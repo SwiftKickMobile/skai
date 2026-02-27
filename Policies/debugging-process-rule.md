@@ -6,7 +6,7 @@ Goal: prevent "guessing fixes" loops by enforcing the **Debugging / Problem-Reso
 
 When you are diagnosing or fixing a bug, flaky behavior, failing test, or unexpected runtime outcome:
 
-- **You must follow** `Guides/Core/debugging-guide.md`.
+- **You must read and follow** `Guides/Core/debugging-guide.md`.
 - **Do not** propose a fix unless you can cite evidence for why it addresses the current best hypothesis.
 - **Do not** ship "shotgun" changes (multiple speculative changes bundled together).
 
@@ -22,6 +22,11 @@ For each iteration:
    - If you need output you cannot access, STOP and ask the human to run the command and paste results.
    - If multiple plausible behaviors depend on product intent, STOP and ask the human which is correct.
 6. Apply **one** change, re-run the smallest verification, and update the possibility space.
+
+## Root cause and fix gates (hard)
+
+- Do not declare a root cause without discriminating evidence that rules out plausible alternatives.
+- Before applying a fix, present the root cause and proposed fix and get explicit human approval.
 
 ## Evidence requirements
 

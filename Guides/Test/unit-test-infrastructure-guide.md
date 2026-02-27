@@ -2,7 +2,7 @@ Managed-By: ai-dev-process
 Managed-Id: guide.unit-test-infrastructure
 Managed-Source: Guides/Test/unit-test-infrastructure-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-02-19
+Managed-Updated-At: 2026-02-27
 
 # Unit Test Infrastructure Guide
 
@@ -16,13 +16,25 @@ Defines the process for identifying, implementing, and compiling test infrastruc
 - Test data (fixtures)
 - Test framework utilities (shared helpers)
 
+## Checkpoints
+
+This guide follows the shared process-flow mechanics in `Guides/Core/process-flow.md` (checkpoints, advance intent, `auto`, and the standard gate line).
+
+Workflow-specific gate points (this guide must STOP and wait at these checkpoints):
+- After Phase 1 (Identify): present the infrastructure analysis for approval.
+  - If Phase 1 concludes **no infrastructure changes required**, do **not** create a work document; approval happens in chat.
+  - If Phase 1 concludes **infrastructure changes required**, create an infrastructure work document and track phases with 🟡 (Phase 1/2/3). Remove 🟡 from Phase 1 only after approval.
+- After Phase 3 (Compile): present compilation results and what infrastructure changed.
+
+At checkpoints, end checkpoint output with the standard gate line (see `Guides/Core/process-flow.md`).
+
 ---
 
 ## Commands
 
-### Next Command
+### Advance intent
 
-**Definition:** Any of `"begin"`, `"next"`, or `"continue"` -- these are synonymous.
+**Definition:** Advance intent. See `Guides/Core/process-flow.md`.
 
 **Behavior:** Context determines the action:
 - If waiting to proceed → remove 🟡 from the current phase (where applicable), advance to next phase
@@ -38,21 +50,19 @@ Defines the process for identifying, implementing, and compiling test infrastruc
 2. **Phase 2: Implement** - Create the infrastructure (if needed)
 3. **Phase 3: Compile** - Ensure everything builds (if implemented)
 
-**Progress tracking:** Work document checklist uses 🟡 for TODO phases, and no marker for completed phases (remove 🟡 when complete)
+**Progress tracking (only if infrastructure changes are required):** Infrastructure work document checklist uses 🟡 for TODO phases, and no marker for completed phases (remove 🟡 when complete).
 
 **Flow:**
 1. Phase 1 (Identify) → STOP at checkpoint
-2. Next Command → **Branching:**
-   - If no infrastructure needed → STOP at checkpoint (no document needed)
-   - If infrastructure exists → STOP at checkpoint (no document needed)
-   - If new infrastructure needed → Create work document → Execute Phase 2 (Implement)
-3. After Phase 2 → Automatically execute Phase 3 (Compile)
+2. Advance intent → **Branching (based on the Phase 1 conclusion):**
+   - If **no infrastructure changes required** → STOP at checkpoint (no document created)
+   - If **infrastructure changes required** → Create work document (includes Phase 1/2/3 checklist with 🟡) → Execute Phase 2 (Implement)
+3. After Phase 2 → Execute Phase 3 (Compile)
 4. After Phase 3 → Remove 🟡 from Phase 2 & 3 (in the work document) → STOP at checkpoint
 
 **Possible outcomes:**
-- No infrastructure needed → STOP at checkpoint after Phase 1 (no document)
-- Infrastructure exists → STOP at checkpoint after Phase 1 (no document)
-- New infrastructure needed → STOP at checkpoint after Phase 3 (document tracks work)
+- No infrastructure changes required → STOP at checkpoint after Phase 1 (no document)
+- Infrastructure changes required → STOP at checkpoint after Phase 3 (document tracks work)
 
 ---
 
@@ -62,7 +72,7 @@ Defines the process for identifying, implementing, and compiling test infrastruc
 
 **Goal:** Determine exactly what infrastructure is needed for the tests
 
-**Checkpoint:** STOP after this phase and wait for Next Command
+**Checkpoint:** STOP after this phase and wait for approval / advance intent (end checkpoint output with the standard gate line; see `Guides/Core/process-flow.md`).
 
 ### Phase 2: Implement
 
@@ -72,7 +82,7 @@ Defines the process for identifying, implementing, and compiling test infrastruc
 
 **Runs only if:** Phase 2 ran
 
-**Checkpoint:** STOP after this phase and wait for Next Command
+**Checkpoint:** STOP after this phase and wait for advance intent (end checkpoint output with the standard gate line; see `Guides/Core/process-flow.md`).
 
 ---
 
@@ -106,9 +116,9 @@ Defines the process for identifying, implementing, and compiling test infrastruc
 
 2. **SEARCH FIRST - MANDATORY**
    - **NEVER assume infrastructure exists**
-   - Use `grep`, `glob_file_search`, or `codebase_search` to find files
-   - Use `read_file` to verify capabilities of found files
-   - **Document search commands used and results found**
+   - Search the codebase to find relevant files and symbols
+   - Open/read the relevant files to verify current capabilities
+   - **Document what you searched and what you found (or did not find)**
    - If file not found: Mark as "NEW (does not exist)"
    - If file found: Mark as "Already exists at [path]" and list its current capabilities
 
@@ -125,8 +135,8 @@ Defines the process for identifying, implementing, and compiling test infrastruc
 5. **BE DEFINITIVE - NO ASSUMPTIONS**
    - Never say "new or existing" or "if available"
    - You must KNOW which it is through verified search
-   - Every "Already exists" claim must be backed by a search command that found the file
-   - **Every "NEW" must be backed by a search command that returned no results**
+   - Every "Already exists" claim must be backed by evidence from your search + file inspection
+   - **Every "NEW" must be backed by evidence that you did not find it**
 
 6. **BE SPECIFIC**
    - For existing items: List exact new methods/properties needed
@@ -142,7 +152,7 @@ Defines the process for identifying, implementing, and compiling test infrastruc
 - **If no infrastructure needed**: Document "No infrastructure changes required"
 - **If infrastructure needed**: Document all needed changes
 
-**Checkpoint:** Present analysis and STOP. Wait for Next Command.
+**Checkpoint:** Present analysis and STOP. Wait for approval / advance intent (end checkpoint output with the standard gate line; see `Guides/Core/process-flow.md`).
 
 ---
 
@@ -313,10 +323,10 @@ read_file path/to/Mocks/MockService.swift
 
 **Ready to proceed to Phase 2?**
 
-**Checkpoint:** Present complete analysis and STOP. Wait for Next Command.
+**Checkpoint:** Present complete analysis and STOP. Wait for approval / advance intent (end checkpoint output with the standard gate line; see `Guides/Core/process-flow.md`).
 
-**After Next Command:**
-- Remove 🟡 from Phase 1 in the work document (if you created one)
+**After approval / advance intent:**
+- If a work document was created: remove 🟡 from Phase 1 in the work document
 - If infrastructure needed: Proceed to Phase 2
 - If no infrastructure needed: Infrastructure process complete (no Phase 2/3 work document required)
 ````
@@ -327,7 +337,7 @@ read_file path/to/Mocks/MockService.swift
 
 **This phase only runs if infrastructure changes are needed.**
 
-**Triggered by:** Next Command after Phase 1 (when infrastructure is needed)
+**Triggered by:** Advance intent after Phase 1 approval (when infrastructure changes are required)
 
 ### Process
 
@@ -602,10 +612,10 @@ This document tracks the infrastructure work for implementing unit tests for [de
 **Phase 1: Identify**
 - Create "Overview / Strategy" section
 - **MANDATORY: Search for each infrastructure item**
-- **MANDATORY: Verify files exist with `read_file` before marking as existing**
+- **MANDATORY: Open/read files to verify current capabilities before marking as existing**
 - Analyze what's needed
 - Document all requirements by category with search proof
-- Present analysis and wait for Next Command
+- Present analysis and wait for approval / advance intent
 
 **Phase 2: Implement** (only if infrastructure needed)
 - Create work document (only now, not in Phase 1)
@@ -634,9 +644,9 @@ This document tracks the infrastructure work for implementing unit tests for [de
 See `docs/ai-dev-process/integration.md` for all infrastructure locations and naming conventions.
 
 **Command:**
-- Next Command - Removes 🟡 from the previously completed phase (where applicable) and proceeds to next phase
+- Advance intent - Proceed to the next phase (see `Guides/Core/process-flow.md`)
 - Phase 1 → STOP (checkpoint)
-- After approval → Remove 🟡 from Phase 1 (if present in a work document)
+- After approval → If a work document exists, remove 🟡 from Phase 1
 - Branch: No infrastructure → Done | Infrastructure needed → Phase 2 & 3
 - After Phase 3 → Remove 🟡 from Phase 2 & 3 → Done
 

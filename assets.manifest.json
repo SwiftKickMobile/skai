@@ -52,6 +52,12 @@
       "tags": ["core"]
     },
     {
+      "id": "guide.process-flow",
+      "type": "guide",
+      "sourcePath": "Guides/Core/process-flow.md",
+      "tags": ["core"]
+    },
+    {
       "id": "template.integration-doc",
       "type": "template",
       "sourcePath": "Templates/docs/ai-dev-process/integration.md",

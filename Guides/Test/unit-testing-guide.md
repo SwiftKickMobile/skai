@@ -2,7 +2,7 @@ Managed-By: ai-dev-process
 Managed-Id: guide.unit-testing
 Managed-Source: Guides/Test/unit-testing-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-02-19
+Managed-Updated-At: 2026-02-27
 
 # Unit Testing Guide
 
@@ -27,13 +27,23 @@ When testing multiple types in a single session:
 - **Infrastructure**: `Guides/Test/unit-test-infrastructure-guide.md`
 - **Writing & Execution**: `Guides/Test/unit-test-writing-guide.md`
 
+## Checkpoints
+
+This guide follows the shared process-flow mechanics in `Guides/Core/process-flow.md` (checkpoints, advance intent, `auto`, and the standard gate line).
+
+Workflow-specific gate points (this guide must STOP and wait at these checkpoints):
+- After planning is complete (all files/sections/tests are stubbed and marked 🟡).
+- Before running tests for a section (ensure writing is complete for the section).
+- After test execution results are gathered (human can approve conclusions and next step).
+- At the end of `auto` runs (report what was completed vs what was skipped and why).
+
 ---
 
 ## Commands
 
-### Next Command
+### Advance intent
 
-**Definition:** Any of `"begin"`, `"next"`, or `"continue"` -- these are synonymous.
+**Definition:** Advance intent. See `Guides/Core/process-flow.md`.
 
 **Behavior:** Context determines the action:
 - If waiting to proceed → mark current step complete (removes 🟡 where applicable), execute next step
@@ -41,12 +51,12 @@ When testing multiple types in a single session:
 
 **Mechanics:**
 - Hands off to sub-process: Sub-process defines its own checkpoints and command protocol
-- When sub-process completes: Returns to checkpoint, waits for Next Command to advance
+- When sub-process completes: Returns to checkpoint, waits for advance intent to advance
 - If no more work remains: Done
 
-### Next Command + `auto`
+### Advance intent + `auto`
 
-Next Command followed by `auto` (e.g., `"next auto"`) -- Auto-advances through sections until infrastructure needed or non-trivial failure.
+Advance intent followed by `auto` (e.g., `"next auto"`). See `Guides/Core/process-flow.md` for shared `auto` semantics and universal STOP conditions.
 
 **First step (Planning):**
 - Executes the planning process (see planning guide)
@@ -61,6 +71,8 @@ Next Command followed by `auto` (e.g., `"next auto"`) -- Auto-advances through s
 - Completes all tests that can be completed automatically
 - At end: Reports which tests were skipped and why
 - Use when: Want to make maximum progress and batch human input items together
+
+At checkpoints, end checkpoint output with the standard gate line (see `Guides/Core/process-flow.md`).
 
 **Skip and Continue Behavior:**
 
@@ -86,7 +98,7 @@ Next Command followed by `auto` (e.g., `"next auto"`) -- Auto-advances through s
 **Final report includes:**
 - Tests completed (with 🟡 removed)
 - Tests skipped (with 🟡 remaining) with reasons
-- Human can then address skipped items with Next Command or approve/modify proposed solutions
+- Human can then address skipped items with advance intent or approve/modify proposed solutions
 
 ---
 
@@ -121,26 +133,26 @@ The testing process is designed for:
 
 ### Step 1: Planning
 
-**Trigger:** Next Command
+**Trigger:** Advance intent
 
 **Process:** Execute `Guides/Test/unit-test-planning-guide.md`
 
 **Output:** Test file with sections marked 🟡 (indicating TODO)
 
-**Checkpoint:** Wait for Next Command
+**Checkpoint:** Wait for advance intent (end checkpoint output with the standard gate line; see `Guides/Core/process-flow.md`).
 
 ---
 
 ### Step 2: Section Implementation (repeat per section)
 
-**Trigger:** Next Command
+**Trigger:** Advance intent
 
 **For each section marked 🟡:**
 
 1. **Infrastructure Phase**
    - Execute `Guides/Test/unit-test-infrastructure-guide.md` for this section
    - Stops at checkpoints defined in that guide
-   - Next Command after infrastructure complete → Proceed to Writing Phase
+   - Advance intent after infrastructure complete → Proceed to Writing Phase
 
 2. **Writing & Execution Phase**
    - Execute `Guides/Test/unit-test-writing-guide.md` for this section
@@ -273,8 +285,8 @@ AI: [Works on Feature C Tests with human guidance for infrastructure]
 ## Quick Reference
 
 **Commands:**
-- Next Command (`"begin"` / `"next"` / `"continue"`) - Proceed
-- Next Command + `auto` - Auto-advance until infrastructure needed or non-trivial failure
+- Advance intent (see `Guides/Core/process-flow.md`) - Proceed
+- Advance intent + `auto` - Auto-advance until infrastructure needed or non-trivial failure (workflow-specific rules above still apply)
 
 **Process Flow:**
 1. Planning → Creates ALL test files with 🟡 sections (single or multiple files) → CHECKPOINT

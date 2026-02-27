@@ -2,7 +2,7 @@ Managed-By: ai-dev-process
 Managed-Id: guide.work-spec
 Managed-Source: Guides/Spec/work-spec-creation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-02-19
+Managed-Updated-At: 2026-02-27
 
 # Work Specification Guide
 
@@ -21,21 +21,43 @@ Orchestrates the work specification creation process. Work specifications provid
 3. **Work Spec First Pass**: Write high-level tasks only (no subtasks) for review.
 4. **Work Spec Second Pass**: Add detailed subtasks after approval.
 
+## Checkpoints
+
+This guide follows the shared process-flow mechanics in `Guides/Core/process-flow.md`.
+
+Workflow-specific gate points (this guide must STOP and wait at these checkpoints):
+- After drafting the planning document (with 🟡 open questions).
+- After resolving all 🟡 items and completing the API sketch (human confirms readiness to proceed).
+- After requirements normalization updates to `/requirements/**` (human acknowledges before proceeding).
+- After the work spec first pass (high-level tasks only) for review.
+- After the work spec second pass (subtasks + traceability) for review.
+
 ---
 
 ## Commands
 
-### Next Command
+### Advance intent
 
-**Definition:** Any of `"begin"`, `"next"`, or `"continue"` -- these are synonymous.
+**Definition:** Advance intent. See `Guides/Core/process-flow.md`.
 
 **Behavior:** Context determines the action. The same command drives every phase of the process; the agent infers which step to execute based on the current state of the conversation and any existing documents.
+
+### Advance intent + `auto`
+
+Advance intent followed by `auto` (e.g., `"next auto"`). See `Guides/Core/process-flow.md` for shared `auto` semantics and universal STOP conditions.
+
+In this workflow, `auto` can be useful after the human has already approved the planning document and there are no remaining 🟡 items, to batch:
+- requirements normalization
+- work spec first pass
+- work spec second pass
+
+If the planning document still has unresolved 🟡 items, this workflow is blocked on human decisions and `auto` should STOP at that checkpoint.
 
 **Planning -- Create Planning Document:**
 - Triggered when the human says begin/next/continue in the context of a scope discussion (e.g., "begin planning", "lets start the planning doc, begin")
 - Summarizes the scope discussion into a planning document
 - Seeds the document with 🟡 open questions and discussion topics for Stage 1
-- Stops for human review
+- Checkpoint: STOP and wait for advance intent (use the standard gate line; see `Guides/Core/process-flow.md`).
 
 **Planning -- Resolve Open Questions:**
 - Triggered when the human says begin/next/continue while working through a planning document with unresolved 🟡 markers
@@ -52,7 +74,7 @@ Orchestrates the work specification creation process. Work specifications provid
 - Task list contains only main tasks (numbered 1, 2, 3, etc.)
 - No subtasks included
 - No Traceability section (deferred to second step because the human may restructure the task list)
-- Stops when high-level structure is complete
+- Checkpoint: STOP and wait for advance intent (use the standard gate line; see `Guides/Core/process-flow.md`).
 - Allows human to review overall sequence before details
 
 **Work Spec -- Second Pass:**
@@ -62,6 +84,7 @@ Orchestrates the work specification creation process. Work specifications provid
 - Adds the Traceability section (requirement ↔ task mapping) now that the task list is finalized
 - Provides implementation-ready detail
 - Completes the work specification
+- Checkpoint: STOP and wait for advance intent (use the standard gate line; see `Guides/Core/process-flow.md`).
 
 ---
 
@@ -79,12 +102,38 @@ Before writing a work spec, the design must be worked through in a planning docu
 
 Work through the design collaboratively. The agent proposes design elements and the human refines, redirects, or approves.
 
+**Planning document rules (tightened):**
+
+- The agent MUST seed the conversation with proposals.
+  - The planning doc should not be a passive transcript. It should contain concrete proposals/options to help the human decide.
+
 **🟡 Marker Protocol for Planning Documents:**
-- Mark open questions and undecided design points with 🟡 throughout the document.
-- As the human provides direction, replace 🟡 items with decisions (labeled **Decisions:** in the document).
-- Do NOT remove 🟡 markers preemptively -- only replace them when the human has explicitly decided.
-- Do NOT convert open questions into decisions without explicit human approval.
-- The planning document is ready for the next stage when all 🟡 markers have been resolved.
+
+- Mark all unresolved discussion items with 🟡:
+  - open questions
+  - proposals/options under consideration
+  - undecided design points / tradeoffs
+- Avoid over-granularity:
+  - If a single proposal contains many sub-bullets, prefer one 🟡 marker on the proposal line rather than 🟡 on every sub-bullet.
+  - Use per-sub-bullet 🟡 only when individual sub-items can be independently accepted/rejected or are likely to be worked in different iterations.
+- Organize the document by topic (natural structure).
+  - Do NOT create a global "Questions" section.
+  - Instead, place 🟡 items under the relevant topic headings where they belong.
+- When the human explicitly approves a resolution:
+  - REPLACE the 🟡 item inline with the approved plan/requirement/decision text (no separate "Questions" section, no "approved" marker).
+  - Do NOT remove 🟡 preemptively. Only replace when the human has explicitly decided.
+- The planning document is ready for the next stage when all 🟡 items have been replaced with approved content.
+
+**Recommended planning document shape (suggested, not required):**
+
+- Problem / goal
+- Current architecture / constraints (if relevant)
+- Topics (one section per major topic)
+  - Each topic contains:
+    - brief context
+    - 🟡 items (questions/proposals/tradeoffs) inline
+    - resolved items replaced inline with the approved text
+    - any non-goals / deferrals (explicit)
 
 **Discussion principles:**
 - Present findings and analysis, not pre-selected options. The human is the architect.
@@ -130,6 +179,8 @@ The planning phase is complete when:
 - The key types and their relationships are described.
 - The design has been validated against concrete use cases.
 - The human confirms readiness to proceed to requirements normalization.
+
+Checkpoint: STOP and wait for the human to confirm readiness to proceed (use the standard gate line; see `Guides/Core/process-flow.md`).
 
 ---
 
@@ -188,6 +239,8 @@ Write canonical requirements as if authored by a **product manager with no knowl
 - ❌ "Accumulate errors during parsing and return an aggregated error array."
 
 The work specification references canonical requirement IDs produced by this step.
+
+Checkpoint: STOP and wait for the human to acknowledge requirements updates before starting the work spec draft (use the standard gate line; see `Guides/Core/process-flow.md`).
 
 ---
 

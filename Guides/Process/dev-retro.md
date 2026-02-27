@@ -2,13 +2,27 @@ Managed-By: ai-dev-process
 Managed-Id: guide.dev-retro
 Managed-Source: Guides/Process/dev-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-02-20
+Managed-Updated-At: 2026-02-27
 
 # Dev-session retro (LLM + human)
 
 Purpose: a completeness backstop for an LLM-driven development session in a host repo. This retro covers **everything since the previous dev retro** (if any); if none, it covers the current session.
 
 Do not do a git/diff report unless asked. Prefer evidence-backed review and consistency checks.
+
+## Checkpoints
+
+This guide follows the shared process-flow mechanics in `Guides/Core/process-flow.md` (checkpoints, advance intent, `auto`, and the standard gate line).
+
+Workflow-specific gate points (this guide must STOP and wait at these checkpoints):
+- After input discovery: if required artifacts are missing or you cannot locate them, STOP and ask the human where they are.
+- After drafting the retro output: STOP and wait for advance intent before making any follow-up changes outside the retro itself.
+
+At checkpoints, end checkpoint output with the standard gate line (see `Guides/Core/process-flow.md`).
+
+## Advance intent
+
+Advance intent (and `auto`) semantics are defined in `Guides/Core/process-flow.md`.
 
 ## Inputs (read what exists)
 
@@ -20,7 +34,7 @@ Read the documents and artifacts that were produced or used during this session,
 - The project's Integration doc:
   - `docs/ai-dev-process/integration.md`
 - Evidence artifacts produced during the session:
-  - build/test outputs, logs, `.xcresult`, screenshots/screen recordings, crash reports, etc.
+  - build/test outputs, logs, result bundles/reports, screenshots/screen recordings, crash reports, etc.
 - The canonical requirements library:
   - `/requirements/**` (or your org's equivalent)
 

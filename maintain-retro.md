@@ -22,10 +22,11 @@ This retro is a **backstop for completeness**, not a git/diff report.
 ## 2) Required bookkeeping
 
 - Ensure `CHANGELOG.md` reflects major user-visible changes. Review each change made since the last retro and verify it has a corresponding entry if user-visible.
+  - Changelog is release notes: prefer multiple short bullets over a single mega-entry.
 - Ensure `assets.manifest.json` is updated if you added/moved/renamed any installable asset or installer dependency (templates/sections/runbooks/policies).
 - Ensure `README.md` is updated if needed:
   - Quick start prompts if any runbook paths changed
-  - Asset inventory: every Guide under `Guides/` must have a corresponding entry in README's "Human-facing guides" section
+  - Usage section: ensure the workflow descriptions and phases match the updated guide checkpoint/gate behavior (and add/update any guide inventory section if your README has one).
   - Any new conventions/invariants developers need to know
 - Ensure `maintain-ai-dev-process.md` is updated if you changed invariants or introduced a new maintenance rule.
 

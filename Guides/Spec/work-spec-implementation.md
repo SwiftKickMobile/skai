@@ -2,7 +2,7 @@ Managed-By: ai-dev-process
 Managed-Id: guide.work-spec-implementation
 Managed-Source: Guides/Spec/work-spec-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-02-08
+Managed-Updated-At: 2026-02-27
 
 
 # Work Task Development Rules
@@ -14,13 +14,22 @@ Managed-Updated-At: 2026-02-08
 - You NEVER remove 🟡 from the CURRENT task 
 - Task completion (removing 🟡) happens when the human asks for the next task
 
+## Checkpoints
+
+This guide follows the shared process-flow mechanics in `Guides/Core/process-flow.md`.
+
+Workflow-specific gate points (this guide must STOP and wait at these checkpoints):
+- After completing the implementation work for Task N (before moving to Task N+1).
+- When blocked by ambiguity, unclear requirements, missing evidence, or a non-trivial issue.
+- At the end of `"next auto"` to report what was completed vs what remains (and why).
+
 ---
 
 ## Commands
 
-### Next Command
+### Advance intent
 
-**Definition:** Any of `"begin"`, `"next"`, or `"continue"` -- these are synonymous.
+**Definition:** Advance intent. See `Guides/Core/process-flow.md`.
 
 **Behavior:** Context determines the action:
 - If waiting to proceed → mark previous task complete (if applicable) and begin next task
@@ -39,9 +48,9 @@ Managed-Updated-At: 2026-02-08
 - 🟡 = TODO (task not yet complete)
 - No marker = Complete (task finished)
 
-### Next Command + `auto`
+### Advance intent + `auto`
 
-Next Command followed by `auto` (e.g., `"next auto"`) -- Auto-advances through all remaining tasks without stopping at checkpoints.
+Advance intent followed by `auto` (e.g., `"next auto"`). See `Guides/Core/process-flow.md` for shared `auto` semantics and universal STOP conditions.
 
 **Behavior:**
 - Automatically implements all remaining 🟡 tasks in sequence
@@ -52,6 +61,8 @@ Next Command followed by `auto` (e.g., `"next auto"`) -- Auto-advances through a
   3. **Non-trivial issues** - Stop, leave 🟡, document problem, wait for human input
 - At end: Reports progress (tasks completed vs tasks remaining with 🟡)
 - Use when: Want to make maximum progress and batch human input items together
+
+At checkpoints, end checkpoint output with the standard gate line (see `Guides/Core/process-flow.md`).
 
 **Auto-fixes allowed:**
 - Obvious typos (wrong variable names, enum values)
@@ -70,7 +81,7 @@ Next Command followed by `auto` (e.g., `"next auto"`) -- Auto-advances through a
 **Final report includes:**
 - Tasks completed (🟡 removed)
 - Tasks remaining (with 🟡) and reasons why they were skipped
-- Human can then address remaining items with Next Command or approve/modify approach
+- Human can then address remaining items with advance intent or approve/modify approach
 
 ## Task N Implementation
 
@@ -102,11 +113,15 @@ If you encounter ambiguity, incompleteness, or potential errors in the spec duri
 - Explain the ambiguity clearly and propose options if applicable
 - Wait for the human to resolve the ambiguity
 
+End checkpoint output with the standard gate line (see `Guides/Core/process-flow.md`).
+
 ### Step 3: Stop and Wait
 - **DO NOT** remove 🟡 from Task N in the work spec
 - **DO NOT** proceed to the next task
 - **DO NOT** update current task status
 - Simply stop and wait for user authorization
+
+End checkpoint output with the standard gate line (see `Guides/Core/process-flow.md`).
 
 ### Step 4: During Implementation
 - When asked questions, do not make changes unless explicitly instructed

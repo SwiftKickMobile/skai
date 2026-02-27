@@ -2,11 +2,26 @@ Managed-By: ai-dev-process
 Managed-Id: guide.report-process-problem
 Managed-Source: Guides/Process/report-process-problem.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-02-20
+Managed-Updated-At: 2026-02-27
 
 # Report a process problem
 
 Purpose: structured intake for ad-hoc process improvement suggestions outside of a dev retro. Helps the developer articulate friction and produces entries in the same working file format used by the retro and ticket creation flows.
+
+## Checkpoints
+
+This guide follows the shared process-flow mechanics in `Guides/Core/process-flow.md` (checkpoints, advance intent, `auto`, and the standard gate line).
+
+Workflow-specific gate points (this guide must STOP and wait at these checkpoints):
+- After understanding the problem: wait for the developer to say they are ready to write the entry to the working file.
+- After drafting/updating the `process-tickets.md` entry: present it for review and wait for approval to proceed.
+- After next-steps prompt ("file now" vs "later"): wait for advance intent before proceeding to ticket creation.
+
+At checkpoints, end checkpoint output with the standard gate line (see `Guides/Core/process-flow.md`).
+
+## Advance intent
+
+Advance intent (and `auto`) semantics are defined in `Guides/Core/process-flow.md`.
 
 ## When to use
 

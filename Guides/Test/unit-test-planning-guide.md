@@ -2,7 +2,7 @@ Managed-By: ai-dev-process
 Managed-Id: guide.unit-test-planning
 Managed-Source: Guides/Test/unit-test-planning-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-02-08
+Managed-Updated-At: 2026-02-27
 
 # Unit Test Planning Guide
 
@@ -10,13 +10,23 @@ Managed-Updated-At: 2026-02-08
 
 Defines the process for creating complete test plans with ALL test stubs and documentation across ALL sections before any implementation begins.
 
+## Checkpoints
+
+This guide follows the shared process-flow mechanics in `Guides/Core/process-flow.md` (checkpoints, advance intent, `auto`, and the standard gate line).
+
+Workflow-specific gate points (this guide must STOP and wait at these checkpoints):
+- After planning is complete (all files/sections/tests are stubbed and marked 🟡).
+- When ambiguities block planning (missing product intent, unclear expected behavior, unclear public API to test).
+
+At checkpoints, end checkpoint output with the standard gate line (see `Guides/Core/process-flow.md`).
+
 ---
 
 ## Commands
 
-### Next Command
+### Advance intent
 
-**Definition:** Any of `"begin"`, `"next"`, or `"continue"` -- these are synonymous.
+**Definition:** Advance intent. See `Guides/Core/process-flow.md`.
 
 **Behavior:** Context determines the action:
 - If waiting to proceed → mark planning complete, return to parent process
@@ -76,7 +86,7 @@ When planning tests for multiple types:
 - Do all planning upfront (all files, all sections, all tests)
 - Mark sections with 🟡 to indicate they contain TODO work
 - Mark individual test functions with 🟡 to indicate they need implementation or fixes
-- Do NOT create work documents during planning
+- Do NOT create new work documents during planning
 - **Only make changes that qualify as "test planning"** - nothing else
 
 **What qualifies as test planning:**
@@ -95,6 +105,134 @@ When planning tests for multiple types:
 - ❌ Any change to existing code
 
 **Key principle:** Test stubs with detailed doc comments ARE the plan
+
+### Creating the Complete Test Plan
+
+**CRITICAL:** The doc comments in the code ARE the test plan. They must be sufficient for review and approval.
+
+**Planning creates:**
+
+**For New Test Suite:**
+1. Test file with ALL test stubs across ALL sections
+2. ALL MARK sections defined **with 🟡 emoji** (marking sections as TODO)
+3. ALL test functions **with 🟡 emoji** (marking individual tests as TODO)
+4. Detailed doc comments for every test
+5. Complete picture of test coverage
+
+**For Adding New Sections:**
+1. New MARK sections in existing test file **with 🟡 emoji** (marking sections as TODO)
+2. Test stubs for new sections only **with 🟡 emoji** (marking individual tests as TODO)
+3. Detailed doc comments for every new test
+4. Existing sections and tests remain unchanged
+
+**For Adding Tests to Existing Section:**
+1. New test stubs in existing section **with 🟡 emoji** (marking individual tests as TODO)
+2. Section MARK comment **with 🟡 emoji if not already present** (marking section as TODO)
+3. Detailed doc comments for every new test
+4. Existing tests in section remain unchanged
+
+**For Marking Failing Tests:**
+1. Failing test functions **marked with 🟡 emoji** (indicating need for fixes)
+2. Section MARK comment **with 🟡 emoji if not already present** (marking section as TODO)
+
+
+**All tests require:**
+- Descriptive camelCase name
+- **Concise, but sufficient doc comment** that explains **what** the test verifies and **how** it verifies it (enough for human review/approval).
+  - Prefer 1-3 short lines; add more only when needed for clarity.
+- **Body with `Issue.record("Test not yet implemented")` to mark as failing TODO**
+
+**Doc Comment Guidelines:**
+- Keep it concise, but sufficient to describe what the test verifies and how it verifies it
+- Be specific about the behavior being validated; include key setup only if it is not obvious
+- Make it clear enough for human review and approval
+
+**Creating Complete Test Plan:**
+
+**For New Test Suite:**
+1. Create test file with suite declaration
+2. Define ALL MARK sections for logical grouping
+3. **Add 🟡 emoji to all MARK sections** (marking sections as TODO)
+4. Add ALL test stub functions across ALL sections
+5. **Add 🟡 emoji to each test function** (marking individual tests as TODO)
+6. Add detailed doc comments for every test
+7. Add standard sections: Constants, Variables, Helpers
+
+**For Adding New Sections:**
+1. Open existing test file
+2. Define new MARK sections for new functionality
+3. **Add 🟡 emoji to new MARK sections** (marking sections as TODO)
+4. Add test stub functions for new sections only
+5. **Add 🟡 emoji to each new test function** (marking individual tests as TODO)
+6. Add detailed doc comments for every new test
+7. Existing sections and helpers remain unchanged
+
+**For Adding Tests to Existing Section:**
+1. Open existing test file
+2. Locate the existing MARK section
+3. **Add 🟡 emoji to section MARK comment if not already present** (marking section as TODO)
+4. Add new test stub functions within the section
+5. **Add 🟡 emoji to each new test function** (marking individual tests as TODO)
+6. Add detailed doc comments for every new test
+7. Existing tests in section remain unchanged
+
+**For Marking Failing Tests:**
+1. Open existing test file
+2. Locate the failing test functions
+3. **Add 🟡 emoji to each failing test function** (marking them as needing fixes)
+4. **Add 🟡 emoji to section MARK comment if not already present** (marking section as TODO)
+
+**Example (Swift Testing framework):**
+```swift
+import Testing
+import Factory
+@testable import YourModule
+
+@Suite(.serialized) @MainActor
+struct ComponentTests {
+
+    // MARK: - Success Tests 🟡
+    
+    /// Verifies that a successful operation returns the expected value.
+    /// Stubs the dependency to return a success response.
+    /// Ensures the component properly processes the response.
+    @Test func testOperationReturnsSuccessResponse() async throws { // 🟡
+        Issue.record("Test not yet implemented")
+    }
+    
+    /// Verifies that required parameters are passed correctly.
+    /// Creates an operation with specific parameters and inspects the captured values.
+    /// Validates that all parameters are included correctly.
+    @Test func testOperationPassesParameters() async throws { // 🟡
+        Issue.record("Test not yet implemented")
+    }
+    
+    // MARK: - Error Handling Tests 🟡
+    
+    /// Verifies that error conditions throw appropriate errors.
+    /// Stubs dependency to return error condition. Ensures component throws appropriate error.
+    @Test func testOperationThrowsOnError() async throws { // 🟡
+        Issue.record("Test not yet implemented")
+    }
+    
+    // MARK: - Constants
+    
+    // MARK: - Variables
+    
+    // MARK: - Helpers
+}
+```
+
+**Assertions - Use `#expect()` (not XCTest macros):**
+```swift
+#expect(value == expected)       // Equality
+#expect(value != unexpected)      // Inequality  
+#expect(value > 0)                // Comparison
+#expect(optionalValue == nil)     // Nil check
+#expect(throws: MyError.self) {   // Error throwing
+    try somethingThatThrows()
+}
+```
 
 ---
 
@@ -336,142 +474,6 @@ Use MARK comments to organize (following code-organization pattern):
 
 ---
 
-## The Planning Process
-
-### Creating the Complete Test Plan
-
-**CRITICAL:** The doc comments in the code ARE the test plan. They must be detailed enough for review and approval.
-
-**Planning creates:**
-
-**For New Test Suite:**
-1. Test file with ALL test stubs across ALL sections
-2. ALL MARK sections defined **with 🟡 emoji** (marking sections as TODO)
-3. ALL test functions **with 🟡 emoji** (marking individual tests as TODO)
-4. Detailed doc comments for every test
-5. Complete picture of test coverage
-
-**For Adding New Sections:**
-1. New MARK sections in existing test file **with 🟡 emoji** (marking sections as TODO)
-2. Test stubs for new sections only **with 🟡 emoji** (marking individual tests as TODO)
-3. Detailed doc comments for every new test
-4. Existing sections and tests remain unchanged
-
-**For Adding Tests to Existing Section:**
-1. New test stubs in existing section **with 🟡 emoji** (marking individual tests as TODO)
-2. Section MARK comment **with 🟡 emoji if not already present** (marking section as TODO)
-3. Detailed doc comments for every new test
-4. Existing tests in section remain unchanged
-
-**For Marking Failing Tests:**
-1. Failing test functions **marked with 🟡 emoji** (indicating need for fixes)
-2. Section MARK comment **with 🟡 emoji if not already present** (marking section as TODO)
-
-
-**All tests require:**
-- Descriptive camelCase name
-- **Detailed multi-line doc comment** that explains:
-  - **What** the test verifies (the assertion/behavior)
-  - **How** it will test it (the approach/steps)
-  - **Why** it matters (the critical aspect being validated)
-- **Body with `Issue.record("Test not yet implemented")` to mark as failing TODO**
-
-**Doc Comment Guidelines:**
-- Use multiple lines (3-4 lines typical)
-- Be specific about test setup and approach
-- Explain the critical behavior being validated
-- Make it clear enough for human review and approval
-
-**Creating Complete Test Plan:**
-
-**For New Test Suite:**
-1. Create test file with suite declaration
-2. Define ALL MARK sections for logical grouping
-3. **Add 🟡 emoji to all MARK sections** (marking sections as TODO)
-4. Add ALL test stub functions across ALL sections
-5. **Add 🟡 emoji to each test function** (marking individual tests as TODO)
-6. Add detailed doc comments for every test
-7. Add standard sections: Constants, Variables, Helpers
-
-**For Adding New Sections:**
-1. Open existing test file
-2. Define new MARK sections for new functionality
-3. **Add 🟡 emoji to new MARK sections** (marking sections as TODO)
-4. Add test stub functions for new sections only
-5. **Add 🟡 emoji to each new test function** (marking individual tests as TODO)
-6. Add detailed doc comments for every new test
-7. Existing sections and helpers remain unchanged
-
-**For Adding Tests to Existing Section:**
-1. Open existing test file
-2. Locate the existing MARK section
-3. **Add 🟡 emoji to section MARK comment if not already present** (marking section as TODO)
-4. Add new test stub functions within the section
-5. **Add 🟡 emoji to each new test function** (marking individual tests as TODO)
-6. Add detailed doc comments for every new test
-7. Existing tests in section remain unchanged
-
-**For Marking Failing Tests:**
-1. Open existing test file
-2. Locate the failing test functions
-3. **Add 🟡 emoji to each failing test function** (marking them as needing fixes)
-4. **Add 🟡 emoji to section MARK comment if not already present** (marking section as TODO)
-
-**Example (Swift Testing framework):**
-```swift
-import Testing
-import Factory
-@testable import YourModule
-
-@Suite(.serialized) @MainActor
-struct ComponentTests {
-
-    // MARK: - Success Tests 🟡
-    
-    /// Verifies that a successful operation returns the expected value.
-    /// Stubs the dependency to return a success response.
-    /// Ensures the component properly processes the response.
-    @Test func testOperationReturnsSuccessResponse() async throws { // 🟡
-        Issue.record("Test not yet implemented")
-    }
-    
-    /// Verifies that required parameters are passed correctly.
-    /// Creates an operation with specific parameters and inspects the captured values.
-    /// Validates that all parameters are included correctly.
-    @Test func testOperationPassesParameters() async throws { // 🟡
-        Issue.record("Test not yet implemented")
-    }
-    
-    // MARK: - Error Handling Tests 🟡
-    
-    /// Verifies that error conditions throw appropriate errors.
-    /// Stubs dependency to return error condition. Ensures component throws appropriate error.
-    @Test func testOperationThrowsOnError() async throws { // 🟡
-        Issue.record("Test not yet implemented")
-    }
-    
-    // MARK: - Constants
-    
-    // MARK: - Variables
-    
-    // MARK: - Helpers
-}
-```
-
-**Assertions - Use `#expect()` (not XCTest macros):**
-```swift
-#expect(value == expected)       // Equality
-#expect(value != unexpected)      // Inequality  
-#expect(value > 0)                // Comparison
-#expect(optionalValue == nil)     // Nil check
-#expect(throws: MyError.self) {   // Error throwing
-    try somethingThatThrows()
-}
-```
-
-
----
-
 ## Tips for Good Test Plans
 
 ### Coverage Considerations
@@ -486,8 +488,8 @@ struct ComponentTests {
 - Be specific: `testErrorConditionTriggersRetry` not `testHandlesError`
 
 ### Documentation
-- Doc comments should explain WHAT the test verifies
-- Keep it concise - one clear sentence
+- Doc comments should explain what the test verifies (and briefly how it verifies it if not obvious)
+- Keep it concise, but sufficient for human review/approval
 - Focus on behavior, not implementation details
 
 ---

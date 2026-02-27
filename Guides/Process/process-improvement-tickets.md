@@ -2,11 +2,27 @@ Managed-By: ai-dev-process
 Managed-Id: guide.process-improvement-tickets
 Managed-Source: Guides/Process/process-improvement-tickets.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-02-20
+Managed-Updated-At: 2026-02-27
 
 # Process improvement tickets
 
 Purpose: convert process improvement suggestions into GitHub issues on the `ai-dev-process` repo. Typically triggered after a dev retro (step 6: Process reflection), but can be used any time a process gap is identified.
+
+## Checkpoints
+
+This guide follows the shared process-flow mechanics in `Guides/Core/process-flow.md` (checkpoints, advance intent, `auto`, and the standard gate line).
+
+Workflow-specific gate points (this guide must STOP and wait at these checkpoints):
+- If GitHub MCP access is missing/broken: STOP and ask the human to set it up (or to fix permissions).
+- After converting suggestions into drafts and updating the working file: present the updated working file for human review and STOP.
+- After the human marks drafts approved: STOP before creating issues unless the human provides advance intent to proceed with filing.
+- After creating issues: report results and STOP (complete).
+
+At checkpoints, end checkpoint output with the standard gate line (see `Guides/Core/process-flow.md`).
+
+## Advance intent
+
+Advance intent (and `auto`) semantics are defined in `Guides/Core/process-flow.md`.
 
 ## Confidentiality rule
 

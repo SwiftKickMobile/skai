@@ -2,7 +2,7 @@ Managed-By: ai-dev-process
 Managed-Id: guide.unit-test-writing
 Managed-Source: Guides/Test/unit-test-writing-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-02-19
+Managed-Updated-At: 2026-02-27
 
 # Unit Test Writing & Execution Guide
 
@@ -14,13 +14,25 @@ Defines the process for writing and executing test logic.
 - Test plan approved
 - Infrastructure ready (stubs, fixtures, utilities)
 
+## Checkpoints
+
+This guide follows the shared process-flow mechanics in `Guides/Core/process-flow.md` (checkpoints, advance intent, `auto`, and the standard gate line).
+
+Workflow-specific gate points (this guide must STOP and wait at these checkpoints):
+- After Phase 1 (Write Tests): present what was implemented and wait before running tests.
+- During Phase 2 (Execute & Fix):
+  - If tests did not run: STOP, surface the concrete error, and wait for advance intent after proposing the next attempt.
+  - If you are about to change production code based on a failing test: propose the fix and STOP for approval.
+
+At checkpoints, end checkpoint output with the standard gate line (see `Guides/Core/process-flow.md`).
+
 ---
 
 ## Commands
 
-### Next Command
+### Advance intent
 
-**Definition:** Any of `"begin"`, `"next"`, or `"continue"` -- these are synonymous.
+**Definition:** Advance intent. See `Guides/Core/process-flow.md`.
 
 **Behavior:** Context determines the action:
 - If waiting to proceed → remove 🟡 from the current phase (where applicable), advance to next phase
@@ -42,7 +54,7 @@ Defines the process for writing and executing test logic.
 
 **Flow:**
 1. Phase 1 (Write Tests) → STOP at checkpoint
-2. Next Command → Remove 🟡 from Phase 1 (in the work document)
+2. Advance intent → Remove 🟡 from Phase 1 (in the work document)
 3. Phase 2 (Execute & Fix) → Iterate until all tests pass
 4. All tests passing → Remove 🟡 from all tests → Writing complete
 
@@ -58,7 +70,7 @@ Defines the process for writing and executing test logic.
 
 **Goal:** Implement test logic for all 🟡 tests in the section
 
-**Checkpoint:** STOP after this phase and wait for Next Command
+**Checkpoint:** STOP after this phase and wait for advance intent (end checkpoint output with the standard gate line; see `Guides/Core/process-flow.md`).
 
 ### Phase 2: Execute & Fix
 
@@ -145,7 +157,7 @@ Defines the process for writing and executing test logic.
 
 7. **STOP - Checkpoint**
 
-**Important:** Do NOT run tests yet. Wait for Next Command.
+**Important:** Do NOT run tests yet. Wait for advance intent.
 
 **Note:** 🟡 remains on test functions during Phase 1. They are only removed in Phase 2 when tests pass.
 
@@ -367,7 +379,7 @@ struct MyComponentTests {
 
 ## Phase 2: Execute & Fix
 
-**Triggered by:** Next Command after Phase 1
+**Triggered by:** Advance intent after Phase 1
 
 **Marks Phase 1 complete (remove 🟡)** in work document before starting
 
@@ -384,11 +396,10 @@ struct MyComponentTests {
 2. **Verify the test actually ran** - IMMEDIATELY after running the command:
    - **Check output file size**: `ls -lh working-docs/<branch-path>/testing/<suite-name>/<section-name>-test-output.txt`
      - If file is 0 bytes or very small (< 1KB): **TESTS DID NOT RUN**
-   - **Check .xcresult exists**: `ls -d working-docs/<branch-path>/testing/<suite-name>/<section-name>-test.xcresult`
-     - If directory doesn't exist: **TESTS DID NOT RUN**
    - **Read the output file**: `cat working-docs/<branch-path>/testing/<suite-name>/<section-name>-test-output.txt`
      - Look for test execution indicators (✔, ✘, Test Suite, etc.)
      - If you see no test execution output: **TESTS DID NOT RUN**
+   - Confirm any additional expected artifacts described in `docs/ai-dev-process/integration.md` were produced.
    
    **If tests did not run:**
    - **STOP**: Do NOT proceed to analyze code or make guesses
@@ -406,7 +417,6 @@ struct MyComponentTests {
 
    **Only proceed to step 3 when you can confirm:**
    - Output file is substantial (several KB minimum)
-   - `.xcresult` directory exists
    - Output file contains test execution indicators
 
 3. **Document results** in work document
@@ -446,30 +456,25 @@ See `docs/ai-dev-process/integration.md` for project-specific test execution com
    ```
 
 2. **Run tests with full output logging**:
-   - **CRITICAL: Use `-only-testing` to run ONLY the tests in the current section**
-   - Do NOT run the entire test file - this creates noise from unimplemented tests
-   - Use the project's test command from `docs/ai-dev-process/integration.md` with `-only-testing` for each test in the section
-   - See `docs/ai-dev-process/integration.md` for command format and examples
-   - Saves two files:
-     - `.xcresult` bundle: Contains assertion failures, expected vs actual values
-     - `-test-output.txt`: Complete build and test output
-   - File naming: `working-docs/<branch-path>/testing/<suite-name>/<section-name>-test.xcresult` and `working-docs/<branch-path>/testing/<suite-name>/<section-name>-test-output.txt`
+   - **CRITICAL: Run ONLY the tests in the current section** - Do NOT run the entire test file (noise from unimplemented tests).
+   - Use the project's test command from `docs/ai-dev-process/integration.md` and follow its recommended way to scope to specific tests.
+   - Persist full output to `working-docs/<branch-path>/testing/<suite-name>/<section-name>-test-output.txt`.
+   - Persist any additional artifacts described in `docs/ai-dev-process/integration.md`.
 
 3. **Analyze failures**:
-   - **Primary**: Extract assertion details from `.xcresult` (see `docs/ai-dev-process/integration.md`)
+   - **Primary**: Extract structured assertion failure details using the process in `docs/ai-dev-process/integration.md`
    - **Secondary**: Search output file for additional context:
 ```bash
      grep -A 10 "failed\|error" working-docs/<branch-path>/testing/<suite-name>/<section-name>-test-output.txt
 ```
 
-4. **Next test run** overwrites both files (same paths)
+4. **Next test run** overwrites the same files (keep paths stable per section)
 
 **Key points:**
-- **Always use `-only-testing` for the current section's tests** - Don't run entire test file
+- Always scope runs to the current section's tests (see `docs/ai-dev-process/integration.md`)
 - Full output enables multiple analyses without re-running tests
 - Branch-based organization keeps test outputs organized
-- See `docs/ai-dev-process/integration.md` for test target to scheme/project mapping and simulator configuration
- - See `docs/ai-dev-process/integration.md` for test target to scheme/project mapping and simulator configuration
+- See `docs/ai-dev-process/integration.md` for the stack-specific runner setup and artifact extraction
 
 ---
 
@@ -478,13 +483,14 @@ See `docs/ai-dev-process/integration.md` for project-specific test execution com
 **Investigation → Fix → Verify (repeat until passing)**
 
 When resolving test failures, follow the project's Debugging / Problem-Resolution Guide (installed with `ai-dev-process`):
+- See `Guides/Core/debugging-guide.md` for the evidence-first loop and approval gates.
 - Select a debugging tactic (e.g., partitioning, minimal working implementation, bisect) and state *why* it's the best next step.
 - Prefer experiments that produce discriminating evidence over "guessing fixes."
 - Use explicit stop conditions: if you need runtime output you can't access, pause and ask the human to run tests and provide the output/logs.
 
 **Process:**
-1. **Extract assertion failure details from .xcresult bundle** - This is CRITICAL for understanding what failed
-   - See `docs/ai-dev-process/integration.md` for the command/process to extract assertion failures
+1. **Extract structured assertion failure details** - This is CRITICAL for understanding what failed
+   - See `docs/ai-dev-process/integration.md` for the command/process to extract assertion failures in this project/stack
    - Look for:
      - Expected vs actual values in assertion failures
      - Error messages and thrown errors
@@ -516,7 +522,7 @@ When resolving test failures, follow the project's Debugging / Problem-Resolutio
    - Compare expected vs actual values from assertion failure
    - Check for common patterns below
 6. **Propose fix** - Document the proposed solution in work document and STOP
-7. **Wait for approval** - Human reviews and gives Next Command to approve
+7. **Wait for approval / advance intent** - Human reviews and approves before you apply the fix (end checkpoint output with the standard gate line; see `Guides/Core/process-flow.md`)
 8. **Apply fix** - Make the approved changes
 9. **Re-run test** - Verify it passes
 10. **Repeat if needed** - If still failing, return to step 1 (extract assertion details)
@@ -766,11 +772,11 @@ This document tracks the writing and execution work for implementing unit tests.
 
 **Phase 2: Execute & Fix**
 - Remove 🟡 from Phase 1 in the work document (if not already done)
-- Run tests using `-only-testing` for current section (generates .xcresult + output file)
-- **CRITICAL: Verify test actually ran** (check file sizes, .xcresult exists, read output)
+- Run tests scoped to the current section's tests (per `docs/ai-dev-process/integration.md`)
+- **CRITICAL: Verify test actually ran** (check file size + output contains test execution indicators)
 - Document results
 - If failures:
-  - Extract assertion details from .xcresult (CRITICAL)
+  - Extract structured assertion details (CRITICAL) (see `docs/ai-dev-process/integration.md`)
   - Document expected vs actual values
   - Investigate and fix (see maintenance workflow)
 - Remove 🟡 from test functions as they pass
@@ -794,9 +800,9 @@ See `docs/ai-dev-process/integration.md` for project-specific test execution com
 
 **Standard process:**
 - Create suite output directory: `working-docs/<branch-path>/testing/<suite-name>/` (per `Guides/Core/working-doc-conventions.md`, e.g., `working-docs/work/step-refactor/testing/TemplateRenderer/`)
-- **Use `-only-testing` to run ONLY tests in current section** - Don't run entire test file
-- Run tests with `-resultBundlePath` (saves .xcresult bundle + output file)
-- **Extract assertion failures from .xcresult** - CRITICAL first step
+- Run tests scoped to ONLY the current section's tests (per `docs/ai-dev-process/integration.md`)
+- Persist artifacts/logs as described in `docs/ai-dev-process/integration.md`
+- **Extract structured assertion failures** - CRITICAL first step (see `docs/ai-dev-process/integration.md`)
 - Search output file for additional context
 - Overwrite both files on subsequent runs
 
@@ -806,7 +812,7 @@ See `docs/ai-dev-process/integration.md` for project-specific test execution com
 - **Never use `deinit`** - it's not actor-isolated and causes data races
 - Use `defer { Container.shared.reset() }` at start of each test for cleanup
 - Register stubs per-test
-- Wait for Next Command before running tests
+- Wait for advance intent before running tests
 
 **Progress Tracking:**
 - **Test file:** 🟡 on test functions = TODO, remove when pass (restore if fails later)
@@ -815,11 +821,11 @@ See `docs/ai-dev-process/integration.md` for project-specific test execution com
 
 **Test execution validation:**
 - After running test command, IMMEDIATELY verify test actually ran
-- Check output file size (should be several KB), .xcresult exists, output contains test indicators
+- Check output file size (should be several KB) and output contains test indicators (plus any expected artifacts from `docs/ai-dev-process/integration.md`)
 - If test didn't run: STOP, investigate why, fix, re-run (do NOT guess or analyze code)
 
 **When tests fail:**
-1. Extract assertion details from .xcresult (CRITICAL)
+1. Extract structured assertion details (CRITICAL) (see `docs/ai-dev-process/integration.md`)
 2. Document expected vs actual values
 3. Investigation → Fix → Verify (repeat until passing)
 - See "When Tests Fail" section above for complete process

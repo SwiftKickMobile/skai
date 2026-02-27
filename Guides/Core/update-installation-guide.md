@@ -1,6 +1,26 @@
+Managed-By: ai-dev-process
+Managed-Id: guide.update-installation
+Managed-Source: Guides/Core/update-installation-guide.md
+Managed-Adapter: repo-source
+Managed-Updated-At: 2026-02-27
+
 # Update Installation Guide
 
 Updates the `ai-dev-process` submodule and re-runs installed adapter runbooks.
+
+## Checkpoints
+
+This guide follows the shared process-flow mechanics in `Guides/Core/process-flow.md` (checkpoints, advance intent, `auto`, and the standard gate line).
+
+Workflow-specific gate points (this guide must STOP and wait at these checkpoints):
+- If `docs/ai-dev-process/install-state.json` is missing: STOP and ask the human to run initial install/update runbooks first.
+- After reporting what changed (changelog summary or `git log` fallback): STOP and wait for the human to acknowledge before proceeding to runbooks.
+
+At checkpoints, end checkpoint output with the standard gate line (see `Guides/Core/process-flow.md`).
+
+## Advance intent
+
+Advance intent (and `auto`) semantics are defined in `Guides/Core/process-flow.md`.
 
 ## Prerequisites
 

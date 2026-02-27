@@ -31,6 +31,10 @@ When you change assets, keep these in sync:
 - `CHANGELOG.md`
   - add an entry under "Unreleased" for user-visible changes (prefix each line item with the date, `YYYY-MM-DD`)
   - always determine the date by running `date +%Y-%m-%d` in the terminal (see `Install/managed-header.md`, "Determining today's date")
+  - treat changelog entries as release notes for humans:
+    - prefer multiple short bullets over one giant "mega-entry"
+    - each bullet should have a short bold headline and 1-2 sentences max
+    - group by theme when many files change (core mechanics, policies, spec guides, test guides, templates, etc.)
  - Skills (if you add/change them):
    - shared templates live at `Templates/skills/ai-dev-process-*/SKILL.md`
    - Cursor installer installs them into host repos at `.cursor/skills/`

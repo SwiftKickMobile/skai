@@ -148,20 +148,24 @@ After installation, workflows are available as **skills** that your agent activa
 
 ### How all workflows work
 
-**Minimal command structure.** You don't need to memorize commands or syntax:
+**Minimal command structure.** You don't need to memorize strict commands:
 
-1. Start a conversation with context that activates a skill (e.g. "Take a look at this Jira ticket", "Debug this crash", "Write unit tests for Foo").
-2. Progress through steps by saying **"begin"**, **"next"**, **"continue"**, etc. -- they all mean the same thing.
-3. At certain steps the agent will **stop and wait** for your approval before proceeding. Saying "next" (or similar) counts as approval.
-4. If the agent hits unexpected conditions, complications, or obstacles, it stops and asks for input rather than guessing.
-5. Adding **"auto"** to any command tells the agent to proceed through the process without stopping for approval, unless a problem arises (e.g. "begin auto", "start auto implementation").
-6. The syntax is flexible -- the agent can figure out what you mean. "next", "continue", "go ahead", "start auto implementation" all work.
+1. Start with context that activates a skill/workflow (e.g. "Write a work spec", "Start unit testing", "Start debugging").
+2. Progress through steps using **advance intent** (e.g. "begin", "next", "continue", "go ahead").
+3. At certain steps the agent will **stop and wait** at a checkpoint (gate). At checkpoints, the agent ends its output with exactly one of these lines:
+   - `⏳ GATE: Next: <thing>. Say "next" or what to change.`
+   - `⏳ GATE: Complete. Say "next" or what to change.`
+   - `⏳ GATE: Blocked. Say "next" or what to change.`
+4. Saying "next" (or similar) at a checkpoint counts as approval to proceed.
+5. Adding **"auto"** to advance intent tells the agent to proceed without stopping at checkpoints, unless a universal STOP condition applies (e.g. "next auto", "begin auto").
+6. You can bound auto: **"auto to <milestone>"** means "proceed until you are about to begin the milestone, then stop" (e.g. "next auto to task 7").
 
 **Agent note-taking and progress tracking.** The agent keeps structured notes so you can pick up where you left off:
 
 - Working documents (plans, specs, progress logs) are created in `working-docs/<branch-path>/`.
-- The agent places **🟡** markers in code and working documents to flag todos, open questions, and items needing your input, along with explanatory commentary.
-- 🟡 markers are removed as items are resolved and you give approval.
+- The agent uses **🟡** markers in working documents to flag TODOs, open questions, and items pending your approval (including "implemented but pending approval").
+- 🟡 markers should be individually updatable (use stable identifiers like task numbers, section names, or explicit IDs on the same line).
+- 🟡 markers are removed only when items are resolved and you give approval.
 
 **Retros on demand.** At any point you can ask the agent to **"retro"** to check for gaps, update documents, backfill requirements, and reflect on process.
 
@@ -173,12 +177,12 @@ Structured planning and specification for complex features. Produces a planning 
 
 **Phases:**
 
-1. **Planning document.** Agent summarizes the discussion into a document seeded with open questions.
-2. **Design discussion.** Agent proposes, human decides. Iterates until all open questions are resolved.
-3. **API sketch.** Agent drafts the API surfaces implied by the design.
-4. **Requirements normalization.** Agent promotes behaviors from the planning document into canonical requirements.
-5. **Work spec first pass.** Agent writes top-level tasks only (no subtasks).
-6. **Work spec second pass.** Agent adds subtasks, requirement IDs, and traceability mapping.
+1. **Planning document.** Agent summarizes the discussion into a document seeded with 🟡 open questions. Checkpoint: human reviews and resolves 🟡 items.
+2. **Design discussion.** Agent proposes, human decides. Iterates until all 🟡 items are resolved.
+3. **API sketch.** Agent drafts the API surfaces implied by the design. Checkpoint: human confirms the design is ready to proceed.
+4. **Requirements normalization.** Agent promotes behaviors from the planning document into canonical requirements. Checkpoint: human acknowledges requirements updates.
+5. **Work spec first pass.** Agent writes top-level tasks only (no subtasks). Checkpoint: human reviews the task list.
+6. **Work spec second pass.** Agent adds subtasks, requirement IDs, and traceability mapping. Checkpoint: human reviews the completed work spec.
 
 ### Work spec implementation (`ai-dev-process-work-spec-implementation`)
 
@@ -188,7 +192,7 @@ Execute tasks from a completed work spec, one top-level task per cycle.
 
 **Phases (repeating):**
 
-1. **Implement next top-level task.** Agent implements all subtasks under the next top-level task.
+1. **Implement next top-level task.** Agent implements all subtasks under Task N. Checkpoint: agent stops after finishing Task N and waits before moving to Task N+1.
 
 ### Unit testing (`ai-dev-process-unit-testing`)
 
@@ -198,9 +202,9 @@ Plan-first testing workflow. The agent plans all tests upfront, then implements 
 
 **Phases:**
 
-1. **Planning.** Agent creates test files organized into sections, with test stubs in each. Doc comments on every stub serve as the test plan.
-2. **Infrastructure** (per section). Agent identifies required test infrastructure for the current section (mocks, stubs, fixtures) and proposes additions.
-3. **Writing** (per section). Agent implements the tests, runs them, fixes identified bugs, and iterates until they pass.
+1. **Planning.** Agent creates test files organized into sections, with test stubs in each. Doc comments on every stub serve as the test plan. Checkpoint: human reviews the plan before implementation begins.
+2. **Infrastructure** (per section). Agent identifies required test infrastructure for the current section (mocks, stubs, fixtures) and proposes additions. Checkpoint: human approves infrastructure changes (if any).
+3. **Writing** (per section). Agent implements tests and then runs them. Checkpoints: agent stops after writing (before running tests), and stops after test results to confirm conclusions and next steps (including any proposed production-code fixes).
 
 Phases 2-3 repeat for each section until none remain.
 
@@ -212,7 +216,7 @@ Evidence-first problem resolution. Prevents "guessing fixes" loops by requiring 
 
 **Phases (repeating):**
 
-1. **Hypothesize and experiment.** Agent states the current possibility space and designs the smallest experiment to discriminate between possibilities. The agent gathers evidence directly where it can (reading code, running tests, analyzing logs); when it needs runtime evidence it can't obtain itself (e.g. reproducing UI behavior, observing device output), it asks the human to run the experiment and report back.
+1. **Hypothesize and experiment.** Agent states the current possibility space, chooses a tactic, and proposes the smallest discriminating experiment. Checkpoints: before an experiment (approval), after an experiment (conclusions + updated possibility space), and before declaring root cause / applying a fix.
 
 Repeats until the root cause is isolated.
 
@@ -224,8 +228,8 @@ Completeness backstop that can be used at any point during any workflow. Reviews
 
 **Phases:**
 
-1. **Retro.** Agent performs the full checklist and reports findings with concrete follow-up suggestions.
-2. **Process suggestions.** If the retro identifies process improvements, agent writes them to the `process-tickets.md` working file. Human and agent discuss and refine.
+1. **Retro.** Agent performs the full checklist and reports findings with concrete follow-up suggestions. Checkpoint: agent stops after the retro output.
+2. **Process suggestions.** If the retro identifies process improvements, agent writes them to the `process-tickets.md` working file. Checkpoint: human reviews and refines suggestions.
 3. **Ticket filing (optional).** When the human is ready, agent files suggestions as GitHub issues on `ai-dev-process`:
    1. Agent checks GitHub MCP access, converts suggestions to issue drafts (applying confidentiality rules to strip project-specific details), and assigns labels from the repo's existing label set.
    2. Human reviews drafts in the working file. Can edit, remove, or add drafts. Iterates until satisfied.
@@ -239,8 +243,8 @@ Ad-hoc intake for process friction or improvement ideas outside of a retro. The 
 
 **Phases:**
 
-1. **Intake.** Agent asks clarifying questions to understand the friction.
-2. **Capture.** When the developer is ready, agent writes a structured suggestion to the working file for review and iteration.
+1. **Intake.** Agent asks clarifying questions to understand the friction. Checkpoint: wait for the developer to say they are ready to capture the suggestion.
+2. **Capture.** When the developer is ready, agent writes a structured suggestion to the working file for review and iteration. Checkpoint: human reviews the entry.
 3. **Ticket filing (optional).** When the developer is ready, agent files suggestions as GitHub issues on `ai-dev-process`:
    1. Agent checks GitHub MCP access, converts suggestions to issue drafts (applying confidentiality rules to strip project-specific details), and assigns labels from the repo's existing label set.
    2. Developer reviews drafts in the working file. Can edit, remove, or add drafts. Iterates until satisfied.
@@ -254,7 +258,7 @@ Check for upstream `ai-dev-process` updates, review what changed, and re-run ada
 
 **Phases:**
 
-1. **Check and report.** Agent checks for upstream changes, pulls the latest, and presents the changelog delta.
+1. **Check and report.** Agent checks for upstream changes, pulls the latest, and presents the changelog delta. Checkpoint: human acknowledges before any runbooks are re-run.
 2. **Re-run adapters.** Agent re-runs each installed adapter's install/update runbook to pick up new or changed assets.
 
 ## Development guide (for contributors)
