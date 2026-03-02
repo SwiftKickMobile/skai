@@ -22,10 +22,11 @@ This retro is a **backstop for completeness**, not a git/diff report.
 ## 2) Required bookkeeping
 
 - Ensure `CHANGELOG.md` reflects major user-visible changes. Review each change made since the last retro and verify it has a corresponding entry if user-visible.
+  - Changelog is release notes: prefer multiple short bullets over a single mega-entry.
 - Ensure `assets.manifest.json` is updated if you added/moved/renamed any installable asset or installer dependency (templates/sections/runbooks/policies).
 - Ensure `README.md` is updated if needed:
   - Quick start prompts if any runbook paths changed
-  - Asset inventory: every Guide under `Guides/` must have a corresponding entry in README's "Human-facing guides" section
+  - Usage section: ensure the workflow descriptions and phases match the updated guide checkpoint/gate behavior (and add/update any guide inventory section if your README has one).
   - Any new conventions/invariants developers need to know
 - Ensure `maintain-ai-dev-process.md` is updated if you changed invariants or introduced a new maintenance rule.
 
@@ -51,6 +52,11 @@ This retro is a **backstop for completeness**, not a git/diff report.
 
 - Search for stale paths (e.g. old install target directories) and update all occurrences.
 - Ensure new files referenced by runbooks exist at those paths.
+- README link check: when `README.md` references a file or directory within this repo, ensure it is a markdown link (clickable in the browser), not just a bare backticked path.
+- If you added or substantially edited any files under `Guides/`:
+  - Verify each changed/new guide has a managed header.
+  - Verify it has a `## Checkpoints` section if it contains any STOP points/gates, and that it references `Guides/Core/process-flow.md`.
+  - Search for terminology drift (e.g., "Next Command") and fix to "advance intent".
 - If a new skill was added or changed: verify the skill template is a **thin wrapper** (just references to Guides), not a self-contained document with inline logic. All substantive instructions must live in a Guide under `Guides/`.
 - Spot-check changed files for smart/curly quotes (`"` `"` `'` `'`) and Unicode dashes (en-dash, em-dash). All repo content must use ASCII equivalents (see `maintain-ai-dev-process.md`, "Content rules"). If found, normalize them.
 

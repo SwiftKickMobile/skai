@@ -74,7 +74,7 @@ Purpose: define the project-specific "evidence contract" so agents can debug det
 
 - 🟡 **Test artifacts** (if applicable)
   {human response}
-  - INSTRUCTION: Provide artifact path conventions for `.xcresult` and extracted JSON (or platform equivalents).
+  - INSTRUCTION: Provide artifact path conventions for structured test results (stack-specific). Examples: Xcode `.xcresult` + extracted JSON; Android JUnit XML under `**/build/test-results/**` and HTML reports under `**/build/reports/tests/**`.
 
 - 🟡 **Runtime/UI evidence**
   {human response}
@@ -90,7 +90,7 @@ Purpose: define the project-specific "evidence contract" so agents can debug det
   {human response}
 - 🟡 Test targets/modules:
   {human response}
-  - INSTRUCTION: List test targets/modules so the agent can form `-only-testing:` selectors and choose schemes correctly.
+  - INSTRUCTION: List test targets/modules so the agent can choose the right test runner commands. For Xcode projects, this also supports forming `-only-testing:` selectors and choosing schemes correctly.
 - 🟡 Any special conventions needed for imports, fixtures, or test discovery:
   {human response}
   - INSTRUCTION: Document any repo-specific conventions that affect tests.

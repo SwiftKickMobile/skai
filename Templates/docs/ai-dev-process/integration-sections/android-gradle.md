@@ -55,3 +55,18 @@ Examples for `<AndroidTestTask>`:
 - Unit test results: `**/build/test-results/**`
 - Android test reports/results: `**/build/reports/androidTests/**` / `**/build/outputs/androidTest-results/**`
 
+### Mandatory when tests fail: capture structured results artifacts
+
+In addition to the full console output log (`<output-path>.txt`), capture the structured test results artifacts produced by the repo.
+
+Typical artifacts include:
+- JUnit XML results: `**/build/test-results/**`
+- HTML reports: `**/build/reports/tests/**`
+
+Evidence contract: when tests fail, provide:
+- `<output-path>.txt` (full output)
+- the JUnit XML results path(s) for the failing run (or the closest equivalent in this repo)
+- the HTML report path(s) for the failing run (if generated)
+
+If the repo does not generate structured artifacts, state that explicitly and fall back to the console output log.
+

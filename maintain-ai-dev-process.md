@@ -31,6 +31,10 @@ When you change assets, keep these in sync:
 - `CHANGELOG.md`
   - add an entry under "Unreleased" for user-visible changes (prefix each line item with the date, `YYYY-MM-DD`)
   - always determine the date by running `date +%Y-%m-%d` in the terminal (see `Install/managed-header.md`, "Determining today's date")
+  - treat changelog entries as release notes for humans:
+    - prefer multiple short bullets over one giant "mega-entry"
+    - each bullet should have a short bold headline and 1-2 sentences max
+    - group by theme when many files change (core mechanics, policies, spec guides, test guides, templates, etc.)
  - Skills (if you add/change them):
    - shared templates live at `Templates/skills/ai-dev-process-*/SKILL.md`
    - Cursor installer installs them into host repos at `.cursor/skills/`
@@ -55,16 +59,36 @@ All guides live under a topical subdirectory within `Guides/`. Do not place guid
 
 When adding a new guide, place it in the most appropriate existing subdirectory. If none fits, propose a new subdirectory and document it here.
 
+## Guide change checklist (process-flow aligned house style)
+
+Whenever you add a new file under `Guides/` (or make a substantial edit to an existing guide):
+
+- **Managed header**: file must include the managed header (`Managed-By`, `Managed-Id`, `Managed-Source`, `Managed-Adapter`, `Managed-Updated-At`).
+- **Process-flow alignment**:
+  - If the guide has any STOP points / gates, include a `## Checkpoints` section near the top that:
+    - references `Guides/Core/process-flow.md` for shared mechanics
+    - enumerates this guide's workflow-specific gates
+    - states that checkpoint outputs must end with the standard `⏳ GATE:` line (by reference; do not restate the variants)
+- **Terminology**: use "advance intent" (never "Next Command").
+- **Lean core, deep links**: keep core guides concise; if a tactic/procedure is detailed and rarely used, place it in a dedicated guide/appendix and link to it from the core guide.
+- **Sanity scan**: after editing, search for:
+  - missing `## Checkpoints` in the changed guide (if it has gates)
+  - inconsistent terms ("Next Command")
+  - stack-mismatched references (e.g., Xcode terms in Android-only sections)
+
 ## README Usage section conventions
 
 The Usage section documents each **skill** (not sub-processes or internal maintenance workflows). Each entry follows this format:
 
-1. Heading: `### <Human-readable name> (<skill-name>)`
+1. Heading: `### <Human-readable name> (skill <skill-name>)` (no colon)
 2. One-paragraph description of what the workflow does.
 3. **Prerequisites:** what's needed before starting.
 4. **Phases:** numbered list of the workflow's phases. Each phase is one line: `<number>. **<Phase name>.** <What happens>.`
    - If a phase has sub-steps, use a numbered sub-list under the phase.
    - If an entire phase is optional, mark it `(optional)` in the phase name.
+
+Formatting rule:
+- When referencing a file or directory path within this repo in `README.md`, use a markdown link so humans can click it in the browser (do not leave bare backticked paths).
 
 Do not add entries for:
 - Sub-processes that are invoked by other skills (e.g., the ticket filing guide is a sub-process of the retro and report-process-problem skills -- it appears as phases within those entries, not as its own heading).

@@ -46,9 +46,21 @@
       "tags": ["core"]
     },
     {
+      "id": "guide.debugging-tactic-code-bisection",
+      "type": "guide",
+      "sourcePath": "Guides/Core/debugging-tactic-code-bisection.md",
+      "tags": ["core"]
+    },
+    {
       "id": "guide.working-doc-conventions",
       "type": "guide",
       "sourcePath": "Guides/Core/working-doc-conventions.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.process-flow",
+      "type": "guide",
+      "sourcePath": "Guides/Core/process-flow.md",
       "tags": ["core"]
     },
     {

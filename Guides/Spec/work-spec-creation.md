@@ -2,7 +2,7 @@ Managed-By: ai-dev-process
 Managed-Id: guide.work-spec
 Managed-Source: Guides/Spec/work-spec-creation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-02-19
+Managed-Updated-At: 2026-02-28
 
 # Work Specification Guide
 
@@ -21,21 +21,43 @@ Orchestrates the work specification creation process. Work specifications provid
 3. **Work Spec First Pass**: Write high-level tasks only (no subtasks) for review.
 4. **Work Spec Second Pass**: Add detailed subtasks after approval.
 
+## Checkpoints
+
+This guide follows the shared process-flow mechanics in `Guides/Core/process-flow.md`.
+
+Workflow-specific gate points (this guide must STOP and wait at these checkpoints):
+- After drafting the planning document (with 🟡 open questions).
+- After resolving all 🟡 items and completing the API sketch (human confirms readiness to proceed).
+- After requirements normalization updates to `/requirements/**` (human acknowledges before proceeding).
+- After the work spec first pass (high-level tasks only) for review.
+- After the work spec second pass (subtasks + traceability) for review.
+
 ---
 
 ## Commands
 
-### Next Command
+### Advance intent
 
-**Definition:** Any of `"begin"`, `"next"`, or `"continue"` -- these are synonymous.
+**Definition:** Advance intent. See `Guides/Core/process-flow.md`.
 
 **Behavior:** Context determines the action. The same command drives every phase of the process; the agent infers which step to execute based on the current state of the conversation and any existing documents.
+
+### Advance intent + `auto`
+
+Advance intent followed by `auto` (e.g., `"next auto"`). See `Guides/Core/process-flow.md` for shared `auto` semantics and universal STOP conditions.
+
+In this workflow, `auto` can be useful after the human has already approved the planning document and there are no remaining 🟡 items, to batch:
+- requirements normalization
+- work spec first pass
+- work spec second pass
+
+If the planning document still has unresolved 🟡 items, this workflow is blocked on human decisions and `auto` should STOP at that checkpoint.
 
 **Planning -- Create Planning Document:**
 - Triggered when the human says begin/next/continue in the context of a scope discussion (e.g., "begin planning", "lets start the planning doc, begin")
 - Summarizes the scope discussion into a planning document
 - Seeds the document with 🟡 open questions and discussion topics for Stage 1
-- Stops for human review
+- Checkpoint: STOP and wait for advance intent (use the standard gate line; see `Guides/Core/process-flow.md`).
 
 **Planning -- Resolve Open Questions:**
 - Triggered when the human says begin/next/continue while working through a planning document with unresolved 🟡 markers
@@ -52,7 +74,7 @@ Orchestrates the work specification creation process. Work specifications provid
 - Task list contains only main tasks (numbered 1, 2, 3, etc.)
 - No subtasks included
 - No Traceability section (deferred to second step because the human may restructure the task list)
-- Stops when high-level structure is complete
+- Checkpoint: STOP and wait for advance intent (use the standard gate line; see `Guides/Core/process-flow.md`).
 - Allows human to review overall sequence before details
 
 **Work Spec -- Second Pass:**
@@ -62,6 +84,7 @@ Orchestrates the work specification creation process. Work specifications provid
 - Adds the Traceability section (requirement ↔ task mapping) now that the task list is finalized
 - Provides implementation-ready detail
 - Completes the work specification
+- Checkpoint: STOP and wait for advance intent (use the standard gate line; see `Guides/Core/process-flow.md`).
 
 ---
 
@@ -79,12 +102,96 @@ Before writing a work spec, the design must be worked through in a planning docu
 
 Work through the design collaboratively. The agent proposes design elements and the human refines, redirects, or approves.
 
+**Planning document rules (tightened):**
+
+- The agent MUST seed the conversation with proposals.
+  - The planning doc should not be a passive transcript. It should contain concrete proposals/options to help the human decide.
+
 **🟡 Marker Protocol for Planning Documents:**
-- Mark open questions and undecided design points with 🟡 throughout the document.
-- As the human provides direction, replace 🟡 items with decisions (labeled **Decisions:** in the document).
-- Do NOT remove 🟡 markers preemptively -- only replace them when the human has explicitly decided.
-- Do NOT convert open questions into decisions without explicit human approval.
-- The planning document is ready for the next stage when all 🟡 markers have been resolved.
+
+- Mark all unresolved discussion items with 🟡:
+  - open questions
+  - proposals/options under consideration
+  - undecided design points / tradeoffs
+- Avoid over-granularity:
+  - If a single proposal contains many sub-bullets, prefer one 🟡 marker on the proposal line rather than 🟡 on every sub-bullet.
+  - Use per-sub-bullet 🟡 only when individual sub-items can be independently accepted/rejected or are likely to be worked in different iterations.
+- Do not propagate markers up the hierarchy:
+  - Do NOT put 🟡 on a topic heading (or parent bullet) solely because it contains child 🟡 items.
+  - Only mark the specific unresolved item line(s) with 🟡 so the marker count reflects true open items.
+- Organize the document by topic (natural structure). This is a hard requirement:
+  - Do NOT create workflow-shaped sections like "Questions", "Discussion", or "Decisions".
+  - Do NOT repeat the same topic across multiple sections ("Topic X" in Discussion and again in Questions).
+  - Do NOT create "Decision" sub-sections (or "Decision:" labels). Decisions are expressed by replacing the unresolved text inline.
+  - Instead: each topic heading contains its own inline 🟡 questions/proposals/tradeoffs where they naturally belong.
+- When the human explicitly approves a resolution:
+  - REPLACE the 🟡 item inline with the approved plan/requirement/decision text (no separate "Questions" section, no "approved" marker).
+  - Do NOT remove 🟡 preemptively. Only replace when the human has explicitly decided.
+- The planning document is ready for the next stage when all 🟡 items have been replaced with approved content.
+
+**Anti-patterns (do not do this):**
+
+- "Questions" section + "Discussion" section + the same topic mentioned in both (duplicate content, multiple 🟡 markers for the same unresolved item).
+- "Decisions" section that mirrors earlier proposals/questions.
+- A topic described once as a proposal (🟡) and again elsewhere as a question (🟡) instead of being a single coherent entry.
+
+**Preferred pattern (topic-first, single source of truth):**
+
+- Write one section per topic.
+- Put the unresolved items (🟡) directly under that topic.
+- When approved, replace the unresolved line(s) in place with the approved requirement/decision text.
+
+**Recommended planning document shape (suggested, not required):**
+
+- Problem / goal
+- Current architecture / constraints (if relevant)
+- Topics (one section per major topic)
+  - Each topic contains:
+    - brief context
+    - 🟡 items (questions/proposals/tradeoffs) inline
+    - resolved items replaced inline with the approved text
+    - any non-goals / deferrals (explicit)
+
+Example topic shape:
+
+- `## <Topic name>`
+  - Context: ...
+  - 🟡 Proposal: ...
+    - Option A: ...
+    - Option B: ...
+  - 🟡 Question: ...
+  - Approved: ... (after replacing 🟡 content inline)
+
+**Optional: phased planning documents (only when the plan is large):**
+
+Sometimes the planning grows large enough that it should be executed in phases. In that case, the planning document is still a single document, but it is structured so each phase has its own planning and API sketch content for traceability.
+
+Rules:
+- Default: no phases. Use phases only when the human or agent proposes them and there is an informal agreement on the phase breakdown.
+- Phase sections MUST come last in the document (after any global planning content).
+- Global planning content MAY exist before phase sections. Later phases may augment or supersede earlier decisions, but do not rewrite earlier phase sections.
+- Each phase runs its own mini-cycle in order:
+  1. Proposals, questions, discussion (Stage 1)
+  2. API sketch (Stage 2)
+  3. Requirements normalization
+  4. Work spec writing
+- Process-flow note: when Phase N is complete, the next step is to begin Phase N+1 (or conclude if there are no more phases).
+  - Stopping condition: at the end of Phase N's cycle, STOP and wait using the standard gate line (see `Guides/Core/process-flow.md`). The "Next" step should be "Begin Phase N+1" (or "Complete" if there are no more phases).
+  - Advance intent at that point is the signal to initialize Phase N+1's Stage 1 discussion content (seed proposals/questions under that phase section).
+- Phase sections can start as lightweight placeholders (scope, rough idea). When it is time to begin a phase, the human tells the agent to initialize the phase's discussion content.
+
+Recommended phased planning shape:
+- Overview / global context (optional)
+- Global topics (optional)
+- Phase sections (last):
+  - `## Phase 1: <name>`
+    - `### Scope` (goal, in-scope, non-goals, dependencies, exit criteria)
+    - `### Stage 1: Proposals, questions, discussion` (🟡 until resolved)
+    - `### Stage 2: API sketch` (API "as of Phase 1")
+    - `### Requirements normalization` (what will be added/updated in `/requirements/**` for this phase)
+    - `### Work spec` (link to this phase's work spec)
+    - `### Supersedes / changes vs earlier phases` (optional; explicit notes when Phase N counteracts Phase < N)
+  - `## Phase 2: <name>` (repeat the same shape)
 
 **Discussion principles:**
 - Present findings and analysis, not pre-selected options. The human is the architect.
@@ -130,6 +237,15 @@ The planning phase is complete when:
 - The key types and their relationships are described.
 - The design has been validated against concrete use cases.
 - The human confirms readiness to proceed to requirements normalization.
+
+If the planning document uses phases:
+- The overall planning phase may remain intentionally incomplete for later phases.
+- For the current phase to proceed to requirements normalization, that phase section must have:
+  - all 🟡 markers in the phase resolved, and
+  - an API sketch for the phase, and
+  - the human's approval to proceed with that phase.
+
+Checkpoint: STOP and wait for the human to confirm readiness to proceed (use the standard gate line; see `Guides/Core/process-flow.md`).
 
 ---
 
@@ -188,6 +304,8 @@ Write canonical requirements as if authored by a **product manager with no knowl
 - ❌ "Accumulate errors during parsing and return an aggregated error array."
 
 The work specification references canonical requirement IDs produced by this step.
+
+Checkpoint: STOP and wait for the human to acknowledge requirements updates before starting the work spec draft (use the standard gate line; see `Guides/Core/process-flow.md`).
 
 ---
 
@@ -323,12 +441,15 @@ Include a short mapping section that ensures every requirement is implemented or
 
 ```markdown
 1. **Task Name** 🟡
-   1. Sub-task description (REQ-ID)
-   2. Sub-task description (REQ-ID)
-   3. Sub-task description (REQ-ID)
+   - **Done when:** [Short, stable completion criteria]
+   - **Implementation**
+     1. Sub-task description (REQ-ID)
+     2. Sub-task description (REQ-ID)
+   - **Verification**
+     3. Run <command(s)> and define what "pass" means (REQ-ID) [evidence: ...]
 ```
 
-Sub-tasks use indented numbered lists. Referencing "1.2" means task 1, sub-task 2 -- the nesting is implied by indentation.
+Sub-tasks use indented numbered lists. Number subtasks sequentially across the task (including Verification). Referencing "1.2" means task 1, sub-task 2 -- the nesting is implied by indentation.
 
 **Progress Indicators:**
 - 🟡 = TODO (task not yet complete)
@@ -350,6 +471,8 @@ Tasks are created with 🟡 and the 🟡 is removed when complete.
 - Each task should be implementable in a single focused session
 - Break large tasks into smaller, manageable pieces
 - Aim for 3-6 sub-tasks per main task
+- Default expectation: each top-level task leaves the codebase in a runnable state for its verification whenever practical (build/tests).
+  - Allowed exception (explicit in the work spec): **Refactor tranche** -- a small sequence of top-level tasks that may temporarily break compilation, but must end with a **Green Gate** task/subtask that restores compilation and runs the relevant verification commands.
 
 ### Task Dependencies
 - Order tasks logically based on dependencies
@@ -376,6 +499,13 @@ Tasks are created with 🟡 and the 🟡 is removed when complete.
 - Validating data flow
 - Checking for linter errors
 - Confirming expected behavior
+  - Verification subtasks are mandatory for each top-level task (build/test/lint as applicable).
+  - Source of truth for project-specific commands/paths is `docs/ai-dev-process/integration.md` (do not invent commands).
+  - Evidence must be captured inline on the verification subtask line using an evidence bracket:
+    - Format: `[evidence: <command variant>; exit <code>; output: <optional link(s)>]`
+    - Example: `[evidence: <command>; exit 0; output: [output](working-docs/<branch-path>/work-spec/<spec-name>/evidence/<slug>.txt)]`
+    - On failure: persist full output to a file and link it.
+    - On success: a linked output file is optional; still record command variant and exit code inline.
 
 ## What to Exclude
 
@@ -494,18 +624,30 @@ Rules:
 ## Task List
 
 1. **[Task Name]** 🟡
-   1. [Specific sub-task] (CAT-A-01)
-   2. [Specific sub-task] (CAT-A-02, CAT-B-01)
-   3. [Specific sub-task] (DEFER-01 if deferring something explicitly)
+   - **Done when:** [Behavioral + verification-based completion criteria]
+   - **Implementation**
+     1. [Specific sub-task] (CAT-A-01)
+     2. [Specific sub-task] (CAT-A-02, CAT-B-01)
+     3. [Specific sub-task] (DEFER-01 if deferring something explicitly)
+   - **Verification**
+     4. [Run command(s) from integration doc; define "pass"] (CAT-A-01) [evidence: exit 0; output: [log](working-docs/<branch-path>/work-spec/<spec-name>/evidence/<slug>.txt)]
 
 2. **[Task Name]** 🟡
-   1. [Specific sub-task] (CAT-A-01)
-   2. [Specific sub-task] (CAT-B-01)
+   - **Done when:** [Behavioral + verification-based completion criteria]
+   - **Implementation**
+     1. [Specific sub-task] (CAT-A-01)
+     2. [Specific sub-task] (CAT-B-01)
+   - **Verification**
+     3. [Run command(s) from integration doc; define "pass"] (CAT-B-01) [evidence: exit 0; output: [log](working-docs/<branch-path>/work-spec/<spec-name>/evidence/<slug>.txt)]
 
 3. **[Task Name]** 🟡
-   1. [Specific sub-task] (CAT-A-02)
-   2. [Specific sub-task] (CAT-A-02)
-   3. [Specific sub-task] (CAT-B-01)
+   - **Done when:** [Behavioral + verification-based completion criteria]
+   - **Implementation**
+     1. [Specific sub-task] (CAT-A-02)
+     2. [Specific sub-task] (CAT-A-02)
+     3. [Specific sub-task] (CAT-B-01)
+   - **Verification**
+     4. [Run command(s) from integration doc; define "pass"] (CAT-A-02) [evidence: exit 0; output: [log](working-docs/<branch-path>/work-spec/<spec-name>/evidence/<slug>.txt)]
 
 ## Traceability
 - CAT-A-01 → Tasks 1, 2

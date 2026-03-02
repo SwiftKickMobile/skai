@@ -2,11 +2,27 @@ Managed-By: ai-dev-process
 Managed-Id: guide.process-improvement-tickets
 Managed-Source: Guides/Process/process-improvement-tickets.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-02-20
+Managed-Updated-At: 2026-02-28
 
 # Process improvement tickets
 
 Purpose: convert process improvement suggestions into GitHub issues on the `ai-dev-process` repo. Typically triggered after a dev retro (step 6: Process reflection), but can be used any time a process gap is identified.
+
+## Checkpoints
+
+This guide follows the shared process-flow mechanics in `Guides/Core/process-flow.md` (checkpoints, advance intent, `auto`, and the standard gate line).
+
+Workflow-specific gate points (this guide must STOP and wait at these checkpoints):
+- If GitHub MCP access is missing/broken: STOP and ask the human to set it up (or to fix permissions).
+- After converting suggestions into drafts and updating the working file: present the updated working file for human review and STOP.
+- After the human marks drafts approved: STOP before creating issues unless the human provides advance intent to proceed with filing.
+- After creating issues: report results and STOP (complete).
+
+At checkpoints, end checkpoint output with the standard gate line (see `Guides/Core/process-flow.md`).
+
+## Advance intent
+
+Advance intent (and `auto`) semantics are defined in `Guides/Core/process-flow.md`.
 
 ## Confidentiality rule
 
@@ -54,14 +70,29 @@ For each suggestion in the working file, convert it to an issue draft by adding 
 **Friction**
 <What was painful or suboptimal, described generically -- no project references>
 
-**Suggestion**
-<What to change in ai-dev-process>
+**Evidence/example**
+<What happened that shows the problem (generic; no project references)>
+
+**Failure mode**
+<What goes wrong if this repeats>
+
+**Candidate approach** (optional)
+<A possible fix direction, if confident>
 
 **Affected files**
 <Paths within the ai-dev-process repo, if known. "Unknown" is acceptable.>
+
+**Verification** (optional)
+<How to confirm the change worked next time>
 ```
 
-For the `**Labels**` field: use the GitHub MCP server to fetch the repo's existing labels and select the most appropriate ones for each draft based on its content.
+For the `**Labels**` field: choose from this explicit list (source of truth for this workflow):
+- `enhancement`
+- `bug`
+- `documentation`
+- `help wanted`
+- `question`
+- `invalid`
 
 Update the working file and present it to the human for review. Do not create any issues yet.
 
