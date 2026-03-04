@@ -1,6 +1,6 @@
-# Maintain `ai-dev-process` (LLM maintainer runbook)
+# Maintain `skai` (LLM maintainer runbook)
 
-This file is instructions for an LLM making changes **to the `ai-dev-process` repo itself** (not installing into a host project).
+This file is instructions for an LLM making changes **to the `skai` repo itself** (not installing into a host project).
 
 ## Safety defaults
 
@@ -36,13 +36,13 @@ When you change assets, keep these in sync:
     - each bullet should have a short bold headline and 1-2 sentences max
     - group by theme when many files change (core mechanics, policies, spec guides, test guides, templates, etc.)
  - Skills (if you add/change them):
-   - shared templates live at `Templates/skills/ai-dev-process-*/SKILL.md`
+   - shared templates live at `Templates/skills/skai-*/SKILL.md`
    - Cursor installer installs them into host repos at `.cursor/skills/`
    - Claude Code installers install them into host repos at `.claude/skills/`
    - **Wrapper pattern (invariant)**: skill templates must be thin wrappers -- a few lines that point the LLM at the corresponding Guide(s) in `Guides/`. All substantive logic lives in the Guide, not in the skill template. This keeps the files copied into host projects small and ensures the Guide is the single source of truth.
    - When adding a new skill: start by writing the Guide under `Guides/`, then create the skill wrapper that references it. This order prevents accidentally inlining logic into the skill template.
  - Install state file:
-   - All adapter runbooks write `docs/ai-dev-process/install-state.json` on successful completion.
+   - All adapter runbooks write `docs/skai/install-state.json` on successful completion.
    - The `update-installation` skill reads this file to determine which adapters to re-run and what SHA was last applied.
    - If you add a new adapter runbook, ensure it writes/merges its entry into this file.
 
@@ -114,7 +114,7 @@ To preserve that:
 - **Idempotency**: re-running install/update should converge to the same end state without manual cleanup.
 - **Managed overwrites only**:
   - Generated host files are overwriteable only if they contain the managed header (`Install/managed-header.md`).
-  - **Symlinks** are overwriteable only if they point at the expected `Submodules/ai-dev-process/...` targets (symlinks cannot contain headers).
+  - **Symlinks** are overwriteable only if they point at the expected `Submodules/skai/...` targets (symlinks cannot contain headers).
   - **Managed blocks**: some project-owned files (e.g., ignore files, Integration doc) are updated only inside delimited managed blocks.
 - **Legacy candidates are permission-gated**:
   - Identify legacy candidates.
@@ -124,10 +124,10 @@ To preserve that:
 
 ## Integration doc architecture (do not regress)
 
-The Integration doc is project-owned at `docs/ai-dev-process/integration.md`, but is structured to support safe automation.
+The Integration doc is project-owned at `docs/skai/integration.md`, but is structured to support safe automation.
 
 Format rules:
-- `Templates/docs/ai-dev-process/integration.md` must be **minimal** and must not contain "meta" guidance.
+- `Templates/docs/skai/integration.md` must be **minimal** and must not contain "meta" guidance.
   - No instructions to the installer/LLM (those belong in `Install/integration-doc-install-update.md`).
   - No instructions to humans about how to clear 🟡 markers (those belong in `README.md`).
 
@@ -135,14 +135,14 @@ Ownership rules:
 - Humans may edit only the **Special instructions / overrides** section (freeform).
 - The installer owns:
   - the `required-values` "form" block (structure + restoration of missing fields)
-  - stack-specific sections inside `BEGIN/END Managed-By: ai-dev-process` blocks.
+  - stack-specific sections inside `BEGIN/END Managed-By: skai` blocks.
 - Stack-specific templates live under:
-  - `Templates/docs/ai-dev-process/integration-sections/`
+  - `Templates/docs/skai/integration-sections/`
 
 When changing Integration templates/sections:
 - Keep managed block markers minimal and stable:
-  - `<!-- BEGIN Managed-By: ai-dev-process | Section: <id> -->`
-  - `<!-- END Managed-By: ai-dev-process | Section: <id> -->`
+  - `<!-- BEGIN Managed-By: skai | Section: <id> -->`
+  - `<!-- END Managed-By: skai | Section: <id> -->`
 - Keep 🟡 markers only for true project-specific missing constants/mappings.
   - Do not mark variables (e.g., `<Scheme>`, `<TestPlan>`, `<TestTarget>`) with 🟡.
   - Do not mark standard procedures/patterns with 🟡.
@@ -160,7 +160,7 @@ When changing Integration templates/sections:
 After editing anything under `Install/`:
 - Ensure `Install/conflict-precedence-policy.md` still matches the runbooks (managed header vs managed symlink behavior).
 - Ensure `assets.manifest.json` includes any new policy/guide/runbook IDs referenced by the installer.
-- Ensure `README.md` Quick start prompts still point at the correct submodule path (`Submodules/ai-dev-process/...`).
+- Ensure `README.md` Quick start prompts still point at the correct submodule path (`Submodules/skai/...`).
 - Ensure ignore-file behavior remains safe: update `.cursorignore` / `.claudeignore` via managed blocks and do not hide the submodule via agent ignore (use editor UI excludes instead).
 
 ## After changes (retro)
@@ -171,8 +171,8 @@ After making changes, run the post-change checklist in `maintain-retro.md`.
 
 Use this as a starting prompt when maintaining this repo:
 
-> You are updating the `ai-dev-process` repo.
-> Follow `README.md` and `maintain-ai-dev-process.md`.
+> You are updating the `skai` repo.
+> Follow `README.md` and `maintain-skai.md`.
 > Make minimal changes.
 > Update `assets.manifest.json`, `README.md` (asset inventory), and `CHANGELOG.md` as needed.
 > Do not commit or delete files unless I explicitly ask.

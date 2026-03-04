@@ -4,7 +4,7 @@ This policy defines how installers and update runbooks must behave in the presen
 
 ## File classes
 
-- **Managed file**: contains the managed header (`Managed-By: ai-dev-process`).
+- **Managed file**: contains the managed header (`Managed-By: skai`).
 - **Managed skill file**: a skill file at `.cursor/skills/**/SKILL.md` or `.claude/skills/**/SKILL.md` that contains the managed marker comment described in `Install/managed-header.md`.
 - **Managed symlink**: a symlink created by the installer that points at the expected repo-owned target path.
 - **Managed block file**: a project-owned file that contains a delimited managed block (begin/end markers) that the installer may update in-place (e.g., ignore files).
@@ -16,7 +16,7 @@ This policy defines how installers and update runbooks must behave in the presen
 - Never overwrite project-owned files.
 - Managed files may be overwritten deterministically.
 - Managed skill files may be overwritten deterministically when the managed marker is present.
-- Managed symlinks may be overwritten deterministically if they already point to an `ai-dev-process` target.
+- Managed symlinks may be overwritten deterministically if they already point to an `skai` target.
 - Managed block files may be updated deterministically, but only within the managed block.
 - Deprecated install artifacts should be identified during discovery and proposed for cleanup (permission-gated).
 - Legacy candidates must not be overwritten by default.
@@ -28,13 +28,13 @@ This policy defines how installers and update runbooks must behave in the presen
 - If destination does not exist: create it.
 - If destination exists and is managed: overwrite/update it.
 - If destination exists and is a symlink:
-  - If it points to the expected `ai-dev-process` target: treat as managed symlink → update/replace as needed.
+  - If it points to the expected `skai` target: treat as managed symlink → update/replace as needed.
   - Otherwise: treat as project-owned → do not overwrite.
 - If destination exists and contains a managed block: treat as managed block file → update only the block.
 - If destination exists and is not managed:
   - Treat it as project-owned by default.
   - If it looks like a legacy candidate, classify it as legacy candidate and do not overwrite.
-  - Create the new managed output in the current canonical location (e.g., `.cursor/rules/ai-dev-process/`) with a non-conflicting name only if needed.
+  - Create the new managed output in the current canonical location (e.g., `.cursor/rules/skai/`) with a non-conflicting name only if needed.
 
 ## Cleanup step (always explicit)
 

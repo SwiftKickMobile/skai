@@ -1,4 +1,4 @@
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: guide.working-doc-conventions
 Managed-Source: Guides/Core/working-doc-conventions.md
 Managed-Adapter: repo-source

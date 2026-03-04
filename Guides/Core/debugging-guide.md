@@ -1,4 +1,4 @@
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: guide.debugging-core
 Managed-Source: Guides/Core/debugging-guide.md
 Managed-Adapter: repo-source

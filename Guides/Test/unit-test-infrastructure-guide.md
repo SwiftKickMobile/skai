@@ -1,4 +1,4 @@
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: guide.unit-test-infrastructure
 Managed-Source: Guides/Test/unit-test-infrastructure-guide.md
 Managed-Adapter: repo-source
@@ -184,7 +184,7 @@ At checkpoints, end checkpoint output with the standard gate line (see `Guides/C
 
 **Location and Naming:**
 
-See `docs/ai-dev-process/integration.md` for the project's test infrastructure locations and naming conventions.
+See `docs/skai/integration.md` for the project's test infrastructure locations and naming conventions.
 
 #### 3. Fixtures
 
@@ -197,7 +197,7 @@ See `docs/ai-dev-process/integration.md` for the project's test infrastructure l
 
 **Location and Naming:**
 
-See `docs/ai-dev-process/integration.md` for the project's fixture locations and naming conventions.
+See `docs/skai/integration.md` for the project's fixture locations and naming conventions.
 
 #### 4. Test Framework Utilities
 
@@ -210,7 +210,7 @@ See `docs/ai-dev-process/integration.md` for the project's fixture locations and
 
 **Location and Examples:**
 
-See `docs/ai-dev-process/integration.md` for the project's test utility locations and available utilities.
+See `docs/skai/integration.md` for the project's test utility locations and available utilities.
 
 **When to propose:**
 - Pattern appears in multiple test suites
@@ -394,7 +394,7 @@ read_file path/to/Mocks/MockService.swift
 
 ### Infrastructure Locations
 
-See `docs/ai-dev-process/integration.md` for:
+See `docs/skai/integration.md` for:
 - Stub/mock locations and naming
 - Fixture locations and naming
 - Test utility locations
@@ -414,7 +414,7 @@ See `docs/ai-dev-process/integration.md` for:
 
 2. **Run the build command** to compile the framework target
    
-   See `docs/ai-dev-process/integration.md` for project-specific build commands.
+   See `docs/skai/integration.md` for project-specific build commands.
 
 3. **Document compilation results** in work document
 
@@ -641,7 +641,7 @@ This document tracks the infrastructure work for implementing unit tests for [de
 
 **Locations:**
 
-See `docs/ai-dev-process/integration.md` for all infrastructure locations and naming conventions.
+See `docs/skai/integration.md` for all infrastructure locations and naming conventions.
 
 **Command:**
 - Advance intent - Proceed to the next phase (see `Guides/Core/process-flow.md`)

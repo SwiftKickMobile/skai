@@ -1,4 +1,4 @@
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: guide.ticket-implementation
 Managed-Source: maintain-tickets.md
 Managed-Adapter: repo-source
@@ -8,11 +8,11 @@ Managed-Updated-At: 2026-02-28
 
 Purpose: work through process improvement tickets filed against this repo. The human initiates a session, the agent summarizes ready tickets, they discuss approach, and the agent implements with approval.
 
-This is an internal maintenance workflow for the `ai-dev-process` repo, not a guide for host projects.
+This is an internal maintenance workflow for the `skai` repo, not a guide for host projects.
 
 ## Prerequisites
 
-- You are working in the `ai-dev-process` repo.
+- You are working in the `skai` repo.
 - A GitHub MCP server configured with issue read/write permissions.
 - The repo has open issues labeled `agent ready` (triaged and approved for agent implementation).
 
@@ -112,7 +112,7 @@ Do not proceed until the human confirms the selection.
 
 For each selected ticket, in the agreed order:
 
-1. **Read the maintainer runbook.** Before making changes, read `maintain-ai-dev-process.md` and follow its rules (safety defaults, bookkeeping, content rules).
+1. **Read the maintainer runbook.** Before making changes, read `maintain-skai.md` and follow its rules (safety defaults, bookkeeping, content rules).
 2. **Propose a plan.** State what files you will change and how. Wait for approval.
 3. **Make the changes.** Follow the repo's conventions:
    - Guides under `Guides/`, policies under `Policies/`, templates under `Templates/`.

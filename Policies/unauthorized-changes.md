@@ -1,4 +1,4 @@
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: policy.unauthorized-changes
 Managed-Source: Policies/unauthorized-changes.md
 Managed-Adapter: repo-source
@@ -23,7 +23,7 @@ Exception: when the user explicitly requests the change (e.g., "make this change
 
 If the user intent could plausibly be interpreted as discussion/troubleshooting, treat it as NOT authorized and STOP to ask: "Do you want me to implement this change?"
 
-If operating inside an `ai-dev-process` workflow with checkpoints: treat authorization to proceed as valid only at a checkpoint, with the standard `⏳ GATE:` line (see `Guides/Core/process-flow.md`). Do not infer execution approval from collaborative phrasing outside a gate.
+If operating inside an `skai` workflow with checkpoints: treat authorization to proceed as valid only at a checkpoint, with the standard `⏳ GATE:` line (see `Guides/Core/process-flow.md`). Do not infer execution approval from collaborative phrasing outside a gate.
 
 ### Authorized examples (code changes allowed)
 

@@ -1,6 +1,6 @@
 {
   "manifestVersion": 1,
-  "repo": "ai-dev-process",
+  "repo": "skai",
   "theme": "LumenNotes",
   "assets": [
     {
@@ -66,25 +66,25 @@
     {
       "id": "template.integration-doc",
       "type": "template",
-      "sourcePath": "Templates/docs/ai-dev-process/integration.md",
+      "sourcePath": "Templates/docs/skai/integration.md",
       "tags": ["core"]
     },
     {
       "id": "template.integration-section-xcode",
       "type": "template",
-      "sourcePath": "Templates/docs/ai-dev-process/integration-sections/xcode.md",
+      "sourcePath": "Templates/docs/skai/integration-sections/xcode.md",
       "tags": ["core"]
     },
     {
       "id": "template.integration-section-swift-package",
       "type": "template",
-      "sourcePath": "Templates/docs/ai-dev-process/integration-sections/swift-package.md",
+      "sourcePath": "Templates/docs/skai/integration-sections/swift-package.md",
       "tags": ["core"]
     },
     {
       "id": "template.integration-section-android-gradle",
       "type": "template",
-      "sourcePath": "Templates/docs/ai-dev-process/integration-sections/android-gradle.md",
+      "sourcePath": "Templates/docs/skai/integration-sections/android-gradle.md",
       "tags": ["core"]
     },
     {
@@ -124,9 +124,9 @@
       "tags": ["core"]
     },
     {
-      "id": "skill.ai-dev-process-report-process-problem",
+      "id": "skill.skai-report-process-problem",
       "type": "skill",
-      "sourcePath": "Templates/skills/ai-dev-process-report-process-problem/SKILL.md",
+      "sourcePath": "Templates/skills/skai-report-process-problem/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code"]
     },
     {
@@ -202,57 +202,57 @@
       "tags": ["core"]
     },
     {
-      "id": "skill.ai-dev-process-debugging",
+      "id": "skill.skai-debugging",
       "type": "skill",
-      "sourcePath": "Templates/skills/ai-dev-process-debugging/SKILL.md",
+      "sourcePath": "Templates/skills/skai-debugging/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code"]
     },
     {
-      "id": "skill.ai-dev-process-work-spec-creation",
+      "id": "skill.skai-work-spec-creation",
       "type": "skill",
-      "sourcePath": "Templates/skills/ai-dev-process-work-spec-creation/SKILL.md",
+      "sourcePath": "Templates/skills/skai-work-spec-creation/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code"]
     },
     {
-      "id": "skill.ai-dev-process-work-spec-implementation",
+      "id": "skill.skai-work-spec-implementation",
       "type": "skill",
-      "sourcePath": "Templates/skills/ai-dev-process-work-spec-implementation/SKILL.md",
+      "sourcePath": "Templates/skills/skai-work-spec-implementation/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code"]
     },
     {
-      "id": "skill.ai-dev-process-unit-testing",
+      "id": "skill.skai-unit-testing",
       "type": "skill",
-      "sourcePath": "Templates/skills/ai-dev-process-unit-testing/SKILL.md",
+      "sourcePath": "Templates/skills/skai-unit-testing/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code"]
     },
     {
-      "id": "skill.ai-dev-process-unit-test-planning",
+      "id": "skill.skai-unit-test-planning",
       "type": "skill",
-      "sourcePath": "Templates/skills/ai-dev-process-unit-test-planning/SKILL.md",
+      "sourcePath": "Templates/skills/skai-unit-test-planning/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code"]
     },
     {
-      "id": "skill.ai-dev-process-unit-test-infrastructure",
+      "id": "skill.skai-unit-test-infrastructure",
       "type": "skill",
-      "sourcePath": "Templates/skills/ai-dev-process-unit-test-infrastructure/SKILL.md",
+      "sourcePath": "Templates/skills/skai-unit-test-infrastructure/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code"]
     },
     {
-      "id": "skill.ai-dev-process-unit-test-writing",
+      "id": "skill.skai-unit-test-writing",
       "type": "skill",
-      "sourcePath": "Templates/skills/ai-dev-process-unit-test-writing/SKILL.md",
+      "sourcePath": "Templates/skills/skai-unit-test-writing/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code"]
     },
     {
-      "id": "skill.ai-dev-process-dev-retro",
+      "id": "skill.skai-dev-retro",
       "type": "skill",
-      "sourcePath": "Templates/skills/ai-dev-process-dev-retro/SKILL.md",
+      "sourcePath": "Templates/skills/skai-dev-retro/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code"]
     },
     {
-      "id": "skill.ai-dev-process-update-installation",
+      "id": "skill.skai-update-installation",
       "type": "skill",
-      "sourcePath": "Templates/skills/ai-dev-process-update-installation/SKILL.md",
+      "sourcePath": "Templates/skills/skai-update-installation/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code"]
     },
     {

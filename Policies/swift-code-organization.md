@@ -1,4 +1,4 @@
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: policy.swift-code-organization
 Managed-Source: Policies/swift-code-organization.md
 Managed-Adapter: repo-source

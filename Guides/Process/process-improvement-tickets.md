@@ -1,4 +1,4 @@
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: guide.process-improvement-tickets
 Managed-Source: Guides/Process/process-improvement-tickets.md
 Managed-Adapter: repo-source
@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-03-02
 
 # Process improvement tickets
 
-Purpose: file process improvement ticket drafts as GitHub issues on the `ai-dev-process` repo. Typically triggered after a dev retro or report-process-problem session, which produce drafts in the working file. Can also be used standalone.
+Purpose: file process improvement ticket drafts as GitHub issues on the `skai` repo. Typically triggered after a dev retro or report-process-problem session, which produce drafts in the working file. Can also be used standalone.
 
 ## Checkpoints
 
@@ -36,7 +36,7 @@ The human reviews all issue content before creation (step 3). This is the final 
 
 - A `process-tickets.md` working file with one or more 🟡 ticket drafts (typically produced by a dev retro or report-process-problem session).
 - A GitHub MCP server configured with issue creation permissions.
-- The `ai-dev-process` GitHub repo identifier (e.g., `owner/ai-dev-process`). Ask the human if you don't know it.
+- The `skai` GitHub repo identifier (e.g., `owner/skai`). Ask the human if you don't know it.
 
 ## Procedure
 
@@ -76,7 +76,7 @@ Draft format (for standalone use only -- producer guides write this format direc
 <A possible fix direction, if confident>
 
 **Affected files**
-<Paths within the ai-dev-process repo, if known. "Unknown" is acceptable.>
+<Paths within the skai repo, if known. "Unknown" is acceptable.>
 
 **Verification** (optional)
 <How to confirm the change worked next time>
@@ -108,7 +108,7 @@ For each 🟡 entry, the human decides: **file**, **revise**, or **skip**.
 
 For each entry the human approved for filing:
 
-1. Use the GitHub MCP server to create the issue on the `ai-dev-process` repo with the labels from the draft.
+1. Use the GitHub MCP server to create the issue on the `skai` repo with the labels from the draft.
 2. Update the working file: remove the 🟡 marker from the heading and add `**Filed**: #<number>` below the heading.
 
 Report the created issue numbers and URLs back to the human.

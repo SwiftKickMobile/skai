@@ -1,13 +1,13 @@
 # Managed File Header (Required)
 
-Any file generated/maintained by `ai-dev-process` in a host project must start with this header block.
+Any file generated/maintained by `skai` in a host project must start with this header block.
 
 ## Header format
 
 The first lines of the file must be:
 
 ```
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: <asset-id>
 Managed-Source: <repo-relative-source> OR <submodule-path>/<repo-relative-source>
 Managed-Adapter: <adapter-id>
@@ -37,10 +37,10 @@ For these files, treat a skill file as managed if it contains a managed marker c
 
 ```markdown
 ---
-name: ai-dev-process-debugging
+name: skai-debugging
 description: ...
 ---
-<!-- Managed-By: ai-dev-process | Managed-Id: skill.ai-dev-process-debugging | Managed-Source: Submodules/ai-dev-process/Templates/skills/ai-dev-process-debugging/SKILL.md | Managed-Adapter: cursor | Managed-Updated-At: 2026-02-17 -->
+<!-- Managed-By: skai | Managed-Id: skill.skai-debugging | Managed-Source: Submodules/skai/Templates/skills/skai-debugging/SKILL.md | Managed-Adapter: cursor | Managed-Updated-At: 2026-02-17 -->
 ```
 
 The shared skill templates at `Templates/skills/*/SKILL.md` do **not** contain the managed marker. Each installer stamps it at copy time with the appropriate `Managed-Adapter` value (`cursor` or `claude-code`).
@@ -48,11 +48,11 @@ The shared skill templates at `Templates/skills/*/SKILL.md` do **not** contain t
 Rules:
 - Installers may overwrite a skill file only when this marker is present (or when the destination does not exist).
 - `Managed-Id` must match an entry in `assets.manifest.json`.
-- Previously installed skills may have adapter-prefixed IDs (e.g., `cursor-skill.ai-dev-process-debugging`); treat these as managed (the marker is present) and overwrite with the current ID format.
+- Previously installed skills may have adapter-prefixed IDs (e.g., `cursor-skill.skai-debugging`); treat these as managed (the marker is present) and overwrite with the current ID format.
 
 ## Symlinks
 
-Symlinks cannot "contain" a managed header. For symlinked installs, treat a host path as managed if it is a symlink pointing at the expected `ai-dev-process` target path.
+Symlinks cannot "contain" a managed header. For symlinked installs, treat a host path as managed if it is a symlink pointing at the expected `skai` target path.
 
 ## Ignore files (`.cursorignore`, `.claudeignore`)
 
@@ -61,9 +61,9 @@ Ignore files are typically gitignore-style and are often project-owned. Installe
 Instead, installers may manage a delimited block using comment markers, for example:
 
 ```
-# BEGIN Managed-By: ai-dev-process
+# BEGIN Managed-By: skai
 ... patterns ...
-# END Managed-By: ai-dev-process
+# END Managed-By: skai
 ```
 
 The installer may create the file if it does not exist, and may update only the block if it exists.

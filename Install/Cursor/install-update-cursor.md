@@ -8,13 +8,13 @@ This document is the canonical Cursor install/update runbook.
 - `Install/managed-header.md`
 - `Install/conflict-precedence-policy.md`
 - `Policies/safe-operations.md`
-- `Templates/docs/ai-dev-process/integration.md`
+- `Templates/docs/skai/integration.md`
 
 Key responsibilities:
 - Detect existing installs (including legacy copies of guides/rules) and plan a safe migration.
-- Create/update `docs/ai-dev-process/integration.md` (and migrate any legacy integration command notes into it).
-- Generate managed Cursor `.mdc` rule files into `.cursor/rules/ai-dev-process/`.
-- Install `ai-dev-process` Cursor skills into `.cursor/skills/` (no symlinks; wrappers point at `Submodules/ai-dev-process/...` sources).
+- Create/update `docs/skai/integration.md` (and migrate any legacy integration command notes into it).
+- Generate managed Cursor `.mdc` rule files into `.cursor/rules/skai/`.
+- Install `skai` Cursor skills into `.cursor/skills/` (no symlinks; wrappers point at `Submodules/skai/...` sources).
 - Update `.cursorignore` (and, if present, `.claudeignore`) via managed blocks so Cursor and Claude installs can coexist without clutter.
 - Never overwrite project-owned files; only overwrite managed files; treat lookalike files as legacy candidates.
 
@@ -24,11 +24,11 @@ Follow the discover → classify → plan → confirm → execute workflow.
 
 ### 1) Discover (read-only)
 
-- Identify whether `ai-dev-process` is already present as a submodule (and where).
+- Identify whether `skai` is already present as a submodule (and where).
 - If this is an update, record the current submodule commit SHA (pre-update) and the intended new SHA (post-update).
 - Inventory existing install artifacts:
   - `.cursor/rules/**`, `.cursor/**`
-  - specifically scan for prior `ai-dev-process` install targets under `.cursor/**` (do not assume current targets only):
+  - specifically scan for prior `skai` install targets under `.cursor/**` (do not assume current targets only):
     - `.cursor/skills/**`
     - `.cursor/agent/**` (deprecated install target; see cleanup guidance below)
   - `docs/**`
@@ -38,8 +38,8 @@ Follow the discover → classify → plan → confirm → execute workflow.
 ### 2) Classify
 
 Classify each discovered artifact:
-- **Managed**: has the managed header (`Managed-By: ai-dev-process`) → safe to overwrite.
-- **Managed symlink**: a symlink that points into `Submodules/ai-dev-process/...` at the expected target path → safe to replace/update.
+- **Managed**: has the managed header (`Managed-By: skai`) → safe to overwrite.
+- **Managed symlink**: a symlink that points into `Submodules/skai/...` at the expected target path → safe to replace/update.
 - **Legacy candidate**: looks like a managed asset but lacks the header → do not overwrite.
 - **Project-owned**: custom → do not overwrite.
 
@@ -49,7 +49,7 @@ Prepare a concrete plan:
 - Files to create
 - Files to update (managed only, including managed symlinks)
 - Legacy candidates to supersede (create new managed files in canonical locations)
-- Integration doc migration items (move legacy integration glue into `docs/ai-dev-process/integration.md`)
+- Integration doc migration items (move legacy integration glue into `docs/skai/integration.md`)
 - Legacy cleanup proposals (explicitly permission-gated):
   - delete legacy candidates
   - or replace legacy candidates with symlinks to the new canonical locations
@@ -59,7 +59,7 @@ Prepare a concrete plan:
 Required gray-area checks (ask the human, then reflect the decision in the plan):
 - Search for legacy debugging rule candidates (common examples: `.cursor/rules/debugging*.mdc`, `.cursor/rules/*debug*.mdc`, or other Cursor rules that encode project-specific logging/API conventions).
   - If found, propose:
-    1) migrating any project-specific logging/API conventions they contain into `docs/ai-dev-process/integration.md`, then
+    1) migrating any project-specific logging/API conventions they contain into `docs/skai/integration.md`, then
     2) deleting those legacy debugging rule files (only with explicit approval).
   - When reporting discovery, list the candidates you found; do not emit "not found" lines for example filenames you didn't find.
 
@@ -75,9 +75,9 @@ If updating the submodule, include an "update review" section:
 ### 5) Execute (safe order)
 
 1. Ensure submodule is present/updated.
-2. Create/update `docs/ai-dev-process/integration.md` (migrate legacy command docs into it; do not delete legacy docs by default).
+2. Create/update `docs/skai/integration.md` (migrate legacy command docs into it; do not delete legacy docs by default).
    - If you cannot find the required integration information in-repo:
-     - Create/seed the Integration doc from `Templates/docs/ai-dev-process/integration.md`.
+     - Create/seed the Integration doc from `Templates/docs/skai/integration.md`.
      - Fill only what you can source with high confidence.
      - Add explicit 🟡 placeholders for missing items.
      - STOP and ask the human for the missing items before proceeding with the rest of the install.
@@ -89,12 +89,12 @@ If updating the submodule, include an "update review" section:
      - Add `working-docs/` so ephemeral working documents are not committed.
    - Update `.cursorignore` by inserting/updating a managed block:
      - Exclude `.claude/**` so Cursor sessions don't ingest Claude-specific assets by default.
-     - Do NOT exclude `Submodules/ai-dev-process/**` here; use editor UI excludes for autocomplete/search clutter instead.
+     - Do NOT exclude `Submodules/skai/**` here; use editor UI excludes for autocomplete/search clutter instead.
    - If `.claudeignore` exists, propose inserting/updating an equivalent managed block to exclude `.cursor/**` (ask approval before changing).
-3. Generate managed Cursor `.mdc` rule files into `.cursor/rules/ai-dev-process/`.
-4. Install `ai-dev-process` Cursor skills into `.cursor/skills/`.
+3. Generate managed Cursor `.mdc` rule files into `.cursor/rules/skai/`.
+4. Install `skai` Cursor skills into `.cursor/skills/`.
 5. If approved, perform legacy cleanup (delete or replace with symlinks).
-6. Write/update `docs/ai-dev-process/install-state.json` (see "Install state file" below).
+6. Write/update `docs/skai/install-state.json` (see "Install state file" below).
 
 Required Integration doc fields to request (minimum set):
 - Build/compile command(s)
@@ -106,7 +106,7 @@ Required Integration doc fields to request (minimum set):
 ## Cursor install targets
 
 Create these directories in the host repo:
-- `.cursor/rules/ai-dev-process/`
+- `.cursor/rules/skai/`
 - `.cursor/skills/`
 
 ## Generating Cursor rule files (`.mdc`)
@@ -123,53 +123,53 @@ Initial supported stacks:
 - Android/Kotlin: generate `.mdc` with `globs: ["**/*.kt", "**/*.kts"]`.
 
 Recommended generated rules (filenames are stable):
-- `.cursor/rules/ai-dev-process/coding-patterns.mdc` ← `Policies/coding-patterns.md`
-- `.cursor/rules/ai-dev-process/debugging-process.mdc` ← `Policies/debugging-process-rule.md`
-- `.cursor/rules/ai-dev-process/error-handling.mdc` ← `Policies/error-handling.md`
-- `.cursor/rules/ai-dev-process/unauthorized-changes.mdc` ← `Policies/unauthorized-changes.md`
-- `.cursor/rules/ai-dev-process/safe-operations.mdc` ← `Policies/safe-operations.md`
-- `.cursor/rules/ai-dev-process/swift-code-organization.mdc` ← `Policies/swift-code-organization.md` (Swift stack only)
+- `.cursor/rules/skai/coding-patterns.mdc` ← `Policies/coding-patterns.md`
+- `.cursor/rules/skai/debugging-process.mdc` ← `Policies/debugging-process-rule.md`
+- `.cursor/rules/skai/error-handling.mdc` ← `Policies/error-handling.md`
+- `.cursor/rules/skai/unauthorized-changes.mdc` ← `Policies/unauthorized-changes.md`
+- `.cursor/rules/skai/safe-operations.mdc` ← `Policies/safe-operations.md`
+- `.cursor/rules/skai/swift-code-organization.mdc` ← `Policies/swift-code-organization.md` (Swift stack only)
 
 ## Installing Cursor skills (recommended; no symlinks)
 
 Create these skills in the host repo under `.cursor/skills/` by copying the shared templates from the submodule and inserting the managed marker comment immediately after the YAML frontmatter (see `Install/managed-header.md`).
 
-Use `Managed-Adapter: cursor` and `Managed-Id: skill.<skill-name>` (e.g., `skill.ai-dev-process-debugging`).
+Use `Managed-Adapter: cursor` and `Managed-Id: skill.<skill-name>` (e.g., `skill.skai-debugging`).
 
 Rules:
 - Each destination `SKILL.md` is considered managed only if it contains the managed marker comment described in `Install/managed-header.md`.
 - Overwrite only if destination is missing or already contains the managed marker.
 
 Install these skills:
-- `.cursor/skills/ai-dev-process-debugging/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-debugging/SKILL.md`
-- `.cursor/skills/ai-dev-process-work-spec-creation/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-work-spec-creation/SKILL.md`
-- `.cursor/skills/ai-dev-process-work-spec-implementation/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-work-spec-implementation/SKILL.md`
-- `.cursor/skills/ai-dev-process-unit-testing/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-unit-testing/SKILL.md`
-- `.cursor/skills/ai-dev-process-unit-test-planning/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-unit-test-planning/SKILL.md`
-- `.cursor/skills/ai-dev-process-unit-test-infrastructure/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-unit-test-infrastructure/SKILL.md`
-- `.cursor/skills/ai-dev-process-unit-test-writing/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-unit-test-writing/SKILL.md`
-- `.cursor/skills/ai-dev-process-dev-retro/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-dev-retro/SKILL.md`
-- `.cursor/skills/ai-dev-process-update-installation/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-update-installation/SKILL.md`
+- `.cursor/skills/skai-debugging/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-debugging/SKILL.md`
+- `.cursor/skills/skai-work-spec-creation/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-work-spec-creation/SKILL.md`
+- `.cursor/skills/skai-work-spec-implementation/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-work-spec-implementation/SKILL.md`
+- `.cursor/skills/skai-unit-testing/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-unit-testing/SKILL.md`
+- `.cursor/skills/skai-unit-test-planning/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-unit-test-planning/SKILL.md`
+- `.cursor/skills/skai-unit-test-infrastructure/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-unit-test-infrastructure/SKILL.md`
+- `.cursor/skills/skai-unit-test-writing/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-unit-test-writing/SKILL.md`
+- `.cursor/skills/skai-dev-retro/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-dev-retro/SKILL.md`
+- `.cursor/skills/skai-update-installation/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-update-installation/SKILL.md`
 
 ## Install state file
 
-After a successful install or update, write/update `docs/ai-dev-process/install-state.json` so the `update-installation` skill can detect changes and re-run the appropriate adapters.
+After a successful install or update, write/update `docs/skai/install-state.json` so the `update-installation` skill can detect changes and re-run the appropriate adapters.
 
 Format:
 
 ```json
 {
-  "managedBy": "ai-dev-process",
-  "submodulePath": "Submodules/ai-dev-process",
+  "managedBy": "skai",
+  "submodulePath": "Submodules/skai",
   "lastSHA": "<current submodule HEAD SHA>",
   "lastUpdatedAt": "<yyyy-mm-dd>",
   "installedAdapters": [
@@ -187,48 +187,12 @@ Rules:
 - If the file already exists, **merge**: update `lastSHA`, `lastUpdatedAt`, and upsert this adapter's entry in `installedAdapters` (preserve entries from other adapters).
 - The adapter ID for this runbook is `cursor`; the runbook path is `Install/Cursor/install-update-cursor.md`.
 
-## Legacy path adoption (required, permission-gated)
+## Legacy artifact cleanup (permission-gated)
 
-If the host repo already has legacy copies of these guides at older locations (common examples):
-- `.cursor/work-spec.md`
-- `.cursor/work-spec-implementation.md`
-- `.cursor/skills/ai-dev-process-work-spec/SKILL.md` (replaced by `-work-spec-creation` and `-work-spec-implementation`)
+During discovery, if you find artifacts that appear to be from older installations (symlinks pointing into the submodule, guide/rule copies without managed headers, skills that have been renamed or replaced), propose a cleanup plan:
 
-Then the installer MUST propose a cleanup plan:
-- **Preferred**: delete them (only with explicit approval).
-- **Alternative**: replace them with a short redirect note that points at:
-  - the Cursor skills under `.cursor/skills/ai-dev-process-*/`
-  - and/or the canonical submodule sources under `Submodules/ai-dev-process/Guides/Spec/...`
+- **Managed symlinks** (symlinks into `Submodules/skai/...`): propose deleting them (only with explicit approval).
+- **Legacy candidates** (look like managed assets but lack the managed header): do not overwrite. Propose deletion or replacement, but only with explicit approval. If they contain project-specific content (e.g., logging conventions, custom rules), propose migrating that content into `docs/skai/integration.md` first.
+- **Non-symlink or project-authored content**: treat as project-owned and STOP to ask the human what to do.
 
 Rationale: leaving legacy copies in place increases the chance that humans/agents keep reading the wrong file out of habit.
-
-## Deprecated Cursor agent-doc install target (required, permission-gated)
-
-Older installs of `ai-dev-process` may have placed symlinked "agent docs" under:
-- `.cursor/agent/ai-dev-process/` (deprecated)
-
-Current installs use Cursor skills under `.cursor/skills/ai-dev-process-*/` instead (no symlinks).
-
-Required behavior:
-- If `.cursor/agent/ai-dev-process/` exists:
-  - If it contains symlinks that point into `Submodules/ai-dev-process/...`, treat them as **deprecated managed symlinks** and propose deleting the whole directory (only with explicit approval).
-  - If it contains non-symlink or project-authored content, treat it as project-owned and STOP to ask the human what to do.
-
-## Deprecated Cursor skill: `ai-dev-process-retro-prd` (required, permission-gated)
-
-Older installs may have installed:
-- `.cursor/skills/ai-dev-process-retro-prd/` (deprecated)
-
-It is superseded by:
-- `.cursor/skills/ai-dev-process-dev-retro/`
-
-Required behavior:
-- If `.cursor/skills/ai-dev-process-retro-prd/` exists:
-  - If it contains only managed skill files (managed marker comment present), propose deleting the deprecated skill directory (only with explicit approval).
-  - Otherwise treat as project-owned and STOP to ask what to do.
-
-## Legacy debugging rule (special case, permission-gated)
-
-If the host repo contains `.cursor/rules/debugging.mdc` (legacy, no managed header), treat it as a gray area:
-- It may contain project-specific logging conventions that should be migrated into `docs/ai-dev-process/integration.md`.
-- The installer should propose deleting it (because debugging should be guided by `Guides/Core/debugging-guide.md` plus the Debugging Process rule), but must ask for explicit approval before deleting.

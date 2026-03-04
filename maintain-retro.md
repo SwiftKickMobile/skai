@@ -1,6 +1,6 @@
 # Maintenance retro checklist (LLM + human)
 
-Use this after making changes to `ai-dev-process` to ensure nothing was forgotten.
+Use this after making changes to `skai` to ensure nothing was forgotten.
 
 ## Retro intent (read this first)
 
@@ -28,13 +28,13 @@ This retro is a **backstop for completeness**, not a git/diff report.
   - Quick start prompts if any runbook paths changed
   - Usage section: ensure the workflow descriptions and phases match the updated guide checkpoint/gate behavior (and add/update any guide inventory section if your README has one).
   - Any new conventions/invariants developers need to know
-- Ensure `maintain-ai-dev-process.md` is updated if you changed invariants or introduced a new maintenance rule.
+- Ensure `maintain-skai.md` is updated if you changed invariants or introduced a new maintenance rule.
 
 ## 3) Integration doc architecture checks (common misses)
 
 - If you changed Integration behavior:
-  - `Templates/docs/ai-dev-process/integration.md` still has a human-owned "Special instructions / overrides" section.
-  - Stack-specific templates exist under `Templates/docs/ai-dev-process/integration-sections/`.
+  - `Templates/docs/skai/integration.md` still has a human-owned "Special instructions / overrides" section.
+  - Stack-specific templates exist under `Templates/docs/skai/integration-sections/`.
   - Runbooks still describe how to merge/update/remove the managed blocks.
   - 🟡 is used only for true project-specific constants/mappings (not for variables or standard procedures).
   - Integration section templates are **integration-doc-ready** content (no 🟡 TODO lists; no installer/human instruction prose; include copy/pasteable CLI templates with `<...>` variables).
@@ -58,7 +58,7 @@ This retro is a **backstop for completeness**, not a git/diff report.
   - Verify it has a `## Checkpoints` section if it contains any STOP points/gates, and that it references `Guides/Core/process-flow.md`.
   - Search for terminology drift (e.g., "Next Command") and fix to "advance intent".
 - If a new skill was added or changed: verify the skill template is a **thin wrapper** (just references to Guides), not a self-contained document with inline logic. All substantive instructions must live in a Guide under `Guides/`.
-- Spot-check changed files for smart/curly quotes (`"` `"` `'` `'`) and Unicode dashes (en-dash, em-dash). All repo content must use ASCII equivalents (see `maintain-ai-dev-process.md`, "Content rules"). If found, normalize them.
+- Spot-check changed files for smart/curly quotes (`"` `"` `'` `'`) and Unicode dashes (en-dash, em-dash). All repo content must use ASCII equivalents (see `maintain-skai.md`, "Content rules"). If found, normalize them.
 
 ## 6) Process reflection
 

@@ -1,4 +1,4 @@
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: guide.work-spec
 Managed-Source: Guides/Spec/work-spec-creation.md
 Managed-Adapter: repo-source
@@ -500,7 +500,7 @@ Tasks are created with 🟡 and the 🟡 is removed when complete.
 - Checking for linter errors
 - Confirming expected behavior
   - Verification subtasks are mandatory for each top-level task (build/test/lint as applicable).
-  - Source of truth for project-specific commands/paths is `docs/ai-dev-process/integration.md` (do not invent commands).
+  - Source of truth for project-specific commands/paths is `docs/skai/integration.md` (do not invent commands).
   - Evidence must be captured inline on the verification subtask line using an evidence bracket:
     - Format: `[evidence: <command variant>; exit <code>; output: <optional link(s)>]`
     - Example: `[evidence: <command>; exit 0; output: [output](working-docs/<branch-path>/work-spec/<spec-name>/evidence/<slug>.txt)]`

@@ -1,6 +1,6 @@
 # Integration doc install/update guidance (shared)
 
-This is a shared guide for installers that create/update the host project's Integration doc at `docs/ai-dev-process/integration.md`.
+This is a shared guide for installers that create/update the host project's Integration doc at `docs/skai/integration.md`.
 
 ## Goals
 
@@ -20,8 +20,8 @@ This is a shared guide for installers that create/update the host project's Inte
 The Integration doc contains:
 - a human-owned "Special instructions / overrides" section (must be read and obeyed first)
 - LLM-managed blocks delimited by:
-  - `<!-- BEGIN Managed-By: ai-dev-process | Section: ... -->`
-  - `<!-- END Managed-By: ai-dev-process | Section: ... -->`
+  - `<!-- BEGIN Managed-By: skai | Section: ... -->`
+  - `<!-- END Managed-By: skai | Section: ... -->`
 
 Installers may only create/update/remove content inside managed blocks.
 
@@ -38,13 +38,13 @@ Standard instruction format:
 
 When creating/updating the Integration doc:
 
-1. Seed from `Templates/docs/ai-dev-process/integration.md` if missing.
+1. Seed from `Templates/docs/skai/integration.md` if missing.
 2. Read and obey "Special instructions / overrides".
 3. Detect which stacks apply (Xcode/Swift, Swift Package Manager, Android/Gradle, etc.) and then:
    - insert/update the corresponding managed blocks from:
-     - `Templates/docs/ai-dev-process/integration-sections/xcode.md`
-     - `Templates/docs/ai-dev-process/integration-sections/swift-package.md`
-     - `Templates/docs/ai-dev-process/integration-sections/android-gradle.md`
+     - `Templates/docs/skai/integration-sections/xcode.md`
+     - `Templates/docs/skai/integration-sections/swift-package.md`
+     - `Templates/docs/skai/integration-sections/android-gradle.md`
    - remove irrelevant managed blocks if the stack is not present (or the human says omit).
    - Note: a project may use both `xcode` and `swift-package` sections (e.g., app targets built via Xcode and library submodules built as Swift packages).
 4. If required project-specific constants/mappings cannot be inferred:

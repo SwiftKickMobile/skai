@@ -1,4 +1,4 @@
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: guide.unit-test-writing
 Managed-Source: Guides/Test/unit-test-writing-guide.md
 Managed-Adapter: repo-source
@@ -122,7 +122,7 @@ At checkpoints, end checkpoint output with the standard gate line (see `Guides/C
      ```
 
 1. **Review project testing conventions**
-  - See `docs/ai-dev-process/integration.md` for project-specific requirements
+  - See `docs/skai/integration.md` for project-specific requirements
    - Check for dependency injection patterns, test suite structure, and test infrastructure
 
 2. **Review approved infrastructure**
@@ -284,7 +284,7 @@ let result3 = try await sut.performOperation()  // Gets third response
 
 **Observe publisher changes:**
 
-See `docs/ai-dev-process/integration.md` for project-specific test utilities (e.g., a `PublisherSpy` equivalent), if any.
+See `docs/skai/integration.md` for project-specific test utilities (e.g., a `PublisherSpy` equivalent), if any.
 
 ```swift
 let spy = PublisherSpy(viewModel.$state)
@@ -388,7 +388,7 @@ struct MyComponentTests {
 **What to do:**
 
 1. **Run the tests** using standard process (see "Running Tests" section below)
-   - Use the project's test command from `docs/ai-dev-process/integration.md`
+   - Use the project's test command from `docs/skai/integration.md`
    - Save full output to `working-docs/<branch-path>/testing/<suite-name>/<section-name>-test-output.txt`
 
 **CRITICAL VALIDATION - DO NOT SKIP:**
@@ -399,7 +399,7 @@ struct MyComponentTests {
    - **Read the output file**: `cat working-docs/<branch-path>/testing/<suite-name>/<section-name>-test-output.txt`
      - Look for test execution indicators (✔, ✘, Test Suite, etc.)
      - If you see no test execution output: **TESTS DID NOT RUN**
-   - Confirm any additional expected artifacts described in `docs/ai-dev-process/integration.md` were produced.
+   - Confirm any additional expected artifacts described in `docs/skai/integration.md` were produced.
    
    **If tests did not run:**
    - **STOP**: Do NOT proceed to analyze code or make guesses
@@ -446,7 +446,7 @@ struct MyComponentTests {
 
 ### Running Tests
 
-See `docs/ai-dev-process/integration.md` for project-specific test execution commands.
+See `docs/skai/integration.md` for project-specific test execution commands.
 
 **Standard test execution process:**
 
@@ -457,12 +457,12 @@ See `docs/ai-dev-process/integration.md` for project-specific test execution com
 
 2. **Run tests with full output logging**:
    - **CRITICAL: Run ONLY the tests in the current section** - Do NOT run the entire test file (noise from unimplemented tests).
-   - Use the project's test command from `docs/ai-dev-process/integration.md` and follow its recommended way to scope to specific tests.
+   - Use the project's test command from `docs/skai/integration.md` and follow its recommended way to scope to specific tests.
    - Persist full output to `working-docs/<branch-path>/testing/<suite-name>/<section-name>-test-output.txt`.
-   - Persist any additional artifacts described in `docs/ai-dev-process/integration.md`.
+   - Persist any additional artifacts described in `docs/skai/integration.md`.
 
 3. **Analyze failures**:
-   - **Primary**: Extract structured assertion failure details using the process in `docs/ai-dev-process/integration.md`
+   - **Primary**: Extract structured assertion failure details using the process in `docs/skai/integration.md`
    - **Secondary**: Search output file for additional context:
 ```bash
      grep -A 10 "failed\|error" working-docs/<branch-path>/testing/<suite-name>/<section-name>-test-output.txt
@@ -471,10 +471,10 @@ See `docs/ai-dev-process/integration.md` for project-specific test execution com
 4. **Next test run** overwrites the same files (keep paths stable per section)
 
 **Key points:**
-- Always scope runs to the current section's tests (see `docs/ai-dev-process/integration.md`)
+- Always scope runs to the current section's tests (see `docs/skai/integration.md`)
 - Full output enables multiple analyses without re-running tests
 - Branch-based organization keeps test outputs organized
-- See `docs/ai-dev-process/integration.md` for the stack-specific runner setup and artifact extraction
+- See `docs/skai/integration.md` for the stack-specific runner setup and artifact extraction
 
 ---
 
@@ -482,7 +482,7 @@ See `docs/ai-dev-process/integration.md` for project-specific test execution com
 
 **Investigation → Fix → Verify (repeat until passing)**
 
-When resolving test failures, follow the project's Debugging / Problem-Resolution Guide (installed with `ai-dev-process`):
+When resolving test failures, follow the project's Debugging / Problem-Resolution Guide (installed with `skai`):
 - See `Guides/Core/debugging-guide.md` for the evidence-first loop and approval gates.
 - Select a debugging tactic (e.g., partitioning, minimal working implementation, bisect) and state *why* it's the best next step.
 - Prefer experiments that produce discriminating evidence over "guessing fixes."
@@ -490,7 +490,7 @@ When resolving test failures, follow the project's Debugging / Problem-Resolutio
 
 **Process:**
 1. **Extract structured assertion failure details** - This is CRITICAL for understanding what failed
-   - See `docs/ai-dev-process/integration.md` for the command/process to extract assertion failures in this project/stack
+   - See `docs/skai/integration.md` for the command/process to extract assertion failures in this project/stack
    - Look for:
      - Expected vs actual values in assertion failures
      - Error messages and thrown errors
@@ -574,7 +574,7 @@ with `option: .includeMetadata` (line 194), but the tests expect `.excludeMetada
 
 ### Test Suite Structure & Isolation
 
-See `docs/ai-dev-process/integration.md` for:
+See `docs/skai/integration.md` for:
 - Testing framework requirements
 - Test suite declaration patterns
 - Serialization requirements
@@ -616,7 +616,7 @@ struct MyComponentTests {
 
 ### Dependency Injection in Tests
 
-See `docs/ai-dev-process/integration.md` for:
+See `docs/skai/integration.md` for:
 - Factory framework usage
 - Container registration patterns
 - Test-specific DI patterns
@@ -772,11 +772,11 @@ This document tracks the writing and execution work for implementing unit tests.
 
 **Phase 2: Execute & Fix**
 - Remove 🟡 from Phase 1 in the work document (if not already done)
-- Run tests scoped to the current section's tests (per `docs/ai-dev-process/integration.md`)
+- Run tests scoped to the current section's tests (per `docs/skai/integration.md`)
 - **CRITICAL: Verify test actually ran** (check file size + output contains test execution indicators)
 - Document results
 - If failures:
-  - Extract structured assertion details (CRITICAL) (see `docs/ai-dev-process/integration.md`)
+  - Extract structured assertion details (CRITICAL) (see `docs/skai/integration.md`)
   - Document expected vs actual values
   - Investigate and fix (see maintenance workflow)
 - Remove 🟡 from test functions as they pass
@@ -796,13 +796,13 @@ This document tracks the writing and execution work for implementing unit tests.
 
 **Test Execution:**
 
-See `docs/ai-dev-process/integration.md` for project-specific test execution commands.
+See `docs/skai/integration.md` for project-specific test execution commands.
 
 **Standard process:**
 - Create suite output directory: `working-docs/<branch-path>/testing/<suite-name>/` (per `Guides/Core/working-doc-conventions.md`, e.g., `working-docs/work/step-refactor/testing/TemplateRenderer/`)
-- Run tests scoped to ONLY the current section's tests (per `docs/ai-dev-process/integration.md`)
-- Persist artifacts/logs as described in `docs/ai-dev-process/integration.md`
-- **Extract structured assertion failures** - CRITICAL first step (see `docs/ai-dev-process/integration.md`)
+- Run tests scoped to ONLY the current section's tests (per `docs/skai/integration.md`)
+- Persist artifacts/logs as described in `docs/skai/integration.md`
+- **Extract structured assertion failures** - CRITICAL first step (see `docs/skai/integration.md`)
 - Search output file for additional context
 - Overwrite both files on subsequent runs
 
@@ -821,11 +821,11 @@ See `docs/ai-dev-process/integration.md` for project-specific test execution com
 
 **Test execution validation:**
 - After running test command, IMMEDIATELY verify test actually ran
-- Check output file size (should be several KB) and output contains test indicators (plus any expected artifacts from `docs/ai-dev-process/integration.md`)
+- Check output file size (should be several KB) and output contains test indicators (plus any expected artifacts from `docs/skai/integration.md`)
 - If test didn't run: STOP, investigate why, fix, re-run (do NOT guess or analyze code)
 
 **When tests fail:**
-1. Extract structured assertion details (CRITICAL) (see `docs/ai-dev-process/integration.md`)
+1. Extract structured assertion details (CRITICAL) (see `docs/skai/integration.md`)
 2. Document expected vs actual values
 3. Investigation → Fix → Verify (repeat until passing)
 - See "When Tests Fail" section above for complete process

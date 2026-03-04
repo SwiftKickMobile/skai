@@ -1,6 +1,6 @@
 # Safe Operations (Agent Policy)
 
-This policy applies to agents executing the `ai-dev-process` workflows, including install/update runbooks.
+This policy applies to agents executing the `skai` workflows, including install/update runbooks.
 
 ## Rules
 

@@ -1,4 +1,4 @@
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: guide.dev-retro
 Managed-Source: Guides/Process/dev-retro.md
 Managed-Adapter: repo-source
@@ -32,7 +32,7 @@ Read the documents and artifacts that were produced or used during this session,
   - work spec doc(s) (if used)
   - planning docs / analysis docs (including unit-testing planning + infrastructure + writing work docs)
 - The project's Integration doc:
-  - `docs/ai-dev-process/integration.md`
+  - `docs/skai/integration.md`
 - Evidence artifacts produced during the session:
   - build/test outputs, logs, result bundles/reports, screenshots/screen recordings, crash reports, etc.
 - The canonical requirements library:
@@ -71,7 +71,7 @@ If the session changed behavior, conventions, or integration details:
 - Update the most relevant docs (choose the minimum set):
   - code comments where correctness depends on subtle behavior
   - README / developer docs
-  - integration doc values/commands (inside managed blocks only, if using `ai-dev-process` Integration format)
+  - integration doc values/commands (inside managed blocks only, if using `skai` Integration format)
   - process docs/runbooks (if a repeatable workflow changed)
 
 If you are not confident what should be documented, STOP and ask the human what level of documentation is expected.

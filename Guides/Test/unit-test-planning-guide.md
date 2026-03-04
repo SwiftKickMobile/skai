@@ -1,4 +1,4 @@
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: guide.unit-test-planning
 Managed-Source: Guides/Test/unit-test-planning-guide.md
 Managed-Adapter: repo-source
@@ -439,7 +439,7 @@ struct MyComponentTests {
 
 ### File Structure
 
-See `docs/ai-dev-process/integration.md` for:
+See `docs/skai/integration.md` for:
 - Test target organization
 - File naming conventions
 - Test file structure

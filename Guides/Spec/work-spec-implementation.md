@@ -1,4 +1,4 @@
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: guide.work-spec-implementation
 Managed-Source: Guides/Spec/work-spec-implementation.md
 Managed-Adapter: repo-source
@@ -104,7 +104,7 @@ When implementing Task N:
 - **Refer to the Requirements Inventory**: Each subtask cites requirement IDs (e.g., `DOC-01`, `VALID-02`). Use these to find the full requirement text and ensure the implementation satisfies it.
 - Implement all code changes needed
 - Run verification subtasks and capture evidence:
-  - Use project-specific commands/paths from `docs/ai-dev-process/integration.md` (do not invent commands).
+  - Use project-specific commands/paths from `docs/skai/integration.md` (do not invent commands).
   - Record evidence inline on the verification subtask line using an evidence bracket.
     - Format: `[evidence: <command variant>; exit <code>; output: <optional link(s)>]`
     - On failure: persist full output to a file under `working-docs/<branch-path>/work-spec/<spec-name>/evidence/` (or the workflow-specific location if one exists) and link it.

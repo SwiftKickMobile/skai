@@ -1,4 +1,4 @@
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: guide.report-process-problem
 Managed-Source: Guides/Process/report-process-problem.md
 Managed-Adapter: repo-source
@@ -57,6 +57,6 @@ Present the entry to the developer for review and iterate until they're satisfie
 
 ### 3. Next steps
 
-Ask the developer if they'd like to file the ticket as a GitHub issue on `ai-dev-process` now, or leave it in the working file for later.
+Ask the developer if they'd like to file the ticket as a GitHub issue on `skai` now, or leave it in the working file for later.
 
 If they want to file now, proceed to `Guides/Process/process-improvement-tickets.md`.

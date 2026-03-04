@@ -1,6 +1,6 @@
-# AI Dev Process Integration
+# SKAI Integration
 
-This document is the project-owned source of truth for operational details required by `ai-dev-process` workflows.
+This document is the project-owned source of truth for operational details required by `skai` workflows.
 
 Do not store secrets here.
 
@@ -14,7 +14,7 @@ Do not store secrets here.
 
 ## Integration sections
 
-<!-- BEGIN Managed-By: ai-dev-process | Section: required-values -->
+<!-- BEGIN Managed-By: skai | Section: required-values -->
 ## Required project integration values
 
 ### Repositories and tooling
@@ -95,14 +95,14 @@ Purpose: define the project-specific "evidence contract" so agents can debug det
   {human response}
   - INSTRUCTION: Document any repo-specific conventions that affect tests.
 
-<!-- END Managed-By: ai-dev-process | Section: required-values -->
+<!-- END Managed-By: skai | Section: required-values -->
 
-<!-- BEGIN Managed-By: ai-dev-process | Section: xcode -->
-<!-- END Managed-By: ai-dev-process | Section: xcode -->
+<!-- BEGIN Managed-By: skai | Section: xcode -->
+<!-- END Managed-By: skai | Section: xcode -->
 
-<!-- BEGIN Managed-By: ai-dev-process | Section: swift-package -->
-<!-- END Managed-By: ai-dev-process | Section: swift-package -->
+<!-- BEGIN Managed-By: skai | Section: swift-package -->
+<!-- END Managed-By: skai | Section: swift-package -->
 
-<!-- BEGIN Managed-By: ai-dev-process | Section: android-gradle -->
-<!-- END Managed-By: ai-dev-process | Section: android-gradle -->
+<!-- BEGIN Managed-By: skai | Section: android-gradle -->
+<!-- END Managed-By: skai | Section: android-gradle -->
 

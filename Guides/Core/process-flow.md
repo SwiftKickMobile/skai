@@ -1,4 +1,4 @@
-Managed-By: ai-dev-process
+Managed-By: skai
 Managed-Id: guide.process-flow
 Managed-Source: Guides/Core/process-flow.md
 Managed-Adapter: repo-source
@@ -79,7 +79,7 @@ Examples (infer from context):
 
 ## 🟡 markers (workflow-scoped)
 
-This section applies only to ai-dev-process workflow documents (work specs, planning docs, unit test plans, working docs), not to arbitrary developer notes.
+This section applies only to skai workflow documents (work specs, planning docs, unit test plans, working docs), not to arbitrary developer notes.
 
 - 🟡 means TODO.
 - 🟡 may also mean "implemented but pending approval"; it must not be cleared until the human approves.

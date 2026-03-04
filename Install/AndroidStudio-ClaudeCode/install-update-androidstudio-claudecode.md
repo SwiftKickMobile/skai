@@ -1,6 +1,6 @@
 ## Android Studio + Claude Code adapter: install/update (LLM runbook)
 
-Purpose: install/update `ai-dev-process` into an Android/Kotlin/Jetpack Compose project that uses Claude Code.
+Purpose: install/update `skai` into an Android/Kotlin/Jetpack Compose project that uses Claude Code.
 
 ## Inputs (required reading)
 
@@ -8,7 +8,7 @@ Purpose: install/update `ai-dev-process` into an Android/Kotlin/Jetpack Compose 
 - `Install/managed-header.md`
 - `Install/conflict-precedence-policy.md`
 - `Policies/safe-operations.md`
-- `Templates/docs/ai-dev-process/integration.md`
+- `Templates/docs/skai/integration.md`
 
 ### Key decisions (from discussion)
 
@@ -31,7 +31,7 @@ Follow the discover → classify → plan → confirm → execute workflow.
 
 ### 1) Discover (read-only)
 
-- Identify whether `ai-dev-process` is already present as a submodule (and where).
+- Identify whether `skai` is already present as a submodule (and where).
 - If this is an update, record the current submodule commit SHA (pre-update) and the intended new SHA (post-update).
 - Inventory existing install artifacts:
   - Claude instruction files (`claude.md`, `CLAUDE.md`, `.claude/**`)
@@ -42,8 +42,8 @@ Follow the discover → classify → plan → confirm → execute workflow.
 ### 2) Classify
 
 Classify each discovered artifact:
-- **Managed**: has the managed header (`Managed-By: ai-dev-process`) → safe to overwrite.
-- **Managed symlink**: a symlink that points into `Submodules/ai-dev-process/...` at the expected target path → safe to replace/update.
+- **Managed**: has the managed header (`Managed-By: skai`) → safe to overwrite.
+- **Managed symlink**: a symlink that points into `Submodules/skai/...` at the expected target path → safe to replace/update.
 - **Legacy candidate**: looks like a managed asset but lacks the header → do not overwrite.
 - **Project-owned**: custom → do not overwrite.
 
@@ -53,7 +53,7 @@ Prepare a concrete plan:
 - Files to create
 - Files to update (managed only, including managed symlinks)
 - Legacy candidates to supersede (create new managed files in canonical locations)
-- Integration doc migration items (e.g., existing Gradle command notes into `docs/ai-dev-process/integration.md`)
+- Integration doc migration items (e.g., existing Gradle command notes into `docs/skai/integration.md`)
 
 ### 4) Confirm (human gate)
 
@@ -67,7 +67,7 @@ If updating the submodule, include an "update review" section:
 ### 5) Execute (safe order)
 
 1. Ensure submodule is present/updated.
-2. Create/update `docs/ai-dev-process/integration.md` (migrate legacy command docs into it; do not delete legacy docs by default).
+2. Create/update `docs/skai/integration.md` (migrate legacy command docs into it; do not delete legacy docs by default).
 3. Create/update the Claude instruction file (`claude.md` vs `CLAUDE.md`) using managed headers.
 4. Install Claude Code skills into `.claude/skills/` (see "Installing Claude Code skills" below).
 4.5 Create/update ignore files (permission-gated if the files already exist and are project-owned):
@@ -75,16 +75,16 @@ If updating the submodule, include an "update review" section:
      - Add `working-docs/` so ephemeral working documents are not committed.
    - Update `.claudeignore` by inserting/updating a managed block:
      - Exclude `.cursor/**` so Claude sessions don't ingest Cursor-specific assets by default.
-     - Do NOT exclude `Submodules/ai-dev-process/**` here; use editor UI excludes for autocomplete/search clutter instead.
+     - Do NOT exclude `Submodules/skai/**` here; use editor UI excludes for autocomplete/search clutter instead.
    - If `.cursorignore` exists, propose inserting/updating an equivalent managed block to exclude `.claude/**` (ask approval before changing).
 5. Optionally propose cleanup of legacy candidates as a separate explicit step.
-6. Write/update `docs/ai-dev-process/install-state.json` (see "Install state file" below).
+6. Write/update `docs/skai/install-state.json` (see "Install state file" below).
 
 ## Android adapter install targets
 
 In the host repo, create:
-- `docs/ai-dev-process/` (Integration doc)
-- `.claude/skills/ai-dev-process-*/` (managed skills pointing to submodule sources)
+- `docs/skai/` (Integration doc)
+- `.claude/skills/skai-*/` (managed skills pointing to submodule sources)
 
 ## Testing stack defaults (initial)
 
@@ -96,42 +96,42 @@ Observed defaults from real Android projects:
 
 Create these skills in the host repo under `.claude/skills/` by copying the shared templates from the submodule and inserting the managed marker comment immediately after the YAML frontmatter (see `Install/managed-header.md`).
 
-Use `Managed-Adapter: claude-code` and `Managed-Id: skill.<skill-name>` (e.g., `skill.ai-dev-process-debugging`).
+Use `Managed-Adapter: claude-code` and `Managed-Id: skill.<skill-name>` (e.g., `skill.skai-debugging`).
 
 Rules:
 - Each destination `SKILL.md` is considered managed only if it contains the managed marker comment described in `Install/managed-header.md`.
 - Overwrite only if destination is missing or already contains the managed marker.
 
 Install these skills:
-- `.claude/skills/ai-dev-process-debugging/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-debugging/SKILL.md`
-- `.claude/skills/ai-dev-process-work-spec-creation/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-work-spec-creation/SKILL.md`
-- `.claude/skills/ai-dev-process-work-spec-implementation/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-work-spec-implementation/SKILL.md`
-- `.claude/skills/ai-dev-process-dev-retro/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-dev-retro/SKILL.md`
-- `.claude/skills/ai-dev-process-unit-testing/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-unit-testing/SKILL.md`
-- `.claude/skills/ai-dev-process-unit-test-planning/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-unit-test-planning/SKILL.md`
-- `.claude/skills/ai-dev-process-unit-test-infrastructure/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-unit-test-infrastructure/SKILL.md`
-- `.claude/skills/ai-dev-process-unit-test-writing/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-unit-test-writing/SKILL.md`
-- `.claude/skills/ai-dev-process-update-installation/SKILL.md`
-  - source: `Submodules/ai-dev-process/Templates/skills/ai-dev-process-update-installation/SKILL.md`
+- `.claude/skills/skai-debugging/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-debugging/SKILL.md`
+- `.claude/skills/skai-work-spec-creation/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-work-spec-creation/SKILL.md`
+- `.claude/skills/skai-work-spec-implementation/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-work-spec-implementation/SKILL.md`
+- `.claude/skills/skai-dev-retro/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-dev-retro/SKILL.md`
+- `.claude/skills/skai-unit-testing/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-unit-testing/SKILL.md`
+- `.claude/skills/skai-unit-test-planning/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-unit-test-planning/SKILL.md`
+- `.claude/skills/skai-unit-test-infrastructure/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-unit-test-infrastructure/SKILL.md`
+- `.claude/skills/skai-unit-test-writing/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-unit-test-writing/SKILL.md`
+- `.claude/skills/skai-update-installation/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-update-installation/SKILL.md`
 
 ## Install state file
 
-After a successful install or update, write/update `docs/ai-dev-process/install-state.json` so the `update-installation` skill can detect changes and re-run the appropriate adapters.
+After a successful install or update, write/update `docs/skai/install-state.json` so the `update-installation` skill can detect changes and re-run the appropriate adapters.
 
 Format:
 
 ```json
 {
-  "managedBy": "ai-dev-process",
-  "submodulePath": "Submodules/ai-dev-process",
+  "managedBy": "skai",
+  "submodulePath": "Submodules/skai",
   "lastSHA": "<current submodule HEAD SHA>",
   "lastUpdatedAt": "<yyyy-mm-dd>",
   "installedAdapters": [
@@ -149,22 +149,16 @@ Rules:
 - If the file already exists, **merge**: update `lastSHA`, `lastUpdatedAt`, and upsert this adapter's entry in `installedAdapters` (preserve entries from other adapters).
 - The adapter ID for this runbook is `androidstudio-claudecode`; the runbook path is `Install/AndroidStudio-ClaudeCode/install-update-androidstudio-claudecode.md`.
 
-## Deprecated symlink install target (required)
+## Legacy artifact cleanup (permission-gated)
 
-Older installs may have placed symlinked guides under:
-- `.claude/agent/ai-dev-process/` (symlinks pointing into `Submodules/ai-dev-process/...`)
+During discovery, if you find artifacts that appear to be from older installations (symlinks pointing into the submodule, guide copies without managed headers, skills that have been renamed or replaced), propose a cleanup plan:
 
-Current installs use managed skills under `.claude/skills/ai-dev-process-*/` instead (no symlinks).
-
-Required behavior:
-- If `.claude/agent/ai-dev-process/` exists:
-  - If it contains symlinks that point into `Submodules/ai-dev-process/...`, delete them (these are installer-created artifacts, no approval needed).
-  - If it contains non-symlink or project-authored content, treat as project-owned and STOP to ask the human what to do.
-  - Remove the directory if empty after cleanup.
+- **Managed symlinks** (symlinks into `Submodules/skai/...`): safe to delete (installer-created artifacts, no approval needed). Remove the containing directory if empty after cleanup.
+- **Non-symlink or project-authored content**: treat as project-owned and STOP to ask the human what to do.
 
 ### Step 0 -- Inspect current state
 
-- Identify whether `ai-dev-process` is already present as a submodule (check `.gitmodules`).
+- Identify whether `skai` is already present as a submodule (check `.gitmodules`).
 - Identify any existing Claude Code instruction files:
   - `CLAUDE.md` at repo root
   - `claude.md` at repo root
@@ -177,7 +171,7 @@ Required behavior:
 
 ### Step 1 -- Ensure submodule exists and is updated
 
-- If missing: add submodule at project-chosen location (recommended: `Submodules/ai-dev-process`).
+- If missing: add submodule at project-chosen location (recommended: `Submodules/skai`).
 - Init/update submodule recursively.
 
 ### Step 2 -- Ensure Integration doc exists (project-owned source of truth)
@@ -185,7 +179,7 @@ Required behavior:
 Create (if missing) a single Integration doc in the host project, path chosen by the project.
 
 Default:
-- `docs/ai-dev-process/integration.md`
+- `docs/skai/integration.md`
 
 Populate (or migrate) key integration details:
 - How to build, lint, and run unit tests (`./gradlew test`, module-specific variants, CI parity)
@@ -196,7 +190,7 @@ Populate (or migrate) key integration details:
 Do not delete legacy docs; add pointers if you migrate content.
 
 If you cannot find the required integration information in-repo:
-- Create/seed the Integration doc from `Templates/docs/ai-dev-process/integration.md`.
+- Create/seed the Integration doc from `Templates/docs/skai/integration.md`.
 - Fill only what you can source with high confidence.
 - Add explicit 🟡 placeholders for missing items.
 - STOP and ask the human for the missing items before proceeding with Step 3.
@@ -222,7 +216,7 @@ Decide instruction file location:
 The instruction file should:
 - Include a managed-by header.
 - Point to the Integration doc path.
-- Point to the `ai-dev-process` submodule guides that are relevant for Android work.
+- Point to the `skai` submodule guides that are relevant for Android work.
 - Include the core safety/process rules (no unauthorized changes; remove 🟡 markers; stop conditions).
 
 ### Step 4 -- Update flow
