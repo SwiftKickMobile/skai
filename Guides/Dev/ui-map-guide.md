@@ -11,7 +11,7 @@ A UI Map is a YAML document that defines every scene in an app and the routing r
 
 ## YAML format
 
-A UI Map is a YAML document with a fixed schema. The schema is formally defined in [`ui-map.schema.json`](ui-map.schema.json); this section is the conceptual reference.
+A UI Map is a YAML document with a fixed schema. The schema is formally defined in [`ui-map.schema.json`](../../Bin/ui-map.schema.json); this section is the conceptual reference.
 
 ### Top-level structure
 
@@ -250,7 +250,7 @@ todos:
 
 ### Schema reference
 
-The formal contract is in [`ui-map.schema.json`](ui-map.schema.json) (JSON Schema, draft 2020-12). Validate a UI Map with:
+The formal contract is in [`ui-map.schema.json`](../../Bin/ui-map.schema.json) (JSON Schema, draft 2020-12). Validate a UI Map with:
 
 ```
 pipx run check-jsonschema --schemafile ui-map.schema.json <your-map>.yaml

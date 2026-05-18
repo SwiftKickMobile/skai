@@ -14,9 +14,22 @@ The output is a Mermaid `flowchart TD` block (bare, no ``` fences).
 
 Usage:
     uv run ui-map-render.py <input.yaml>                     # write Mermaid to stdout
-    uv run ui-map-render.py <input.yaml> -o <output.mmd>     # write to file
+    uv run ui-map-render.py <input.yaml> -o <output.mmd>     # write Mermaid to a file
     uv run ui-map-render.py <input.yaml> --markdown          # wrap in ```mermaid fences
+    uv run ui-map-render.py <input.yaml> --svg <output.svg>  # also render an SVG
+    uv run ui-map-render.py <input.yaml> --svg <o.svg> --open   # render SVG, then open it
     uv run ui-map-render.py <input.yaml> --no-validate       # skip JSON Schema validation
+
+The Mermaid-text outputs (-o / --markdown / stdout) and the --svg output are
+independent and may be combined in a single invocation.
+
+SVG rendering shells out to the Mermaid CLI (`mmdc`) — an optional external
+dependency, not a Python package. Install it with `brew install mermaid-cli`
+or `npm install -g @mermaid-js/mermaid-cli`. `mmdc` drives a headless Chrome
+via Puppeteer; when PUPPETEER_EXECUTABLE_PATH is unset, the script points it at
+an installed Chrome/Chromium if it can find one. `--open` opens the SVG in a
+browser (macOS forces one explicitly, since Preview cannot display SVG;
+override the choice with the UI_MAP_BROWSER env var).
 
 Tip on running:
     `uv run` (from https://docs.astral.sh/uv/) reads the PEP 723 metadata at the
@@ -158,7 +171,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import shutil
+import subprocess
 import sys
+import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -682,6 +699,80 @@ def render(model: Model) -> str:
 
 
 # ---------------------------------------------------------------------------
+# SVG rendering
+# ---------------------------------------------------------------------------
+
+# Chrome/Chromium locations probed when PUPPETEER_EXECUTABLE_PATH is unset, so
+# mmdc's Puppeteer can reuse an installed browser instead of downloading its
+# own (~150MB) chrome-headless-shell.
+_CHROME_CANDIDATES: tuple[str, ...] = (
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Chromium.app/Contents/MacOS/Chromium",
+    "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
+    "/usr/bin/google-chrome",
+    "/usr/bin/chromium",
+    "/usr/bin/chromium-browser",
+)
+
+
+def _ensure_puppeteer_browser() -> None:
+    """Point Puppeteer at an installed Chrome when PUPPETEER_EXECUTABLE_PATH is
+    unset and a known browser is present. A no-op otherwise."""
+    if os.environ.get("PUPPETEER_EXECUTABLE_PATH"):
+        return
+    for candidate in _CHROME_CANDIDATES:
+        if os.access(candidate, os.X_OK):
+            os.environ["PUPPETEER_EXECUTABLE_PATH"] = candidate
+            return
+
+
+def render_svg(mermaid: str, svg_path: Path) -> None:
+    """Render Mermaid text to an SVG via the Mermaid CLI (`mmdc`).
+
+    Raises RuntimeError if `mmdc` is not installed or the render fails.
+    """
+    if shutil.which("mmdc") is None:
+        raise RuntimeError(
+            "mmdc (Mermaid CLI) not found on PATH. Install it with "
+            "`brew install mermaid-cli` or "
+            "`npm install -g @mermaid-js/mermaid-cli`."
+        )
+    _ensure_puppeteer_browser()
+    tmp = tempfile.NamedTemporaryFile(
+        mode="w", suffix=".mmd", delete=False, encoding="utf-8"
+    )
+    try:
+        tmp.write(mermaid)
+        tmp.close()
+        subprocess.run(
+            ["mmdc", "-i", tmp.name, "-o", str(svg_path), "-b", "white", "-q"],
+            check=True,
+        )
+    except subprocess.CalledProcessError as exc:
+        raise RuntimeError(f"mmdc exited with status {exc.returncode}") from exc
+    finally:
+        Path(tmp.name).unlink(missing_ok=True)
+
+
+def open_in_browser(path: Path) -> None:
+    """Open a file in a browser.
+
+    macOS forces a browser explicitly: Preview cannot display SVG, and Launch
+    Services may map .svg to a non-browser app. Defaults to Safari; override
+    with the UI_MAP_BROWSER env var. Other platforms use the OS default opener.
+    """
+    if sys.platform == "darwin":
+        browser = os.environ.get("UI_MAP_BROWSER", "Safari")
+        subprocess.run(["open", "-a", browser, str(path)], check=False)
+    elif sys.platform.startswith("linux"):
+        subprocess.run(["xdg-open", str(path)], check=False)
+    elif sys.platform == "win32":
+        os.startfile(str(path))  # type: ignore[attr-defined]
+    else:
+        print(f"Cannot open a browser on platform '{sys.platform}'.", file=sys.stderr)
+
+
+# ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
@@ -695,7 +786,22 @@ def main(argv: list[str] | None = None) -> int:
         "-o",
         "--output",
         type=Path,
-        help="Output file (default: stdout).",
+        help="Write the Mermaid text to this file (default: stdout).",
+    )
+    parser.add_argument(
+        "--markdown",
+        action="store_true",
+        help="Wrap the Mermaid text in ```mermaid fences.",
+    )
+    parser.add_argument(
+        "--svg",
+        type=Path,
+        help="Also render an SVG to this path (requires the mmdc CLI).",
+    )
+    parser.add_argument(
+        "--open",
+        action="store_true",
+        help="Open the rendered SVG in a browser (requires --svg).",
     )
     parser.add_argument(
         "--schema",
@@ -708,12 +814,10 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Skip JSON Schema validation.",
     )
-    parser.add_argument(
-        "--markdown",
-        action="store_true",
-        help="Wrap the output in ```mermaid fences.",
-    )
     args = parser.parse_args(argv)
+
+    if args.open and not args.svg:
+        parser.error("--open requires --svg")
 
     data = load_yaml(args.input)
 
@@ -732,13 +836,29 @@ def main(argv: list[str] | None = None) -> int:
         print(f"UI Map error: {exc}", file=sys.stderr)
         return 3
 
-    if args.markdown:
-        mermaid = "```mermaid\n" + mermaid + "\n```\n"
+    text_output = f"```mermaid\n{mermaid}\n```\n" if args.markdown else mermaid
 
+    generated: list[Path] = []
     if args.output:
-        args.output.write_text(mermaid + "\n")
-    else:
-        print(mermaid)
+        args.output.write_text(text_output + "\n")
+        generated.append(args.output)
+
+    if args.svg:
+        try:
+            render_svg(mermaid, args.svg)
+        except RuntimeError as exc:
+            print(f"SVG render failed: {exc}", file=sys.stderr)
+            return 4
+        generated.append(args.svg)
+
+    if not args.output and not args.svg:
+        print(text_output)
+
+    if generated:
+        print(f"Generated: {', '.join(p.name for p in generated)}", file=sys.stderr)
+
+    if args.open:
+        open_in_browser(args.svg)
 
     return 0
 
