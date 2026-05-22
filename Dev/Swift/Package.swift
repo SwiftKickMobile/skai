@@ -4,8 +4,8 @@ import PackageDescription
 let package = Package(
     name: "SKAI",
     platforms: [
-        .iOS(.v17),
-        .macOS(.v14),
+        .iOS(.v18),
+        .macOS(.v15),
     ],
     products: [
         .library(name: "SKAISwiftUI", targets: ["SKAISwiftUI"]),

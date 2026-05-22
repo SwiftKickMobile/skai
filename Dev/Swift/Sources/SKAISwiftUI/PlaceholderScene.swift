@@ -71,15 +71,12 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     @Environment(\.placeholderCrumbs) private var crumbs
     @Environment(\.placeholderShowsDismiss) private var showsDismiss
 
+    @State private var breadcrumbScroll = ScrollPosition(edge: .trailing)
+
     // MARK: - Lifecycle
 
     public var body: some View {
         layout
-            .overlay(alignment: .topTrailing) {
-                if showsDismiss {
-                    dismissButton.padding(Self.contentPadding)
-                }
-            }
             .background {
                 if !isFullBleed {
                     RoundedRectangle(cornerRadius: Self.cornerRadius)
@@ -127,13 +124,20 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     }
 
     private var breadcrumb: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 6) {
-                ForEach(crumbs) { crumb in
-                    titleMenu(title: crumb.title, routes: crumb.routes)
-                    Text("›").font(.headline).foregroundStyle(.secondary)
+        HStack(spacing: 8) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(crumbs) { crumb in
+                        titleMenu(title: crumb.title, routes: crumb.routes)
+                        Text("›").font(.headline).foregroundStyle(.secondary)
+                    }
+                    titleMenu(title: title, routes: routes)
                 }
-                titleMenu(title: title, routes: routes)
+            }
+            .scrollPosition($breadcrumbScroll)
+
+            if showsDismiss {
+                dismissButton
             }
         }
     }
