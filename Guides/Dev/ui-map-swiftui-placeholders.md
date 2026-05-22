@@ -36,7 +36,7 @@ You declare only `title` / `routes` / `tabs` / `embedded` and wire the destinati
 - **Dismiss ✕** — inline beside the breadcrumb, shown only when `placeholderShowsDismiss` (i.e. presented modally).
 - **Nav-bar title** — inline `navigationTitle`, on full-bleed scenes only (embedded content doesn't set one).
 - **Layout** — full-bleed (no border) for everything except **embedded composite content**, which gets a light-gray fill (no border).
-- **Tabs** — a real full-bleed `TabView` with a default tab symbol; the breadcrumb is delegated to (accumulated into) each tab.
+- **Tabs** — a real full-bleed `TabView`; the breadcrumb is delegated to (accumulated into) each tab. Each tab takes a `systemImage` (see tab section); the package falls back to a default if it doesn't resolve.
 
 ## Destination markers (nav + modal only)
 
@@ -75,7 +75,7 @@ struct AppView: View {
 
 ### tab
 
-`tabs:` on `PlaceholderScene`; each tab's content is wrapped in a `NavigationStack`. Modal routes (if any) ride alongside as `.sheet` / `.fullScreenCover` (see modal).
+`tabs:` on `PlaceholderScene`; each tab's content is wrapped in a `NavigationStack`. Give each tab a fitting `systemImage` — a real SF Symbol, preferably a base name with a `.fill` variant so iOS solidifies it when selected (e.g. `note.text`, `folder`, `trash`). If the name doesn't resolve, the package falls back to a default, but pick a valid one. Modal routes (if any) ride alongside as `.sheet` / `.fullScreenCover` (see modal).
 
 ```swift
 PlaceholderScene(
@@ -85,9 +85,9 @@ PlaceholderScene(
         PlaceholderRoute(label: "Search", kind: .fullScreen) { viewModel.coverRoute = .search },
     ],
     tabs: [
-        PlaceholderTab(label: "Notes") { NavigationStack { NotesView() } },
-        PlaceholderTab(label: "Folders") { NavigationStack { FoldersView() } },
-        PlaceholderTab(label: "Trash") { NavigationStack { TrashView() } },
+        PlaceholderTab(label: "Notes", systemImage: "note.text") { NavigationStack { NotesView() } },
+        PlaceholderTab(label: "Folders", systemImage: "folder") { NavigationStack { FoldersView() } },
+        PlaceholderTab(label: "Trash", systemImage: "trash") { NavigationStack { TrashView() } },
     ]
 )
 .sheet(...) { ... }            // see modal
@@ -166,10 +166,15 @@ PlaceholderScene(
 
 ### leaf
 
-No routes, no embedded, no tabs.
+No routes, no embedded, no tabs — but still gets a view model, like every scene (empty until it needs state).
 
 ```swift
+@Observable
+class ShareSheetViewModel {}
+
 struct ShareSheetView: View {
+    @State private var viewModel = ShareSheetViewModel()
+
     var body: some View { PlaceholderScene(title: "Share Sheet") }
 }
 ```

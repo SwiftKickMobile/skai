@@ -154,7 +154,7 @@ Once the package is in place, declare completion directly — no advancing gate.
 Each entry is a `- [ ]` list item with a bold title, then Description / Justification / Touches as sub-bullets. The checkbox is for the implementation skill to track progress — `- [x]` once executed.
 
 ```
-- [ ] N. <Type>: <identity>
+- [ ] T<n> <Type>: <identity>
   - **Description** what changes. Single operation: 1–2 lines.
     Multiple operations of the same kind under one identity: a sub-list,
     one bullet per operation. Avoid prose that buries per-operation detail.
@@ -162,7 +162,7 @@ Each entry is a `- [ ]` list item with a bold title, then Description / Justific
   - **Touches** scenes / routes / files affected
 ```
 
-The title is plain text with a leading number, type word, and identity (e.g., `1. Add scene: required_update`). The leading type word is **capitalized** (`Add`, `Move`, `Modify`, `Conformance`). Sub-bullet field labels are **bold**; no separator (em-dash, colon, etc.) after the label — the bold weight is the separator.
+The title is plain text with a stable task ID, the type word, and identity (e.g., `T1 Add scene: required_update`). Task IDs are `T1`, `T2`, ... — assigned sequentially in document order, and never renumbered or reused (removing a task retires its ID), so cross-references stay stable across plan revisions. The ID identifies, it does not order — entries execute top-down in document order (see Ordering), not by ID. Task IDs are their own namespace, kept distinct from the Phase-1 finding letters (`A`/`B`/`C`); the letter prefix also keeps the checkbox line free of a leading digit, which some Markdown renderers misparse as an ordered-list item (forcing a line break after the checkbox). The leading type word is **capitalized** (`Add`, `Move`, `Modify`, `Conformance`). Sub-bullet field labels are **bold**; no separator (em-dash, colon, etc.) after the label — the bold weight is the separator.
 
 - **Type** — `<operation> <element>` for map changes, or `conformance / <dimension>` for code-vs-map/guide changes.
   - operations: `add` | `remove` | `move` | `modify`

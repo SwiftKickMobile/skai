@@ -1,4 +1,9 @@
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 /// The placeholder body for a UI Map scene. A scaffolded scene view's `body`
 /// invokes this.
@@ -26,11 +31,13 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     ///     itself a `PlaceholderScene` and carries its own border.
     public init(
         title: String,
+        domainColor: Color = .accentColor,
         routes: [PlaceholderRoute] = [],
         tabs: [PlaceholderTab] = [],
         @ViewBuilder embedded: () -> EmbeddedContent
     ) {
         self.title = title
+        self.domainColor = domainColor
         self.routes = routes
         self.tabs = tabs
         self.embedded = embedded()
@@ -40,10 +47,12 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     /// Leaf scene (no embedded content) or a tabs-only container.
     public init(
         title: String,
+        domainColor: Color = .accentColor,
         routes: [PlaceholderRoute] = [],
         tabs: [PlaceholderTab] = []
     ) where EmbeddedContent == EmptyView {
         self.title = title
+        self.domainColor = domainColor
         self.routes = routes
         self.tabs = tabs
         self.embedded = EmptyView()
@@ -55,13 +64,11 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     private static var insetPadding: CGFloat { 6 }
     private static var contentPadding: CGFloat { 12 }
     private static var cornerRadius: CGFloat { 10 }
-    /// Light-gray fill for composite scenes — mirrors the UI Map render's
-    /// composite wrapper (`#f0f0f0`, no border).
-    private static var compositeFill: Color { Color(white: 0xF0 / 255.0) }
 
     // MARK: - Variables
 
     private let title: String
+    private let domainColor: Color
     private let routes: [PlaceholderRoute]
     private let tabs: [PlaceholderTab]
     private let embedded: EmbeddedContent
@@ -80,11 +87,12 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
             .background {
                 if !isFullBleed {
                     RoundedRectangle(cornerRadius: Self.cornerRadius)
-                        .fill(Self.compositeFill)
+                        .fill(Colors.composite)
                 }
             }
             .padding(isFullBleed ? 0 : Self.insetPadding)
             .modifier(InlineNavTitle(title: title, enabled: isFullBleed))
+            .tint(domainColor)
     }
 
     // MARK: - Layout
@@ -98,7 +106,7 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     /// This scene's inherited crumbs plus itself — handed down to tab content so
     /// the breadcrumb accumulates through the tab boundary.
     private var effectiveCrumbs: [PlaceholderCrumb] {
-        crumbs + [PlaceholderCrumb(title: title, routes: routes)]
+        crumbs + [PlaceholderCrumb(title: title, color: domainColor, routes: routes)]
     }
 
     @ViewBuilder
@@ -128,10 +136,10 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 6) {
                     ForEach(crumbs) { crumb in
-                        titleMenu(title: crumb.title, routes: crumb.routes)
+                        titleMenu(title: crumb.title, routes: crumb.routes, color: crumb.color)
                         Text("›").font(.headline).foregroundStyle(.secondary)
                     }
-                    titleMenu(title: title, routes: routes)
+                    titleMenu(title: title, routes: routes, color: domainColor)
                 }
             }
             .scrollPosition($breadcrumbScroll)
@@ -143,10 +151,16 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     }
 
     @ViewBuilder
-    private func titleMenu(title: String, routes: [PlaceholderRoute]) -> some View {
+    private func titleMenu(title: String, routes: [PlaceholderRoute], color: Color) -> some View {
         let visible = routes.filter { !$0.isCurrent }
+        let pill = Text(title)
+            .font(.subheadline)
+            .foregroundStyle(.black)
+            .padding(.vertical, 3)
+            .padding(.horizontal, 8)
+            .background(RoundedRectangle(cornerRadius: 8).fill(color))
         if visible.isEmpty {
-            Text(title).font(.headline).foregroundStyle(.secondary)
+            pill.opacity(0.5)
         } else {
             Menu {
                 ForEach(PlaceholderRouteKind.allCases, id: \.self) { kind in
@@ -160,7 +174,7 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
                     }
                 }
             } label: {
-                Text(title).font(.headline)
+                pill
             }
         }
     }
@@ -171,19 +185,33 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
                 tab.content
                     .environment(\.placeholderCrumbs, effectiveCrumbs)
                     .environment(\.placeholderShowsDismiss, false)
-                    .tabItem { Label(tab.label, systemImage: "square.dashed") }
+                    .tabItem { Label(tab.label, systemImage: resolvedSymbol(tab.systemImage)) }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    /// Returns `name` if it's a real SF Symbol, else the default — guards against
+    /// a scaffold picking a symbol that doesn't exist (which would render blank).
+    private func resolvedSymbol(_ name: String) -> String {
+        #if canImport(UIKit)
+        return UIImage(systemName: name) != nil ? name : "square"
+        #elseif canImport(AppKit)
+        return NSImage(systemSymbolName: name, accessibilityDescription: nil) != nil ? name : "square"
+        #else
+        return name
+        #endif
     }
 
     private var dismissButton: some View {
         Button {
             dismiss()
         } label: {
-            Image(systemName: "xmark.circle.fill")
-                .imageScale(.large)
-                .foregroundStyle(.secondary)
+            Image(systemName: "xmark")
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.black)
+                .padding(7)
+                .background(Circle().fill(domainColor))
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Dismiss")

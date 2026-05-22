@@ -12,10 +12,12 @@ public struct PlaceholderChildHost<Content: View>: View {
 
     public init(
         title: String,
+        domainColor: Color,
         routes: [PlaceholderRoute] = [],
         @ViewBuilder content: () -> Content
     ) {
         self.title = title
+        self.domainColor = domainColor
         self.routes = routes
         self.content = content()
     }
@@ -25,6 +27,7 @@ public struct PlaceholderChildHost<Content: View>: View {
     // MARK: - Variables
 
     private let title: String
+    private let domainColor: Color
     private let routes: [PlaceholderRoute]
     private let content: Content
 
@@ -35,6 +38,6 @@ public struct PlaceholderChildHost<Content: View>: View {
     public var body: some View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .environment(\.placeholderCrumbs, crumbs + [PlaceholderCrumb(title: title, routes: routes)])
+            .environment(\.placeholderCrumbs, crumbs + [PlaceholderCrumb(title: title, color: domainColor, routes: routes)])
     }
 }

@@ -13,10 +13,12 @@ struct PlaceholderCrumb: Identifiable {
     // Menu, swallowing taps. Breadcrumb titles are distinct within a path.
     var id: String { title }
     let title: String
+    let color: Color
     let routes: [PlaceholderRoute]
 
-    init(title: String, routes: [PlaceholderRoute] = []) {
+    init(title: String, color: Color, routes: [PlaceholderRoute] = []) {
         self.title = title
+        self.color = color
         self.routes = routes
     }
 }
@@ -44,17 +46,18 @@ public extension View {
     /// scene doesn't inherit the nav owner's crumb. Apply this on the
     /// destination — passing the owner's title — so the pushed scene's
     /// breadcrumb includes it.
-    func placeholderCrumb(_ title: String, routes: [PlaceholderRoute] = []) -> some View {
-        modifier(PlaceholderCrumbAppender(title: title, routes: routes))
+    func placeholderCrumb(_ title: String, color: Color, routes: [PlaceholderRoute] = []) -> some View {
+        modifier(PlaceholderCrumbAppender(title: title, color: color, routes: routes))
     }
 }
 
 private struct PlaceholderCrumbAppender: ViewModifier {
     @Environment(\.placeholderCrumbs) private var crumbs
     let title: String
+    let color: Color
     let routes: [PlaceholderRoute]
 
     func body(content: Content) -> some View {
-        content.environment(\.placeholderCrumbs, crumbs + [PlaceholderCrumb(title: title, routes: routes)])
+        content.environment(\.placeholderCrumbs, crumbs + [PlaceholderCrumb(title: title, color: color, routes: routes)])
     }
 }

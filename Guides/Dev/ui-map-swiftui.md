@@ -15,7 +15,7 @@ Foo/
   Views/                 // optional — Foo's own subviews
 ```
 
-All of the scene's route enums live at the top of `FooViewModel.swift`, above the view-model class. A non-routing scene with no state to manage may omit `FooViewModel.swift` entirely — the view stands alone.
+All of the scene's route enums live at the top of `FooViewModel.swift`, above the view-model class. Every scene gets a `FooViewModel` — even a leaf with no routes or state — so each scene's file layout is identical and there is always a consistent home for state the moment any is needed.
 
 A scene's folder may contain a `Views/` subfolder for the scene's own subviews — small presentational views split out to keep `FooView.swift` uncluttered. `Views/` holds subviews only: never a scene (every scene gets its own folder), and never another scene's subviews.
 
@@ -166,6 +166,8 @@ A composite parent has no route enum for its composite children — they're embe
 
 ```swift
 struct DetailView: View {
+    @State private var viewModel = DetailViewModel()
+
     var body: some View {
         ScrollView {
             HeaderView(...)
