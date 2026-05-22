@@ -112,7 +112,7 @@ The implementation skill produces **skeleton + navigation only**, not feature co
 
 The exact placeholder shape is platform-specific and lives in the platform reference's **Placeholder scenes** section — the authority for how a scaffolded scene is built:
 
-- iOS/SwiftUI: see [`ui-map-swiftui.md`](ui-map-swiftui.md) → "Placeholder scenes" (the `SKAISwiftUI.PlaceholderScene` view, route/tab/embedded handling, dismiss, and the new-scene no-inputs rule).
+- iOS/SwiftUI: see [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md) — the `SKAISwiftUI` API, the per-route-kind scaffold patterns, the NavigationStack-at-the-presentation-boundary rule, dismiss/breadcrumb behavior, and the new-scene no-inputs rule.
 - Android/Compose: see [`ui-map-compose.md`](ui-map-compose.md) → "Placeholder scenes" (pending; authored when the Compose path is built).
 
 **This boundary is a hard line.** If a Change entry appears to require feature content, the entry is malformed — STOP at a blocked gate. Feature work belongs to a separate work spec (see skai's `work-spec-creation` / `work-spec-implementation` flow), not the UI Map implementation skill.
