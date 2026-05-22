@@ -78,10 +78,11 @@ the demo doc and the guide describe the same conventions in prose.
        7. Seventh domain        → #37D8CB  (teal)
        8. Eighth domain         → #CC7BE9  (lavender)
        9. Ninth domain          → #F277D5  (magenta)
-   - Scenes inside `common:` have no native domain; the script assigns them
-     their visual-parent's domain (the parent in which they render
-     canonically). If a common scene has no visual parent, the script emits
-     a warning and uses a neutral gray fill.
+   - Scenes inside `common:` form their own pseudo-domain `common`, appended
+     last in declaration order and labeled "Common" in the legend; it takes
+     the next palette slot after the real domains. Common scenes still render
+     at their canonical position (their consumer's wrapper) — only the fill
+     color and the legend entry mark them as common.
    - The Domain Legend subgraph at the top of the diagram contains one node
      per domain, named `leg_<domain_id>`, classed with that domain's color.
 
@@ -185,6 +186,11 @@ import yaml
 
 ROUTE_KINDS: tuple[str, ...] = ("nav", "modal", "composite", "tab", "child")
 
+# Pseudo-domain id for scenes in the YAML's top-level `common:` group. Appended
+# last in domain order so it renders as the final "Common" legend entry and
+# takes the next palette slot after the real domains.
+COMMON_DOMAIN_ID = "common"
+
 # Fill colors assigned to domains in YAML declaration order.
 # A project with more domains than slots is a semantic error.
 DOMAIN_PALETTE: tuple[str, ...] = (
@@ -205,7 +211,6 @@ DOMAIN_PALETTE: tuple[str, ...] = (
 TODO_FILL_ALPHA = 0.3
 TODO_STROKE_WIDTH = "2px"
 POINTER_FILL = "#bdbdbd"
-COMMON_FALLBACK_FILL = "#e0e0e0"
 
 TEXT_DARK = "#231f20"
 
@@ -315,8 +320,11 @@ def build_model(data: dict[str, Any]) -> Model:
                 {domain_id: domain_data}, None, None, domain_id, scenes, edges, scene_domain
             )
 
-    for item in data.get("common", []) or []:
-        _walk_item(item, None, None, None, scenes, edges, scene_domain)
+    common_items = data.get("common", []) or []
+    for item in common_items:
+        _walk_item(item, None, None, COMMON_DOMAIN_ID, scenes, edges, scene_domain)
+    if common_items:
+        domain_order.append(COMMON_DOMAIN_ID)
 
     inbound: dict[str, list[tuple[str, str]]] = {sid: [] for sid in scenes}
     for parent_id, kind, target_id in edges:
@@ -346,22 +354,6 @@ def build_model(data: dict[str, Any]) -> Model:
                 f"Scene '{sid}' has {len(inbound[sid])} inbound refs ({listing}) "
                 f"but no primary_parent"
             )
-
-    # Resolve domain for common scenes by walking up the visual-parent chain.
-    for sid in list(scenes.keys()):
-        if scene_domain.get(sid) is not None:
-            continue
-        current = sid
-        visited: set[str] = {current}
-        while True:
-            parent_id, _ = visual_parent.get(current, (None, None))
-            if parent_id is None or parent_id in visited:
-                break
-            visited.add(parent_id)
-            if scene_domain.get(parent_id) is not None:
-                scene_domain[sid] = scene_domain[parent_id]
-                break
-            current = parent_id
 
     if len(domain_order) > len(DOMAIN_PALETTE):
         raise SemanticError(
@@ -505,7 +497,7 @@ def render(model: Model) -> str:
             out.append("")
 
     # Implements callouts
-    impl_by_domain: dict[str | None, list[str]] = {}
+    impl_by_domain: dict[str, list[str]] = {}
     impl_emitted = False
     for sid, body in model.scenes.items():
         impls = body.get("implements")
@@ -515,7 +507,7 @@ def render(model: Model) -> str:
         text = "Implements: " + ", ".join(humanize(v) for v in impls)
         out.append(f'    {impl_id}[/"{text}"/]')
         out.append(f"    {impl_id} -.- {sid}")
-        domain = model.scene_domain.get(sid)
+        domain = model.scene_domain[sid]
         impl_by_domain.setdefault(domain, []).append(impl_id)
         impl_emitted = True
     if impl_emitted:
@@ -595,35 +587,13 @@ def render(model: Model) -> str:
         members = [f"leg_{domain_id}", *domain_scenes]
         out.append(f"    class {','.join(members)} {cls}")
 
-    # Common scenes whose domain couldn't be resolved get a neutral fill.
-    unassigned = [
-        sid
-        for sid, d in model.scene_domain.items()
-        if d is None and sid not in todo_set
-    ]
-    if unassigned:
-        out.append(
-            f"    classDef commonFallback fill:{COMMON_FALLBACK_FILL},"
-            f"stroke:{COMMON_FALLBACK_FILL},color:{TEXT_DARK},filter:none"
-        )
-        out.append(f"    class {','.join(unassigned)} commonFallback")
-        print(
-            f"warning: {len(unassigned)} common scene(s) had no resolvable "
-            f"domain; using neutral fill: {', '.join(unassigned)}",
-            file=sys.stderr,
-        )
-
     # TODO override — per-domain: domain-color stroke, 0.3-alpha domain fill.
-    todo_by_domain: dict[str | None, list[str]] = {}
+    todo_by_domain: dict[str, list[str]] = {}
     for sid in todo_ids:
-        todo_by_domain.setdefault(model.scene_domain.get(sid), []).append(sid)
+        todo_by_domain.setdefault(model.scene_domain[sid], []).append(sid)
     for domain_id, sids in todo_by_domain.items():
-        if domain_id is None:
-            base_color = COMMON_FALLBACK_FILL
-            cls = "todo_fallback"
-        else:
-            base_color = DOMAIN_PALETTE[model.domain_order.index(domain_id)]
-            cls = f"{domain_id}_todo"
+        base_color = DOMAIN_PALETTE[model.domain_order.index(domain_id)]
+        cls = f"{domain_id}_todo"
         fill = _hex_with_alpha(base_color, TODO_FILL_ALPHA)
         out.append(
             f"    classDef {cls} fill:{fill},stroke:{base_color},"
@@ -660,13 +630,8 @@ def render(model: Model) -> str:
 
     # Implements callouts inherit their attached scene's domain class.
     for domain_id, impl_ids in impl_by_domain.items():
-        if domain_id is None:
-            # Implement on a scene with no resolved domain — use neutral
-            if impl_ids:
-                out.append(f"    class {','.join(impl_ids)} commonFallback")
-        else:
-            cls = _domain_class_name(domain_id)
-            out.append(f"    class {','.join(impl_ids)} {cls}")
+        cls = _domain_class_name(domain_id)
+        out.append(f"    class {','.join(impl_ids)} {cls}")
 
     # Notes
     if note_ids:

@@ -10,7 +10,7 @@ Examples use **LumenNotes**, skai's shared fictional theme. The schema and conve
 version: 1
 app: LumenNotes
 
-modal_styles: [sheet, full_screen, card, popover]
+modal_styles: [sheet, full_screen, popover]
 
 domains:
   app:                                    # collapsed (domain == root scene)
@@ -24,11 +24,11 @@ domains:
 
   library:                                # collapsed
     tab:
-      - notes_tab:
+      - notes:
           nav:
             - note                        # cross-domain ref
-      - folders_tab: {}
-      - trash_tab: {}
+      - folders: {}
+      - trash: {}
     modal:
       - profile                           # cross-domain ref
       - search                            # cross-domain ref (reused)
@@ -64,7 +64,7 @@ common:
       implements: [privacy_policy, terms_of_service]
 
 todos:
-  - scope: folders_tab
+  - scope: folders
     note: "Subfolder navigation planned for v2"
 ```
 
@@ -91,7 +91,8 @@ flowchart TD
         leg_library(["Library"])
         leg_note(["Note"])
         leg_other(["Other"])
-        leg_app ~~~ leg_library ~~~ leg_note ~~~ leg_other
+        leg_common(["Common"])
+        leg_app ~~~ leg_library ~~~ leg_note ~~~ leg_other ~~~ leg_common
     end
 
     %% Canonical scenes
@@ -99,9 +100,9 @@ flowchart TD
     login(["Login"])
     welcome(["Welcome"])
     library(["Library"])
-    notes_tab(["Notes Tab"])
-    folders_tab(["Folders Tab"])
-    trash_tab(["Trash Tab"])
+    notes(["Notes"])
+    folders(["Folders"])
+    trash(["Trash"])
     note(["Note"])
     tag_picker(["Tag Picker"])
     attachment_viewer(["Attachment Viewer"])
@@ -135,13 +136,13 @@ flowchart TD
     library -->|"<span style='background:white;border:1px solid black;padding:4px 8px'>Tab</span>"| library_tab
     subgraph library_tab[" "]
         direction LR
-        notes_tab
-        folders_tab
-        trash_tab
+        notes
+        folders
+        trash
     end
 
-    notes_tab -->|"<span style='background:white;border:1px solid black;padding:4px 8px'>Nav</span>"| notes_tab_nav
-    subgraph notes_tab_nav[" "]
+    notes -->|"<span style='background:white;border:1px solid black;padding:4px 8px'>Nav</span>"| notes_nav
+    subgraph notes_nav[" "]
         note
     end
 
@@ -180,28 +181,30 @@ flowchart TD
     classDef app_domain fill:#8AD1FA,stroke:#8AD1FA,color:#231f20,filter:none
     class leg_app,app,login app_domain
     classDef library_domain fill:#EFD74E,stroke:#EFD74E,color:#231f20,filter:none
-    class leg_library,library,notes_tab,folders_tab,trash_tab library_domain
+    class leg_library,library,notes,folders,trash library_domain
     classDef note_domain fill:#FE9CA8,stroke:#FE9CA8,color:#231f20,filter:none
     class leg_note,note,tag_picker,attachment_viewer,share_sheet note_domain
     classDef other_domain fill:#78DB85,stroke:#78DB85,color:#231f20,filter:none
-    class leg_other,profile,search,editor,web other_domain
+    class leg_other,profile,search,editor other_domain
+    classDef common_domain fill:#D39AE7,stroke:#D39AE7,color:#231f20,filter:none
+    class leg_common,web common_domain
     classDef app_todo fill:#8AD1FA4C,stroke:#8AD1FA,stroke-width:2px,color:#231f20,filter:none
     class welcome app_todo
     classDef pointer fill:#bdbdbd,stroke:#bdbdbd,color:#231f20,filter:none
     class search_at_note pointer
     classDef mutex fill:#ffffff,stroke:#999,stroke-dasharray:10 5,filter:none
-    class app_child,login_nav,library_modal,library_tab,notes_tab_nav,note_modal,profile_nav mutex
+    class app_child,login_nav,library_modal,library_tab,notes_nav,note_modal,profile_nav mutex
     classDef composite fill:#f0f0f0,stroke:#f0f0f0,stroke-width:0px,filter:none
     class note_composite composite
     classDef legendBox fill:#F5F5F5,stroke:#B5B5B5,color:#231f20,filter:none
     class domain_legend legendBox
-    class impl_web other_domain
+    class impl_web common_domain
     classDef note fill:#fff7d6,stroke:#d4c171,color:#231f20,filter:none
     class note_welcome,note_library note
     classDef modalStyle fill:#ffffff,stroke:#999,stroke-dasharray:10 5,color:#231f20,filter:none
     class mstyle_library,mstyle_note modalStyle
     classDef smallFont font-size:13px
-    class impl_web,note_welcome,note_library,mstyle_library,mstyle_note,leg_app,leg_library,leg_note,leg_other smallFont
+    class impl_web,note_welcome,note_library,mstyle_library,mstyle_note,leg_app,leg_library,leg_note,leg_other,leg_common smallFont
 ```
 
 ## Notes on what's where
@@ -210,8 +213,8 @@ flowchart TD
 - **Canonical placement via `primary_parent`.** `Search` is YAML-organized under `other:` but its `primary_parent: library` puts the canonical instance in the `library_modal` wrapper. The reference from `note.modal` renders as a gray pointer (`Search_at_note`).
 - **Gray fill marks non-canonical references.** Pointer nodes use the same shape as canonical scenes, distinguished by fill color only.
 - **Root scenes are not wrapped.** `App` is the root: no incoming route, no enclosing wrapper. Matches the FigJam convention.
-- **`common:` scenes render at their consumer.** `Web` is YAML-organized under `common:` (domain-agnostic), but the render places its canonical instance inside its only consumer's Nav wrapper (`profile_nav`), since it has a single inbound route. If Web were referenced from multiple consumers, a `primary_parent` would pick the visual home.
-- **Scene fill encodes domain.** Each domain maps to a palette color (in YAML declaration order). The Domain Legend block at the top maps domain to color.
+- **`common:` scenes render at their consumer, colored as the `Common` domain.** `Web` is YAML-organized under `common:` (domain-agnostic): the render places its canonical instance inside its only consumer's Nav wrapper (`profile_nav`), since it has a single inbound route. Its fill is the dedicated **Common** color with its own legend entry (appended last) — common scenes no longer borrow a real domain's color. If Web were referenced from multiple consumers, a `primary_parent` would pick the visual home.
+- **Scene fill encodes domain.** Each domain maps to a palette color (in YAML declaration order); `common:` is appended last as the **Common** pseudo-domain with the next palette slot. The Domain Legend block at the top maps domain to color.
 - **Mutex vs. composite wrappers are visually distinct.** Mutex wrappers use a dashed border with white fill; composite wrappers use light-gray fill with no border.
 - **`Implements:` callouts.** Right-leaning parallelograms attached to the abstract scene via a dashed connector, with single-line comma-separated implementations. Fill matches the attached scene's domain color.
 - **Modal-style callouts.** The project declares a `modal_styles` vocabulary; each scene reached by a modal route tags itself with a `modal_style`. For every modal wrapper, the render emits a callout — a parallelogram styled like the mutex wrapper (white fill, dashed gray border) — listing each destination and its bolded style on a single comma-separated line. The callout annotates the wrapper, not any one scene.
