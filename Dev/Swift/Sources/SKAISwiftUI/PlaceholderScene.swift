@@ -55,6 +55,9 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     private static var insetPadding: CGFloat { 6 }
     private static var contentPadding: CGFloat { 12 }
     private static var cornerRadius: CGFloat { 10 }
+    /// Light-gray fill for composite scenes — mirrors the UI Map render's
+    /// composite wrapper (`#f0f0f0`, no border).
+    private static var compositeFill: Color { Color(white: 0xF0 / 255.0) }
 
     // MARK: - Variables
 
@@ -65,64 +68,95 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     private let hasEmbedded: Bool
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.placeholderCrumbs) private var crumbs
+    @Environment(\.placeholderShowsDismiss) private var showsDismiss
 
     // MARK: - Lifecycle
 
     public var body: some View {
         layout
             .overlay(alignment: .topTrailing) {
-                dismissButton.padding(Self.contentPadding)
+                if showsDismiss {
+                    dismissButton.padding(Self.contentPadding)
+                }
             }
-            .overlay {
-                RoundedRectangle(cornerRadius: Self.cornerRadius)
-                    .strokeBorder(Color.secondary, lineWidth: 1)
+            .background {
+                if !isFullBleed {
+                    RoundedRectangle(cornerRadius: Self.cornerRadius)
+                        .fill(Self.compositeFill)
+                }
             }
-            .padding(Self.insetPadding)
+            .padding(isFullBleed ? 0 : Self.insetPadding)
+            .modifier(InlineNavTitle(title: title, enabled: isFullBleed))
     }
 
     // MARK: - Layout
 
-    private var isLeaf: Bool { !hasEmbedded && tabs.isEmpty }
+    /// A full-bleed scene fills edge-to-edge with no box border or inset gap.
+    /// True when it carries breadcrumbs (a child host, tab, or nav push) or is
+    /// presented modally. Only embedded/composite content (crumbs reset, not
+    /// modal) keeps the bordered box.
+    private var isFullBleed: Bool { !crumbs.isEmpty || showsDismiss }
+
+    /// This scene's inherited crumbs plus itself — handed down to tab content so
+    /// the breadcrumb accumulates through the tab boundary.
+    private var effectiveCrumbs: [PlaceholderCrumb] {
+        crumbs + [PlaceholderCrumb(title: title, routes: routes)]
+    }
 
     @ViewBuilder
     private var layout: some View {
-        if isLeaf {
-            VStack(spacing: 16) {
-                titleLabel
-                routesMenu
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(Self.contentPadding)
+        if !tabs.isEmpty {
+            // Tabbed: a full-bleed TabView owns the screen edges (tab bar at the
+            // bottom). The breadcrumb is delegated to the tab content, which
+            // accumulates this scene into its crumbs and renders it under its
+            // own nav bar.
+            tabView
         } else {
             VStack(alignment: .leading, spacing: 16) {
-                header
-                if hasEmbedded { embedded }
-                if !tabs.isEmpty { tabView }
+                breadcrumb
+                if hasEmbedded {
+                    embedded
+                        .environment(\.placeholderCrumbs, [])
+                        .environment(\.placeholderShowsDismiss, false)
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .padding(Self.contentPadding)
         }
     }
 
-    private var header: some View {
-        HStack(spacing: 12) {
-            titleLabel
-            routesMenu
-            Spacer(minLength: 0)
+    private var breadcrumb: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(crumbs) { crumb in
+                    titleMenu(title: crumb.title, routes: crumb.routes)
+                    Text("›").font(.headline).foregroundStyle(.secondary)
+                }
+                titleMenu(title: title, routes: routes)
+            }
         }
     }
 
-    private var titleLabel: some View {
-        Text(title).font(.headline)
-    }
-
     @ViewBuilder
-    private var routesMenu: some View {
-        if !routes.isEmpty {
-            Menu("Routes") {
-                ForEach(routes) { route in
-                    Button(route.label) { route.action() }
+    private func titleMenu(title: String, routes: [PlaceholderRoute]) -> some View {
+        let visible = routes.filter { !$0.isCurrent }
+        if visible.isEmpty {
+            Text(title).font(.headline).foregroundStyle(.secondary)
+        } else {
+            Menu {
+                ForEach(PlaceholderRouteKind.allCases, id: \.self) { kind in
+                    let kindRoutes = visible.filter { $0.kind == kind }
+                    if !kindRoutes.isEmpty {
+                        Section(kind.title) {
+                            ForEach(kindRoutes) { route in
+                                Button(route.label) { route.action() }
+                            }
+                        }
+                    }
                 }
+            } label: {
+                Text(title).font(.headline)
             }
         }
     }
@@ -131,10 +165,12 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
         TabView {
             ForEach(tabs) { tab in
                 tab.content
+                    .environment(\.placeholderCrumbs, effectiveCrumbs)
+                    .environment(\.placeholderShowsDismiss, false)
                     .tabItem { Label(tab.label, systemImage: "square.dashed") }
             }
         }
-        .frame(maxWidth: .infinity, minHeight: 240, maxHeight: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var dismissButton: some View {
@@ -150,6 +186,31 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     }
 }
 
+// MARK: - Nav title
+
+/// Sets the scene's nav-bar title (inline on iOS). A no-op outside a
+/// `NavigationStack`. `navigationBarTitleDisplayMode` is iOS-only, so it's
+/// guarded for the package's macOS build.
+private struct InlineNavTitle: ViewModifier {
+    let title: String
+    let enabled: Bool
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if enabled {
+            #if os(iOS)
+            content
+                .navigationTitle(title)
+                .navigationBarTitleDisplayMode(.inline)
+            #else
+            content.navigationTitle(title)
+            #endif
+        } else {
+            content
+        }
+    }
+}
+
 // MARK: - Previews
 
 #Preview("Leaf") {
@@ -160,8 +221,8 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     PlaceholderScene(
         title: "Profile",
         routes: [
-            PlaceholderRoute(label: "Debug") {},
-            PlaceholderRoute(label: "Web") {},
+            PlaceholderRoute(label: "Debug", kind: .nav) {},
+            PlaceholderRoute(label: "Web", kind: .nav) {},
         ]
     )
 }
@@ -169,7 +230,7 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
 #Preview("Container") {
     PlaceholderScene(
         title: "Appointment Details",
-        routes: [PlaceholderRoute(label: "Cancel Appointment") {}]
+        routes: [PlaceholderRoute(label: "Cancel Appointment", kind: .sheet) {}]
     ) {
         PlaceholderScene(title: "Thumbnail Slider")
         PlaceholderScene(title: "Record Warning")
@@ -189,7 +250,7 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
 #Preview("Tabbed + embedded") {
     PlaceholderScene(
         title: "Pipeline",
-        routes: [PlaceholderRoute(label: "Menu") {}],
+        routes: [PlaceholderRoute(label: "Menu", kind: .nav) {}],
         tabs: [
             PlaceholderTab(label: "Appointments") { PlaceholderScene(title: "Appointments Stage") },
             PlaceholderTab(label: "Closed") { PlaceholderScene(title: "Closed Pipeline Stage") },
