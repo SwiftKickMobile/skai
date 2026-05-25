@@ -71,6 +71,13 @@ Applies to all workflow documents: files under `Guides/`, internal runbooks (`ma
 - **Terminology**: use "advance intent" (never "Next Command").
 - **Lean core, deep links**: keep core guides concise; if a tactic/procedure is detailed and rarely used, place it in a dedicated guide/appendix and link to it from the core guide.
 
+### Examples vs. derivations
+
+Agents copy the worked **example**, not the surrounding prose — an example outweighs any rule, and a missing or mismatched one misleads more than absent text. Two consequences for authoring:
+
+- **Each distinct *path* a guide teaches needs its own faithful example.** With only one (e.g. only the audit case, or only the root case), it becomes the gravitational center and agents misapply it to the other paths.
+- **Never enumerate *compositions*.** Route kinds, options, and states combine combinatorially — an example per combination bloats the guide and still leaves gaps. State the governing rule as a **decision procedure the agent applies** ("before X, ask Y; do Z only if…"), frame per-case recipes as *derivations* of it, and let the agent derive the combinations you didn't draw. Illustrate the bounded base set; derive the rest.
+
 ### Standard structure for guides with gates
 
 If the guide has any STOP points / gates, inline the process-flow operational template in both sections. Do not reference `Guides/Core/process-flow.md` as a runtime dependency -- agents skip indirect references.

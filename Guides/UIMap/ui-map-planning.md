@@ -74,11 +74,13 @@ On the signal: digest all available inputs, infer the situation — **new change
 
 The Discussion section is topic-organized. New-change drafting uses free-form prose with one section per concern; audits use a fixed structure (see Audit proposal example below). In new-change drafting, do NOT create workflow-shaped sections ("Questions", "Decisions") — each topic carries its own open items inline.
 
-Open items are `- [ ]` lines tagged with a Kind. The same Kinds are used in both new-change discussion and audit findings:
+Open items use one format, for both new-change discussion topics and audit findings:
 
-- `- [ ] Question — …` — needs the human's input; the agent has no basis to recommend. Rare — propose a default whenever there is one.
-- `- [ ] Proposal — …` — the agent recommends a course of action; the human accepts / rejects / modifies.
-- `- [ ] Tradeoff — …` — two or more options **plus the agent's recommended pick and why**; the human confirms or chooses differently. Never a neutral menu.
+`- [ ] <id> [Kind] <summary>` — a letter-led id, a bracketed Kind, and a plain-language summary. The id is `D1`, `D2`, … for new-change discussion topics and `F1`, `F2`, … for audit findings — letter-led so a leading digit isn't misparsed as an ordered-list item (which breaks the checkbox onto its own line), continuous within the section and never renumbered, so each decision has a stable handle the Change list can cite. The Kind is one of:
+
+- `[Question]` — needs the human's input; the agent has no basis to recommend. Rare — propose a default whenever there is one.
+- `[Proposal]` — the agent recommends a course of action; the human accepts / rejects / modifies.
+- `[Tradeoff]` — two or more options **plus the agent's recommended pick and why**; the human confirms or chooses differently. Never a neutral menu.
 
 The agent always takes a position: every item carries a recommendation, and a Tradeoff names which option it recommends. When a finding's resolution differs across the items it affects, expand it into a sub-list **bucketed by proposed resolution** — one bucket per resolution, the affected items under it — so the human can confirm or override per bucket (e.g., "approve the rename-the-map bucket, but keep X"). When all items share one resolution, state it once with a count; do not repeat it per item.
 
@@ -92,6 +94,31 @@ Place a marker on the specific content line that needs input — never on a head
   **Disposing a finding is a two-step call.** (1) *Can the deviation be resolved as a UI-Map change or as a code-conformance fix under the guide's conventions?* If neither — not expressible in the map, and not a convention the guide defines — it is outside the skill's scope; record it under `Out of scope` (it needs separate handling), not as a finding. (2) If yes, *is it low cost/complexity/risk?* Yes → **fix now** (a `fix map` or `fix code` Change-list entry); no → **defer**. Weigh cost/risk by locality (one file vs cross-cutting), behavior risk (structure-only vs touches runtime), new-code volume (templated vs real logic), and reversibility — the agent proposes the call, the human approves it. Mechanical relocations, renames, file-layout moves, and placeholder scaffolds are always **fix now**: moving folders to mirror `domains:` (`git mv`), renaming a scene id or type, inlining a route enum, adding a missing placeholder ViewModel. The thing that **defers** is a *refactor* — rewriting or re-architecting existing code, a design task even when behavior is unchanged; relocating and renaming are not refactors. A map scene with no code, found while auditing an existing app, is a **defer** (tracked by a todo) — placeholder scaffolding is for new work, not back-filling a shipped app.
 
   A deferred finding ensures the map's `todos:` mechanism records the pending work (an existing TODO, or a new one added this pass) and produces no Change-list entry; approved defers populate the Phase 2 Deferrals section with a pointer to the TODO. **Project-wide topics** that cross-cut many findings (e.g. a repo-wide pattern, a missing project-convention doc section), and any **`Question`** finding (a deviation you cannot dispose without the human's intent), may be raised as their own Discussion items before the disposition-grouped findings. Use sparingly — only when keeping the decision inline would noise up multiple per-scene findings.
+
+**New-change example** (LumenNotes — a Tradeoff with a recommended pick, and a Proposal):
+
+```
+## Discussion
+
+### Sharing a note
+
+A note needs a way to share its contents. Today it has no outgoing share route.
+
+- [ ] D1 [Tradeoff] How is share presented from a note?
+  - **Concern** Share can be a modal sheet over the note or a pushed screen.
+  - **Options**
+    - A — `modal` sheet over the note
+    - B — `nav` push onto the note's stack
+  - **Proposal** A (modal) — sharing is a transient side-task, not a destination in the note's flow.
+  - **Why** A sheet dismisses back to where you were; a push implies a place in the navigation.
+
+### Scene name
+
+- [ ] D2 [Proposal] Name for the share scene
+  - **Concern** The new scene needs a scene id.
+  - **Proposal** `share_sheet`.
+  - **Why** Matches the modal's role and reads clearly in the map.
+```
 
 **Audit example** (LumenNotes — a Proposal, a Tradeoff with a recommended pick, a bucketed rename, and a defer):
 
@@ -136,7 +163,7 @@ Place a marker on the specific content line that needs input — never on a head
 
 Each finding is its own `- [ ]` item under the appropriate `###` subsection. The title is `<id> [Kind] <plain-language summary>` — the id is `F1`, `F2`, … (letter-led so renderers don't misparse it as a list; continuous across subsections, no per-group reset), `[Kind]` is `Proposal` / `Tradeoff` / `Question`, and the title itself carries no bold. Subsections group by disposition: `Map fixes` (fix-map), `Code conformance` (fix-code), `Deferred` — in that order; omit any with no findings. A `Tradeoff` files under its recommended option's disposition; a finding whose buckets span directions (some fix-map, some fix-code) files under `Code conformance`, each direction in its own bucket. A `Question` has no disposition yet, so it isn't filed under a subsection — raise it above them as its own Discussion item (see Project-wide topics above). It's answered in place — check the box and append the `Decision` — and stays where it is; the document is not reorganized. Sub-bullet labels are **bold** with no separator after: `Concern` always, then either a `Proposal` (the recommended action — a `Tradeoff` adds `Options`) or, for a `Question`, a `Question` line (what you need decided and why you can't recommend yet); `Detail` when the concern needs elaboration; `Why` for the rationale. On approval, check the box and append a `- **Decision** <succinct resolution>.` line as the last sub-bullet. Approved defers cite a TODO in the Proposal and also populate the Phase 2 Deferrals section.
 
-**Keep findings tight:** within a subsection, leave no blank line between one finding and the next. A blank line makes the list "loose," which pushes the checkbox onto its own line in some renderers; a tight list keeps the checkbox inline with the title. The same applies to Change-list entries.
+**Keep Discussion items tight:** where two or more `- [ ]` items sit under the same heading, leave no blank line between them. A blank line makes the list "loose," which pushes the checkbox onto its own line in some renderers; a tight list keeps the checkbox inline with the title. This applies to new-change topics, audit findings, and Change-list entries alike.
 
 After drafting, and after each subsequent response, STOP at a gate: a **Blocked** gate if any `- [ ]` items remain, or the advancing **Planned** gate if none do — every item `- [x]`, or drafting produced no items at all (inputs fully specify the change, or the audit found no deviations).
 
@@ -201,13 +228,13 @@ Each entry is a `- [ ]` list item with a bold title, then Description / Justific
   - **Touches** scenes / routes / files affected
 ```
 
-The title is plain text with a stable task ID, the type word, and identity (e.g., `T1 Add scene: required_update`). Task IDs are `T1`, `T2`, … — assigned sequentially in document order, and never renumbered or reused (removing a task retires its ID), so cross-references stay stable across plan revisions. The ID identifies, it does not order — entries execute top-down in document order (see Ordering), not by ID. Task IDs are their own namespace, kept distinct from the Phase-1 finding ids (`F1`/`F2`); the letter prefix also keeps the checkbox line free of a leading digit, which some Markdown renderers misparse as an ordered-list item (forcing a line break after the checkbox). The leading type word is **capitalized** (`Add`, `Move`, `Modify`, `Conformance`). Sub-bullet field labels are **bold**; no separator (em-dash, colon, etc.) after the label — the bold weight is the separator.
+The title is plain text with a stable task ID, the type word, and identity (e.g., `T1 Add scene: required_update`). Task IDs are `T1`, `T2`, … — assigned sequentially in document order, and never renumbered or reused (removing a task retires its ID), so cross-references stay stable across plan revisions. The ID identifies, it does not order — entries execute top-down in document order (see Ordering), not by ID. Task IDs are their own namespace, kept distinct from the Phase-1 ids (`D1`/`D2` discussion topics, `F1`/`F2` audit findings); the letter prefix also keeps the checkbox line free of a leading digit, which some Markdown renderers misparse as an ordered-list item (forcing a line break after the checkbox). The leading type word is **capitalized** (`Add`, `Move`, `Modify`, `Conformance`). Sub-bullet field labels are **bold**; no separator (em-dash, colon, etc.) after the label — the bold weight is the separator.
 
 - **Type** — `<operation> <element>` for map changes, or `conformance / <dimension>` for code-vs-map/guide changes.
   - operations: `add` | `remove` | `move` | `modify`
   - map elements: `domain` | `scene` | `route` | `scene-attribute`
   - conformance dimensions: `folder-org` | `file-layout` | `naming` | `route-kind` | `platform-pattern`
-- **Source** (the leading token of Justification) — one of: `Upstream requirement` | `Human spec` | `Agent proposal` | `Guide convention` | `Project convention` | `Map` | `Migration mapping`. When the source is a spec or requirement, the Justification is just the citation; when it is `Agent proposal`, give a real rationale. `Project convention` means the project's `README.md` (or equivalent project-conventions doc) is the authority, often for project-specific overrides of the guide. The source is a review-triage signal — a reviewer scans for `Agent proposal`.
+- **Source** (the leading token of Justification) — one of: `Upstream requirement` | `Human spec` | `Agent proposal` | `Guide convention` | `Project convention` | `Map` | `Migration mapping`. When the source is a spec or requirement, the Justification is just the citation; when it is `Agent proposal`, give a real rationale. When the task implements a resolved Phase-1 decision, cite it by its id (`D#`/`F#`) rather than by section name, so the decision→task link is stable. `Project convention` means the project's `README.md` (or equivalent project-conventions doc) is the authority, often for project-specific overrides of the guide. The source is a review-triage signal — a reviewer scans for `Agent proposal`.
 
 **Ordering:** structural, top-down — domain-level changes first, then scenes, then routes — mirroring the map and the rendered diagram. That order also serves as the execution order. Group by domain for audits.
 

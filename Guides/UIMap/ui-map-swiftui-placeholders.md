@@ -16,11 +16,13 @@ Follow this guide for the standard patterns; defer to the project `README.md` fo
 
 ## The one rule: NavigationStack lives at the presentation boundary
 
-A scene **never wraps itself** in a `NavigationStack`. Exactly one stack is supplied by whatever presents the scene:
+A scene **never wraps itself** in a `NavigationStack`. Exactly one stack sits on any root-to-leaf path, supplied by whatever first presents a scene on that path.
 
-- **modal** — the `.sheet` / `.fullScreenCover` wraps its content in a `NavigationStack` (popover does **not**).
-- **tab** — each `PlaceholderTab`'s content is wrapped in a `NavigationStack`.
-- **child** — the child slot wraps a **non-tab** child in a `NavigationStack`; a **tabbed** child (its body is a `TabView`) is **not** wrapped (each tab carries its own).
+**The decision you run:** before rendering any slot or destination, ask *is a `NavigationStack` already on this path?* — add one only if not. That question resolves every graph. The per-kind cases below are it worked out for a **single** kind; read them as derivations of this rule, not independent commands. For a composition the cases don't draw (e.g. a `child` coordinator reached by a `nav` push), apply the rule rather than pattern-matching a case: the push already put a stack on the path, so the child slot adds none.
+
+- **modal** — `.sheet` / `.fullScreenCover` supplies the stack (popover does **not**).
+- **tab** — each `PlaceholderTab`'s content supplies its own stack.
+- **child** — the child slot supplies the stack for a **non-tab** child **only when none is already on the path**; a **tabbed** child (its body is a `TabView`) supplies its own per tab.
 - **nav push** — reuses the ambient stack; the destination adds none.
 
 This gives every scene a nav bar (for its title) without nested stacks, for any graph.
@@ -57,7 +59,7 @@ Child and tab content need **no** markers — `PlaceholderChildHost` and the tab
 
 ### child
 
-`PlaceholderChildHost` + a `switch` over the child route. Each child route is `kind: .child` and marks `isCurrent` so the active one drops out of the menu. In the switch, wrap a **non-tab** child in a `NavigationStack`; leave a **tabbed** child unwrapped.
+`PlaceholderChildHost` + a `switch` over the child route. Each child route is `kind: .child` and marks `isCurrent` so the active one drops out of the menu. In the switch, apply the one rule: wrap a **non-tab** child in a `NavigationStack` **only if no stack is already on the path** — i.e. this coordinator is itself the presentation boundary (the root, or reached by a modal/tab). A coordinator reached by a **nav push** already sits in the presenter's stack, so its non-tab children reuse it (no wrap). A **tabbed** child is never wrapped.
 
 ```swift
 struct AppView: View {
@@ -72,7 +74,7 @@ struct AppView: View {
         ) {
             switch viewModel.childRoute {
             case .library: LibraryView()                  // tabbed child → not wrapped
-            case .login: NavigationStack { LoginView() }  // non-tab child → wrapped
+            case .login: NavigationStack { LoginView() }  // non-tab child, App is root (no ambient stack) → wrap
             }
         }
     }
