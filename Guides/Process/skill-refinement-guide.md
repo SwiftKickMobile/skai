@@ -12,6 +12,8 @@ Use it when a cold review finds real problems in a skill's guide(s). Trivial cop
 
 The input is a **cold review**: a fresh, independent session that reads the skill's guide(s) and its design spec with no prior context and critically assesses fidelity, completeness, clarity, internal consistency, and conciseness. It produces findings — each with a severity and a suggested fix — and a verdict. The review is meant to be aggressive; it is not blunted to spare feelings.
 
+To launch one, fill in the slots in [`cold-review-prompt-template.md`](cold-review-prompt-template.md) and hand the filled prompt to a fresh session. That reviewer must **not** read this guide or the template (both are refiner-facing and would bias the review); give it only the filled prompt and the files it names.
+
 ## The design spec is the standard
 
 Every skill should have a **design spec** — a plan, requirements doc, or equivalent source-of-truth describing what the skill is supposed to do. That doc is the standard each finding is judged against. A guide that contradicts the spec is a defect; a finding that asks for something the spec deliberately decided against is weighed against the spec, not accepted automatically. If a skill has no design spec, refining it reliably is hard — close that gap first.
@@ -88,13 +90,14 @@ Discuss it, get a decision, update the skill's design spec, then repair the guid
 
 ## Repairing
 
-- Group accepted findings into small clusters of related fixes. Patch one cluster at a time.
+- Group accepted findings into small clusters of related fixes.
+- **Patch exactly one cluster, then STOP and run the self-check below in writing before touching the next cluster.** Do not batch several clusters into a single edit pass — patching every finding at once is the failure mode this prevents: it produces shallow fixes that break adjacent behavior. (Architecture findings are resolved and the spec updated *before* any cluster is patched — see above.)
 - Do not fold opportunistic cleanup into a repair — if it isn't needed to close a finding, leave it.
-- After each cluster, self-check: Did I contradict adjacent text in the same file or a sibling guide? Did I leave a stale sentence teaching the old behavior? Did I move a rule away from the point where the agent needs it? Did I weaken an enforced rule into a suggestion?
+- After each cluster, self-check (record the result before proceeding): Did I contradict adjacent text in the same file or a sibling guide? Did I leave a stale sentence teaching the old behavior? Did I move a rule away from the point where the agent needs it? Did I weaken an enforced rule into a suggestion?
 
 ## Closing the pass
 
-In the refinement working document, mark every finding `closed` / `downgraded` / `still open` / `rejected` / `deferred` / `logged`, each with one line of evidence. `logged` means the finding was classified `log only` at triage and recorded in the coverage map without a guide change. A finding is not `closed` if the underlying problem still reproduces under different wording.
+In the refinement working document, mark every finding `closed` / `downgraded` / `still open` / `rejected` / `deferred` / `logged`, each with one line of evidence. For `rejected` and `logged` entries, that evidence must be the **rationale** — *why* the finding was declined or didn't meet the bar — not merely the disposition: these are exactly what a later cold review will re-raise, and the recorded rationale is what lets the next pass refer back and skip instead of relitigating. `logged` means the finding was classified `log only` at triage and recorded in the coverage map without a guide change. A finding is not `closed` if the underlying problem still reproduces under different wording.
 
 Append every entry to the skill's coverage map at this step, so future passes have the cross-pass record.
 

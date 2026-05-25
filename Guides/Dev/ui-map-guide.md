@@ -1,3 +1,9 @@
+Managed-By: skai
+Managed-Id: guide.ui-map-guide
+Managed-Source: Guides/Dev/ui-map-guide.md
+Managed-Adapter: repo-source
+Managed-Updated-At: 2026-05-24
+
 # UI Map Guide
 
 A UI Map is a YAML document that defines every scene in an app and the routing relationships between them. The map is the single source of truth for the app's UI architecture; implementation should mirror it directly. A render script produces a visual diagram from the YAML for human review.

@@ -1,3 +1,9 @@
+Managed-By: skai
+Managed-Id: guide.ui-map-swiftui-placeholders
+Managed-Source: Guides/Dev/ui-map-swiftui-placeholders.md
+Managed-Adapter: repo-source
+Managed-Updated-At: 2026-05-24
+
 # UI Map — SwiftUI Placeholder Scenes
 
 How the UI Map **implementation** skill scaffolds scenes in SwiftUI: skeleton + navigation, no feature content. Companion to [`ui-map-swiftui.md`](ui-map-swiftui.md) — read its **Scene file layout**, **Route enums**, and **Modal routing** sections first; this doc builds on them. Read this doc only when scaffolding placeholders (not for audit or planning).

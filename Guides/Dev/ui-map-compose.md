@@ -1,3 +1,9 @@
+Managed-By: skai
+Managed-Id: guide.ui-map-compose
+Managed-Source: Guides/Dev/ui-map-compose.md
+Managed-Adapter: repo-source
+Managed-Updated-At: 2026-05-24
+
 # UI Map — Jetpack Compose Reference
 
 Platform reference for implementing a UI Map in Jetpack Compose. Companion to [`ui-map-guide.md`](ui-map-guide.md), which defines the platform-agnostic YAML format.
@@ -200,12 +206,16 @@ sealed class ProfileNavRoute : Route {
 
 `WebScreen(resource = …)` renders the page for the given `Resource` (e.g. `PrivacyPolicy`, `TermsAndConditions`). One composable, one view model, multiple instances.
 
+## Placeholder scenes
+
+Scaffolding placeholder scenes — the placeholder library API, the per-route-kind patterns, the each-scene-owns-its-navigation-hosts rule, and the dismiss/breadcrumb behavior — is covered in its own doc, read only when implementing: [`ui-map-compose-placeholders.md`](ui-map-compose-placeholders.md).
+
 ## State ownership
 
 Routes are owned by the local `NavController`, not the view model. The view model expresses *intent* to route via one-shot effects (`Navigate`, `NavigateModal`, `CloseModal`); the screen dispatches each effect to the appropriate `NavController`. The screen never reads the current route from the view model — Compose Navigation is the source of truth.
 
 Effects come from:
 
-- `processEvent` handlers called by the screen, e.g. a click handler that sends `Navigate(...)` to the effect channel.
+- `processEvent` handlers called by the screen, e.g. a click handler that sends `Navigate(…)` to the effect channel.
 - External flows observed in the view model's `init`, e.g. an auth flow that sends `Navigate(AppChildRoute.Login)` when the user logs out.
 - Compose Navigation itself handles dismissal: system back press, drag-to-dismiss, and outside-tap pop the back stack automatically. The view model can pop programmatically via `CloseModal`.

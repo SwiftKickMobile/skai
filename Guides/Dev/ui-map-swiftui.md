@@ -1,3 +1,9 @@
+Managed-By: skai
+Managed-Id: guide.ui-map-swiftui
+Managed-Source: Guides/Dev/ui-map-swiftui.md
+Managed-Adapter: repo-source
+Managed-Updated-At: 2026-05-24
+
 # UI Map — SwiftUI Reference
 
 Platform reference for implementing a UI Map in SwiftUI. Companion to [`ui-map-guide.md`](ui-map-guide.md), which defines the platform-agnostic YAML format.
@@ -87,7 +93,7 @@ A `Modal` connector in the diagram doesn't specify *how* the modal is presented 
 | `full_screen` | `CoverRoute` | `coverRoute` | `.fullScreenCover(item:)` |
 | `popover` | `PopoverRoute` | `popoverRoute` | `.popover(item:)` — also apply `.presentationCompactAdaptation(.popover)` to the content, or it falls back to a sheet on iPhone (compact width) |
 
-A single scene can expose several at once — one enum and one route property per presentation style:
+A single scene can expose several at once - one enum and one route property per presentation style:
 
 ```swift
 @Observable

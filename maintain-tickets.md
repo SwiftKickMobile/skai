@@ -156,7 +156,6 @@ For each selected ticket, in the agreed order:
 3. **Make the changes.** Follow the repo's conventions:
    - Guides under `Guides/`, policies under `Policies/`, templates under `Templates/`.
    - Managed headers on all repo-source files.
-   - ASCII only (no smart quotes or Unicode dashes).
    - Keep examples project-agnostic.
 4. **Update bookkeeping.** For each change set:
    - `assets.manifest.json` (if assets were added/moved/renamed)

@@ -264,7 +264,6 @@ Do not add entries for:
 
 - Prefer IDE-neutral `.md` sources in this repo.
 - IDE-specific outputs (e.g., Cursor `.mdc`) are generated into host repos by installer runbooks under `Install/`.
-- **ASCII only for quotes and dashes.** Use straight quotes (`"`, `'`), hyphens (`-`), and double-hyphens (`--`) for em-dashes. Never use smart/curly quotes (`"` `"` `'` `'`) or Unicode dashes (`-` `--`). These break tooling (e.g., `StrReplace`) that matches on ASCII equivalents.
 - Keep examples project-agnostic (use the shared fictional theme, currently "LumenNotes").
 
 ## Installer invariants (do not regress)

@@ -1,3 +1,9 @@
+Managed-By: skai
+Managed-Id: guide.ui-map-implementation
+Managed-Source: Guides/Dev/ui-map-implementation.md
+Managed-Adapter: repo-source
+Managed-Updated-At: 2026-05-24
+
 # UI Map Implementation
 
 The implementation method for the UI Map system. Consumes the approved plan document produced by [`ui-map-planning.md`](ui-map-planning.md) and executes its Change list. Companion to the platform references ([`ui-map-swiftui.md`](ui-map-swiftui.md), [`ui-map-compose.md`](ui-map-compose.md)), which carry the placeholder-scene spec.
@@ -113,7 +119,7 @@ The implementation skill produces **skeleton + navigation only**, not feature co
 The exact placeholder shape is platform-specific and lives in the platform reference's **Placeholder scenes** section — the authority for how a scaffolded scene is built:
 
 - iOS/SwiftUI: see [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md) — the `SKAISwiftUI` API, the per-route-kind scaffold patterns, the NavigationStack-at-the-presentation-boundary rule, dismiss/breadcrumb behavior, and the new-scene no-inputs rule.
-- Android/Compose: see [`ui-map-compose.md`](ui-map-compose.md) → "Placeholder scenes" (pending; authored when the Compose path is built).
+- Android/Compose: see [`ui-map-compose-placeholders.md`](ui-map-compose-placeholders.md) — the placeholder library API, the per-route-kind scaffold patterns, the each-scene-owns-its-navigation-hosts rule, dismiss/breadcrumb behavior, and the new-scene no-inputs rule.
 
 **This boundary is a hard line.** If a Change entry appears to require feature content, the entry is malformed — STOP at a blocked gate. Feature work belongs to a separate work spec (see skai's `work-spec-creation` / `work-spec-implementation` flow), not the UI Map implementation skill.
 
