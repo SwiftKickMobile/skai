@@ -123,6 +123,10 @@ Install these skills:
   - source: `Submodules/skai/Templates/skills/skai-work-spec-creation/SKILL.md`
 - `.agents/skills/skai-work-spec-implementation/SKILL.md`
   - source: `Submodules/skai/Templates/skills/skai-work-spec-implementation/SKILL.md`
+- `.agents/skills/skai-ui-map-planning/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-ui-map-planning/SKILL.md`
+- `.agents/skills/skai-ui-map-implementation/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-ui-map-implementation/SKILL.md`
 - `.agents/skills/skai-suggestion/SKILL.md`
   - source: `Submodules/skai/Templates/skills/skai-suggestion/SKILL.md`
 - `.agents/skills/skai-dev-retro/SKILL.md`

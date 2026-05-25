@@ -148,6 +148,10 @@ Install these skills:
   - source: `Submodules/skai/Templates/skills/skai-work-spec-creation/SKILL.md`
 - `.cursor/skills/skai-work-spec-implementation/SKILL.md`
   - source: `Submodules/skai/Templates/skills/skai-work-spec-implementation/SKILL.md`
+- `.cursor/skills/skai-ui-map-planning/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-ui-map-planning/SKILL.md`
+- `.cursor/skills/skai-ui-map-implementation/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-ui-map-implementation/SKILL.md`
 - `.cursor/skills/skai-unit-testing/SKILL.md`
   - source: `Submodules/skai/Templates/skills/skai-unit-testing/SKILL.md`
 - `.cursor/skills/skai-unit-test-planning/SKILL.md`

@@ -197,6 +197,7 @@ Execute tasks from a completed work spec, one top-level task per cycle.
 Plan changes to the app's UI Map -- the YAML document that defines every scene and its routing. Handles new UI work and audits of an existing app against the map. Produces a plan document (discussion plus a typed change list), the proposed `ui-map.yaml` edits, and a render of the resulting map for review.
 
 - Guide [`Guides/UIMap/ui-map-planning.md`](Guides/UIMap/ui-map-planning.md)
+- Example [`Guides/UIMap/ui-map-demo.md`](Guides/UIMap/ui-map-demo.md) -- a complete UI Map in YAML with its rendered diagram
 
 **Prerequisites:** A UI Map (`ui-map.yaml`) for the project, or the intent to start one. For an audit, the app code to compare against the map.
 
