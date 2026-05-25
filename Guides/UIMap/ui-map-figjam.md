@@ -1,6 +1,6 @@
 Managed-By: skai
 Managed-Id: guide.ui-map-figjam
-Managed-Source: Guides/Dev/ui-map-figjam.md
+Managed-Source: Guides/UIMap/ui-map-figjam.md
 Managed-Adapter: repo-source
 Managed-Updated-At: 2026-05-24
 

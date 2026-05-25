@@ -284,6 +284,72 @@
       "type": "guide",
       "sourcePath": "maintain-retro.md",
       "tags": ["core"]
+    },
+    {
+      "id": "guide.ui-map-guide",
+      "type": "guide",
+      "sourcePath": "Guides/UIMap/ui-map-guide.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.ui-map-swiftui",
+      "type": "guide",
+      "sourcePath": "Guides/UIMap/ui-map-swiftui.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.ui-map-swiftui-placeholders",
+      "type": "guide",
+      "sourcePath": "Guides/UIMap/ui-map-swiftui-placeholders.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.ui-map-compose",
+      "type": "guide",
+      "sourcePath": "Guides/UIMap/ui-map-compose.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.ui-map-compose-placeholders",
+      "type": "guide",
+      "sourcePath": "Guides/UIMap/ui-map-compose-placeholders.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.ui-map-planning",
+      "type": "guide",
+      "sourcePath": "Guides/UIMap/ui-map-planning.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.ui-map-implementation",
+      "type": "guide",
+      "sourcePath": "Guides/UIMap/ui-map-implementation.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.ui-map-demo",
+      "type": "guide",
+      "sourcePath": "Guides/UIMap/ui-map-demo.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.ui-map-figjam",
+      "type": "guide",
+      "sourcePath": "Guides/UIMap/ui-map-figjam.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "skill.skai-ui-map-planning",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-ui-map-planning/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "skill.skai-ui-map-implementation",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-ui-map-implementation/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     }
   ]
 }

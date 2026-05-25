@@ -1,6 +1,6 @@
 Managed-By: skai
 Managed-Id: guide.ui-map-demo
-Managed-Source: Guides/Dev/ui-map-demo.md
+Managed-Source: Guides/UIMap/ui-map-demo.md
 Managed-Adapter: repo-source
 Managed-Updated-At: 2026-05-24
 

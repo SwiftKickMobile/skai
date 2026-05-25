@@ -1,6 +1,6 @@
 Managed-By: skai
 Managed-Id: guide.ui-map-compose
-Managed-Source: Guides/Dev/ui-map-compose.md
+Managed-Source: Guides/UIMap/ui-map-compose.md
 Managed-Adapter: repo-source
 Managed-Updated-At: 2026-05-24
 

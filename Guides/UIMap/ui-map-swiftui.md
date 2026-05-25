@@ -1,6 +1,6 @@
 Managed-By: skai
 Managed-Id: guide.ui-map-swiftui
-Managed-Source: Guides/Dev/ui-map-swiftui.md
+Managed-Source: Guides/UIMap/ui-map-swiftui.md
 Managed-Adapter: repo-source
 Managed-Updated-At: 2026-05-24
 

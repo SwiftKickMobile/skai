@@ -192,6 +192,31 @@ Execute tasks from a completed work spec, one top-level task per cycle.
 
 1. **Implement next top-level task.** Agent implements all subtasks under Task N. Gate: agent stops after finishing Task N and waits before moving to Task N+1.
 
+### UI Map planning (skill `skai-ui-map-planning`)
+
+Plan changes to the app's UI Map -- the YAML document that defines every scene and its routing. Handles new UI work and audits of an existing app against the map. Produces a plan document (discussion plus a typed change list), the proposed `ui-map.yaml` edits, and a render of the resulting map for review.
+
+- Guide [`Guides/UIMap/ui-map-planning.md`](Guides/UIMap/ui-map-planning.md)
+
+**Prerequisites:** A UI Map (`ui-map.yaml`) for the project, or the intent to start one. For an audit, the app code to compare against the map.
+
+**Phases:**
+
+1. **Discussion.** Agent digests the inputs and drafts topic-organized discussion with inline `- [ ]` items (questions, proposals, tradeoffs); for an audit, conformance findings. Gate: human resolves each item before the change list is written.
+2. **Change list.** Agent translates the resolved decisions into a typed change list, edits `ui-map.yaml` to the proposed state, and renders it. Ends with a `🏁 Complete.` handoff -- the change list, map diff, and render are the review package for implementation.
+
+### UI Map implementation (skill `skai-ui-map-implementation`)
+
+Execute an approved UI Map plan: scaffold each scene and its navigation as placeholders -- skeleton plus routing, no feature content. Runs autonomously between gates, build-verifying at stage boundaries.
+
+- Guide [`Guides/UIMap/ui-map-implementation.md`](Guides/UIMap/ui-map-implementation.md)
+
+**Prerequisites:** An approved UI Map plan (change list plus `ui-map.yaml`) from `skai-ui-map-planning`.
+
+**Phases:**
+
+1. **Scaffold the change list.** Agent executes the change-list entries top-down, building at domain boundaries. Gates: optional stage gates for large change sets, then a completion gate (build green) for the human to review the diff and click through the new navigation.
+
 ### Unit testing (skill `skai-unit-testing`)
 
 Plan-first testing workflow. The agent creates an orchestration document for the overall testing session, plans all tests upfront, runs one infrastructure pass across all planned tests, and then implements tests one logical section at a time (e.g. "Success Tests", "Error Handling Tests"). Handles new test suites, additions to existing suites, and fixing failing tests.

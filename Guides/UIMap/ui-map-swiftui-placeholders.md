@@ -1,6 +1,6 @@
 Managed-By: skai
 Managed-Id: guide.ui-map-swiftui-placeholders
-Managed-Source: Guides/Dev/ui-map-swiftui-placeholders.md
+Managed-Source: Guides/UIMap/ui-map-swiftui-placeholders.md
 Managed-Adapter: repo-source
 Managed-Updated-At: 2026-05-24
 
