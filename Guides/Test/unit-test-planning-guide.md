@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.unit-test-planning
 Managed-Source: Guides/Test/unit-test-planning-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-03-07
+Managed-Updated-At: 2026-05-27
 
 # Unit Test Planning Guide
 
@@ -11,6 +11,12 @@ Managed-Updated-At: 2026-03-07
 Defines the process for creating complete test plans with ALL test stubs and documentation across ALL sections before any implementation begins.
 
 ## Gates
+
+Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+
+**Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
+
+**No fabricated gates.** `⏳ GATE:` lines only appear at gates this `## Gates` section defines or at a properly emitted blocked gate. Do not invent new gate categories or labels to describe discussion state, partial completion, or intermediate review. If a `⏳ GATE:` line is needed that this guide doesn't define, that's a signal the guide is missing a gate — file it as a process improvement.
 
 Use these standard gate lines:
 - Planned gate: `⏳ GATE: Next: <what happens after your response>. Say "next" or what to change.`
@@ -28,7 +34,7 @@ If an unexpected blocker prevents continued work, use the blocked gate line and 
 When the workflow finishes, return control to the parent testing workflow.
 
 Planned gates for this workflow:
-- After planning is complete (all files/sections/tests are stubbed and marked 🟡).
+- After planning is complete (all files/sections/tests are stubbed and marked `🟡` in the test files).
 
 ---
 
@@ -41,10 +47,13 @@ Rules:
 - "we should...", "let's..." = discussion/context-setting, NOT authorization.
 - Outside a gate, interpret "begin"/"next"/"continue" as "resume planning where you left off." Do not use them to clear planning markers early.
 
-Progress tracking:
-- Default rule: 🟡 = TODO or pending approval. Do not clear 🟡 without human approval.
-- In this workflow, section-level and test-level 🟡 markers in the planned test files remain in place when planning completes.
-- Advance intent at the planning-complete gate returns control to the parent testing workflow; it does not clear the planned test sections/tests.
+Progress tracking (canonical in-code marker case):
+
+This workflow is the canonical example of the in-code progress-marker convention (see `Guides/Core/process-flow.md`, "Progress markers"). The artifact produced by this workflow is source code (test files), so `🟡` markers are used on section MARK comments and `@Test` function declarations to indicate TODO state. Completion is **removal** of the marker as tests are written and pass downstream (in `Guides/Test/unit-test-writing-guide.md`). This is the in-code branch of the two-convention model; process artifacts in other workflows use `- [ ]` / `- [x]` instead.
+
+- Default rule: a `🟡` marker means TODO or pending approval. Do not remove it without human approval.
+- In this workflow, section-level and test-level `🟡` markers in the planned test files remain in place when planning completes.
+- Advance intent at the planning-complete gate returns control to the parent testing workflow; it does not remove the planned test sections/tests.
 - Planning ambiguities should stop with the blocked gate line and leave all planning markers in place.
 
 **Behavior:** Context determines the action:
@@ -459,7 +468,7 @@ struct MyComponentTests {
 
 ### File Structure
 
-See `docs/skai/integration.md` for:
+See `skai/integration.md` for:
 - Test target organization
 - File naming conventions
 - Test file structure

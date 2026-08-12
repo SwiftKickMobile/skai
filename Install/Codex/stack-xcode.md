@@ -4,7 +4,7 @@ This file is read by the Codex install runbook (`install-update-codex.md`) when 
 
 ## Integration doc guidance
 
-When filling or updating the Integration doc (`docs/skai/integration.md`):
+When filling or updating the Integration doc (`skai/integration.md`):
 
 - Prefer non-interactive command-line commands (e.g., `xcodebuild ...`) over GUI instructions ("open Xcode..."). If you can't produce command-line commands with high confidence, leave 🟡 placeholders and ask.
 - **Never invent a simulator/device model.** If a canonical `xcodebuild -destination` string is not already established in-repo, propose one and ask the human to confirm before writing it.

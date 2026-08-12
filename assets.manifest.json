@@ -118,6 +118,18 @@
       "tags": ["core"]
     },
     {
+      "id": "guide.skill-refinement",
+      "type": "guide",
+      "sourcePath": "Guides/Process/skill-refinement-guide.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.cold-review-prompt-template",
+      "type": "guide",
+      "sourcePath": "Guides/Process/cold-review-prompt-template.md",
+      "tags": ["core"]
+    },
+    {
       "id": "guide.update-installation",
       "type": "guide",
       "sourcePath": "Guides/Core/update-installation-guide.md",
@@ -292,6 +304,18 @@
       "tags": ["core"]
     },
     {
+      "id": "guide.ui-map-architecture-artifacts",
+      "type": "guide",
+      "sourcePath": "Guides/UIMap/ui-map-architecture-artifacts.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.ui-map-implementation-artifacts",
+      "type": "guide",
+      "sourcePath": "Guides/UIMap/ui-map-implementation-artifacts.md",
+      "tags": ["core"]
+    },
+    {
       "id": "guide.ui-map-swiftui",
       "type": "guide",
       "sourcePath": "Guides/UIMap/ui-map-swiftui.md",
@@ -313,6 +337,12 @@
       "id": "guide.ui-map-compose-placeholders",
       "type": "guide",
       "sourcePath": "Guides/UIMap/ui-map-compose-placeholders.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.ui-map-architecture",
+      "type": "guide",
+      "sourcePath": "Guides/UIMap/ui-map-architecture.md",
       "tags": ["core"]
     },
     {
@@ -338,6 +368,12 @@
       "type": "guide",
       "sourcePath": "Guides/UIMap/ui-map-figjam.md",
       "tags": ["core"]
+    },
+    {
+      "id": "skill.skai-ui-map-architecture",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-ui-map-architecture/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-ui-map-planning",

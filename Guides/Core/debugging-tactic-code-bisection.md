@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.debugging-tactic-code-bisection
 Managed-Source: Guides/Core/debugging-tactic-code-bisection.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-03-07
+Managed-Updated-At: 2026-05-27
 
 # Debugging tactic: code bisection
 
@@ -13,6 +13,10 @@ This is not `git bisect` (history search). This is code-level bisection within a
 ## Gates
 
 Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+
+**Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
+
+**No fabricated gates.** `⏳ GATE:` lines only appear at gates this `## Gates` section defines or at a properly emitted blocked gate. Do not invent new gate categories or labels to describe discussion state, partial completion, or intermediate review. If a `⏳ GATE:` line is needed that this guide doesn't define, that's a signal the guide is missing a gate — file it as a process improvement.
 
 Use these standard gate lines:
 - Planned gate: `⏳ GATE: Next: <what happens after your response>. Say "next" or what to change.`
@@ -52,8 +56,8 @@ Rules:
 `auto to <milestone>` = auto-advance but STOP before the named planned gate. Use stable, workflow-specific milestone names.
 
 Progress tracking:
-- Default rule: 🟡 = TODO or pending approval. Do not clear 🟡 without human approval.
-- This tactic currently uses inline discussion rather than a required bisection work document.
+- Default rule: a progress marker (per `Guides/Core/process-flow.md`, "Progress markers") means TODO or pending approval. Do not clear it without human approval.
+- This tactic currently uses inline discussion rather than a required bisection work document, so it does not own any progress markers of its own.
 - The active state lives in the conversation plus the temporary branch/worktree and the sequence of bisection commits.
 - At the start gate, STOP before creating the temporary branch/worktree or making the first bisection commit.
 - At the isolated-delta gate, STOP after presenting the minimal diff + evidence and before switching into real fix work.

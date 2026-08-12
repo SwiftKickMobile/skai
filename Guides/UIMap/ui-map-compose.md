@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-compose
 Managed-Source: Guides/UIMap/ui-map-compose.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-05-24
+Managed-Updated-At: 2026-08-11
 
 # UI Map — Jetpack Compose Reference
 
@@ -12,23 +12,23 @@ Each scene's routing is implemented locally: the view model emits one-shot navig
 
 ## Scene file layout
 
-For a scene named `Foo`:
+Map scene IDs are lower snake case. Keep the map ID as the package name and convert each word to UpperCamelCase for code types: `trail_detail` becomes:
 
 ```
-foo/
-  FooScreen.kt          // @Composable fun FooScreen(viewModel: FooViewModel = hiltViewModel())
-  FooViewModel.kt       // route enums at the top, then @HiltViewModel class FooViewModel : ViewModel()
-  FooViewState.kt       // data class for observable scene state
-  FooViewEvent.kt       // sealed interface — UI inputs to the view model
-  FooViewEffect.kt      // sealed interface — one-shot outputs (navigation, toasts, etc.)
-  views/                // optional — Foo's own subviews
+trail_detail/
+  TrailDetailScreen.kt          // @Composable fun TrailDetailScreen(viewModel: TrailDetailViewModel = hiltViewModel())
+  TrailDetailViewModel.kt       // route enums at the top, then @HiltViewModel class TrailDetailViewModel : ViewModel()
+  TrailDetailViewState.kt       // data class for observable scene state
+  TrailDetailViewEvent.kt       // sealed interface — UI inputs to the view model
+  TrailDetailViewEffect.kt      // sealed interface — one-shot outputs (navigation, toasts, etc.)
+  views/                        // optional — TrailDetail's own subviews
 ```
 
-All of the scene's route enums live at the top of `FooViewModel.kt`, above the view-model class. A non-routing scene with no state to manage may omit the view model, view state, event, and effect files entirely — the composable stands alone.
+All of a scene's route enums live at the top of its `<Scene>ViewModel.kt`, above the view-model class. A non-routing scene with no state to manage may omit the view model, view state, event, and effect files entirely — the composable stands alone.
 
-A scene's package may contain a `views/` subpackage for the scene's own subviews — small composables split out to keep `FooScreen.kt` uncluttered. `views/` holds subviews only: never a scene (every scene gets its own package), and never another scene's subviews.
+A scene's package may contain a `views/` subpackage for the scene's own subviews — small composables split out to keep `<Scene>Screen.kt` uncluttered. `views/` holds subviews only: never a scene (every scene gets its own package), and never another scene's subviews.
 
-Package nesting mirrors the map's domain structure — the package tree reads as the `domains:` tree, not as routing parentage. Each domain is a package directly under the scenes root, and a scene's package is placed where the map *defines* it (a collapsed domain at the domain package itself; an inline-defined scene inside its container's owning scene's package; a scene in a non-collapsed domain's `scenes:` list directly under the domain package). Every other appearance of a scene is a reference: the referencing scene calls the composable directly — a reference (cross-domain or `primary_parent`) never creates or moves a package.
+Package nesting mirrors the map's canonical definition nesting inside `domains:` — not references, `primary_parent`, or other inbound routes. Each domain is a package directly under the scenes root, and a scene's package is placed where the map *defines* it (a collapsed domain at the domain package itself; an inline-defined scene inside its container's owning scene's package; a scene in a non-collapsed domain's `scenes:` list directly under the domain package). Every other appearance of a scene is a reference: the referencing scene calls the composable directly — a reference (cross-domain or `primary_parent`) never creates or moves a package.
 
 Scenes in the YAML's top-level `common:` group are domain-agnostic. They live in the shared UI module under its own top-level `Scenes/` package — one package per scene, following the same per-scene layout as any other scene.
 
@@ -98,7 +98,15 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
 
 ## Modal routing
 
-One `ModalRoute` enum per scene. The presentation style (dialog, bottom sheet, full-screen composable) is chosen at the `NavHost` declaration site, not in the route enum:
+One `ModalRoute` enum per scene. Every modal destination has a required `modal_style` in the map; that agreed value selects the builder at the `NavHost` declaration site, not in the route enum. Do not infer or substitute a style during implementation:
+
+| `modal_style` | Builder |
+|---|---|
+| `sheet` | `bottomSheet<Route>` |
+| `full_screen` | `bottomSheetFullScreen<Route>` |
+| `popover` | `dialog<Route>` |
+
+Projects document non-standard styles and deliberate overrides in their project-conventions document.
 
 ```kotlin
 sealed class DashboardModalRoute : Route {
@@ -125,7 +133,7 @@ LaunchedEffect(Unit) {
 
 ModalBottomSheetNavHost(navController = modalNavController) {
     bottomSheet<DashboardModalRoute.Profile>            { ProfileScreen() }
-    composable<DashboardModalRoute.MediaCapture>        { MediaCaptureScreen() }
+    bottomSheetFullScreen<DashboardModalRoute.MediaCapture> { MediaCaptureScreen() }
     dialog<DashboardModalRoute.RecordWarning>           { RecordWarningDialog() }
 }
 ```

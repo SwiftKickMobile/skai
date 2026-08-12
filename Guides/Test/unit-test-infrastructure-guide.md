@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.unit-test-infrastructure
 Managed-Source: Guides/Test/unit-test-infrastructure-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-03-07
+Managed-Updated-At: 2026-05-27
 
 # Unit Test Infrastructure Guide
 
@@ -17,6 +17,12 @@ Defines the process for identifying, implementing, and compiling test infrastruc
 - Test framework utilities (shared helpers)
 
 ## Gates
+
+Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+
+**Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
+
+**No fabricated gates.** `⏳ GATE:` lines only appear at gates this `## Gates` section defines or at a properly emitted blocked gate. Do not invent new gate categories or labels to describe discussion state, partial completion, or intermediate review. If a `⏳ GATE:` line is needed that this guide doesn't define, that's a signal the guide is missing a gate — file it as a process improvement.
 
 Use these standard gate lines:
 - Planned gate: `⏳ GATE: Next: <what happens after your response>. Say "next" or what to change.`
@@ -46,23 +52,27 @@ Advance intent moves past the current gate. Common signals: "next", "continue", 
 Rules:
 - Recognized as approval to move past a gate only after you output a `⏳ GATE:` line.
 - "we should...", "let's..." = discussion/context-setting, NOT authorization.
-- Outside a gate, interpret "begin"/"next"/"continue" using the active phase rules below. Do not use them to create or clear infrastructure phase markers early.
+- Outside a gate, interpret "begin"/"next"/"continue" using the active phase rules below. Do not use them to create or check infrastructure phase markers early.
 
 Progress tracking:
-- Default rule: 🟡 = TODO or pending approval. Do not clear 🟡 without human approval.
+- Default marker convention: `- [ ]` / `- [x]` in the infrastructure work document (process artifact). See `Guides/Core/process-flow.md`, "Progress markers".
+- Default rule: a `- [ ]` phase item means TODO or pending approval. Do not check the box without human approval.
 - This workflow has a conditional marker model:
-  - If Phase 1 concludes no infrastructure changes are required, do not create an infrastructure work document and do not invent phase markers.
-  - If Phase 1 concludes infrastructure changes are required, the infrastructure work document owns the phase markers (`Phase 1: Identify`, `Phase 2: Implement 🟡`, `Phase 3: Compile 🟡`).
+  - If Phase 1 concludes no infrastructure changes are required, do not create an infrastructure work document and do not invent phase items.
+  - If Phase 1 concludes infrastructure changes are required, the infrastructure work document owns the phase items:
+    - `- [ ] Phase 1: Identify`
+    - `- [ ] Phase 2: Implement`
+    - `- [ ] Phase 3: Compile`
 - When a work document exists:
-  - STOP at the Phase 1 gate with Phase 1 still represented in the document.
-  - Only after advance intent may the agent clear Phase 1 and begin Phase 2.
-  - After Phase 3 completes, STOP at the planned gate with Phase 2/3 markers still present.
-  - Only after advance intent may the agent clear the remaining infrastructure phase markers and return control to the parent testing workflow.
-- If work stops due to ambiguity or an unexpected implementation/compile blocker, do not clear the current infrastructure phase marker.
+  - STOP at the Phase 1 gate with `- [ ] Phase 1: Identify` still unchecked.
+  - Only after advance intent may the agent check `Phase 1: Identify` and begin Phase 2.
+  - After Phase 3 completes, STOP at the planned gate with `Phase 2: Implement` and `Phase 3: Compile` still unchecked.
+  - Only after advance intent may the agent check the remaining infrastructure phase items and return control to the parent testing workflow.
+- If work stops due to ambiguity or an unexpected implementation/compile blocker, do not check the current infrastructure phase item.
 
 **Behavior:** Context determines the action:
 - If waiting at the Phase 1 gate → branch based on the approved analysis
-- If waiting at the Phase 3 gate → clear approved infrastructure phase markers and return control to the parent testing workflow
+- If waiting at the Phase 3 gate → check approved infrastructure phase items and return control to the parent testing workflow
 - If stopped due to ambiguities or unexpected challenges → resume where you left off
 
 ---
@@ -77,15 +87,15 @@ Progress tracking:
 2. **Phase 2: Implement** - Create the infrastructure (if needed)
 3. **Phase 3: Compile** - Ensure everything builds (if implemented)
 
-**Progress tracking (only if infrastructure changes are required):** Infrastructure work document checklist uses 🟡 for TODO phases.
+**Progress tracking (only if infrastructure changes are required):** Infrastructure work document checklist uses `- [ ]` items for phases (process artifact convention).
 
 **Flow:**
 1. Phase 1 (Identify) → planned gate
 2. Advance intent → **Branching (based on the Phase 1 conclusion):**
    - If **no infrastructure changes required** → infrastructure process complete (no document created)
-   - If **infrastructure changes required** → Create work document (includes Phase 1/2/3 checklist with 🟡) → Execute Phase 2 (Implement)
+   - If **infrastructure changes required** → Create work document (includes Phase 1/2/3 `- [ ]` checklist) → Execute Phase 2 (Implement)
 3. After Phase 2 → Execute Phase 3 (Compile)
-4. After Phase 3 → planned gate → on advance intent, clear remaining infrastructure phase markers and return to the parent testing workflow
+4. After Phase 3 → planned gate → on advance intent, check remaining infrastructure phase items and return to the parent testing workflow
 
 **Possible outcomes:**
 - No infrastructure changes required → complete after the Phase 1 gate (no document)
@@ -214,7 +224,7 @@ Progress tracking:
 
 **Location and Naming:**
 
-See `docs/skai/integration.md` for the project's test infrastructure locations and naming conventions.
+See `skai/integration.md` for the project's test infrastructure locations and naming conventions.
 
 **Naming Convention:**
 
@@ -235,7 +245,7 @@ If existing test doubles in the module use incorrect terminology (e.g., a stub n
 
 **Location and Naming:**
 
-See `docs/skai/integration.md` for the project's fixture locations and naming conventions.
+See `skai/integration.md` for the project's fixture locations and naming conventions.
 
 #### 4. Test Framework Utilities
 
@@ -248,7 +258,7 @@ See `docs/skai/integration.md` for the project's fixture locations and naming co
 
 **Location and Examples:**
 
-See `docs/skai/integration.md` for the project's test utility locations and available utilities.
+See `skai/integration.md` for the project's test utility locations and available utilities.
 
 **When to propose:**
 - Pattern appears in multiple test suites
@@ -364,9 +374,9 @@ read_file path/to/Mocks/MockService.swift
 **Gate:** Present complete analysis and STOP with the planned gate line.
 
 **After approval / advance intent:**
-- If a work document was created: remove 🟡 from Phase 1 in the work document
-- If infrastructure needed: Proceed to Phase 2
-- If no infrastructure needed: Infrastructure process complete (no Phase 2/3 work document required)
+- If a work document was created: check the box on `Phase 1: Identify` (`- [x]`) in the work document.
+- If infrastructure needed: Proceed to Phase 2.
+- If no infrastructure needed: Infrastructure process complete (no Phase 2/3 work document required).
 ````
 
 ---
@@ -385,8 +395,8 @@ read_file path/to/Mocks/MockService.swift
    - **Session name**: `<session-name>` (the parent unit-testing workflow's session name)
    - **Subpath**: `testing`
    - **File name**: `infrastructure.md`
-   - **Full path**: `working-docs/<branch-path>/<session-name>/testing/infrastructure.md`
-   - **Example**: `working-docs/work/feature-branch/login-tests/testing/infrastructure.md`
+   - **Full path**: `skai/working-docs/<branch-path>/<session-name>/testing/infrastructure.md`
+   - **Example**: `skai/working-docs/work/feature-branch/login-tests/testing/infrastructure.md`
    - **Structure**:
      ```markdown
      # Unit Testing - Infrastructure
@@ -398,9 +408,9 @@ read_file path/to/Mocks/MockService.swift
      
      ## Checklist
      
-     - Phase 1: Identify
-     - Phase 2: Implement 🟡
-     - Phase 3: Compile 🟡
+     - [x] Phase 1: Identify
+     - [ ] Phase 2: Implement
+     - [ ] Phase 3: Compile
      
      ## Phase 1: Identify
      
@@ -412,8 +422,8 @@ read_file path/to/Mocks/MockService.swift
      ```
 
 **1. Create infrastructure work spec** (if complex, otherwise implement directly):
-   - **Full path**: `working-docs/<branch-path>/<session-name>/testing/infrastructure-spec.md`
-   - **Example**: `working-docs/work/feature-branch/login-tests/testing/infrastructure-spec.md`
+   - **Full path**: `skai/working-docs/<branch-path>/<session-name>/testing/infrastructure-spec.md`
+   - **Example**: `skai/working-docs/work/feature-branch/login-tests/testing/infrastructure-spec.md`
    - **Structure**: Motivation, Functional Requirements, Relevant Files, Task List
    - **Content**: Describe all stubs, mocks, fixtures, and production code changes needed
    - **No code**: Describe what to implement, not how
@@ -429,7 +439,7 @@ read_file path/to/Mocks/MockService.swift
 
 ### Infrastructure Locations
 
-See `docs/skai/integration.md` for:
+See `skai/integration.md` for:
 - Stub/mock locations and naming
 - Fixture locations and naming
 - Test utility locations
@@ -449,7 +459,7 @@ See `docs/skai/integration.md` for:
 
 2. **Run the build command** to compile the framework target
    
-   See `docs/skai/integration.md` for project-specific build commands.
+   See `skai/integration.md` for project-specific build commands.
 
 3. **Document compilation results** in work document
 
@@ -610,7 +620,7 @@ let result3 = try await sut.performOperation(params: params3)  // Gets third res
 
 **Work Document Structure** (created in Phase 2 only if infrastructure needed):
 
-Full path: `working-docs/<branch-path>/<session-name>/testing/infrastructure.md` (per `Guides/Core/working-doc-conventions.md`)
+Full path: `skai/working-docs/<branch-path>/<session-name>/testing/infrastructure.md` (per `Guides/Core/working-doc-conventions.md`)
 
 ```markdown
 # Unit Testing - Infrastructure
@@ -622,9 +632,9 @@ This document tracks the infrastructure work for implementing unit tests for [se
 
 ## Checklist
 
-- Phase 1: Identify
-- Phase 2: Implement 🟡
-- Phase 3: Compile 🟡
+- [x] Phase 1: Identify
+- [ ] Phase 2: Implement
+- [ ] Phase 3: Compile
 
 ## Phase 1: Identify
 
@@ -670,7 +680,7 @@ This document tracks the infrastructure work for implementing unit tests for [se
 
 **Locations:**
 
-See `docs/skai/integration.md` for all infrastructure locations and naming conventions.
+See `skai/integration.md` for all infrastructure locations and naming conventions.
 
 **Phase flow:** Phase 1 → planned gate → if no infrastructure: done | if infrastructure: Phase 2 → Phase 3 → planned gate → done
 

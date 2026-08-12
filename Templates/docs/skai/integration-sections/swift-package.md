@@ -5,6 +5,7 @@ Provide `swift`-based commands for packages that use `Package.swift` (not `xcode
 ### Build (CLI, non-interactive)
 
 ```bash
+set -o pipefail
 swift build \
   --package-path <PackagePath> \
   2>&1 | tee <output-path>.txt
@@ -13,6 +14,7 @@ swift build \
 ### Run unit tests (all)
 
 ```bash
+set -o pipefail
 swift test \
   --package-path <PackagePath> \
   --xunit-output <results-path>.xml \
@@ -24,6 +26,7 @@ swift test \
 Entire test suite (class/struct):
 
 ```bash
+set -o pipefail
 swift test \
   --package-path <PackagePath> \
   --xunit-output <results-path>.xml \
@@ -34,6 +37,7 @@ swift test \
 Single test method:
 
 ```bash
+set -o pipefail
 swift test \
   --package-path <PackagePath> \
   --xunit-output <results-path>.xml \
@@ -44,6 +48,7 @@ swift test \
 Multiple specific tests (pipe-separated):
 
 ```bash
+set -o pipefail
 swift test \
   --package-path <PackagePath> \
   --xunit-output <results-path>.xml \
@@ -56,6 +61,7 @@ swift test \
 Rule: always keep the full output file via `tee`. Filtering is only for terminal display.
 
 ```bash
+set -o pipefail
 ... 2>&1 | tee <output-path>.txt | grep -E "passed|failed|error:|Test run"
 ```
 

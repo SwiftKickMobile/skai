@@ -54,7 +54,7 @@ Sticky notes mark TODOs and known divergences between the map and the current im
 
 ## Migration to the YAML format
 
-A one-time, per-project conversion of a deprecated FigJam diagram into a valid `ui-map.yaml`. The human points the agent at this doc to run it; it is not part of ordinary planning or implementation. Migration produces the **map only** — it does not modify code or scaffold placeholders. It *reads* the code freely, though: the diagram is the structural source, and the code fills what the diagram can't carry (e.g. modal styles). A full code-vs-map conformance pass is a separate, later audit (`ui-map-planning.md`), not part of migration.
+A one-time, per-project conversion of a deprecated FigJam diagram into a valid `ui-map.yaml`. The human points the agent at this doc to run it; it is not part of ordinary architecture or implementation work. Migration produces the **map only** — it does not modify code or scaffold placeholders. It *reads* the code freely, though: the diagram is the structural source, and the code fills what the diagram can't carry (e.g. modal styles). A full code-vs-map conformance pass is a separate, later audit (`ui-map-implementation.md`), not part of migration.
 
 The hard part is **domains**: FigJam has no concept of them, but the YAML is organized around them (and the code folders mirror them). So migration is not a mechanical transcription — it pivots on a human-reviewed domain design. Everything else maps element-for-element.
 
@@ -115,4 +115,4 @@ FigJam captures less than the schema allows — but the codebase is right there.
 - **Modal styles.** A FigJam `Modal` connector says a scene is presented modally but never *how*. The style lives in the code: find the presentation modifier (SwiftUI) or builder (Compose) bound to each modal route and map it back to a `modal_style` per the platform reference (`ui-map-swiftui.md` / `ui-map-compose.md`), then declare the resulting `modal_styles` vocabulary at the top of the map.
 - **Anything else the diagram can't express** — derive it from the code where the code is authoritative. If neither the diagram nor the code settles it, **STOP at a blocked gate** and ask the human — never fabricate, and never silently drop it.
 
-Structure comes from the FigJam (and the human-designed domains); the code supplies the details the diagram can't hold. Reconciling any remaining code↔map drift is a later pass (`ui-map-planning.md`), not migration. After approval the project is on the YAML system; subsequent changes use `ui-map-planning.md` / `ui-map-implementation.md`.
+Structure comes from the FigJam (and the human-designed domains); the code supplies the details the diagram can't hold. Reconciling any remaining code↔map drift is a later pass (`ui-map-implementation.md`), not migration. After approval the project is on the YAML system; subsequent map changes use `ui-map-architecture.md`; code alignment uses `ui-map-implementation.md`.

@@ -2,19 +2,25 @@ Managed-By: skai
 Managed-Id: guide.work-spec-implementation
 Managed-Source: Guides/Spec/work-spec-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-03-07
+Managed-Updated-At: 2026-05-27
 
 
 # Work Task Development Rules
 
 ## 🚨 CRITICAL RULE - READ FIRST 🚨
 
-**NEVER remove 🟡 from the current task in the work spec document.**
-- You can remove 🟡 from PREVIOUS tasks when starting a new task
-- You NEVER remove 🟡 from the CURRENT task 
-- Task completion (removing 🟡) happens when the human asks for the next task
+**NEVER check the box on the current task in the work spec document.**
+- You can check the box (`- [x]`) on the PREVIOUS task when starting a new task — but only after advance intent.
+- You NEVER check the box on the CURRENT task while implementation is in progress.
+- Task completion (`- [x]`) happens at the planned gate after the human asks for the next task.
 
 ## Gates
+
+Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+
+**Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
+
+**No fabricated gates.** `⏳ GATE:` lines only appear at gates this `## Gates` section defines or at a properly emitted blocked gate. Do not invent new gate categories or labels to describe discussion state, partial completion, or intermediate review. If a `⏳ GATE:` line is needed that this guide doesn't define, that's a signal the guide is missing a gate — file it as a process improvement.
 
 Use these standard gate lines:
 - Planned gate: `⏳ GATE: Next: <what happens after your response>. Say "next" or what to change.`
@@ -29,10 +35,8 @@ In the planned gate line, `<what happens after your response>` should describe w
 
 If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
 
-When the workflow finishes (all tasks complete), use: `🏁 Complete. Let me know if anything needs adjustment.`
-
 Planned gates for this workflow:
-- After completing the implementation work for Task N, but before clearing Task N's 🟡 marker and starting Task N+1.
+- After completing the implementation work for Task N, but before checking Task N's box and starting Task N+1.
 - At the end of `next auto`, if work remains or the run stopped early, to report what was completed vs what remains (and why).
 
 ---
@@ -44,37 +48,38 @@ Advance intent moves past the current gate. Common signals: "next", "continue", 
 Rules:
 - Recognized as approval to move past a gate only after you output a `⏳ GATE:` line.
 - "we should...", "let's..." = discussion/context-setting, NOT authorization.
-- Outside a gate, interpret "begin"/"next"/"continue" using the active-task rules below. Do not use them to clear the current task marker early.
+- Outside a gate, interpret "begin"/"next"/"continue" using the active-task rules below. Do not use them to check the current task box early.
 
 `auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit human resolution.
-`auto to <target>` = auto-advance but STOP before the named workflow target. Use stable task identifiers such as `task 7` or a task number/title.
+`auto to <target>` = auto-advance but STOP before the named workflow target. Use stable task identifiers (e.g., `T7`, `task 7`).
 
 Progress tracking:
-- Default rule: 🟡 = TODO or pending approval. Do not clear 🟡 without human approval.
-- In this workflow, the current task's task-line 🟡 marker is the task gate/phase marker.
-- When Task N implementation work finishes, STOP at the planned gate with Task N still marked 🟡.
-- Only after the human gives advance intent may the agent remove 🟡 from Task N, remove any fully satisfied work-spec-only inventory/API markers completed by Task N, and begin Task N+1.
-- If work stops due to a blocker, do not clear the current task's 🟡 marker.
+- Default marker convention: `- [ ]` / `- [x]` in the work spec (a process artifact). See `Guides/Core/process-flow.md`, "Progress markers".
+- Default rule: a `- [ ]` task item means TODO or pending approval. Do not check the box without human approval.
+- In this workflow, the current task's `- [ ]` marker is the task gate/phase marker.
+- When Task N implementation work finishes, STOP at the planned gate with Task N still `- [ ]`.
+- Only after the human gives advance intent may the agent check Task N (`- [x]`), check any fully satisfied work-spec-only inventory items completed by Task N, and begin Task N+1.
+- If work stops due to a blocker, do not check the current task's box.
 
 **Behavior:** Context determines the action:
 - If waiting to proceed → mark previous task complete (if applicable) and begin next task
 - If stopped due to ambiguities or unexpected challenges → resume implementation where you left off
 
 **When executing next task:**
-1. Find the first task marked with 🟡 in the work spec
-2. **If not the first task:** 
-   - Remove 🟡 from the previous (just-completed) task
-   - Remove 🟡 from any Requirements Inventory items in the *work spec only* that were fully satisfied by the completed task
-   - Remove 🟡 from any API Inventory items fully implemented by the completed task
-3. Implement the next task in sequence (referring to requirement IDs for full context)
-4. Follow the Task N implementation rules below
+1. Find the first unchecked task (`- [ ]`) in the work spec.
+2. **If not the first task:**
+   - Check the box (`- [x]`) on the previous (just-completed) task.
+   - Check the box on any Requirements Inventory items in the *work spec only* that were fully satisfied by the completed task.
+   - Check the box on any API Inventory items fully implemented by the completed task.
+3. Implement the next task in sequence (referring to requirement IDs for full context).
+4. Follow the Task N implementation rules below.
 
 **Workflow-specific `auto` rules:**
 
-- Automatically implements all remaining 🟡 tasks in sequence, clearing each completed task as auto advances.
-- If auto completes the final remaining task with no blocker and no bounded target stop, clear that final task's 🟡 marker and complete the workflow with `🏁 Complete...` rather than stopping at a planned gate.
-- `auto to <target>` should use stable task identifiers (for example, `task 7`).
-- If auto stops early because work remains, report progress at the planned gate (tasks completed vs tasks remaining with 🟡).
+- Automatically implements all remaining `- [ ]` tasks in sequence, checking each completed task as auto advances.
+- If auto completes the final remaining task with no blocker and no bounded target stop, check that final task's box and complete the workflow with `🏁 Complete...` rather than stopping at a planned gate.
+- `auto to <target>` should use stable task identifiers (for example, `T7`).
+- If auto stops early because work remains, report progress at the planned gate (tasks completed vs tasks remaining `- [ ]`).
 
 **Auto-fixes allowed:**
 - Obvious typos (wrong variable names, enum values)
@@ -96,20 +101,20 @@ Progress tracking:
 - The work spec says X but the next viable implementation step would do not-X
 - Required verification evidence cannot be produced, or new evidence contradicts the current task/spec
 
-For any of these, STOP with the blocked gate line and leave the current task's 🟡 marker in place.
+For any of these, STOP with the blocked gate line and leave the current task as `- [ ]`.
 
 ## Task N Implementation
 
 When implementing Task N:
 
 ### Step 1: Mark Previous Task Complete (if applicable)
-- **IF** there is a previous task with 🟡: Remove 🟡 from it in work spec
-- **IF** implementing the first task: Skip this step (no previous task exists)
-- **Update Requirements Inventory (work spec only)**: Remove 🟡 from any requirements listed in the work spec inventory (e.g., `DATA-01`, `MIG-02`, `TEMP-01`) that were fully satisfied by the completed task
-- **Update API Inventory**: Remove 🟡 from any APIs that were fully implemented by the completed task
+- **IF** there is a previous unchecked task: Check the box (`- [x]`) on it in the work spec.
+- **IF** implementing the first task: Skip this step (no previous task exists).
+- **Update Requirements Inventory (work spec only)**: Check the box on any `- [ ]` requirements in the work spec inventory (e.g., `DATA-01`, `MIG-02`, `TEMP-01`) that were fully satisfied by the completed task.
+- **Update API Inventory**: Check the box on any `- [ ]` APIs that were fully implemented by the completed task.
 
 **Important:**
-- Do NOT add, remove, or modify any markers in the canonical requirements repository (`/requirements/**`).
+- Do NOT add or modify any progress markers in the canonical requirements repository (`/requirements/**`).
 - Canonical requirements are referenced by ID only and never carry progress state.
 - All execution and progress tracking lives exclusively in the work spec.
 
@@ -119,10 +124,10 @@ When implementing Task N:
 - **Refer to the Requirements Inventory**: Each subtask cites requirement IDs (e.g., `DOC-01`, `VALID-02`). Use these to find the full requirement text and ensure the implementation satisfies it.
 - Implement all code changes needed
 - Run verification subtasks and capture evidence:
-  - Use project-specific commands/paths from `docs/skai/integration.md` (do not invent commands).
+  - Use project-specific commands/paths from `skai/integration.md` (do not invent commands).
   - Record evidence inline on the verification subtask line using an evidence bracket.
     - Format: `[evidence: <command variant>; exit <code>; output: <optional link(s)>]`
-    - On failure: persist full output to a file under `working-docs/<branch-path>/<spec-name>/work-spec/evidence/` (or the workflow-specific location if one exists) and link it.
+    - On failure: persist full output to a file under `skai/working-docs/<branch-path>/<spec-name>/work-spec/evidence/` (or the workflow-specific location if one exists) and link it.
     - On success: linked output is optional; still record command variant and exit code.
 - If implementation differs from the spec (spec deviation):
   - STOP and propose a spec amendment (exact text change) for approval.
@@ -140,12 +145,12 @@ If you encounter ambiguity, incompleteness, or potential errors in the spec duri
 - End with the blocked gate line.
 
 ### Step 3: Stop and Wait
-- **DO NOT** remove 🟡 from Task N in the work spec
-- **DO NOT** proceed to the next task
-- **DO NOT** update current task status
+- **DO NOT** check the box on Task N in the work spec.
+- **DO NOT** proceed to the next task.
+- **DO NOT** update current task status.
 - End with the planned gate line.
-- If there is another task after Task N, the `Next` text should say you will clear Task N and begin Task N+1 after advance intent.
-- If Task N is the final task, the `Next` text should say you will clear Task N and complete the workflow after advance intent.
+- If there is another task after Task N, the `Next` text should say you will check the box on Task N and begin Task N+1 after advance intent.
+- If Task N is the final task, the `Next` text should say you will check the box on Task N and complete the workflow after advance intent.
 
 ### Step 4: During Implementation
 - When asked questions, do not make changes unless explicitly instructed
@@ -156,17 +161,17 @@ If you encounter ambiguity, incompleteness, or potential errors in the spec duri
 ## 📋 Summary Checklist
 
 For each task implementation:
-- [ ] Remove 🟡 from previous task (if applicable)
-- [ ] Remove 🟡 from completed requirements in Requirements Inventory
-- [ ] Remove 🟡 from completed APIs in API Inventory
-- [ ] Refer to requirement IDs during implementation to ensure full coverage
-- [ ] Implement current task fully  
-- [ ] Update work spec if implementation changed from plan
-- [ ] Stop and wait
-- [ ] ❌ DO NOT remove 🟡 from current task
+- Check the box on the previous task (if applicable).
+- Check the box on completed requirements in Requirements Inventory.
+- Check the box on completed APIs in API Inventory.
+- Refer to requirement IDs during implementation to ensure full coverage.
+- Implement current task fully.
+- Update work spec if implementation changed from plan.
+- Stop and wait.
+- ❌ DO NOT check the box on the current task.
 
 ### Why This Rule Exists
-The human controls task progression. Removing 🟡 from the current task would signal the work is finished and reviewed, which only the human can determine.
+The human controls task progression. Checking the current task's box would signal the work is finished and reviewed, which only the human can determine.
 
 ---
 
@@ -180,9 +185,9 @@ When a task involves implementing unit tests, follow the **Unit Testing Guide** 
 3. When the unit testing sub-process completes, return to the work spec workflow
 
 **Task completion criteria:**
-- All test files planned and approved
-- All sections implemented (no 🟡 remaining in test files)
-- Work spec task can be marked complete
+- All test files planned and approved.
+- All sections implemented (no 🟡 remaining in test files — the in-code progress markers from the unit-test planning workflow have all been removed as tests are written and pass).
+- Work spec task can be marked complete (`- [x]`).
 
 **Do NOT:**
 - Skip the planning phase

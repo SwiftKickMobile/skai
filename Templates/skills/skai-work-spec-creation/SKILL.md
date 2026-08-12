@@ -1,6 +1,6 @@
 ---
 name: skai-work-spec-creation
-description: Creates work specs using skai (planning, PRD/requirements updates, and work spec creation with 🟡 checkpoints). Use when the user asks to plan work, write a work spec, or refine requirements.
+description: Creates work specs using skai (planning, PRD/requirements updates, and work spec creation with `- [ ]` task checkpoints). Use when the user asks to plan work, write a work spec, or refine requirements.
 ---
 
 # SKAI: Work spec creation
@@ -8,4 +8,4 @@ description: Creates work specs using skai (planning, PRD/requirements updates, 
 ## Instructions
 
 - Read `Submodules/skai/Guides/Spec/work-spec-creation.md` and follow it.
-- If the workflow needs project-specific commands/paths, read `docs/skai/integration.md` and STOP to ask for missing required values.
+- If the workflow needs project-specific commands/paths, read `skai/integration.md` and STOP to ask for missing required values.

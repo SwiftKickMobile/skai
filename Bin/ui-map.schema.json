@@ -18,7 +18,7 @@
       "minLength": 1
     },
     "modal_styles": {
-      "description": "Project vocabulary of valid modal presentation styles (e.g. sheet, full_screen, card). A scene's 'modal_style' must be one of these. Optional; required only if any scene declares a 'modal_style'.",
+      "description": "Project vocabulary of valid modal presentation styles (e.g. sheet, full_screen, card). Required whenever the map contains a modal route; every modal destination's 'modal_style' must be one of these.",
       "type": "array",
       "minItems": 1,
       "items": { "type": "string", "minLength": 1 }
@@ -65,7 +65,11 @@
         "child": { "$ref": "#/$defs/RouteContainer" },
         "implements": { "$ref": "#/$defs/ImplementsList" },
         "platform": { "type": "string" },
-        "modal_style": { "type": "string", "minLength": 1 },
+        "modal_style": {
+          "description": "Required when this collapsed-domain root is reached by a modal route. Must be one of the document's top-level 'modal_styles', and implementations must use it.",
+          "type": "string",
+          "minLength": 1
+        },
         "todo": { "type": "boolean" },
         "note": { "type": "string" },
         "notes": { "$ref": "#/$defs/NotesList" },
@@ -121,7 +125,7 @@
           "$ref": "#/$defs/RouteContainer"
         },
         "modal": {
-          "description": "Modal routes: parent presents the child modally. The presentation style (sheet, dialog, full-screen) is an implementation detail.",
+          "description": "Modal routes: parent presents the child using the destination scene's required 'modal_style'.",
           "$ref": "#/$defs/RouteContainer"
         },
         "composite": {
@@ -146,7 +150,7 @@
           "minLength": 1
         },
         "modal_style": {
-          "description": "How this scene is presented when reached by a modal route (e.g. sheet, full_screen, card). Must be one of the document's top-level 'modal_styles'. Informational; does not affect routing semantics.",
+          "description": "How this scene is presented when reached by a modal route (e.g. sheet, full_screen, card). Required for every modal destination and must be one of the document's top-level 'modal_styles'. Implementations must use this style.",
           "type": "string",
           "minLength": 1
         },
@@ -159,7 +163,7 @@
           "type": "string"
         },
         "notes": {
-          "description": "Multiple notes. Each note can be a bare string (attaches to the scene) or an object with 'text' and optional 'on' (attaches to a route container of the named kind).",
+          "description": "Multiple notes. Each note can be a bare string (attaches to the scene) or an object with 'text' and optional 'at' (attaches to a route container of the named kind).",
           "$ref": "#/$defs/NotesList"
         },
         "primary_parent": {

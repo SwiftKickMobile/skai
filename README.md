@@ -25,7 +25,7 @@ Recommended host locations for agent-facing docs:
   - [How all workflows work](#how-all-workflows-work)
   - [Work spec creation](#work-spec-creation-skill-skai-work-spec-creation)
   - [Work spec implementation](#work-spec-implementation-skill-skai-work-spec-implementation)
-  - [UI Map planning](#ui-map-planning-skill-skai-ui-map-planning)
+  - [UI Map architecture](#ui-map-architecture-skill-skai-ui-map-architecture)
   - [UI Map implementation](#ui-map-implementation-skill-skai-ui-map-implementation)
   - [Unit testing](#unit-testing-skill-skai-unit-testing)
   - [Debugging](#debugging-skill-skai-debugging)
@@ -62,7 +62,7 @@ Paste ONE of these prompts into your agent chat (from the host repo root).
 >
 > - If the `Submodules/skai` submodule is missing, add it there.
 > - Do a discovery pass first, then propose a migration plan, then WAIT for approval before writing.
-> - Use `docs/skai/integration.md` ([`docs/skai/integration.md`](docs/skai/integration.md)) as the project-owned Integration doc and migrate any legacy build/test command notes into it (do not delete legacy files unless I explicitly approve).
+> - Use `skai/integration.md` ([`skai/integration.md`](skai/integration.md)) as the project-owned Integration doc and migrate any legacy build/test command notes into it (do not delete legacy files unless I explicitly approve).
 > - Only overwrite files that contain the managed header (`Managed-By: skai`). Treat lookalike files without the header as legacy candidates.
 
 #### Claude Code prompt
@@ -71,7 +71,7 @@ Paste ONE of these prompts into your agent chat (from the host repo root).
 >
 > - If the `Submodules/skai` submodule is missing, add it there.
 > - Do a discovery pass first, then propose a migration plan, then WAIT for approval before writing.
-> - Use `docs/skai/integration.md` ([`docs/skai/integration.md`](docs/skai/integration.md)) as the project-owned Integration doc and migrate any legacy build/test command notes into it (do not delete legacy files unless I explicitly approve).
+> - Use `skai/integration.md` ([`skai/integration.md`](skai/integration.md)) as the project-owned Integration doc and migrate any legacy build/test command notes into it (do not delete legacy files unless I explicitly approve).
 > - Only overwrite files that contain the managed header (`Managed-By: skai`). Treat lookalike files without the header as legacy candidates.
 
 #### Codex prompt
@@ -80,7 +80,7 @@ Paste ONE of these prompts into your agent chat (from the host repo root).
 >
 > - If the `Submodules/skai` submodule is missing, add it there.
 > - Do a discovery pass first, then propose a migration plan, then WAIT for approval before writing.
-> - Use `docs/skai/integration.md` ([`docs/skai/integration.md`](docs/skai/integration.md)) as the project-owned Integration doc and migrate any legacy build/test command notes into it (do not delete legacy files unless I explicitly approve).
+> - Use `skai/integration.md` ([`skai/integration.md`](skai/integration.md)) as the project-owned Integration doc and migrate any legacy build/test command notes into it (do not delete legacy files unless I explicitly approve).
 > - Use `.agents/AGENTS.md` as the Codex instruction file.
 > - Only overwrite files that contain the managed header (`Managed-By: skai`). Treat lookalike files without the header as legacy candidates.
 
@@ -113,13 +113,13 @@ Add a GitHub MCP server to your IDE's MCP configuration with a personal access t
 
 ## How installs stay safe
 
-- **Integration doc (project-owned)**: [`docs/skai/integration.md`](docs/skai/integration.md) is the single source of truth for project-specific commands/paths (build/test/lint/etc). Templates live in [`Templates/`](Templates/).
+- **Integration doc (project-owned)**: [`skai/integration.md`](skai/integration.md) is the single source of truth for project-specific commands/paths (build/test/lint/etc). Templates live in [`Templates/`](Templates/).
 - **Managed files**: host-project files written by the installer have a required header (see [`Install/managed-header.md`](Install/managed-header.md)). The installer overwrites only files that already contain this header.
 - **Legacy installs**: lookalike files without the header are treated as **legacy candidates** and are not overwritten by default (see [`Install/conflict-precedence-policy.md`](Install/conflict-precedence-policy.md)).
 
 ## Integration document (how to use it)
 
-The Integration doc ([`docs/skai/integration.md`](docs/skai/integration.md)) is the **project-owned** place where `skai` workflows get the concrete, copy/pasteable details they need to run deterministically (build/test commands, destinations, artifact paths, evidence expectations).
+The Integration doc ([`skai/integration.md`](skai/integration.md)) is the **project-owned** place where `skai` workflows get the concrete, copy/pasteable details they need to run deterministically (build/test commands, destinations, artifact paths, evidence expectations).
 
 Why it matters:
 - It prevents agents from guessing project-specific constants (like `xcodebuild -destination` strings, scheme/test plan conventions, or where `.xcresult` / logs are stored).
@@ -132,6 +132,8 @@ How humans should fill it:
   - remove the 🟡 marker
   - delete the `INSTRUCTION:` line(s) under it
 - If a future install/update can't infer a required value with high confidence, the installer may **restore** 🟡 + `INSTRUCTION:` prompts so the doc remains a complete, reliable source of truth.
+
+> **Note on `🟡`:** The Integration doc's `🟡` (missing project-specific value) is a separate concept from the workflow-progress `🟡` used in source files by skai workflows (see [Agent note-taking and progress tracking](#how-all-workflows-work) below). Both share the emoji; their lifecycles differ.
 
 ## IDE clutter / autocomplete (recommended)
 
@@ -175,11 +177,13 @@ After installation, workflows are available as **skills** that your agent activa
 5. Adding **"auto"** to advance intent tells the agent to proceed without stopping at checkpoints, unless a universal STOP condition applies (e.g. "next auto", "begin auto").
 6. You can bound auto: **"auto to <milestone>"** means "proceed until you are about to begin the milestone, then stop" (e.g. "next auto to task 7").
 
-**Agent note-taking and progress tracking.** The agent keeps structured notes so you can pick up where you left off:
+**Agent note-taking and progress tracking.** The agent keeps structured notes so you can pick up where you left off. Two marker conventions coexist:
 
-- The agent uses **🟡** markers in working documents to flag TODOs, open questions, and items pending your approval (including "implemented but pending approval").
-- 🟡 markers should be individually updatable (use stable identifiers like task numbers, section names, or explicit IDs on the same line).
-- 🟡 markers are removed only when items are resolved and you give approval.
+- In **process artifacts** (markdown workflow documents — work specs, planning docs, retro outputs, ticket drafts, etc.): the agent uses `- [ ]` / `- [x]` markdown checkboxes with stable letter-led IDs (`D1`, `T1`, `F1`, `S1`, etc.) on each item. Completion is checking the box — the artifact keeps a record of every resolved item.
+- In **source files** (test code, application code) written or planned by a skai workflow: the agent uses a **🟡** emoji on lines/functions/sections that are TODO. Completion is *removal* of the marker — the file's remaining work is read by which 🟡s remain. The canonical example is the unit test planning workflow, where section MARKs and test functions are seeded with 🟡 and the markers come off as tests are implemented and pass.
+- Markers are cleared only when items are resolved and you give approval at the relevant gate.
+
+> **Note on `🟡`:** This is the workflow-progress `🟡`, distinct from the [Integration document](#integration-document-how-to-use-it) `🟡` (which marks missing project-specific values needing human input). Both share the emoji; their lifecycles differ.
 
 **Retros on demand.** At any point you can ask the agent to **"retro"** to check for gaps, update documents, backfill requirements, and reflect on process.
 
@@ -193,12 +197,11 @@ Structured planning and specification for complex features. Produces a planning 
 
 **Phases:**
 
-1. **Planning document.** Agent summarizes the discussion into a document seeded with 🟡 open questions. Optional: for large efforts, the planning document can be organized into explicit phase sections; each phase runs its own mini-cycle (discussion, API sketch, requirements normalization, work spec) before moving to the next. Gate: human reviews and resolves 🟡 items before the workflow advances.
-2. **Design discussion.** Agent proposes, human decides. Iterates until all 🟡 items are resolved.
-3. **API sketch.** Agent drafts the API surfaces implied by the design. Gate: human confirms the design is ready to proceed.
-4. **Requirements normalization.** Agent promotes behaviors from the planning document into canonical requirements. Gate: human acknowledges requirements updates.
-5. **Work spec first pass.** Agent writes top-level tasks only (no subtasks). Gate: human reviews the task list.
-6. **Work spec second pass.** Agent adds subtasks, requirement IDs, and traceability mapping. Gate: human reviews the completed work spec.
+1. **Planning document + design discussion.** Agent summarizes the discussion into a document seeded with `- [ ] D<n> [Kind] <summary>` discussion items per topic (each `[Question]`, `[Proposal]`, or `[Tradeoff]`). Optional: for large efforts, the planning document can be organized into explicit phase sections; each phase runs its own mini-cycle (discussion, API sketch, requirements normalization, work spec) before moving to the next. While any `- [ ]` item remains unresolved the workflow is at a blocked gate; the moment they're all resolved (check the box, append a `- **Decision**` sub-bullet) the agent emits the first planned gate to advance to API sketch.
+2. **API sketch.** Agent drafts the API surfaces implied by the design. Gate: human confirms the design is ready to proceed.
+3. **Requirements normalization.** Agent promotes behaviors from the planning document into canonical requirements. Gate: human acknowledges requirements updates.
+4. **Work spec first pass.** Agent writes top-level tasks only (no subtasks). Gate: human reviews the task list.
+5. **Work spec second pass.** Agent adds subtasks, requirement IDs, and traceability mapping. Gate: human reviews the completed work spec.
 
 ### Work spec implementation (skill `skai-work-spec-implementation`)
 
@@ -212,31 +215,34 @@ Execute tasks from a completed work spec, one top-level task per cycle.
 
 1. **Implement next top-level task.** Agent implements all subtasks under Task N. Gate: agent stops after finishing Task N and waits before moving to Task N+1.
 
-### UI Map planning (skill `skai-ui-map-planning`)
+### UI Map architecture (skill `skai-ui-map-architecture`)
 
-Plan changes to the app's UI Map -- the YAML document that defines every scene and its routing. Handles new UI work and audits of an existing app against the map. Produces a plan document (discussion plus a typed change list), the proposed `ui-map.yaml` edits, and a render of the resulting map for review.
+Create or change the app's UI Map as an architecture artifact. Produces a change package under `skai/changes/<change-id>/` containing the architecture artifact, `proposed-ui-map.yaml`, and `proposed-ui-map.svg`; the official map stays frozen during architecture.
 
-- Guide [`Guides/UIMap/ui-map-planning.md`](Guides/UIMap/ui-map-planning.md)
+- Guide [`Guides/UIMap/ui-map-architecture.md`](Guides/UIMap/ui-map-architecture.md)
 - Example [`Guides/UIMap/ui-map-demo.md`](Guides/UIMap/ui-map-demo.md) -- a complete UI Map in YAML with its rendered diagram
 
-**Prerequisites:** A UI Map (`ui-map.yaml`) for the project, or the intent to start one. For an audit, the app code to compare against the map.
+**Prerequisites:** Product/design/story inputs for a baseline map or scoped map change. Existing maps live at `skai/ui-map/ui-map.yaml`; architecture change artifacts live under `skai/changes/<change-id>/`.
 
 **Phases:**
 
-1. **Discussion.** Agent digests the inputs and drafts topic-organized discussion with inline `- [ ]` items (questions, proposals, tradeoffs); for an audit, conformance findings. Gate: human resolves each item before the change list is written.
-2. **Change list.** Agent translates the resolved decisions into a typed change list, edits `ui-map.yaml` to the proposed state, and renders it. Ends with a `🏁 Complete.` handoff -- the change list, map diff, and render are the review package for implementation.
+1. **Discussion.** Agent digests the inputs and drafts topic-organized map decisions with inline `- [ ]` items (questions, proposals, tradeoffs). Gate: human resolves each item before map changes are written.
+2. **Map changes.** Agent translates the resolved decisions into typed map changes, writes the package's proposed map, and renders that proposal for validation and review. Ends with `🏁 Complete.` once the valid architecture package is in place.
 
 ### UI Map implementation (skill `skai-ui-map-implementation`)
 
-Execute an approved UI Map plan: scaffold each scene and its navigation as placeholders -- skeleton plus routing, no feature content. Runs autonomously between gates, build-verifying at stage boundaries.
+Conform app code to the proposed map in an architecture change package, then promote that map to official. The guide covers the audit, alignment discussion, checkbox-tracked code changes and their ownership dispositions, placeholder scaffolding, build verification, and change requests back to architecture.
 
 - Guide [`Guides/UIMap/ui-map-implementation.md`](Guides/UIMap/ui-map-implementation.md)
 
-**Prerequisites:** An approved UI Map plan (change list plus `ui-map.yaml`) from `skai-ui-map-planning`.
+**Prerequisites:** A change package at `skai/changes/<change-id>/` (proposed map + render + architecture artifact) and the app codebase; with no change package, the official `skai/ui-map/ui-map.yaml` is the frozen target. Run mode (Plan vs Build) is inferred from context.
 
-**Phases:**
+**Stages:**
 
-1. **Scaffold the change list.** Agent executes the change-list entries top-down, building at domain boundaries. Gates: optional stage gates for large change sets, then a completion gate (build green) for the human to review the diff and click through the new navigation.
+1. **Audit.** Agent compares the codebase to the target map within the change's scope and separates UI-map-owned work, concrete handoffs, and map-level change requests.
+2. **Discussion.** Agent resolves the non-mechanical decisions the audit raises. Gate: discussion complete.
+3. **Code Changes.** Agent writes typed, unchecked items with stable IDs and a Disposition (`implement` / `placeholder` / `planned` / `handoff`), ending with a terminal promote item when a proposed map exists. The checkbox records completion; Disposition records ownership. Gate: Code Changes ready.
+4. **Implement.** In Build, the agent executes owned items, build-verifies at chunk boundaries, and blocks while any handoff remains unchecked. In Plan, owned code work remains unchecked as `planned`. When a proposed map exists, promotion is the terminal item and runs only at the mode's completion point. Click-through QA is downstream, not a gate.
 
 ### Unit testing (skill `skai-unit-testing`)
 
@@ -248,9 +254,9 @@ Plan-first testing workflow. The agent creates an orchestration document for the
 
 **Phases:**
 
-1. **Planning.** Agent chooses a session name for the current testing effort and creates `working-docs/<branch-path>/<session-name>/testing/unit-testing.md` (following [`Guides/Core/working-doc-conventions.md`](Guides/Core/working-doc-conventions.md)), adds `Planning 🟡`, and creates test files organized into sections with test stubs in each. Doc comments on every stub serve as the test plan. At the planning gate, `Planning 🟡` remains until the human approves advancing to infrastructure.
-2. **Infrastructure.** Agent identifies required test infrastructure across all planned tests in the testing session (stubs, fixtures, production code abstractions) and proposes additions. The orchestration document keeps `Infrastructure 🟡` until the human approves advancing to writing. Related infrastructure docs and artifacts live under the same `working-docs/<branch-path>/<session-name>/...` session folder.
-3. **Writing** (per section, file-by-file). Agent implements tests and then runs them section-by-section, finishing the current file before moving to the next. Gates: agent stops after writing (before running tests), and stops after test results to confirm conclusions and next steps (including any proposed production-code fixes). The orchestration document keeps `Writing 🟡` until all sections in the testing session are approved complete. If a test requires infrastructure that wasn't identified in Phase 2, it is skipped, the missing infrastructure is documented, and the human can decide at the next planned gate whether to re-enter the infrastructure phase or defer that skipped work.
+1. **Planning.** Agent chooses a session name for the current testing effort and creates `skai/working-docs/<branch-path>/<session-name>/testing/unit-testing.md` (following [`Guides/Core/working-doc-conventions.md`](Guides/Core/working-doc-conventions.md)) with a `- [ ] Planning` / `- [ ] Infrastructure` / `- [ ] Writing` checklist, and creates test files organized into sections with test stubs in each. Test files use `🟡` on section MARKs and `@Test` functions (in-code progress markers). Doc comments on every stub serve as the test plan. At the planning gate, `Planning` remains unchecked until the human approves advancing to infrastructure.
+2. **Infrastructure.** Agent identifies required test infrastructure across all planned tests in the testing session (stubs, fixtures, production code abstractions) and proposes additions. The orchestration document keeps `Infrastructure` unchecked until the human approves advancing to writing. Related infrastructure docs and artifacts live under the same `skai/working-docs/<branch-path>/<session-name>/...` session folder.
+3. **Writing** (per section, file-by-file). Agent implements tests and then runs them section-by-section, finishing the current file before moving to the next. Gates: agent stops after writing (before running tests), and stops after test results to confirm conclusions and next steps (including any proposed production-code fixes). As tests pass and the human approves, the agent removes `🟡` from those test functions and section MARKs in the test files. The orchestration document keeps `Writing` unchecked until all sections in the testing session are approved complete. If a test requires infrastructure that wasn't identified in Phase 2, it is skipped, the missing infrastructure is documented, and the human can decide at the next planned gate whether to re-enter the infrastructure phase or defer that skipped work.
 
 Phase 3 repeats for each section until none remain.
 
@@ -279,7 +285,7 @@ Completeness backstop that can be used at any point during any workflow. Reviews
 **Phases:**
 
 1. **Retro.** Agent performs the full checklist, reports findings, and completes immediately if no process suggestions were generated.
-2. **Process improvement follow-up (optional).** If the retro identifies process improvements, agent lists them in the retro output and stops at a handoff gate. On `next`, the agent enters [`Guides/Process/process-improvement.md`](Guides/Process/process-improvement.md), which drafts `process-tickets.md`, lets the human review/edit the resulting `## 🟡 Ticket: ...` entries, and files the remaining ones on `next`.
+2. **Process improvement follow-up (optional).** If the retro identifies process improvements, agent lists them in the retro output as `- [ ] S<n>` items and stops at a handoff gate. On `next`, the agent enters [`Guides/Process/process-improvement.md`](Guides/Process/process-improvement.md), which drafts `process-tickets.md`, lets the human review/edit the resulting `- [ ] T<n> Ticket: ...` entries, and files the remaining ones on `next`.
 
 ### Suggestion (skill `skai-suggestion`)
 
@@ -291,25 +297,25 @@ Ad-hoc process improvement suggestions outside of a retro. The agent helps the d
 
 **Phases:**
 
-1. **Understand and draft.** Agent asks clarifying questions to understand the suggestion (skipped if the developer provides enough detail up front). Once it has enough context, it stops at a ready-to-draft gate. On `next`, it chooses a session name, writes one or more `## 🟡 Ticket: ...` drafts to `working-docs/<branch-path>/<session-name>/process-tickets.md`, and presents them for review.
-2. **Review and file (optional).** The draft-review gate is the main filing gate: the human can revise or remove drafts there, or say `next` to file the remaining `## 🟡 Ticket: ...` entries as GitHub issues on `skai`. On filing, the draft marker is removed and the entry records the filed issue number.
+1. **Understand and draft.** Agent asks clarifying questions to understand the suggestion (skipped if the developer provides enough detail up front). Once it has enough context, it stops at a ready-to-draft gate. On `next`, it chooses a session name, writes one or more `- [ ] T<n> Ticket: ...` drafts (with bold sub-bullet body fields) to `skai/working-docs/<branch-path>/<session-name>/process-tickets.md`, and presents them for review.
+2. **Review and file (optional).** The draft-review gate is the main filing gate: the human can revise drafts or move them to a `## Skipped` subsection, or say `next` to file the remaining unchecked `- [ ] T<n> Ticket: ...` entries as GitHub issues on `skai`. On filing, the entry is checked (`- [x]`) and a `- **Filed** #<n>` sub-bullet is appended.
 
 ### Update installation (skill `skai-update-installation`)
 
-Check for upstream `skai` updates, review what changed, and re-run adapter runbooks.
+Update `skai` to the latest release (or a target you name), review what changed, and re-run adapter runbooks.
 
 - Guide [`Guides/Core/update-installation-guide.md`](Guides/Core/update-installation-guide.md)
 
-**Prerequisites:** An existing installation ([`docs/skai/install-state.json`](docs/skai/install-state.json) must exist from the initial install).
+**Prerequisites:** An existing installation ([`skai/install-state.json`](skai/install-state.json) must exist from the initial install).
 
 **Phases:**
 
-1. **Check and report.** Agent checks for upstream changes, updates the submodule as needed, and presents the changelog delta. Gate: human acknowledges before any runbooks are re-run.
+1. **Pick target, update, and report.** Agent updates the submodule to the latest release (`v<N>` tag) by default — or to a target you name (head of current branch, head of main, or a specific commit) — and presents the `## Release <N>` notes between your installed and target releases. Gate: human acknowledges before any runbooks are re-run.
 2. **Re-run adapters.** Agent re-runs each installed adapter's install/update runbook to pick up new or changed assets.
 
 ### Working documents
 
-- Working documents (plans, specs, progress logs) live under [`working-docs/`](working-docs/) and are organized by your current git branch.
+- Working documents (plans, specs, progress logs) live under [`skai/working-docs/`](skai/working-docs/) and are organized by your current git branch.
 - `<branch-path>` is the current branch name, with `/` decomposed into nested folders (so `feature/foo` becomes `feature/foo/`).
 - Working docs are ephemeral and typically git-ignored.
 

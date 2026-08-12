@@ -2,13 +2,13 @@ Managed-By: skai
 Managed-Id: guide.ui-map-compose-placeholders
 Managed-Source: Guides/UIMap/ui-map-compose-placeholders.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-05-24
+Managed-Updated-At: 2026-08-11
 
 # UI Map — Jetpack Compose Placeholder Scenes
 
-How the UI Map **implementation** skill scaffolds scenes in Jetpack Compose: skeleton + navigation, no feature content. Companion to [`ui-map-compose.md`](ui-map-compose.md) — read its **Scene file layout** and **Route enums** sections first; this doc builds on them. Read this doc only when scaffolding placeholders (not for audit or planning).
+How the UI Map **implementation** skill scaffolds scenes in Jetpack Compose: skeleton + navigation, no feature content. Companion to [`ui-map-compose.md`](ui-map-compose.md) — read its **Scene file layout** and **Route enums** sections first; this doc builds on them. Load this doc while auditing, planning, or building whenever placeholder work is in scope; omit it only when no placeholder work is in scope.
 
-Placeholders use two copy-in libraries: the **placeholder library** (the `PlaceholderScene` family — the Compose counterpart to `SKAISwiftUI`) and the **routing library** (`SlideNavHost`, `ModalBottomSheetNavHost`, the `bottomSheet` / `bottomSheetFullScreen` / `dialog` modal builders, the `navigate*` extensions). Both are vendored into the app; distribution is a project concern, not a scaffolding one.
+Placeholders require two project-vendored libraries: the **placeholder library** (the `PlaceholderScene` family — the Compose counterpart to `SKAISwiftUI`) and the **routing library** (`SlideNavHost`, `ModalBottomSheetNavHost`, the `bottomSheet` / `bottomSheetFullScreen` / `dialog` modal builders, the `navigate*` extensions). SKAI does not currently distribute these libraries. Before Code Changes, confirm that the project provides compatible implementations of the APIs below; if either library is absent or incompatible, STOP in Discussion under the implementation guide's missing-mapping rule. Do not hand-roll a substitute during scaffolding.
 
 ## Build philosophy
 
@@ -31,12 +31,30 @@ A scene that both pushes and presents modals owns both hosts. A pushed or modall
 - `PlaceholderRoute(label, kind, isCurrent = false) { action }` — one menu route. `kind` is `PlaceholderRouteKind.{Nav, Sheet, FullScreen, Popover, Child}`. `isCurrent = true` omits it from the menu (used for the **active child**).
 - `PlaceholderTab(label, icon) { content }` — one tab. `icon` is an `ImageVector`.
 - `PlaceholderChildHost(title, domainColor, routes) { content }` — hosts a child-routed scene full-bleed and contributes the parent's breadcrumb to the selected child.
-- `PlaceholderColors.{app, library, note, other, common}` — domain tints, matched to the rendered map.
+- `PlaceholderColors.domain(index)` — the domain palette by index, matched to the rendered map (mirrors `Bin/ui-map-render.py`).
 
 Two presentation helpers wire the breadcrumb + dismiss/back context on destinations:
 
 - `PlaceholderPushedScene(presenterTitle, presenterColor, onBack) { destination }` — on a **nav** destination: appends the presenting scene to the breadcrumb, hides the dismiss control, and supplies `onBack` (`navController::popBackStack`) for the top-app-bar back arrow.
 - `PlaceholderModalScene(presenterTitle, presenterColor, onDismiss) { destination }` — on a **modal** destination: shows the dismiss control (✕), wires `onDismiss`, resets the breadcrumb to the presenter, and clears any inherited back arrow (a modal never shows one). For a sheet, `onDismiss` is the `BottomSheetScope`'s `dismissBottomSheet` (animated); for a `dialog`, it's `navController::popBackStack`.
+
+## Domain colors
+
+Scaffolded scenes are tinted to match the rendered map. The render colors each domain by its **declaration order**; `PlaceholderColors.domain(index)` returns the tint for that index.
+
+Generate one artifact, `DomainColors.kt`, mapping each domain to its slot in map declaration order:
+
+```kotlin
+// 🟡 UI Map scaffold <change-id>
+object DomainColors {
+    val app = PlaceholderColors.domain(0)
+    val library = PlaceholderColors.domain(1)
+    val note = PlaceholderColors.domain(2)
+    val common = PlaceholderColors.domain(3) // when top-level `common:` exists
+}
+```
+
+Each scene sets `domainColor` to its domain's slot; a scene in a sub-domain uses its domain's color. `DomainColors` follows the renderer's domain order: every key in `domains`, in declaration order, followed by `common` when the map has a top-level `common:` group. Never track only the domains that currently have placeholders. It is shared placeholder infrastructure, like the placeholder library itself: the production skill deletes it once no `UI Map scaffold` markers remain in the project.
 
 ## What the library renders for you — don't hand-build these
 
@@ -50,18 +68,18 @@ You declare only `title` / `domainColor` / `routes` / `tabs` / `embedded` and wi
 
 ## Route enums
 
-Per `ui-map-compose.md`: a `sealed interface` implementing the `Route` marker, with `@Serializable data object` (or `data class`) cases, for type-safe Compose Navigation. Route enums live at the top of `<Scene>ViewModel.kt`.
+Follow the route-type contract in [`ui-map-compose.md`](ui-map-compose.md). Placeholder route declarations live at the top of `<Scene>ViewModel.kt`.
 
 ```kotlin
-sealed interface NoteModalRoute : Route {
-    @Serializable data object TagPicker : NoteModalRoute
-    @Serializable data object ShareSheet : NoteModalRoute
+sealed class NoteModalRoute : Route {
+    @Serializable data object TagPicker : NoteModalRoute()
+    @Serializable data object ShareSheet : NoteModalRoute()
 }
 ```
 
 ## View models and DI
 
-Every scene gets a view model, like every scene in `ui-map-compose.md` — but a placeholder's is **minimal** (`class FooViewModel : ViewModel()`), empty until it needs state. The route enums in the view model file are the only required content. Obtain it with plain `viewModel()`, not `hiltViewModel()`: a skeleton should not require Hilt wiring. (Production scenes use `hiltViewModel()` and the full `ViewState` / `ViewEvent` / `ViewEffect` triad per `ui-map-compose.md`; placeholders skip all of that and call `navigatePush` directly from the route action.)
+As a placeholder-only convention, every scaffolded scene gets a **minimal** view model (`class FooViewModel : ViewModel()`), empty until it needs state; this does not change the canonical guide's allowance for production stateless leaves to omit one. Route declarations, when present, are the minimal view-model file's only required additional content. Obtain the view model with plain `viewModel()`, not `hiltViewModel()`: a skeleton should not require Hilt wiring. Production scenes follow `ui-map-compose.md`; placeholders skip the production state/event/effect triad and call `navigatePush` directly from the route action.
 
 ## Per route kind
 
@@ -76,7 +94,7 @@ fun AppScreen(viewModel: AppViewModel = viewModel()) {
     val destination = navController.currentBackStackEntryAsState().value?.destination
     PlaceholderChildHost(
         title = "App",
-        domainColor = PlaceholderColors.app,
+        domainColor = DomainColors.app,
         routes = listOf(
             PlaceholderRoute("Library", PlaceholderRouteKind.Child, isCurrent = destination?.hasRoute(AppChildRoute.Library::class) != false) {
                 navController.navigateReplace(AppChildRoute.Library)
@@ -101,7 +119,7 @@ fun AppScreen(viewModel: AppViewModel = viewModel()) {
 ```kotlin
 PlaceholderScene(
     title = "Library",
-    domainColor = PlaceholderColors.library,
+    domainColor = DomainColors.library,
     routes = listOf(
         PlaceholderRoute("Profile", PlaceholderRouteKind.Sheet) { modalNavController.navigatePush(LibraryModalRoute.Profile) },
         PlaceholderRoute("Search", PlaceholderRouteKind.FullScreen) { modalNavController.navigatePush(LibraryModalRoute.Search) },
@@ -126,14 +144,14 @@ fun NotesScreen(viewModel: NotesViewModel = viewModel()) {
         composable<NavStart> {
             PlaceholderScene(
                 title = "Notes",
-                domainColor = PlaceholderColors.library,
+                domainColor = DomainColors.library,
                 routes = listOf(
                     PlaceholderRoute("Note", PlaceholderRouteKind.Nav) { navController.navigatePush(NotesNavRoute.Note) },
                 ),
             )
         }
         composable<NotesNavRoute.Note> {
-            PlaceholderPushedScene("Notes", PlaceholderColors.library, onBack = navController::popBackStack) {
+            PlaceholderPushedScene("Notes", DomainColors.library, onBack = navController::popBackStack) {
                 NoteScreen()
             }
         }
@@ -143,13 +161,13 @@ fun NotesScreen(viewModel: NotesViewModel = viewModel()) {
 
 ### modal
 
-The scene overlays a `ModalBottomSheetNavHost` (its own `modalNavController = rememberNavController(rememberBottomSheetNavigator())`) beside its body in a `Box`. Each destination is wrapped in `PlaceholderModalScene`. The presentation style maps to the builder, chosen at the host (not on the route enum):
+The scene overlays a `ModalBottomSheetNavHost` (its own `modalNavController = rememberNavController(rememberBottomSheetNavigator())`) beside its body in a `Box`. Each destination is wrapped in `PlaceholderModalScene`. Use the `modal_style` → builder mapping in [`ui-map-compose.md`](ui-map-compose.md); the dismiss callback is:
 
-| modal style | builder | dismiss passed to `PlaceholderModalScene` |
-| --- | --- | --- |
-| sheet | `bottomSheet<Route>(navHostController = modalNavController) { … }` | `{ dismissBottomSheet() }` |
-| full_screen | `bottomSheetFullScreen<Route>(navHostController = modalNavController) { … }` | `{ dismissBottomSheet() }` |
-| popover | `dialog<Route> { … }` | `modalNavController::popBackStack` |
+| Builder | Dismiss passed to `PlaceholderModalScene` |
+| --- | --- |
+| `bottomSheet<Route>(navHostController = modalNavController) { … }` | `{ dismissBottomSheet() }` |
+| `bottomSheetFullScreen<Route>(navHostController = modalNavController) { … }` | `{ dismissBottomSheet() }` |
+| `dialog<Route> { … }` | `modalNavController::popBackStack` |
 
 `bottomSheet` / `bottomSheetFullScreen` are the routing library's opaque material3 sheets. Both open **full-height**, skipping the partial detent — matching SalesPro and HomeStory; the sheet has a rounded top + status-bar gap, the full-screen variant is square edge-to-edge (height is the same; the difference is cosmetic). Their content runs in a `BottomSheetScope` that exposes `dismissBottomSheet()` — an animated close (slide down, then pop) — which you pass as the modal's `onDismiss`. A `dialog` has no slide animation, so it dismisses with a plain `popBackStack`.
 
@@ -160,7 +178,7 @@ fun NoteScreen(viewModel: NoteViewModel = viewModel()) {
     Box(Modifier.fillMaxSize()) {
         PlaceholderScene(
             title = "Note",
-            domainColor = PlaceholderColors.note,
+            domainColor = DomainColors.note,
             routes = listOf(
                 PlaceholderRoute("Tag Picker", PlaceholderRouteKind.Popover) { modalNavController.navigatePush(NoteModalRoute.TagPicker) },
                 PlaceholderRoute("Share Sheet", PlaceholderRouteKind.Sheet) { modalNavController.navigatePush(NoteModalRoute.ShareSheet) },
@@ -169,12 +187,12 @@ fun NoteScreen(viewModel: NoteViewModel = viewModel()) {
         )
         ModalBottomSheetNavHost(navController = modalNavController) {
             dialog<NoteModalRoute.TagPicker> {
-                PlaceholderModalScene("Note", PlaceholderColors.note, onDismiss = modalNavController::popBackStack) {
+                PlaceholderModalScene("Note", DomainColors.note, onDismiss = modalNavController::popBackStack) {
                     TagPickerScreen()
                 }
             }
             bottomSheet<NoteModalRoute.ShareSheet>(navHostController = modalNavController) {
-                PlaceholderModalScene("Note", PlaceholderColors.note, onDismiss = { dismissBottomSheet() }) {
+                PlaceholderModalScene("Note", DomainColors.note, onDismiss = { dismissBottomSheet() }) {
                     ShareSheetScreen()
                 }
             }
@@ -189,20 +207,26 @@ Composite children are listed in `embedded` (shown together, each as its own gra
 
 ### leaf
 
-No routes, no tabs, no embedded — but still gets a minimal view model, like every scene.
+No routes, no tabs, no embedded — but still gets a minimal view model under the placeholder-only convention above.
 
 ```kotlin
 class ShareSheetViewModel : ViewModel()
 
 @Composable
 fun ShareSheetScreen(viewModel: ShareSheetViewModel = viewModel()) {
-    PlaceholderScene(title = "Share Sheet", domainColor = PlaceholderColors.note)
+    PlaceholderScene(title = "Share Sheet", domainColor = DomainColors.note)
 }
 ```
 
 ## New-scene inputs — none
 
-A newly scaffolded scene models no inputs: no variant for `implements`, no parameters, and its incoming route case carries no associated value. (Wiring inputs — modeling them on the route enum, asking for a fixture — is the existing-scene case, handled separately.)
+A newly scaffolded scene models no inputs: no variant for `implements`, no parameters, and its incoming route case carries no associated value. For a new route to an existing destination, inspect and preserve that destination's parameter contract. When the codebase or project conventions already define the source of every required value, model those values on the route declaration and pass them through; otherwise STOP in Discussion under the implementation guide's missing-input rule. Do not invent fixture data, value sources, or feature behavior.
+
+## Reaching a scene from a real screen
+
+> **TODO (deferred).** The real-screen entry trigger for Compose is deferred to a separate work effort (rebuild-plan D12); no Compose trigger is built yet.
+
+Until it lands or project conventions provide a compatible trigger, routing a new scene from an existing **real** screen has no defined code mapping: STOP in Discussion before Code Changes under the implementation guide's missing-mapping rule. Do not hand-roll or omit the trigger.
 
 ## Boundary
 

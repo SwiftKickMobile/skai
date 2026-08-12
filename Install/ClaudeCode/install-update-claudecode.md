@@ -44,6 +44,7 @@ Follow the discover → classify → plan → confirm → execute workflow.
 - Inventory existing install artifacts:
   - Claude instruction files (`claude.md`, `CLAUDE.md`, `.claude/**`)
   - `docs/**`
+  - the known legacy and canonical SKAI project-artifact paths in `Install/conflict-precedence-policy.md`
 - Identify any existing docs containing integration details (to migrate into Integration doc).
 
 ### 2) Classify
@@ -61,6 +62,7 @@ Prepare a concrete plan:
 - Files to update (managed only, including managed symlinks)
 - Legacy candidates to supersede (create new canonical outputs)
 - Integration doc migration items
+- Canonical SKAI project-artifact path migrations and any destination conflicts
 - Legacy cleanup proposals (permission-gated)
 - Legacy adapter migration (see "Migrating from old adapter IDs" below)
 
@@ -76,7 +78,8 @@ If updating the submodule, include an "update review" section:
 ### 5) Execute (safe order)
 
 1. Ensure submodule is present/updated.
-2. Create/update `docs/skai/integration.md` (migrate legacy command docs into it; do not delete legacy docs by default).
+2. Perform the approved canonical project-artifact path migrations from `Install/conflict-precedence-policy.md`; STOP on any source/destination collision.
+3. Create/update `skai/integration.md` (migrate legacy command docs into it; do not delete legacy docs by default).
    - If you cannot find the required integration information in-repo:
      - Create/seed the Integration doc from `Templates/docs/skai/integration.md`.
      - Fill only what you can source with high confidence.
@@ -87,17 +90,17 @@ If updating the submodule, include an "update review" section:
      - Xcode/Swift → `Install/ClaudeCode/stack-xcode.md`
      - Android/Kotlin → `Install/ClaudeCode/stack-android.md`
    - Follow `Install/integration-doc-install-update.md` for how to update the Integration doc safely (managed blocks + human overrides).
-3. Create/update the Claude instruction file (`claude.md` vs `CLAUDE.md`) using managed headers.
-4. Install Claude Code skills into `.claude/skills/` (see "Installing Claude Code skills" below).
-5. Create/update ignore files (permission-gated if they already exist and are project-owned):
+4. Create/update the Claude instruction file (`claude.md` vs `CLAUDE.md`) using managed headers.
+5. Install Claude Code skills into `.claude/skills/` (see "Installing Claude Code skills" below).
+6. Create/update ignore files (permission-gated if they already exist and are project-owned):
    - Update `.gitignore` by inserting/updating a managed block:
-     - Add `working-docs/` so ephemeral working documents are not committed.
+     - Add `skai/working-docs/` so ephemeral working documents are not committed.
    - Update `.claudeignore` by inserting/updating a managed block:
      - Exclude `.cursor/**` so Claude sessions don't ingest Cursor-specific assets by default.
      - Do NOT exclude `Submodules/skai/**` here; use editor UI excludes for autocomplete/search clutter instead.
    - If `.cursorignore` exists, propose inserting/updating an equivalent managed block to exclude `.claude/**` (ask approval before changing).
-6. Optionally propose cleanup of legacy candidates as a separate explicit step.
-7. Write/update `docs/skai/install-state.json` (see "Install state file" below).
+7. Optionally propose cleanup of legacy candidates as a separate explicit step.
+8. Write/update `skai/install-state.json` (see "Install state file" below).
 
 Required Integration doc fields to request (minimum set):
 - Build/compile command(s)
@@ -123,7 +126,9 @@ Install these skills:
   - source: `Submodules/skai/Templates/skills/skai-work-spec-creation/SKILL.md`
 - `.claude/skills/skai-work-spec-implementation/SKILL.md`
   - source: `Submodules/skai/Templates/skills/skai-work-spec-implementation/SKILL.md`
-- `.claude/skills/skai-ui-map-planning/SKILL.md`
+- `.claude/skills/skai-ui-map-architecture/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-ui-map-architecture/SKILL.md`
+- `.claude/skills/skai-ui-map-planning/SKILL.md` (deprecated compatibility entry point)
   - source: `Submodules/skai/Templates/skills/skai-ui-map-planning/SKILL.md`
 - `.claude/skills/skai-ui-map-implementation/SKILL.md`
   - source: `Submodules/skai/Templates/skills/skai-ui-map-implementation/SKILL.md`
@@ -144,7 +149,7 @@ Install these skills:
 
 ## Install state file
 
-After a successful install or update, write/update `docs/skai/install-state.json` so the `update-installation` skill can detect changes and re-run the appropriate adapters.
+After a successful install or update, write/update `skai/install-state.json` so the `update-installation` skill can detect changes and re-run the appropriate adapters.
 
 Format:
 
@@ -153,6 +158,7 @@ Format:
   "managedBy": "skai",
   "submodulePath": "Submodules/skai",
   "lastSHA": "<current submodule HEAD SHA>",
+  "lastRelease": "<v<N> release tag at submodule HEAD, or null if not on a release>",
   "lastUpdatedAt": "<yyyy-mm-dd>",
   "installedAdapters": [
     {
@@ -166,7 +172,8 @@ Format:
 
 Rules:
 - If the file does not exist, create it with this adapter's entry.
-- If the file already exists, **merge**: update `lastSHA`, `lastUpdatedAt`, and upsert this adapter's entry in `installedAdapters` (preserve entries from other adapters).
+- If the file already exists, **merge**: update `lastSHA`, `lastRelease`, `lastUpdatedAt`, and upsert this adapter's entry in `installedAdapters` (preserve entries from other adapters).
+- Determine `lastRelease` from the submodule's current HEAD: `git -C <submodulePath> tag --points-at HEAD --list 'v*'` -- if a `v<N>` tag points at HEAD, use the highest; otherwise set `lastRelease` to null.
 - The adapter ID for this runbook is `claude-code`; the runbook path is `Install/ClaudeCode/install-update-claudecode.md`.
 
 ## Migrating from old adapter IDs

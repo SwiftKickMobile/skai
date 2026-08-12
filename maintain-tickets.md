@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ticket-implementation
 Managed-Source: maintain-tickets.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-03-07
+Managed-Updated-At: 2026-05-27
 
 # Ticket implementation session
 
@@ -20,6 +20,10 @@ This is an internal maintenance workflow for the `skai` repo, not a guide for ho
 
 Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
 
+**Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
+
+**No fabricated gates.** `⏳ GATE:` lines only appear at gates this `## Gates` section defines or at a properly emitted blocked gate. Do not invent new gate categories or labels to describe discussion state, partial completion, or intermediate review. If a `⏳ GATE:` line is needed that this guide doesn't define, that's a signal the guide is missing a gate — file it as a process improvement.
+
 Use these standard gate lines:
 - Planned gate: `⏳ GATE: Next: <what happens after your response>. Say "next" or what to change.`
 - Blocked gate: `⏳ GATE: Blocked: <reason>. Resolve and say "next" to continue.`
@@ -34,12 +38,12 @@ In the planned gate line, `<what happens after your response>` should describe w
 If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
 
 Workflow-specific gate notes:
-- The phase-start gate is a non-standard planned gate. The human may review and resolve inline `🟡` proposal items there before the phase is ready for implementation planning. `Next` there means: the phase scope is settled enough to move to a concrete file-change plan.
-- The phase-completion gate is also non-standard. `Next` there means: approve the implemented phase, clear the phase marker, and close the tickets covered by that phase before moving on.
+- The phase-start gate uses the canonical Discussion-phase gate behavior (see `Guides/Core/process-flow.md`, "Structured discussion items"): while any `- [ ]` discussion items remain inside the active phase, the workflow emits a blocked gate citing the remaining count; the moment every item is resolved, the agent emits the planned gate that moves the phase to its file-change plan.
+- The phase-completion gate is non-standard. `Next` there means: approve the implemented phase, check the phase's box in the top-of-document phase checklist, close the tickets covered by that phase, and move on.
 
 Planned gates for this workflow:
-- After creating/updating `working-docs/<branch-path>/<session-name>/ticket-planning.md` with the ready-ticket inventory and proposed phases, and after confirming which phases/tickets will be tackled in this session, but before initializing the first selected phase.
-- At the start of each phase, after initializing that phase's discussion/proposals content and exposing any inline `🟡` items that still need human decisions.
+- After creating/updating `skai/working-docs/<branch-path>/<session-name>/ticket-planning.md` with the ready-ticket inventory and proposed phases, and after confirming which phases/tickets will be tackled in this session, but before initializing the first selected phase.
+- Per phase: after every `- [ ]` discussion item in the phase has been resolved (the first planned gate of the phase — emitted on resolution of the last item; advances to the file-change plan).
 - Before making repo changes for a phase, after proposing the concrete file-change plan.
 - After implementing a phase, after reporting what changed and before approving the phase as complete.
 
@@ -55,7 +59,7 @@ If no issues match, say **"No ready tickets found."** and stop.
 
 Choose a `session-name` for this ticket-maintenance session so multiple planning efforts on the same branch stay separate.
 
-Create or update a working planning document at `working-docs/<branch-path>/<session-name>/ticket-planning.md` (path per `Guides/Core/working-doc-conventions.md`, session name: `<session-name>`, subpath: none, filename: `ticket-planning.md`).
+Create or update a working planning document at `skai/working-docs/<branch-path>/<session-name>/ticket-planning.md` (path per `Guides/Core/working-doc-conventions.md`, session name: `<session-name>`, subpath: none, filename: `ticket-planning.md`).
 
 For each ticket, include:
 - A markdown link to the GitHub issue (not just `#123`).
@@ -76,21 +80,32 @@ The goal is to implement cohesive improvements (one phase at a time), not blindl
 Rules:
 - Treat the buckets as **execution phases** (Phase A, Phase B, etc.). Implement one phase fully before moving to the next.
 - Capture overlaps explicitly so changes that touch the same area are coordinated.
-- Seed each phase with proposals and 🟡 open items, and replace 🟡 inline as the human approves decisions (follow the planning protocol in `Guides/Spec/work-spec-creation.md`).
+- Track phase completion via a `## Phases` checklist at the top of the planning document (`- [ ] Phase A: <theme>`). Phase sections themselves use plain `###` headings without markers — markdown task lists are scoped to list items, not headings.
+- Seed each phase with `- [ ]` discussion items per the canonical Structured discussion items schema (`Guides/Core/process-flow.md`) — `- [ ] PA<n> [Kind] <summary>` for Phase A items, `- [ ] PB<n>` for Phase B, etc. Check the box and append `- **Decision** <resolution>.` as the human approves each item.
 
 Format example:
 
 ```
-### 🟡 Phase A: <theme> (#N, #M, ...)
+## Phases
+
+- [ ] Phase A: <theme> (#N, #M)
+- [ ] Phase B: <theme> (#P)
+
+### Phase A: <theme> (#N, #M, …)
 
 Primary tickets:
 - [#20 Hard prohibition on destructive git operations without explicit human approval](https://github.com/<owner>/<repo>/issues/20)
   - Friction: agent ran a destructive git command without permission and destroyed uncommitted work.
   - Suggestion: hard rule requiring explicit approval for destructive git commands, with scope/warning requirements.
   - Notes: should live in policy for universal enforcement.
-```
 
-Mark phases with 🟡 when TODO.
+#### Discussion
+
+- [ ] PA1 [Proposal] Where does this rule live?
+  - **Concern** Could be a new policy file or extend an existing one.
+  - **Proposal** Extend `Policies/safe-operations.md` rather than introduce a new file.
+  - **Why** Safe-operations is already loaded as a universal policy; adding a new file fragments the safety story.
+```
 
 If there are only 1-2 tickets and they are obviously independent, you may make each one its own single-ticket phase rather than grouping multiple tickets into a broader theme.
 
@@ -107,21 +122,22 @@ Rules:
 `auto to <milestone>` = auto-advance but STOP before the named planned gate. Use stable, workflow-specific milestone names.
 
 Progress tracking:
-- Default rule: 🟡 = TODO or pending approval. Do not clear 🟡 without human approval.
-- The workflow-owned artifact is `working-docs/<branch-path>/<session-name>/ticket-planning.md`.
-- Use each phase heading as the durable phase marker, for example: `### 🟡 Phase A: <theme>`.
-- Use inline `🟡` items inside a phase for open planning questions, proposal choices, or unresolved scope details.
-- At the planning-document gate, STOP with the selected phase headings still marked `🟡`.
-- At the phase-start gate, local human decisions may clear inline `🟡` proposal items inside that phase. The phase heading `🟡` remains until implementation for that phase is approved.
-- At the file-change-plan gate, STOP with the phase heading `🟡` still present.
-- At the phase-completion gate, STOP with the phase heading `🟡` still present.
-- After advance intent at the phase-completion gate, clear the phase heading `🟡`, close the tickets implemented in that phase, and move to the next remaining `🟡` phase.
+- Default marker convention: `- [ ]` / `- [x]` in the planning document (process artifact). See `Guides/Core/process-flow.md`, "Progress markers".
+- Default rule: a `- [ ]` item means TODO or pending approval. Do not check it without human approval.
+- The workflow-owned artifact is `skai/working-docs/<branch-path>/<session-name>/ticket-planning.md`.
+- The top-of-document `## Phases` checklist tracks per-phase completion: `- [ ] Phase A: <theme>`, `- [ ] Phase B: <theme>`, etc. These are the durable phase markers.
+- Inside each phase, `- [ ]` discussion items (`PA1`, `PA2`, `PB1`, …) track open planning questions, proposal choices, or unresolved scope details — per the canonical Structured discussion items schema.
+- At the planning-document gate, STOP with all phase items unchecked.
+- At the phase-start (discussion) gate, while any `- [ ]` discussion item in the active phase remains unresolved the workflow is at a blocked gate. The moment they're all resolved (check the box, append `- **Decision**`), the agent emits the planned gate that advances the phase to its file-change plan. The top-of-document phase entry stays `- [ ]` until phase completion is approved.
+- At the file-change-plan gate, STOP with the top-of-document phase entry still `- [ ]`.
+- At the phase-completion gate, STOP with the top-of-document phase entry still `- [ ]`.
+- After advance intent at the phase-completion gate, check the box on that phase in the top-of-document checklist (`- [x]`), close the tickets implemented in that phase, and move to the next unchecked phase.
 
 Workflow-specific advance behavior:
-- After the planning-document gate, advance intent means: initialize the first selected `🟡` phase and stop at that phase's start gate.
-- At the phase-start gate, `next` means the phase scope is settled enough to move to a concrete file-change plan.
+- After the planning-document gate, advance intent means: initialize the first selected phase's discussion items and stop at that phase's discussion gate.
+- At the phase-start (discussion) gate, `next` means the phase scope is settled enough to move to a concrete file-change plan.
 - At the file-change-plan gate, `next` means implement the approved phase.
-- At the phase-completion gate, `next` means approve the implemented phase, clear the phase heading marker, close its tickets, and continue.
+- At the phase-completion gate, `next` means approve the implemented phase, check the phase's box, close its tickets, and continue.
 - `auto` may batch work inside an already-approved phase, but it does not bypass the planning-document, phase-start, file-change-plan, or phase-completion gates.
 
 ## Procedure (continued)

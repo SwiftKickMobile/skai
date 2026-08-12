@@ -8,13 +8,9 @@ import AppKit
 /// The placeholder body for a UI Map scene. A scaffolded scene view's `body`
 /// invokes this.
 ///
-/// Every `PlaceholderScene` draws its own inset border, so nesting (embedded
-/// composites/children, or tabs) reads as nested bordered boxes. Layout is
-/// inferred from what's declared:
-/// - **Leaf** (no embedded content, no tabs): centered title + Routes menu.
-/// - **Container** (embedded children/composites and/or tabs): a header row
-///   (title, Routes, dismiss) with the content below — embedded children stacked,
-///   tabs as a real `TabView`; the two compose.
+/// Root, pushed, modal, child-hosted, and tab scenes render full-bleed. A scene
+/// embedded as composite content draws an inset fill so the nesting remains
+/// visible. Layout is inferred from the declared routes, tabs, and content.
 ///
 /// Shows the scene's name as a visible label, an optional "Routes" menu, and a
 /// dismiss "✕" driven by `@Environment(\.dismiss)`.
@@ -76,6 +72,7 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.placeholderCrumbs) private var crumbs
+    @Environment(\.placeholderIsEmbedded) private var isEmbedded
     @Environment(\.placeholderShowsDismiss) private var showsDismiss
 
     @State private var breadcrumbScroll = ScrollPosition(edge: .trailing)
@@ -98,10 +95,10 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     // MARK: - Layout
 
     /// A full-bleed scene fills edge-to-edge with no box border or inset gap.
-    /// True when it carries breadcrumbs (a child host, tab, or nav push) or is
-    /// presented modally. Only embedded/composite content (crumbs reset, not
-    /// modal) keeps the bordered box.
-    private var isFullBleed: Bool { !crumbs.isEmpty || showsDismiss }
+    /// Composite children are inset; presentation boundaries and destinations
+    /// are full-bleed. Breadcrumbs/dismiss context takes precedence when a scene
+    /// nested in a composite presents another destination.
+    private var isFullBleed: Bool { !isEmbedded || !crumbs.isEmpty || showsDismiss }
 
     /// This scene's inherited crumbs plus itself — handed down to tab content so
     /// the breadcrumb accumulates through the tab boundary.
@@ -123,6 +120,7 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
                 if hasEmbedded {
                     embedded
                         .environment(\.placeholderCrumbs, [])
+                        .environment(\.placeholderIsEmbedded, true)
                         .environment(\.placeholderShowsDismiss, false)
                 }
             }
@@ -215,6 +213,17 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Dismiss")
+    }
+}
+
+private struct PlaceholderIsEmbeddedKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+private extension EnvironmentValues {
+    var placeholderIsEmbedded: Bool {
+        get { self[PlaceholderIsEmbeddedKey.self] }
+        set { self[PlaceholderIsEmbeddedKey.self] = newValue }
     }
 }
 

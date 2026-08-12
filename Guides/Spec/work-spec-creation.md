@@ -1,8 +1,8 @@
 Managed-By: skai
-Managed-Id: guide.work-spec
+Managed-Id: guide.work-spec-creation
 Managed-Source: Guides/Spec/work-spec-creation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-03-04
+Managed-Updated-At: 2026-05-27
 
 # Work Specification Guide
 
@@ -16,37 +16,48 @@ Orchestrates the work specification creation process. Work specifications provid
 - **No Code**: Contains no actual code - only descriptions of what needs to be implemented
 
 **Overall Process:**
-1. **Planning Document Draft**: Summarize the scope discussion into a planning document seeded with 🟡 discussion items.
-2. **Planning Discussion**: Resolve the planning document's inline 🟡 items through collaborative discussion.
-3. **API Sketch**: Capture the non-private API surface implied by the resolved planning discussion.
-4. **Requirements Normalization**: Promote product/system behaviors discovered during planning into the canonical requirements repository.
-5. **Work Spec First Pass**: Write high-level tasks only (no subtasks) for review.
-6. **Work Spec Second Pass**: Add detailed subtasks after approval.
+1. **Planning Document Draft + Discussion**: Summarize the scope discussion into a planning document seeded with `- [ ]` discussion items (canonical Structured discussion items schema — see `Guides/Core/process-flow.md`). Resolve the items collaboratively; while any remain unresolved, the workflow is at a blocked gate.
+2. **API Sketch**: Capture the non-private API surface implied by the resolved planning discussion.
+3. **Requirements Normalization**: Promote product/system behaviors discovered during planning into the canonical requirements repository.
+4. **Work Spec First Pass**: Write high-level tasks only (no subtasks) for review.
+5. **Work Spec Second Pass**: Add detailed subtasks after approval.
 
 ## Gates
 
+Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+
+**Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
+
+**No fabricated gates.** `⏳ GATE:` lines only appear at gates this `## Gates` section defines or at a properly emitted blocked gate. Do not invent new gate categories or labels to describe discussion state, partial completion, or intermediate review. If a `⏳ GATE:` line is needed that this guide doesn't define, that's a signal the guide is missing a gate — file it as a process improvement.
+
 Use these standard gate lines:
-- Planned gate: `⏳ GATE: Next: <thing>. Say "next" or what to change.`
+- Planned gate: `⏳ GATE: Next: <what happens after your response>. Say "next" or what to change.`
 - Blocked gate: `⏳ GATE: Blocked: <reason>. Resolve and say "next" to continue.`
 
 Planned gates are the expected review points of this workflow. At each planned gate:
 1. Summarize what you did and what should happen next.
 2. End with the planned gate line.
-3. STOP and wait for advance intent. Do not proceed.
+3. STOP and wait for the human.
+
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the human gives advance intent. If the gate is non-standard, make it describe the exact human response or handoff needed to resume the workflow.
 
 If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
 
-Workflow-specific gate note:
-- The planning-draft gate is a review/handoff gate.
-- Gate response for this gate: `⏳ GATE: Next: Review the seeded discussion items and respond to them directly, or say "next" for me to start walking through them.`
-- After the agent drafts the planning document, the human reviews the seeded discussion items and may begin Stage 1 by responding to them directly.
-- This gate does not mean approval to move to API sketch.
+Workflow-specific gate notes:
+- The Planning-discussion gate uses the canonical Discussion-phase gate behavior (see `Guides/Core/process-flow.md`, "Structured discussion items"): while any `- [ ]` discussion items remain in the planning document, the workflow emits a blocked gate citing the remaining count; the moment every item is resolved (`- [x]`), the agent emits the first planned gate to advance to API sketch.
+  - Blocked: `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to the API sketch.`
+  - Planned: `⏳ GATE: Next: Discussion complete. Say "next" to advance to the API sketch.`
+- There is no separate "planning draft is ready, please review" gate. The drafting response itself ends with whichever gate applies — blocked (typical) or planned (when the draft produced zero items because inputs fully specify the work).
 
-When the workflow finishes (all steps done), use: `🏁 Complete. Let me know if anything needs adjustment.`
+Progress tracking:
+- Default marker convention: `- [ ]` / `- [x]` in the planning document and the work spec (process artifacts). See `Guides/Core/process-flow.md`, "Progress markers".
+- Default rule: a `- [ ]` item means TODO or pending approval. Do not clear it without human approval.
+- At a planned gate, advance intent is the approval signal for clearing the guide-owned markers completed by the phase that just finished.
+- Workflow-specific exception — planning discussion: `- [ ]` items in the planning document are resolved one at a time during the discussion phase, not at a planned gate. Check the box (`- [x]`) and append `- **Decision** <resolution>.` only after the human explicitly approves that specific item.
+- Workflow-specific note — work-spec task markers: the second pass creates `- [ ]` task markers (with stable IDs `T1`, `T2`, …) in the work spec, but this workflow does not check them. They are checked off later by the implementation workflow.
 
 Planned gates for this workflow:
-- After drafting the planning document (with 🟡 open questions) for human review and discussion handoff.
-- After resolving all planning-discussion 🟡 items (human confirms readiness to begin the API sketch).
+- After all planning-discussion items are resolved (the first planned gate — emitted on resolution of the last item; advances to API sketch).
 - After completing the API sketch (human confirms readiness to proceed to requirements normalization).
 - After requirements normalization updates to `/requirements/**` (human acknowledges before proceeding).
 - After the work spec first pass (high-level tasks only) for review.
@@ -61,34 +72,28 @@ Advance intent moves past the current gate. Common signals: "next", "continue", 
 Rules:
 - Recognized as approval to move past a gate only after you output a `⏳ GATE:` line.
 - "we should...", "let's..." = discussion/context-setting, NOT authorization.
-- Outside a gate, interpret "begin"/"next"/"continue" using the active-phase rules below. Do not use them to skip phases or clear unrelated 🟡 markers.
+- Outside a gate, interpret "begin"/"next"/"continue" using the active-phase rules below. Do not use them to skip phases or clear unrelated progress markers.
 
-Workflow-specific exception -- planning-draft gate:
-- After the planning document draft is presented, the human may begin Stage 1 by commenting on, answering, reprioritizing, or redirecting the seeded discussion items.
-- That response starts the planning discussion loop. It is not the same as approval to move to API sketch.
-- The planning discussion moves to API sketch only at the later planned gate where all planning-discussion 🟡 items are resolved.
+Workflow-specific behavior — planning discussion:
+- After the planning document is drafted, the human begins resolving items by responding to them directly (commenting, answering, refining, redirecting). That conversational engagement is local to each item; the agent updates the document accordingly. It is *not* advance intent for the workflow as a whole.
+- Each item resolves on the human's explicit approval of that specific item — check the box and append `- **Decision** <resolution>.` See canonical Resolution rules.
+- The workflow advances to API sketch only at the first planned gate (the discussion-complete gate), reached when every item is `- [x]`.
 
 `auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit human resolution.
-`auto to <milestone>` = auto-advance but STOP before the named planned gate. Valid milestones in this workflow: `planning draft`, `planning discussion complete`, `api sketch complete`, `requirements normalization`, `work spec first pass`, `work spec second pass`.
-
-Progress tracking:
-- Default rule: 🟡 = TODO or pending approval. Do not clear 🟡 without human approval.
-- At a planned gate, advance intent is the approval signal for clearing the guide-owned 🟡 markers completed by the phase that just finished.
-- Workflow-specific exception -- planning discussion: inline 🟡 items in the planning document are resolved during Stage 1 discussion, not at a planned gate. Replace a 🟡 item inline only after the human explicitly approves that specific resolution.
-- Workflow-specific note -- work-spec task markers: the second pass creates 🟡 task markers in the work spec, but this workflow does not clear them. They are cleared later by the implementation workflow.
+`auto to <milestone>` = auto-advance but STOP before the named planned gate. Valid milestones in this workflow: `planning discussion complete`, `api sketch complete`, `requirements normalization`, `work spec first pass`, `work spec second pass`.
 
 **Behavior:** Context determines the action. The same command drives every phase of the process; the agent infers which step to execute based on the current state of the conversation and any existing documents.
 
-**Workflow-specific `auto` rules:** `auto` can be useful after the human has already approved the planning document, the planning discussion is complete, and the API sketch is approved, to batch requirements normalization, work spec first pass, and work spec second pass. If the planning document still has unresolved 🟡 items, this workflow is blocked on human decisions and `auto` should STOP at the planning-discussion-complete gate.
+**Workflow-specific `auto` rules:** `auto` can be useful after the planning discussion is complete and the API sketch is approved, to batch requirements normalization, work spec first pass, and work spec second pass. If the planning document still has unresolved `- [ ]` items, this workflow is blocked on human decisions and `auto` does not bypass the blocked gate.
 
 **Phase actions when the human says "begin", "next", or "continue":**
 
-- **Planning -- Create Planning Document:** summarize the scope discussion into a planning document; seed with 🟡 open questions for Stage 1; then STOP at the planning-draft gate for human review.
-- **Planning -- Resolve Open Questions:** continue the iterative discussion, updating the document as decisions are made. This continues the active discussion loop; it does not approve unresolved 🟡 items by itself.
-- **Planning -- API Sketch:** after the planning-discussion gate is approved, write the API sketch using the resolved planning document as input.
+- **Planning — Create Planning Document:** summarize the scope discussion into a planning document; seed it with `- [ ]` discussion items per the canonical Structured discussion items schema; end the response with the discussion-phase blocked gate (or the discussion-complete planned gate if zero items were needed).
+- **Planning — Resolve Open Items:** continue the iterative discussion, updating the document as decisions are made. Each response re-emits the current blocked gate verbatim per the persistence rule, with the count updated to reflect remaining items.
+- **Planning — API Sketch:** after the discussion-complete planned gate is approved, write the API sketch using the resolved planning document as input.
 - **Requirements Normalization:** after the API sketch gate is approved, promote product/system behaviors from the planning document into the canonical requirements repository.
-- **Work Spec -- First Pass:** create work specification with high-level tasks only (no subtasks, no Traceability). Allows human to review overall sequence before details.
-- **Work Spec -- Second Pass:** add detailed subtasks, 🟡 indicators, and the Traceability section.
+- **Work Spec — First Pass:** create work specification with high-level tasks only (no subtasks, no Traceability). Allows human to review overall sequence before details.
+- **Work Spec — Second Pass:** add detailed subtasks, `- [ ]` task indicators with stable IDs, and the Traceability section.
 
 ---
 
@@ -100,83 +105,91 @@ Before writing a work spec, the design must be worked through in a planning docu
 
 **Creating the planning document** (begin/next/continue):
 1. Summarize the scope discussion so far (Problem, Current Architecture, initial approach framing).
-2. Seed the document with 🟡-marked open questions and discussion topics derived from the conversation -- these become the agenda for Stage 1.
+2. Seed the document with `- [ ]` discussion items per the canonical Structured discussion items schema (see `Guides/Core/process-flow.md`). Each item is `- [ ] D<n> [Kind] <summary>` with `[Question]` / `[Proposal]` / `[Tradeoff]` as the Kind, placed inline under the topic it concerns.
+3. End the drafting response with the discussion-phase gate — blocked if items remain, planned (discussion-complete) if zero items were needed because inputs fully specify the work.
 
 ### Stage 1: Ideation, Questions, Discussion
 
 Work through the design collaboratively. The agent proposes design elements and the human refines, redirects, or approves.
 
-**Planning document rules (tightened):**
+**Schema:** This stage uses the canonical Structured discussion items schema (see `Guides/Core/process-flow.md`, "Structured discussion items"). In summary:
 
-- The agent MUST seed the conversation with proposals.
-  - The planning doc should not be a passive transcript. It should contain concrete proposals/options to help the human decide.
+- Item line: `- [ ] D<n> [Kind] <summary>` — letter-led ID (`D1`, `D2`, …), `[Question]` / `[Proposal]` / `[Tradeoff]`, plain-language summary.
+- Sub-bullet labels (bold, no separator): `Concern` (always), `Proposal` or `Question`, `Options` (for `[Tradeoff]`), `Detail`, `Why`, `Decision` (added on resolution).
+- The agent always takes a position — every item carries a recommendation, and a `[Tradeoff]` names which option it picks.
 
-**🟡 Marker Protocol for Planning Documents:**
+**Drafting rules (workflow-specific):**
 
-**Why markers go on content, not headings:** Each 🟡 marker is a precise pointer that tells the human "this specific item needs your attention." The total count of 🟡 markers should equal the number of real decisions the human needs to make. Markers on headings or parent bullets are just status indicators on containers -- they inflate the count, obscure what actually needs discussion, and force the human to hunt through the section to find the real item.
+- The agent MUST seed the conversation with proposals. The planning doc is not a passive transcript — it must contain concrete `[Proposal]` / `[Tradeoff]` items that move the design forward.
+- IDs (`D1`, `D2`, …) are continuous across the entire Discussion section, not reset per topic. Once assigned, an ID is never renumbered.
+- Tight lists: where two or more `- [ ]` items sit under the same topic heading, leave no blank line between them.
 
-- **Content-only placement (hard rule):**
-  - Place 🟡 only on the specific content line that needs human input: a proposal, question, tradeoff, or undecided design point.
-  - NEVER place 🟡 on heading lines (`##`, `###`, etc.) or on parent bullets that merely group child items.
-  - NEVER create roll-up markers -- a parent does not get 🟡 just because its children have 🟡.
-- Mark all unresolved discussion items with 🟡:
-  - open questions
-  - proposals/options under consideration
-  - undecided design points / tradeoffs
-- Avoid over-granularity:
-  - If a single proposal contains many sub-bullets, prefer one 🟡 marker on the proposal line rather than 🟡 on every sub-bullet.
-  - Use per-sub-bullet 🟡 only when individual sub-items can be independently accepted/rejected or are likely to be worked in different iterations.
-- Organize the document by topic (natural structure). This is a hard requirement:
-  - Do NOT create workflow-shaped sections like "Questions", "Discussion", or "Decisions".
-  - Do NOT repeat the same topic across multiple sections ("Topic X" in Discussion and again in Questions).
-  - Do NOT create "Decision" sub-sections (or "Decision:" labels). Decisions are expressed by replacing the unresolved text inline.
-  - Instead: each topic heading contains its own inline 🟡 questions/proposals/tradeoffs where they naturally belong.
-- Marker lifecycle during planning discussion:
-  - While Stage 1 is active, explicit human approval of a specific discussion item removes only that item's 🟡 marker.
-  - When the last discussion-item 🟡 marker is resolved, STOP at the planning-discussion gate.
-- When the human explicitly approves a resolution:
-  - REPLACE the 🟡 item inline with the approved plan/requirement/decision text (no separate "Questions" section, no "approved" marker).
-  - Do NOT remove 🟡 preemptively. Only replace when the human has explicitly decided.
-- The planning document is ready for the next stage when all 🟡 items have been replaced with approved content.
+**Topic-organized, items inline** (per canonical):
 
-**Anti-patterns (do not do this):**
+- Each topic is its own `###` subsection inside `## Discussion` (or under a phase section, see Phased planning below).
+- The topic's `- [ ]` items live directly inside it.
+- Do NOT create aggregator sections (`## Questions`, `## Decisions`, `## Tradeoffs`, `## Open Items`). The marker count across the discussion = the number of real decisions; aggregator sections break that property by pulling items out of their topics.
 
-- "Questions" section + "Discussion" section + the same topic mentioned in both (duplicate content, multiple 🟡 markers for the same unresolved item).
-- "Decisions" section that mirrors earlier proposals/questions.
-- A topic described once as a proposal (🟡) and again elsewhere as a question (🟡) instead of being a single coherent entry.
-- 🟡 on a heading with unmarked content below (human must hunt for what needs attention):
-  - ❌ `## Data Model 🟡` → `Proposal: use a single table...`
-- 🟡 on a heading AND its children (roll-up inflates the count):
-  - ❌ `## Data Model 🟡` → `🟡 Proposal: use a single table...`
-- Correct: heading is unmarked, marker is on the specific item:
-  - ✅ `## Data Model` → `🟡 Proposal: use a single table...`
+**Resolution** (per canonical):
 
-**Preferred pattern (topic-first, single source of truth):**
+- On the human's explicit approval of an item, check the box (`- [x]`) and append `- **Decision** <succinct resolution>.` as the last sub-bullet.
+- The original question/proposal stays visible — the decision is appended, not substituted.
+- Do not clear an item preemptively. Only check the box when the human has explicitly decided.
 
-- Write one section per topic.
-- Put the unresolved items (🟡) directly under that topic.
-- When approved, replace the unresolved line(s) in place with the approved requirement/decision text.
+**Discussion-phase gate behavior** (per canonical, repeated here for clarity):
 
-**Recommended planning document shape (suggested, not required):**
+- While any `- [ ]` items remain: blocked gate at the end of every response.
+  - `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to the API sketch.`
+- When every item is resolved: planned gate (the first planned gate of the workflow).
+  - `⏳ GATE: Next: Discussion complete. Say "next" to advance to the API sketch.`
+
+**Recommended planning document shape:**
 
 - Problem / goal
 - Current architecture / constraints (if relevant)
-- Topics (one section per major topic)
+- Discussion (one `###` topic per major area)
   - Each topic contains:
     - brief context
-    - 🟡 items (questions/proposals/tradeoffs) inline
-    - resolved items replaced inline with the approved text
-    - any non-goals / deferrals (explicit)
+    - one or more `- [ ]` discussion items, per the canonical schema
+    - any non-goals / deferrals explicit to that topic
 
-Example topic shape:
+Example topic (unresolved):
 
-- `## <Topic name>`
-  - Context: ...
-  - 🟡 Proposal: ...
-    - Option A: ...
-    - Option B: ...
-  - 🟡 Question: ...
-  - Approved: ... (after replacing 🟡 content inline)
+```
+### Data model
+
+The notes feature needs a schema that supports multiple note kinds (full notes, quick notes, peeks).
+
+- [ ] D1 [Proposal] Use a single notes table
+  - **Concern** Three kinds means we either need three tables (clean separation, cross-table joins) or one table with a kind column (compact, mixed concerns).
+  - **Proposal** One table with a `kind` column.
+  - **Why** Avoids cross-table joins; migration stays a single schema change.
+- [ ] D2 [Tradeoff] Where does the `kind` field default live?
+  - **Concern** Defaults could live in the schema (DB-level default) or the model layer.
+  - **Options**
+    - A — DB-level default (`kind` column defaults to `note`)
+    - B — Model-layer default (the type constructor supplies it)
+  - **Proposal** B (model-layer) — keeps the DB schema agnostic of business semantics.
+  - **Why** A future kind change is a code-only edit; no migration needed.
+```
+
+After resolution:
+
+```
+- [x] D1 [Proposal] Use a single notes table
+  - **Concern** Three kinds means we either need three tables (clean separation, cross-table joins) or one table with a kind column (compact, mixed concerns).
+  - **Proposal** One table with a `kind` column.
+  - **Why** Avoids cross-table joins; migration stays a single schema change.
+  - **Decision** Approved as proposed. Single table with `kind` column.
+- [x] D2 [Tradeoff] Where does the `kind` field default live?
+  - **Concern** Defaults could live in the schema (DB-level default) or the model layer.
+  - **Options**
+    - A — DB-level default (`kind` column defaults to `note`)
+    - B — Model-layer default (the type constructor supplies it)
+  - **Proposal** B (model-layer) — keeps the DB schema agnostic of business semantics.
+  - **Why** A future kind change is a code-only edit; no migration needed.
+  - **Decision** B — model-layer default. Keeps the migration window short.
+```
 
 **Optional: phased planning documents (only when the plan is large):**
 
@@ -202,7 +215,7 @@ Recommended phased planning shape:
 - Phase sections (last):
   - `## Phase 1: <name>`
     - `### Scope` (goal, in-scope, non-goals, dependencies, exit criteria)
-    - `### Stage 1: Proposals, questions, discussion` (🟡 until resolved)
+    - `### Stage 1: Proposals, questions, discussion` (`- [ ]` items until resolved)
     - `### Stage 2: API sketch` (API "as of Phase 1")
     - `### Requirements normalization` (what will be added/updated in `/requirements/**` for this phase)
     - `### Work spec` (link to this phase's work spec)
@@ -213,9 +226,7 @@ Recommended phased planning shape:
 - Present findings and analysis, not pre-selected options. The human is the architect.
 - When the human asks a question, answer it directly -- do not reframe it as a choice between options you've invented.
 - Use concrete scenarios (design-by-use-case) to drive design decisions rather than abstract analysis.
-- Capture both the decision and the reasoning in the document.
-
-Gate: when all planning-discussion 🟡 items are resolved, STOP and output the planned gate line. The next step should be `API sketch`.
+- Capture the resolution in the appended `- **Decision**` sub-bullet; the prior `Concern` / `Proposal` / `Why` lines remain visible so the reasoning trail is preserved.
 
 ### Stage 2: API Sketch
 
@@ -248,12 +259,12 @@ struct FileReference: Codable {                                 // new type
 
 Output: the planning document's "API Sketch" or equivalent section describes the non-private surface area -- types, protocols, and their relationships -- with enough specificity that a work spec can reference them.
 
-Gate: when the API sketch is complete, STOP and output the planned gate line. The next step should be `requirements normalization`.
+Gate: when the API sketch is complete, STOP at the planned gate. `Next` advances to requirements normalization.
 
 ### Planning Document Completeness
 
 The planning phase is complete when:
-- All 🟡 markers have been resolved (replaced with decisions).
+- Every `- [ ]` discussion item in the planning document is `- [x]` with a `- **Decision**` sub-bullet.
 - The key types and their relationships are described.
 - The design has been validated against concrete use cases.
 - The human confirms readiness to proceed to requirements normalization.
@@ -261,7 +272,7 @@ The planning phase is complete when:
 If the planning document uses phases:
 - The overall planning phase may remain intentionally incomplete for later phases.
 - For the current phase to proceed to requirements normalization, that phase section must have:
-  - all 🟡 markers in the phase resolved, and
+  - every `- [ ]` discussion item in the phase resolved (`- [x]` with `- **Decision**`), and
   - an API sketch for the phase, and
   - the human's approval to proceed with that phase.
 
@@ -284,7 +295,7 @@ After the planning phase is complete, product/system behaviors discovered during
 - The requirements repository contains behavioral / contractual requirements only.
 - Requirements must be written as **implementation-agnostic black-box behavior**.
 - It must not name concrete types, functions, files, initializers, modules, targets, or third-party libraries/frameworks.
-- It must not contain 🟡 / TODO / pending markers.
+- It must not contain progress markers of any kind (no `- [ ]` / 🟡 / TODO / pending markers — canonical requirements are not workflow artifacts).
 - Git history is the source of change/audit information.
 - Requirements must be placed into the correct scope folder as defined in
   "Requirements Repository Organization".
@@ -378,19 +389,19 @@ Work specification and planning files are working documents. Create them followi
 - Session name: `[spec-name]`
 - Subpath: (none)
 - File name: `[spec-name]-plan.md`
-- Full path: `working-docs/<branch-path>/[spec-name]/[spec-name]-plan.md`
+- Full path: `skai/working-docs/<branch-path>/[spec-name]/[spec-name]-plan.md`
 
 **Work Spec Document:**
 - Session name: `[spec-name]`
 - Subpath: (none)
 - File name: `[spec-name]-impl.md`
-- Full path: `working-docs/<branch-path>/[spec-name]/[spec-name]-impl.md`
+- Full path: `skai/working-docs/<branch-path>/[spec-name]/[spec-name]-impl.md`
 
 Where `[spec-name]` = the specification name for this workflow session (e.g., `observable-wrapper`). In this workflow, `[spec-name]` serves as the required `session-name` from `Guides/Core/working-doc-conventions.md`, and is also used as the filename prefix so working docs are distinguishable per spec in editor quick-open.
 
 **Examples** (branch: `work/step-refactor`):
-- Planning: `working-docs/work/step-refactor/observable-wrapper/observable-wrapper-plan.md`
-- Work Spec: `working-docs/work/step-refactor/observable-wrapper/observable-wrapper-impl.md`
+- Planning: `skai/working-docs/work/step-refactor/observable-wrapper/observable-wrapper-plan.md`
+- Work Spec: `skai/working-docs/work/step-refactor/observable-wrapper/observable-wrapper-impl.md`
 
 ## Structure
 
@@ -428,12 +439,12 @@ This inventory is split into two scopes.
 #### Canonical requirements (by reference only)
 - List only IDs from the canonical requirements repository (e.g. `DOC-02`, `PROMPT-04`).
 - Do NOT restate or redefine their content here.
-- Do NOT use 🟡 markers for canonical requirements.
+- Do NOT use progress markers — these are reference IDs, not work items.
 
 #### Work-spec requirements (technical / transitional)
-- Each local requirement gets an ID (e.g. `DATA-01`, `MIG-02`, `TEMP-01`).
+- Each local requirement is a `- [ ]` item with a stable letter-led ID (e.g. `DATA-01`, `MIG-02`, `TEMP-01`).
 - These may describe technical or implementation-level decisions.
-- Items start with 🟡.
+- The implementation workflow checks each one (`- [x]`) when fully satisfied by a completed task.
 
 **Rules:**
 - Inventory must be complete (capture all technical requirements + constraints + deferred / non-goal items introduced by this work).
@@ -461,18 +472,18 @@ Include a short mapping section that ensures every requirement is implemented or
 ### Task Structure
 
 ```markdown
-1. **Task Name** 🟡
-   - **Done when:** [Short, stable completion criteria]
-   - **Implementation**
-     1. Sub-task description (REQ-ID)
-     2. Sub-task description (REQ-ID)
-   - **Verification**
-     3. Run <command(s)> and define what "pass" means (REQ-ID) [evidence: ...]
+- [ ] T1 **Task Name**
+  - **Done when:** [Short, stable completion criteria]
+  - **Implementation**
+    1. Sub-task description (REQ-ID)
+    2. Sub-task description (REQ-ID)
+  - **Verification**
+    3. Run <command(s)> and define what "pass" means (REQ-ID) [evidence: ...]
 ```
 
-Sub-tasks use indented numbered lists. Number subtasks sequentially across the task (including Verification). Referencing "1.2" means task 1, sub-task 2 -- the nesting is implied by indentation.
+Tasks are `- [ ]` items with a stable letter-led ID (`T1`, `T2`, …) — letter-led so a leading digit isn't misparsed as an ordered-list item. IDs are sequential in document order, never renumbered, and removing a task retires its ID. Sub-tasks use indented numbered lists; reference them as `T<n>.<m>` (e.g., `T1.2` is task T1, sub-task 2). Number sub-tasks sequentially across Implementation and Verification.
 
-Tasks are created with 🟡. Only mark main tasks (not sub-tasks).
+Only mark main tasks with `- [ ]` (sub-tasks are not separately tracked). The implementation workflow checks the box on each task as it completes.
 
 ### Task Naming
 - Use descriptive action-oriented names
@@ -517,10 +528,10 @@ Tasks are created with 🟡. Only mark main tasks (not sub-tasks).
 - Checking for linter errors
 - Confirming expected behavior
   - Verification subtasks are mandatory for each top-level task (build/test/lint as applicable).
-  - Source of truth for project-specific commands/paths is `docs/skai/integration.md` (do not invent commands).
+  - Source of truth for project-specific commands/paths is `skai/integration.md` (do not invent commands).
   - Evidence must be captured inline on the verification subtask line using an evidence bracket:
     - Format: `[evidence: <command variant>; exit <code>; output: <optional link(s)>]`
-    - Example: `[evidence: <command>; exit 0; output: [output](working-docs/<branch-path>/<spec-name>/work-spec/evidence/<slug>.txt)]`
+    - Example: `[evidence: <command>; exit 0; output: [output](skai/working-docs/<branch-path>/<spec-name>/work-spec/evidence/<slug>.txt)]`
     - On failure: persist full output to a file and link it.
     - On success: a linked output file is optional; still record command variant and exit code inline.
 
@@ -605,9 +616,9 @@ Rules:
 - PROMPT-04
 
 ### Work-spec requirements (technical / transitional)
-- 🟡 CAT-A-01: ...
-- 🟡 CAT-A-02: ...
-- 🟡 CAT-B-01: ...
+- [ ] CAT-A-01 ...
+- [ ] CAT-A-02 ...
+- [ ] CAT-B-01 ...
 
 ## Non-goals / Deferred
 - DEFER-01: ...
@@ -622,34 +633,32 @@ Rules:
 
 ## Task List
 
-1. **[Task Name]** 🟡
-   - **Done when:** [Behavioral + verification-based completion criteria]
-   - **Implementation**
-     1. [Specific sub-task] (CAT-A-01)
-     2. [Specific sub-task] (CAT-A-02, CAT-B-01)
-     3. [Specific sub-task] (DEFER-01 if deferring something explicitly)
-   - **Verification**
-     4. [Run command(s) from integration doc; define "pass"] (CAT-A-01) [evidence: exit 0; output: [log](working-docs/<branch-path>/<spec-name>/work-spec/evidence/<slug>.txt)]
-
-2. **[Task Name]** 🟡
-   - **Done when:** [Behavioral + verification-based completion criteria]
-   - **Implementation**
-     1. [Specific sub-task] (CAT-A-01)
-     2. [Specific sub-task] (CAT-B-01)
-   - **Verification**
-     3. [Run command(s) from integration doc; define "pass"] (CAT-B-01) [evidence: exit 0; output: [log](working-docs/<branch-path>/<spec-name>/work-spec/evidence/<slug>.txt)]
-
-3. **[Task Name]** 🟡
-   - **Done when:** [Behavioral + verification-based completion criteria]
-   - **Implementation**
-     1. [Specific sub-task] (CAT-A-02)
-     2. [Specific sub-task] (CAT-A-02)
-     3. [Specific sub-task] (CAT-B-01)
-   - **Verification**
-     4. [Run command(s) from integration doc; define "pass"] (CAT-A-02) [evidence: exit 0; output: [log](working-docs/<branch-path>/<spec-name>/work-spec/evidence/<slug>.txt)]
+- [ ] T1 **[Task Name]**
+  - **Done when:** [Behavioral + verification-based completion criteria]
+  - **Implementation**
+    1. [Specific sub-task] (CAT-A-01)
+    2. [Specific sub-task] (CAT-A-02, CAT-B-01)
+    3. [Specific sub-task] (DEFER-01 if deferring something explicitly)
+  - **Verification**
+    4. [Run command(s) from integration doc; define "pass"] (CAT-A-01) [evidence: exit 0; output: [log](skai/working-docs/<branch-path>/<spec-name>/work-spec/evidence/<slug>.txt)]
+- [ ] T2 **[Task Name]**
+  - **Done when:** [Behavioral + verification-based completion criteria]
+  - **Implementation**
+    1. [Specific sub-task] (CAT-A-01)
+    2. [Specific sub-task] (CAT-B-01)
+  - **Verification**
+    3. [Run command(s) from integration doc; define "pass"] (CAT-B-01) [evidence: exit 0; output: [log](skai/working-docs/<branch-path>/<spec-name>/work-spec/evidence/<slug>.txt)]
+- [ ] T3 **[Task Name]**
+  - **Done when:** [Behavioral + verification-based completion criteria]
+  - **Implementation**
+    1. [Specific sub-task] (CAT-A-02)
+    2. [Specific sub-task] (CAT-A-02)
+    3. [Specific sub-task] (CAT-B-01)
+  - **Verification**
+    4. [Run command(s) from integration doc; define "pass"] (CAT-A-02) [evidence: exit 0; output: [log](skai/working-docs/<branch-path>/<spec-name>/work-spec/evidence/<slug>.txt)]
 
 ## Traceability
-- CAT-A-01 → Tasks 1, 2
-- CAT-A-02 → Tasks 1, 3
-- CAT-B-01 → Tasks 1, 2, 3
+- CAT-A-01 → T1, T2
+- CAT-A-02 → T1, T3
+- CAT-B-01 → T1, T2, T3
 - DEFER-01 → Non-goals / Deferred

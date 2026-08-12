@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.unit-test-writing
 Managed-Source: Guides/Test/unit-test-writing-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-03-07
+Managed-Updated-At: 2026-05-27
 
 # Unit Test Writing & Execution Guide
 
@@ -15,6 +15,12 @@ Defines the process for writing and executing test logic.
 - Infrastructure ready (stubs, fixtures, utilities)
 
 ## Gates
+
+Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+
+**Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
+
+**No fabricated gates.** `⏳ GATE:` lines only appear at gates this `## Gates` section defines or at a properly emitted blocked gate. Do not invent new gate categories or labels to describe discussion state, partial completion, or intermediate review. If a `⏳ GATE:` line is needed that this guide doesn't define, that's a signal the guide is missing a gate — file it as a process improvement.
 
 Use these standard gate lines:
 - Planned gate: `⏳ GATE: Next: <what happens after your response>. Say "next" or what to change.`
@@ -32,8 +38,8 @@ If an unexpected blocker prevents continued work, use the blocked gate line and 
 When the workflow finishes, return control to the parent testing workflow.
 
 Planned gates for this workflow:
-- After Phase 1 (Write Tests) is complete, but before clearing the Phase 1 🟡 marker in the work document and starting Phase 2.
-- After Phase 2 results are gathered and all tests in scope pass, but before clearing the passing test markers, section marker (if applicable), and Phase 2 🟡 marker.
+- After Phase 1 (Write Tests) is complete, but before checking `Phase 1: Write Tests` in the work document and starting Phase 2.
+- After Phase 2 results are gathered and all tests in scope pass, but before removing the 🟡 markers from passing test functions, the section MARK (if applicable), and checking `Phase 2: Execute & Fix` in the work document.
 - After Phase 2 results are gathered and one or more tests were skipped because required infrastructure is missing, so control can return to the parent workflow for a decision.
 
 Workflow-specific blocked gates:
@@ -55,21 +61,32 @@ Rules:
 - This guide does not define standalone section-level `auto` behavior.
 - The parent unit-testing workflow may use `auto` across sections, but the planned and blocked gates in this guide still define when this section can proceed, pause, or return control.
 
-Progress tracking:
-- Default rule: 🟡 = TODO or pending approval. Do not clear 🟡 without human approval.
-- In this workflow, the work document phase checklist markers (`Phase 1: Write Tests 🟡`, `Phase 2: Execute & Fix 🟡`) are the phase markers.
-- Test-function and section 🟡 markers in the test file are local work markers for the tests in scope.
-- After Phase 1 work is complete, STOP at the planned gate with the Phase 1 🟡 marker still present.
-- Only after advance intent may the agent clear the Phase 1 🟡 marker and begin Phase 2.
-- When Phase 2 succeeds, STOP at the planned gate with test/section/Phase 2 markers still present.
-- Only after advance intent may the agent clear the passing test markers, clear the section marker if all tests in that section now pass, clear the Phase 2 🟡 marker, and return control to the parent testing workflow.
-- If Phase 2 stops because some tests were skipped due to missing infrastructure, STOP at the planned gate with the skipped test markers, section marker, and Phase 2 🟡 marker still present.
-- After advance intent from that skipped-tests gate, return control to the parent testing workflow without clearing the skipped test markers, section marker, or Phase 2 🟡 marker.
-- If work stops due to ambiguity, missing evidence, test-execution failure, or a proposed production-code fix, do not clear the current phase marker or test markers.
+Progress tracking (mixed marker model — both conventions apply):
+
+This workflow uses both progress-marker conventions because it produces both kinds of artifact (see `Guides/Core/process-flow.md`, "Progress markers"):
+- `- [ ]` / `- [x]` in the **work document** (process artifact, markdown).
+- `🟡` in the **test files** (in-code, where completion is removal of the marker as tests are written and pass).
+
+Default rule: a progress marker (either `- [ ]` or `🟡`) means TODO or pending approval. Do not clear it without human approval.
+
+Work document:
+- The work document's checklist has two `- [ ]` phase items: `- [ ] Phase 1: Write Tests` and `- [ ] Phase 2: Execute & Fix`.
+- After Phase 1 work is complete, STOP at the planned gate with `- [ ] Phase 1: Write Tests` still unchecked.
+- Only after advance intent may the agent check `Phase 1: Write Tests` (`- [x]`) and begin Phase 2.
+- When Phase 2 succeeds, STOP at the planned gate with `- [ ] Phase 2: Execute & Fix` still unchecked.
+- Only after advance intent may the agent check `Phase 2: Execute & Fix` and return control to the parent testing workflow.
+- If Phase 2 stops because some tests were skipped due to missing infrastructure, STOP at the planned gate with `- [ ] Phase 2: Execute & Fix` still unchecked.
+- After advance intent from that skipped-tests gate, return control to the parent testing workflow without checking `Phase 2: Execute & Fix`.
+
+Test files (in code):
+- Test-function and section `🟡` markers in the test file are local work markers for the tests in scope.
+- Once a test passes and the human gives advance intent, remove `🟡` from that test function. If all tests in a section pass, also remove `🟡` from the section MARK comment.
+
+If work stops due to ambiguity, missing evidence, test-execution failure, or a proposed production-code fix, do not change any markers — neither check the box on the phase item nor remove `🟡` from test functions.
 
 **Behavior:** Context determines the action:
-- If waiting to proceed → remove approved 🟡 markers in the correct order and advance to the next phase or return to the parent workflow
-- If stopped due to ambiguities or unexpected challenges → resume where you left off
+- If waiting to proceed → clear approved markers in the correct order (check `- [ ]` items in the work document; remove `🟡` from passing test functions) and advance to the next phase or return to the parent workflow.
+- If stopped due to ambiguities or unexpected challenges → resume where you left off.
 
 ---
 
@@ -80,21 +97,21 @@ Progress tracking:
 1. **Phase 1: Write Tests** - Implement test logic
 2. **Phase 2: Execute & Fix** - Run tests and fix failures
 
-**Progress tracking:** 🟡 markers are used in two places:
-- **Test file:** 🟡 on test functions and section MARKs
-- **Work document:** 🟡 on phase checklist items
+**Progress tracking:** Two marker conventions are used in different artifacts (see `Guides/Core/process-flow.md`, "Progress markers"):
+- **Test file (in code):** `🟡` on test functions and section MARKs.
+- **Work document (process artifact):** `- [ ]` on phase checklist items.
 
 **Flow:**
 1. Phase 1 (Write Tests) → planned gate
-2. Advance intent → remove 🟡 from Phase 1 in work document → Phase 2 (Execute & Fix)
+2. Advance intent → check `Phase 1: Write Tests` (`- [x]`) in work document → Phase 2 (Execute & Fix)
 3. Phase 2 iterates until one of these outcomes occurs:
    - all tests in scope pass
    - one or more tests are skipped because required infrastructure is missing
    - a blocked gate is reached
 4. All tests in scope pass → planned gate
-5. Advance intent → remove 🟡 from passing tests, section (if applicable), and Phase 2 → writing complete
+5. Advance intent → remove `🟡` from passing test functions and from the section MARK (if all section tests pass), check `Phase 2: Execute & Fix` (`- [x]`) → writing complete
 6. Tests skipped due to missing infrastructure → planned gate
-7. Advance intent → return control to the parent workflow with skipped markers still present
+7. Advance intent → return control to the parent workflow with the skipped tests' `🟡` markers still present and `Phase 2: Execute & Fix` still unchecked.
 
 **Missing infrastructure during writing:** If you discover a test requires infrastructure that was not provided during the infrastructure phase, do not create the infrastructure inline. Skip the test (mark it as blocked on infrastructure), document what is missing, and continue with the rest of the section. Once the runnable tests in the section have been handled, STOP at the skipped-tests planned gate and return control to the parent workflow so the human can decide whether to re-enter the infrastructure phase before more writing continues.
 
@@ -110,13 +127,13 @@ Progress tracking:
 
 **Goal:** Implement test logic for all 🟡 tests in the section
 
-**Gate:** STOP after this phase and wait for advance intent. Do not run tests or clear the Phase 1 🟡 marker yet.
+**Gate:** STOP after this phase and wait for advance intent. Do not run tests or check `Phase 1: Write Tests` yet.
 
 ### Phase 2: Execute & Fix
 
 **Iterative:** May require multiple investigation/fix cycles
 
-**After Phase 2:** STOP and present results either when all tests in scope pass or when skipped tests due to missing infrastructure must be reviewed. Remove 🟡 markers only after the documented advance-intent branch for that result.
+**After Phase 2:** STOP and present results either when all tests in scope pass or when skipped tests due to missing infrastructure must be reviewed. Clear markers (remove `🟡` from passing tests; check `Phase 2: Execute & Fix`) only after the documented advance-intent branch for that result.
 
 ---
 
@@ -137,10 +154,10 @@ Progress tracking:
    - **Session name**: `<session-name>` (the parent unit-testing workflow's session name)
    - **Subpath**: `testing/<suite-name>`
    - **File name**: `<section-name>-writing.md`
-   - **Full path**: `working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-writing.md`
+   - **Full path**: `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-writing.md`
    - `<suite-name>` = test file name without "Tests.swift" (e.g., `TemplateRenderer` from `TemplateRendererTests.swift`)
    - `<section-name>` = section name in kebab-case (e.g., `success-tests`, `error-handling`)
-   - **Example**: `working-docs/work/feature-branch/login-tests/testing/TemplateRenderer/success-tests-writing.md`
+   - **Example**: `skai/working-docs/work/feature-branch/login-tests/testing/TemplateRenderer/success-tests-writing.md`
    - **Structure**:
      ```markdown
      # [Suite Name] - [Section Name] Tests - Writing & Execution
@@ -154,8 +171,8 @@ Progress tracking:
      
      ## Checklist
      
-     - Phase 1: Write Tests 🟡
-     - Phase 2: Execute & Fix 🟡
+     - [ ] Phase 1: Write Tests
+     - [ ] Phase 2: Execute & Fix
      
      ## Phase 1: Write Tests
      
@@ -163,7 +180,7 @@ Progress tracking:
      ```
 
 1. **Review project testing conventions**
-  - See `docs/skai/integration.md` for project-specific requirements
+  - See `skai/integration.md` for project-specific requirements
    - Check for dependency injection patterns, test suite structure, and test infrastructure
 
 2. **Review approved infrastructure**
@@ -200,7 +217,7 @@ Progress tracking:
 
 **Important:** Do NOT run tests yet. Wait for advance intent.
 
-**Note:** 🟡 remains on test functions during Phase 1. The Phase 1 🟡 marker in the work document also remains in place until the human gives advance intent at the Phase 1 gate.
+**Note:** `🟡` remains on test functions during Phase 1. `- [ ] Phase 1: Write Tests` in the work document also remains unchecked until the human gives advance intent at the Phase 1 gate.
 
 ---
 
@@ -330,7 +347,7 @@ let result3 = try await sut.performOperation()  // Gets third response
 
 **Observe publisher changes:**
 
-See `docs/skai/integration.md` for project-specific test utilities (e.g., a `PublisherSpy` equivalent), if any.
+See `skai/integration.md` for project-specific test utilities (e.g., a `PublisherSpy` equivalent), if any.
 
 ```swift
 let spy = PublisherSpy(viewModel.$state)
@@ -427,25 +444,25 @@ struct MyComponentTests {
 
 **Triggered by:** Advance intent after Phase 1
 
-**On advance intent:** remove 🟡 from `Phase 1: Write Tests` in the work document, then begin Phase 2.
+**On advance intent:** check `Phase 1: Write Tests` (`- [x]`) in the work document, then begin Phase 2.
 
 ### Process
 
 **What to do:**
 
 1. **Run the tests** using standard process (see "Running Tests" section below)
-   - Use the project's test command from `docs/skai/integration.md`
-   - Save full output to `working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
+   - Use the project's test command from `skai/integration.md`
+   - Save full output to `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
 
 **CRITICAL VALIDATION - DO NOT SKIP:**
 
 2. **Verify the test actually ran** - IMMEDIATELY after running the command:
-   - **Check output file size**: `ls -lh working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
+   - **Check output file size**: `ls -lh skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
      - If file is 0 bytes or very small (< 1KB): **TESTS DID NOT RUN**
-   - **Read the output file**: `cat working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
+   - **Read the output file**: `cat skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
      - Look for test execution indicators (✔, ✘, Test Suite, etc.)
      - If you see no test execution output: **TESTS DID NOT RUN**
-   - Confirm any additional expected artifacts described in `docs/skai/integration.md` were produced.
+   - Confirm any additional expected artifacts described in `skai/integration.md` were produced.
    
    **If tests did not run:**
    - **STOP**: Do NOT proceed to analyze code or make guesses
@@ -474,56 +491,56 @@ struct MyComponentTests {
    - Pass/fail status
 
 4. **If all tests pass:**
-   - Document success
-   - STOP at the planned gate (present results and wait for advance intent)
-   - After advance intent: remove 🟡 from `Phase 2: Execute & Fix` in the work document, from passing test functions, and from section MARK comment (if all tests in section pass)
+   - Document success.
+   - STOP at the planned gate (present results and wait for advance intent).
+   - After advance intent: check `Phase 2: Execute & Fix` (`- [x]`) in the work document, remove `🟡` from passing test functions, and remove `🟡` from the section MARK comment if all tests in the section pass.
    - Section complete!
 
 5. **If one or more tests were skipped because infrastructure is missing:**
-   - Keep the skipped test markers, section marker, and `Phase 2: Execute & Fix 🟡` in place
-   - Document exactly what infrastructure is missing
-   - STOP at the planned gate and return control to the parent workflow after advance intent
+   - Keep the skipped tests' `🟡` markers and the section's `🟡` marker in place. Leave `- [ ] Phase 2: Execute & Fix` unchecked.
+   - Document exactly what infrastructure is missing.
+   - STOP at the planned gate and return control to the parent workflow after advance intent.
 
 6. **If tests fail:**
-   - Keep all 🟡 markers in place (do not remove from passing tests mid-iteration)
-   - Document failures in work document
-   - Follow maintenance workflow (see below)
-   - Re-run after fixes
-   - Repeat until all pass
+   - Keep all markers in place (do not remove `🟡` from passing tests mid-iteration; do not check `Phase 2: Execute & Fix`).
+   - Document failures in work document.
+   - Follow maintenance workflow (see below).
+   - Re-run after fixes.
+   - Repeat until all pass.
 
 ---
 
 ### Running Tests
 
-See `docs/skai/integration.md` for project-specific test execution commands.
+See `skai/integration.md` for project-specific test execution commands.
 
 **Standard test execution process:**
 
 1. **Create output directory** (per `Guides/Core/working-doc-conventions.md`):
 ```bash
-   mkdir -p working-docs/<branch-path>/<session-name>/testing/<suite-name>
+   mkdir -p skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>
    ```
 
 2. **Run tests with full output logging**:
    - **CRITICAL: Run ONLY the tests in the current section** - Do NOT run the entire test file (noise from unimplemented tests).
-   - Use the project's test command from `docs/skai/integration.md` and follow its recommended way to scope to specific tests.
-   - Persist full output to `working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`.
-   - Persist any additional artifacts described in `docs/skai/integration.md`.
+   - Use the project's test command from `skai/integration.md` and follow its recommended way to scope to specific tests.
+   - Persist full output to `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`.
+   - Persist any additional artifacts described in `skai/integration.md`.
 
 3. **Analyze failures**:
-   - **Primary**: Extract structured assertion failure details using the process in `docs/skai/integration.md`
+   - **Primary**: Extract structured assertion failure details using the process in `skai/integration.md`
    - **Secondary**: Search output file for additional context:
 ```bash
-     grep -A 10 "failed\|error" working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt
+     grep -A 10 "failed\|error" skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt
 ```
 
 4. **Next test run** overwrites the same files (keep paths stable per section)
 
 **Key points:**
-- Always scope runs to the current section's tests (see `docs/skai/integration.md`)
+- Always scope runs to the current section's tests (see `skai/integration.md`)
 - Full output enables multiple analyses without re-running tests
 - Branch-based organization keeps test outputs organized
-- See `docs/skai/integration.md` for the stack-specific runner setup and artifact extraction
+- See `skai/integration.md` for the stack-specific runner setup and artifact extraction
 
 ---
 
@@ -539,7 +556,7 @@ When resolving test failures, follow the project's Debugging / Problem-Resolutio
 
 **Process:**
 1. **Extract structured assertion failure details** - This is CRITICAL for understanding what failed
-   - See `docs/skai/integration.md` for the command/process to extract assertion failures in this project/stack
+   - See `skai/integration.md` for the command/process to extract assertion failures in this project/stack
    - Look for:
      - Expected vs actual values in assertion failures
      - Error messages and thrown errors
@@ -556,7 +573,7 @@ When resolving test failures, follow the project's Debugging / Problem-Resolutio
    
 3. **Search test output file** for additional context:
    ```bash
-   grep -A 10 "failed\|error" working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt
+   grep -A 10 "failed\|error" skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt
    ```
    
 4. **Document the failure** in work document:
@@ -623,7 +640,7 @@ with `option: .includeMetadata` (line 194), but the tests expect `.excludeMetada
 
 ### Test Suite Structure & Isolation
 
-See `docs/skai/integration.md` for:
+See `skai/integration.md` for:
 - Testing framework requirements
 - Test suite declaration patterns
 - Serialization requirements
@@ -665,7 +682,7 @@ struct MyComponentTests {
 
 ### Dependency Injection in Tests
 
-See `docs/skai/integration.md` for:
+See `skai/integration.md` for:
 - Factory framework usage
 - Container registration patterns
 - Test-specific DI patterns
@@ -783,7 +800,7 @@ See `docs/skai/integration.md` for:
 
 **Work Document Structure:**
 
-Full path: `working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-writing.md` (per `Guides/Core/working-doc-conventions.md`)
+Full path: `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-writing.md` (per `Guides/Core/working-doc-conventions.md`)
 
 ```markdown
 # [Suite Name] - [Section Name] Tests - Writing & Execution
@@ -797,8 +814,8 @@ This document tracks the writing and execution work for implementing unit tests.
 
 ## Checklist
 
-- Phase 1: Write Tests 🟡
-- Phase 2: Execute & Fix 🟡
+- [ ] Phase 1: Write Tests
+- [ ] Phase 2: Execute & Fix
 
 ## Phase 1: Write Tests
 
@@ -810,32 +827,32 @@ This document tracks the writing and execution work for implementing unit tests.
 ```
 
 **Phase 1: Write Tests**
-- Create work document
-- Review available infrastructure
-- Implement test logic (Arrange → Act → Assert)
-- **Keep 🟡 on test functions** (removed in Phase 2 when they pass)
-- Add supporting code if needed
-- Ensure test isolation
-- Document in work document
-- When approved: remove 🟡 from "Phase 1: Write Tests" in the work document
+- Create work document.
+- Review available infrastructure.
+- Implement test logic (Arrange → Act → Assert).
+- **Keep `🟡` on test functions** (removed in Phase 2 when they pass).
+- Add supporting code if needed.
+- Ensure test isolation.
+- Document in work document.
+- When approved: check `Phase 1: Write Tests` (`- [x]`) in the work document.
 
 **Phase 2: Execute & Fix**
-- Remove 🟡 from Phase 1 in the work document (if not already done)
-- Run tests scoped to the current section's tests (per `docs/skai/integration.md`)
-- **CRITICAL: Verify test actually ran** (check file size + output contains test execution indicators)
-- Document results
+- Check `Phase 1: Write Tests` in the work document (if not already done).
+- Run tests scoped to the current section's tests (per `skai/integration.md`).
+- **CRITICAL: Verify test actually ran** (check file size + output contains test execution indicators).
+- Document results.
 - If failures:
-  - Extract structured assertion details (CRITICAL) (see `docs/skai/integration.md`)
-  - Document expected vs actual values
-  - Investigate and fix (see maintenance workflow)
+  - Extract structured assertion details (CRITICAL) (see `skai/integration.md`).
+  - Document expected vs actual values.
+  - Investigate and fix (see maintenance workflow).
 - If infrastructure is missing for some tests:
-  - Skip those tests
-  - Document the missing infrastructure
-  - STOP at the skipped-tests planned gate and return control to the parent workflow after advance intent
-- Re-run until all pass
-- When all pass: STOP at the planned gate (present results, wait for advance intent)
-- After advance intent: remove 🟡 from test functions, section MARK, and Phase 2 in work document
-- If previously passing test fails: Restore 🟡 to that test function
+  - Skip those tests.
+  - Document the missing infrastructure.
+  - STOP at the skipped-tests planned gate and return control to the parent workflow after advance intent.
+- Re-run until all pass.
+- When all pass: STOP at the planned gate (present results, wait for advance intent).
+- After advance intent: check `Phase 2: Execute & Fix` (`- [x]`) in the work document; remove `🟡` from passing test functions and from the section MARK (if all tests in the section pass).
+- If a previously passing test fails: restore `🟡` to that test function.
 
 ---
 
@@ -848,13 +865,13 @@ This document tracks the writing and execution work for implementing unit tests.
 
 **Test Execution:**
 
-See `docs/skai/integration.md` for project-specific test execution commands.
+See `skai/integration.md` for project-specific test execution commands.
 
 **Standard process:**
-- Create suite output directory: `working-docs/<branch-path>/<session-name>/testing/<suite-name>/` (per `Guides/Core/working-doc-conventions.md`, e.g., `working-docs/work/step-refactor/login-tests/testing/TemplateRenderer/`)
-- Run tests scoped to ONLY the current section's tests (per `docs/skai/integration.md`)
-- Persist artifacts/logs as described in `docs/skai/integration.md`
-- **Extract structured assertion failures** - CRITICAL first step (see `docs/skai/integration.md`)
+- Create suite output directory: `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/` (per `Guides/Core/working-doc-conventions.md`, e.g., `skai/working-docs/work/step-refactor/login-tests/testing/TemplateRenderer/`)
+- Run tests scoped to ONLY the current section's tests (per `skai/integration.md`)
+- Persist artifacts/logs as described in `skai/integration.md`
+- **Extract structured assertion failures** - CRITICAL first step (see `skai/integration.md`)
 - Search output file for additional context
 - Overwrite both files on subsequent runs
 
@@ -868,11 +885,11 @@ See `docs/skai/integration.md` for project-specific test execution commands.
 
 **Test execution validation:**
 - After running test command, IMMEDIATELY verify test actually ran
-- Check output file size (should be several KB) and output contains test indicators (plus any expected artifacts from `docs/skai/integration.md`)
+- Check output file size (should be several KB) and output contains test indicators (plus any expected artifacts from `skai/integration.md`)
 - If test didn't run: STOP, investigate why, fix, re-run (do NOT guess or analyze code)
 
 **When tests fail:**
-1. Extract structured assertion details (CRITICAL) (see `docs/skai/integration.md`)
+1. Extract structured assertion details (CRITICAL) (see `skai/integration.md`)
 2. Document expected vs actual values
 3. Investigation → Fix → Verify (repeat until passing)
 - See "When Tests Fail" section above for complete process

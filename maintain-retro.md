@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.maintain-retro
 Managed-Source: maintain-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-03-04
+Managed-Updated-At: 2026-05-27
 
 # Maintenance retro checklist (LLM + human)
 
@@ -56,6 +56,8 @@ This retro is a **backstop for completeness**, not a git/diff report.
 
 ## 5) Consistency checks
 
+**Record the result of every check, even when clean.** For each check below, write down either `0 occurrences` (with the search / inspection used — file paths, `grep` / `rg` pattern, or "visual review of section X") or a list of occurrences classified per-check (`<path>:<line>` → `false positive (intentional per …)` / `to fix` / `to revisit`). Reading the check and self-certifying "done" without a recorded result is the failure mode this rule prevents — a `0 occurrences` line with the search used is the minimum evidence. This matches the recording discipline used by `maintain-skai.md` § Sanity scan.
+
 - Search for stale paths (e.g. old install target directories) and update all occurrences.
 - Ensure new files referenced by runbooks exist at those paths.
 - README link check: when `README.md` references a file or directory within this repo, ensure it is a markdown link (clickable in the browser), not just a bare backticked path.
@@ -63,8 +65,11 @@ This retro is a **backstop for completeness**, not a git/diff report.
   - Verify each changed/new guide has a managed header.
   - Verify it has a `## Gates` section if it contains any STOP points/gates, and that it contains the standardized process-flow template (see `maintain-skai.md`, "Standard structure for guides with gates").
   - Search for terminology drift (e.g., "Next Command") and fix to "advance intent".
-  - For each planned gate, verify the guide identifies a workflow-owned artifact, the specific gate/phase 🟡 marker that remains while waiting, and the exact artifact change that happens only after advance intent.
-  - If the guide creates working docs or artifacts, verify its paths use `working-docs/<branch-path>/<session-name>/...` rather than placing files directly under `working-docs/<branch-path>/...`.
+  - For each planned gate, verify the guide identifies a workflow-owned artifact, the specific gate/phase progress marker that remains while waiting (the unchecked `- [ ]` or the `🟡` in code), and the exact artifact change that happens only after advance intent.
+  - Verify marker conventions match the canonical rule: `- [ ]` / `- [x]` in process artifacts (markdown workflow docs); `🟡` only in source files (test code, app code) where completion = removal. The canonical in-code case is `Guides/Test/unit-test-planning-guide.md`.
+  - Verify `- [ ]` items have stable letter-led IDs on the same line (`D1`, `T1`, `F1`, `S1`, etc.), tight lists under shared headings (no blank lines between sibling checkbox items), and that markers are never on heading lines.
+  - Verify discussion-based phases use the Structured discussion items schema (`[Question]`/`[Proposal]`/`[Tradeoff]`, inline-with-topic, no aggregator sections like `## Questions` / `## Decisions`). See `Guides/Core/process-flow.md` "Structured discussion items".
+  - If the guide creates working docs or artifacts, verify its paths use `skai/working-docs/<branch-path>/<session-name>/...` rather than placing files directly under `skai/working-docs/<branch-path>/...`.
 - If a new skill was added or changed: verify the skill template is a **thin wrapper** (just references to Guides), not a self-contained document with inline logic. All substantive instructions must live in a Guide under `Guides/`.
 
 ## 6) Process reflection

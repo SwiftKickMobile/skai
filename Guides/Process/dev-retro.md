@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.dev-retro
 Managed-Source: Guides/Process/dev-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-03-07
+Managed-Updated-At: 2026-05-27
 
 # Dev-session retro (LLM + human)
 
@@ -13,6 +13,10 @@ Do not do a git/diff report unless asked. Prefer evidence-backed review and cons
 ## Gates
 
 Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+
+**Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
+
+**No fabricated gates.** `⏳ GATE:` lines only appear at gates this `## Gates` section defines or at a properly emitted blocked gate. Do not invent new gate categories or labels to describe discussion state, partial completion, or intermediate review. If a `⏳ GATE:` line is needed that this guide doesn't define, that's a signal the guide is missing a gate — file it as a process improvement.
 
 Use these standard gate lines:
 - Planned gate: `⏳ GATE: Next: <what happens after your response>. Say "next" or what to change.`
@@ -29,7 +33,7 @@ If an unexpected blocker prevents continued work, use the blocked gate line and 
 
 Workflow-specific gate notes:
 - The process-improvement handoff is a non-standard planned gate. `Next` there means: hand the current SKAI process suggestions to `Guides/Process/process-improvement.md`, where that workflow will own ticket drafting, review, and filing.
-- At that handoff gate, the retro output's `SKAI process suggestions` section is the handoff artifact. The `🟡` suggestion markers there remain conceptually pending while waiting for the human to approve drafting.
+- At that handoff gate, the retro output's `SKAI process suggestions` section is the handoff artifact. The unchecked `- [ ]` suggestion items there remain pending while waiting for the human to approve drafting.
 
 Planned gates for this workflow:
 - After the retro output is prepared and SKAI process suggestions have been identified, but before handing them off to the process-improvement workflow for drafting.
@@ -50,12 +54,13 @@ Rules:
 `auto to <milestone>` = auto-advance but STOP before the named planned gate. Use stable, workflow-specific milestone names.
 
 Progress tracking:
-- Default rule: 🟡 = TODO or pending approval. Do not clear 🟡 without human approval.
+- Default marker convention: `- [ ]` / `- [x]` in the retro output (process artifact). See `Guides/Core/process-flow.md`, "Progress markers".
+- Default rule: a `- [ ]` item means TODO or pending approval. Do not check it without human approval.
 - This guide does not require a separate phase marker for ordinary retro work.
 - If SKAI process suggestions are generated, the workflow-owned handoff artifact is the retro output's `SKAI process suggestions` section.
-- In that section, mark each suggestion with `🟡` to show it is pending handoff into the drafting workflow.
-- At the process-improvement handoff gate, STOP with those `🟡` suggestion markers still present.
-- If the human gives advance intent at that handoff gate, transfer control to `Guides/Process/process-improvement.md` starting at Phase 1, step 2 using the remaining `🟡` suggestions as the draft inputs.
+- In that section, each suggestion is a `- [ ]` item with a stable letter-led ID (`S1`, `S2`, …). The unchecked state shows it is pending handoff into the drafting workflow.
+- At the process-improvement handoff gate, STOP with the suggestion items still unchecked.
+- If the human gives advance intent at that handoff gate, transfer control to `Guides/Process/process-improvement.md` starting at Phase 1, step 2 using the unchecked `S<n>` suggestions as the draft inputs.
 - Do not draft `process-tickets.md` in this guide. `Guides/Process/process-improvement.md` owns ticket drafting, review, and filing.
 
 Workflow-specific advance behavior:
@@ -70,7 +75,7 @@ Read the documents and artifacts that were produced or used during this session,
   - work spec doc(s) (if used)
   - planning docs / analysis docs (including unit-testing planning + infrastructure + writing work docs)
 - The project's Integration doc:
-  - `docs/skai/integration.md`
+  - `skai/integration.md`
 - Evidence artifacts produced during the session:
   - build/test outputs, logs, result bundles/reports, screenshots/screen recordings, crash reports, etc.
 - The canonical requirements library:
@@ -144,7 +149,7 @@ Output is two sections in the retro output, written directly as you reflect (not
 
 Agent behavior issues, project-specific friction, one-off observations, or problems outside the skai repo's scope. These are worth noting for the human but do not belong in the skai issue tracker and do not flow into the process-improvement handoff.
 
-Format: brief bullets, no `🟡` markers. If none, say **"None."**
+Format: brief bullets, no progress markers. If none, say **"None."**
 
 #### SKAI process suggestions
 
@@ -161,16 +166,27 @@ Suggestion quality bar (problem-first; solution optional):
   - **Verification plan** (how to know next time)
 - Hard rule: do not output suggestions that are purely abstract ("be more careful", "improve quality") without evidence and a verifiable check.
 
-Format each as a `🟡` item with enough detail for `Guides/Process/process-improvement.md` to draft a ticket:
-  - concise summary
-  - friction/problem
-  - evidence/example
-  - failure mode
-  - optional candidate approach
-  - likely affected files (or `Unknown`)
-  - optional verification
+Format each as a `- [ ] S<n> <concise summary>` item (stable letter-led ID — `S1`, `S2`, …) with sub-bullets for the required details:
+  - **Friction/problem** — concrete.
+  - **Evidence/example** — what happened in this session.
+  - **Failure mode** — what goes wrong if this repeats.
+  - **Candidate approach** — optional; direction, not a mandate.
+  - **Likely files** — optional; or `Unknown`.
+  - **Verification** — optional; how to know next time.
 - Do not draft `process-tickets.md` here.
 - If none, say **"None."**
+
+Example:
+
+```
+- [ ] S1 Retro forgets to scan README for stale paths
+  - **Friction/problem** Three retros in a row missed a stale `Templates/` reference because the consistency check didn't run on README.
+  - **Evidence/example** This session's retro skipped step 5 (consistency check) and shipped with a stale path.
+  - **Failure mode** Stale paths in README slip into production until a human notices them.
+  - **Candidate approach** Add a README path-staleness check to `maintain-retro.md` step 5.
+  - **Likely files** `maintain-retro.md`.
+  - **Verification** Next retro flags the stale path; human verifies.
+```
 
 ## Retro output (keep it short)
 
@@ -182,6 +198,6 @@ Then output only:
 - remaining follow-ups (1-8 bullets)
 - or: "Dev retro complete; no misses found."
 - **Session observations** section from step 6 (brief bullets, no markers).
-- **SKAI process suggestions** section from step 6 (with `🟡` markers if any).
+- **SKAI process suggestions** section from step 6 (with `- [ ]` items and `S<n>` IDs if any).
 - If the "SKAI process suggestions" section has entries: end with `⏳ GATE: Next: Draft process tickets from these retro suggestions. Say "next" or what to change.`
 - On advance intent from that gate, follow `Guides/Process/process-improvement.md` starting at Phase 1, step 2.

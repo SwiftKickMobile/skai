@@ -6,17 +6,17 @@ Managed-Updated-At: 2026-03-07
 
 # Working Document Conventions
 
-Working documents (planning docs, work specs, test work docs, test artifacts) are ephemeral files that track in-progress work. They live under a single top-level folder, are organized by git branch, and are grouped into named session folders so multiple efforts on the same branch do not collide.
+Working documents (planning docs, work specs, test work docs, test artifacts) are ephemeral files that track in-progress work. They live under `skai/working-docs/`, are organized by git branch, and are grouped into named session folders so multiple efforts on the same branch do not collide.
 
 ## Location
 
-All working documents live under `working-docs/` at the project root.
+All working documents live under `skai/working-docs/` at the project root.
 
-Within `working-docs/`, the current git branch name is used to create a subdirectory path. If the branch name contains `/`, each segment becomes a nested folder.
+Within `skai/working-docs/`, the current git branch name is used to create a subdirectory path. If the branch name contains `/`, each segment becomes a nested folder.
 
 Inside the branch path, each workflow session must choose a required `session-name` folder. This session folder distinguishes separate efforts on the same branch and contains all primary documents and related artifacts for that effort.
 
-**Path formula:** `working-docs/<branch-path>/<session-name>/<subpath>/<filename>`
+**Path formula:** `skai/working-docs/<branch-path>/<session-name>/<subpath>/<filename>`
 
 Where:
 - `<branch-path>` = the current git branch name, with `/` decomposed into nested directories
@@ -33,10 +33,10 @@ Notes:
 
 | Branch | Branch path |
 |---|---|
-| `work/step-refactor` + `observable-wrapper` | `working-docs/work/step-refactor/observable-wrapper/` |
-| `work/foo` + `retro-cleanup` | `working-docs/work/foo/retro-cleanup/` |
-| `feature/auth-flow` + `login-tests` | `working-docs/feature/auth-flow/login-tests/` |
-| `main` + `ticket-maintenance` | `working-docs/main/ticket-maintenance/` |
+| `work/step-refactor` + `observable-wrapper` | `skai/working-docs/work/step-refactor/observable-wrapper/` |
+| `work/foo` + `retro-cleanup` | `skai/working-docs/work/foo/retro-cleanup/` |
+| `feature/auth-flow` + `login-tests` | `skai/working-docs/feature/auth-flow/login-tests/` |
+| `main` + `ticket-maintenance` | `skai/working-docs/main/ticket-maintenance/` |
 
 ## Creating a working document
 
@@ -48,19 +48,19 @@ Notes:
 3. Construct the full path using the formula above (the calling guide specifies `<subpath>` and `<filename>`).
 4. Create the directory structure:
    ```bash
-   mkdir -p working-docs/<branch-path>/<session-name>/<subpath>
+   mkdir -p skai/working-docs/<branch-path>/<session-name>/<subpath>
    ```
 5. Write the document.
 
 ## Examples
 
 - Work spec planning:
-  - `working-docs/<branch-path>/observable-wrapper/observable-wrapper-plan.md`
+  - `skai/working-docs/<branch-path>/observable-wrapper/observable-wrapper-plan.md`
 - Work spec implementation:
-  - `working-docs/<branch-path>/observable-wrapper/observable-wrapper-impl.md`
+  - `skai/working-docs/<branch-path>/observable-wrapper/observable-wrapper-impl.md`
 - Unit testing orchestration:
-  - `working-docs/<branch-path>/login-tests/testing/unit-testing.md`
+  - `skai/working-docs/<branch-path>/login-tests/testing/unit-testing.md`
 - Unit test suite infrastructure:
-  - `working-docs/<branch-path>/login-tests/testing/LoginViewModelTests/infrastructure.md`
+  - `skai/working-docs/<branch-path>/login-tests/testing/LoginViewModelTests/infrastructure.md`
 - Process improvement drafts:
-  - `working-docs/<branch-path>/retro-cleanup/process-tickets.md`
+  - `skai/working-docs/<branch-path>/retro-cleanup/process-tickets.md`

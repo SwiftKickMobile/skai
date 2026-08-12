@@ -68,16 +68,8 @@ the demo doc and the guide describe the same conventions in prose.
 
 3. DOMAINS AND PALETTE
    - Each domain in the YAML's `domains:` section maps to a palette color in
-     declaration order. The mapping is:
-       1. App / first domain   → #8AD1FA  (sky blue)
-       2. Second domain         → #EFD74E  (yellow)
-       3. Third domain          → #ED8490  (coral)
-       4. Fourth domain         → #6AD578  (green)
-       5. Fifth domain          → #F7A55E  (orange)
-       6. Sixth domain          → #87AFFF  (periwinkle)
-       7. Seventh domain        → #37D8CB  (teal)
-       8. Eighth domain         → #CC7BE9  (lavender)
-       9. Ninth domain          → #F277D5  (magenta)
+     declaration order using `DOMAIN_PALETTE`, the single authoritative list
+     of palette values below.
    - Scenes inside `common:` form their own pseudo-domain `common`, appended
      last in declaration order and labeled "Common" in the legend; it takes
      the next palette slot after the real domains. Common scenes still render
@@ -140,9 +132,8 @@ the demo doc and the guide describe the same conventions in prose.
    - Note style: pale yellow `#fff7d6`, muted gold stroke `#d4c171`, dark text.
 
 10. CALLOUTS — MODAL STYLES
-    - For each modal wrapper `<sid>_modal` whose destinations declare a
-      `modal_style`, emit one callout `mstyle_<sid>` listing each styled
-      destination as `Scene Name <b>style</b>` — the presentation style
+    - For each modal wrapper `<sid>_modal`, emit one callout `mstyle_<sid>`
+      listing each destination as `Scene Name <b>style</b>` — the required style
       bolded — comma-separated on a single line to keep the callout short.
     - Shape is a right-leaning parallelogram, matching the implements callout.
     - Attached to the wrapper via `-.-` (not to the scenes inside — keeps the
@@ -165,7 +156,8 @@ the demo doc and the guide describe the same conventions in prose.
       Categories: duplicate canonical home, undefined scene reference,
       ambiguous visual home (multiple inbound, no primary_parent),
       `primary_parent` that doesn't actually route to the scene,
-      too many domains for the palette, modal_style outside the vocabulary.
+      too many domains for the palette, missing modal_style or vocabulary,
+      modal_style outside the vocabulary.
 """
 
 from __future__ import annotations
@@ -361,9 +353,21 @@ def build_model(data: dict[str, Any]) -> Model:
             f"({len(DOMAIN_PALETTE)} slots). Extend DOMAIN_PALETTE."
         )
 
-    # Validate each scene's modal_style against the project vocabulary.
+    # Every modal destination has an implementation-significant style from the
+    # project's declared vocabulary.
     modal_styles = data.get("modal_styles", []) or []
     modal_style_set = set(modal_styles)
+    modal_edges = [edge for edge in edges if edge[1] == "modal"]
+    if modal_edges and not modal_style_set:
+        raise SemanticError(
+            "The map contains modal routes but has no top-level 'modal_styles' vocabulary"
+        )
+    for parent_id, _, target_id in modal_edges:
+        if scenes[target_id].get("modal_style") is None:
+            raise SemanticError(
+                f"Scene '{target_id}' is reached by modal route from '{parent_id}' "
+                "but has no modal_style"
+            )
     for sid, body in scenes.items():
         ms = body.get("modal_style")
         if ms is None:
@@ -541,8 +545,8 @@ def render(model: Model) -> str:
     if notes_emitted:
         out.append("")
 
-    # Modal-style callouts: one per modal wrapper whose destinations declare a
-    # modal_style. Lists each styled destination and its style, left-aligned.
+    # Modal-style callouts: one per modal wrapper. Lists each destination and
+    # its required style, left-aligned.
     # Attached to the wrapper (not the scenes inside) so no edge routes within.
     mstyle_callout_ids: list[str] = []
     for sid, body in model.scenes.items():
@@ -552,9 +556,8 @@ def render(model: Model) -> str:
         lines: list[str] = []
         for item in modal_targets:
             target_id, _ = _scene_id_and_body(item)
-            ms = model.scenes[target_id].get("modal_style")
-            if ms:
-                lines.append(f"{humanize(target_id)} <b>{ms}</b>")
+            ms = model.scenes[target_id]["modal_style"]
+            lines.append(f"{humanize(target_id)} <b>{ms}</b>")
         if not lines:
             continue
         callout_id = f"mstyle_{sid}"

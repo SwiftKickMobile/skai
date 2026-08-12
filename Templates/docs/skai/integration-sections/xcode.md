@@ -10,6 +10,7 @@ Provide `xcodebuild`-based commands (not "open Xcode" steps).
 ### Build (CLI, non-interactive)
 
 ```bash
+set -o pipefail
 xcodebuild build \
   -scheme <Scheme> \
   -project <ProjectDir>/<Project>.xcodeproj \
@@ -20,6 +21,7 @@ xcodebuild build \
 ### Run unit tests (all)
 
 ```bash
+set -o pipefail
 rm -rf <result-bundle>.xcresult && \
 xcodebuild test \
   -scheme <Scheme> \
@@ -35,6 +37,7 @@ xcodebuild test \
 Entire class:
 
 ```bash
+set -o pipefail
 rm -rf <result-bundle>.xcresult && \
 xcodebuild test \
   -scheme <Scheme> \
@@ -48,6 +51,7 @@ xcodebuild test \
 Single test method (quote + include `()` when required by the test framework):
 
 ```bash
+set -o pipefail
 rm -rf <result-bundle>.xcresult && \
 xcodebuild test \
   -scheme <Scheme> \
@@ -63,6 +67,7 @@ xcodebuild test \
 Rule: always keep the full output file via `tee`. Filtering is only for terminal display.
 
 ```bash
+set -o pipefail
 ... 2>&1 | tee <output-path>.txt | grep -E "^(✔|✘|•)|Assertion|failed|error:|threw"
 ```
 
@@ -80,4 +85,3 @@ Evidence contract: when tests fail, provide:
 - `<output-path>.txt` (full output)
 - `<result-bundle>.xcresult` path
 - `<results-json-path>.json` (required)
-

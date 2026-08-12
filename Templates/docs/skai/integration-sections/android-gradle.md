@@ -7,6 +7,7 @@ Placeholders like `<Variant>`, `<ModulePath>`, and `<TestNamePattern>` are **var
 ### Build / compile
 
 ```bash
+set -o pipefail
 ./gradlew <AssembleTask> --no-daemon --stacktrace 2>&1 | tee <output-path>.txt
 ```
 
@@ -18,12 +19,14 @@ Examples for `<AssembleTask>` (pick based on the repo's modules/variants):
 ### Unit tests (all)
 
 ```bash
+set -o pipefail
 ./gradlew test --no-daemon --stacktrace 2>&1 | tee <output-path>.txt
 ```
 
 ### Unit tests (single module / variant)
 
 ```bash
+set -o pipefail
 ./gradlew <ModulePath>:test<Variant>UnitTest --no-daemon --stacktrace 2>&1 | tee <output-path>.txt
 ```
 
@@ -36,12 +39,14 @@ Examples:
 Prefer a repo-supported mechanism (varies by test framework and Gradle config). Common patterns include:
 
 ```bash
+set -o pipefail
 ./gradlew <ModulePath>:test<Variant>UnitTest --tests '<TestNamePattern>' --no-daemon --stacktrace 2>&1 | tee <output-path>.txt
 ```
 
 ### Instrumentation / UI tests (if applicable)
 
 ```bash
+set -o pipefail
 ./gradlew <AndroidTestTask> --no-daemon --stacktrace 2>&1 | tee <output-path>.txt
 ```
 
@@ -69,4 +74,3 @@ Evidence contract: when tests fail, provide:
 - the HTML report path(s) for the failing run (if generated)
 
 If the repo does not generate structured artifacts, state that explicitly and fall back to the console output log.
-

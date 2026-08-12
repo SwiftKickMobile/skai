@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-swiftui
 Managed-Source: Guides/UIMap/ui-map-swiftui.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-05-24
+Managed-Updated-At: 2026-08-11
 
 # UI Map — SwiftUI Reference
 
@@ -12,20 +12,20 @@ Each scene's routing is implemented locally: the view model owns the outgoing ro
 
 ## Scene file layout
 
-For a scene named `Foo`:
+Map scene IDs are lower snake case. Convert each word to UpperCamelCase for scene folders and code types: `trail_detail` becomes `TrailDetail`, so its standard layout is:
 
 ```
-Foo/
-  FooView.swift          // struct FooView: View
-  FooViewModel.swift     // route enums at the top, then @Observable class FooViewModel
-  Views/                 // optional — Foo's own subviews
+TrailDetail/
+  TrailDetailView.swift          // struct TrailDetailView: View
+  TrailDetailViewModel.swift     // route enums at the top, then @Observable class TrailDetailViewModel
+  Views/                         // optional — TrailDetail's own subviews
 ```
 
-All of the scene's route enums live at the top of `FooViewModel.swift`, above the view-model class. Every scene gets a `FooViewModel` — even a leaf with no routes or state — so each scene's file layout is identical and there is always a consistent home for state the moment any is needed.
+All of a scene's route enums live at the top of its `<Scene>ViewModel.swift`, above the view-model class. Every scene gets a `<Scene>ViewModel` — even a leaf with no routes or state — so each scene's file layout is identical and there is always a consistent home for state the moment any is needed.
 
-A scene's folder may contain a `Views/` subfolder for the scene's own subviews — small presentational views split out to keep `FooView.swift` uncluttered. `Views/` holds subviews only: never a scene (every scene gets its own folder), and never another scene's subviews.
+A scene's folder may contain a `Views/` subfolder for the scene's own subviews — small presentational views split out to keep `<Scene>View.swift` uncluttered. `Views/` holds subviews only: never a scene (every scene gets its own folder), and never another scene's subviews.
 
-Scenes live under a top-level `Scenes/` folder (a project may override the root in its `README.md`), organized to mirror the map's domain structure — **the folder tree reads as the `domains:` tree, not as routing parentage.** Each domain is a folder directly under `Scenes/`, and a scene's folder is placed where the map *defines* it:
+Scenes live under a top-level `Scenes/` folder (a project may override the root in its `README.md`), organized to mirror the map's canonical definition nesting inside `domains:` — not references, `primary_parent`, or other inbound routes. Each domain is a folder directly under `Scenes/`, and a scene's folder is placed where the map *defines* it:
 
 - a collapsed domain (domain id == its root scene) → the domain folder is that root scene's folder (e.g. `Library/LibraryView.swift`);
 - a scene defined inline under a route container → nests inside that container's owning scene's folder (e.g. `App/Login/Welcome/`);
@@ -33,7 +33,7 @@ Scenes live under a top-level `Scenes/` folder (a project may override the root 
 
 Every other appearance of a scene is a reference: the referencing scene imports and instantiates it, and a reference **never** creates or moves a folder. This includes a cross-domain reference (it does not pull the scene into the referrer's domain) and `primary_parent` (a render-only hint, never a folder move). Do not place scenes flat — the folder tree must mirror the map's domain structure.
 
-Scenes in the YAML's top-level `common:` group are domain-agnostic. They live in the shared UI module under its own top-level `Scenes/` folder — one folder per scene, following the same per-scene layout as any other scene. The shared UI module must link the placeholder package (`SKAISwiftUI`) to host these scenes. If it doesn't — or the project has no SwiftUI-capable shared module — that is a **blocked gate**: STOP and ask for the dependency to be added. (The symptom is a *link* error — undefined `SKAISwiftUI` symbols — not a missing-module compile error, since SwiftPM exposes the module at the project level.) Do not relocate the scene into another target to make it build.
+Scenes in the YAML's top-level `common:` group are domain-agnostic. They live in the shared UI module under its own top-level `Scenes/` folder — one folder per scene, following the same per-scene layout as any other scene. When scaffolding them, apply the `SKAISwiftUI` package-linkage rule in [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md) to the shared module. If the project has no SwiftUI-capable shared module, STOP at a blocked gate; do not relocate the scene into another target to make it build.
 
 ## Route enums
 
@@ -85,7 +85,7 @@ The view model sets `navRoute` to navigate; SwiftUI clears it when the user pops
 
 ## Modal routing
 
-A `Modal` connector in the diagram doesn't specify *how* the modal is presented — the map's `modal_style` value selects the native modifier:
+Every modal destination has a required `modal_style` in the map; that agreed value selects the native modifier. Do not infer or substitute a style during implementation:
 
 | `modal_style` | Enum suffix | Property | Modifier |
 |---|---|---|---|
@@ -119,8 +119,6 @@ struct DashboardView: View {
 ```
 
 For modal styles beyond the standard set above (third-party libraries, project-specific overlay patterns), the project declares them in its `modal_styles` YAML vocabulary and documents the implementations in `README.md` under a **Modal Styles** section — each non-standard style paired with its modifier signature and enum-suffix convention. The project's `README.md` is also where projects declare deliberate overrides of other patterns in this guide.
-
-The choice of presentation style is informal and not encoded in the diagram.
 
 ## Child routing
 

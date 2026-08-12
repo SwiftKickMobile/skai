@@ -12,7 +12,7 @@ This document is the canonical Cursor install/update runbook.
 
 Key responsibilities:
 - Detect existing installs (including legacy copies of guides/rules) and plan a safe migration.
-- Create/update `docs/skai/integration.md` (and migrate any legacy integration command notes into it).
+- Create/update `skai/integration.md` (and migrate any legacy integration command notes into it).
 - Generate managed Cursor `.mdc` rule files into `.cursor/rules/skai/`.
 - Install `skai` Cursor skills into `.cursor/skills/` (no symlinks; wrappers point at `Submodules/skai/...` sources).
 - Update `.cursorignore` (and, if present, `.claudeignore`) via managed blocks so Cursor and Claude installs can coexist without clutter.
@@ -32,6 +32,7 @@ Follow the discover → classify → plan → confirm → execute workflow.
     - `.cursor/skills/**`
     - `.cursor/agent/**` (deprecated install target; see cleanup guidance below)
   - `docs/**`
+  - the known legacy and canonical SKAI project-artifact paths in `Install/conflict-precedence-policy.md`
   - any "integration glue" docs/notes (build/test commands, destinations, artifact paths), wherever they live (README, docs, CI scripts, etc.)
 - Inventory any existing Integration doc candidates and existing rule/policy docs (do not assume specific filenames).
 
@@ -49,7 +50,8 @@ Prepare a concrete plan:
 - Files to create
 - Files to update (managed only, including managed symlinks)
 - Legacy candidates to supersede (create new managed files in canonical locations)
-- Integration doc migration items (move legacy integration glue into `docs/skai/integration.md`)
+- Integration doc migration items (move legacy integration glue into `skai/integration.md`)
+- Canonical SKAI project-artifact path migrations and any destination conflicts
 - Legacy cleanup proposals (explicitly permission-gated):
   - delete legacy candidates
   - or replace legacy candidates with symlinks to the new canonical locations
@@ -59,7 +61,7 @@ Prepare a concrete plan:
 Required gray-area checks (ask the human, then reflect the decision in the plan):
 - Search for legacy debugging rule candidates (common examples: `.cursor/rules/debugging*.mdc`, `.cursor/rules/*debug*.mdc`, or other Cursor rules that encode project-specific logging/API conventions).
   - If found, propose:
-    1) migrating any project-specific logging/API conventions they contain into `docs/skai/integration.md`, then
+    1) migrating any project-specific logging/API conventions they contain into `skai/integration.md`, then
     2) deleting those legacy debugging rule files (only with explicit approval).
   - When reporting discovery, list the candidates you found; do not emit "not found" lines for example filenames you didn't find.
 
@@ -75,7 +77,8 @@ If updating the submodule, include an "update review" section:
 ### 5) Execute (safe order)
 
 1. Ensure submodule is present/updated.
-2. Create/update `docs/skai/integration.md` (migrate legacy command docs into it; do not delete legacy docs by default).
+2. Perform the approved canonical project-artifact path migrations from `Install/conflict-precedence-policy.md`; STOP on any source/destination collision.
+3. Create/update `skai/integration.md` (migrate legacy command docs into it; do not delete legacy docs by default).
    - If you cannot find the required integration information in-repo:
      - Create/seed the Integration doc from `Templates/docs/skai/integration.md`.
      - Fill only what you can source with high confidence.
@@ -84,17 +87,17 @@ If updating the submodule, include an "update review" section:
    - When filling "Build / compile" and "Unit tests", prefer non-interactive command-line commands (e.g., `xcodebuild ...`) over GUI instructions ("open Xcode…"). If you can't produce command-line commands with high confidence, leave 🟡 placeholders and ask.
    - For Xcode projects: never invent a simulator/device model. If a canonical `xcodebuild -destination` string is not already established in-repo, propose one and ask the human to confirm before writing it.
    - Follow `Install/integration-doc-install-update.md` for how to update the Integration doc safely (managed blocks + human overrides).
-2.5 Create/update ignore files (permission-gated if the files already exist and are project-owned):
+3.5 Create/update ignore files (permission-gated if the files already exist and are project-owned):
    - Update `.gitignore` by inserting/updating a managed block:
-     - Add `working-docs/` so ephemeral working documents are not committed.
+     - Add `skai/working-docs/` so ephemeral working documents are not committed.
    - Update `.cursorignore` by inserting/updating a managed block:
      - Exclude `.claude/**` so Cursor sessions don't ingest Claude-specific assets by default.
      - Do NOT exclude `Submodules/skai/**` here; use editor UI excludes for autocomplete/search clutter instead.
    - If `.claudeignore` exists, propose inserting/updating an equivalent managed block to exclude `.cursor/**` (ask approval before changing).
-3. Generate managed Cursor `.mdc` rule files into `.cursor/rules/skai/`.
-4. Install `skai` Cursor skills into `.cursor/skills/`.
-5. If approved, perform legacy cleanup (delete or replace with symlinks).
-6. Write/update `docs/skai/install-state.json` (see "Install state file" below).
+4. Generate managed Cursor `.mdc` rule files into `.cursor/rules/skai/`.
+5. Install `skai` Cursor skills into `.cursor/skills/`.
+6. If approved, perform legacy cleanup (delete or replace with symlinks).
+7. Write/update `skai/install-state.json` (see "Install state file" below).
 
 Required Integration doc fields to request (minimum set):
 - Build/compile command(s)
@@ -148,7 +151,9 @@ Install these skills:
   - source: `Submodules/skai/Templates/skills/skai-work-spec-creation/SKILL.md`
 - `.cursor/skills/skai-work-spec-implementation/SKILL.md`
   - source: `Submodules/skai/Templates/skills/skai-work-spec-implementation/SKILL.md`
-- `.cursor/skills/skai-ui-map-planning/SKILL.md`
+- `.cursor/skills/skai-ui-map-architecture/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-ui-map-architecture/SKILL.md`
+- `.cursor/skills/skai-ui-map-planning/SKILL.md` (deprecated compatibility entry point)
   - source: `Submodules/skai/Templates/skills/skai-ui-map-planning/SKILL.md`
 - `.cursor/skills/skai-ui-map-implementation/SKILL.md`
   - source: `Submodules/skai/Templates/skills/skai-ui-map-implementation/SKILL.md`
@@ -169,7 +174,7 @@ Install these skills:
 
 ## Install state file
 
-After a successful install or update, write/update `docs/skai/install-state.json` so the `update-installation` skill can detect changes and re-run the appropriate adapters.
+After a successful install or update, write/update `skai/install-state.json` so the `update-installation` skill can detect changes and re-run the appropriate adapters.
 
 Format:
 
@@ -178,6 +183,7 @@ Format:
   "managedBy": "skai",
   "submodulePath": "Submodules/skai",
   "lastSHA": "<current submodule HEAD SHA>",
+  "lastRelease": "<v<N> release tag at submodule HEAD, or null if not on a release>",
   "lastUpdatedAt": "<yyyy-mm-dd>",
   "installedAdapters": [
     {
@@ -191,7 +197,8 @@ Format:
 
 Rules:
 - If the file does not exist, create it with this adapter's entry.
-- If the file already exists, **merge**: update `lastSHA`, `lastUpdatedAt`, and upsert this adapter's entry in `installedAdapters` (preserve entries from other adapters).
+- If the file already exists, **merge**: update `lastSHA`, `lastRelease`, `lastUpdatedAt`, and upsert this adapter's entry in `installedAdapters` (preserve entries from other adapters).
+- Determine `lastRelease` from the submodule's current HEAD: `git -C <submodulePath> tag --points-at HEAD --list 'v*'` -- if a `v<N>` tag points at HEAD, use the highest; otherwise set `lastRelease` to null.
 - The adapter ID for this runbook is `cursor`; the runbook path is `Install/Cursor/install-update-cursor.md`.
 
 ## Legacy artifact cleanup (permission-gated)
@@ -199,7 +206,7 @@ Rules:
 During discovery, if you find artifacts that appear to be from older installations (symlinks pointing into the submodule, guide/rule copies without managed headers, skills that have been renamed or replaced), propose a cleanup plan:
 
 - **Managed symlinks** (symlinks into `Submodules/skai/...`): propose deleting them (only with explicit approval).
-- **Legacy candidates** (look like managed assets but lack the managed header): do not overwrite. Propose deletion or replacement, but only with explicit approval. If they contain project-specific content (e.g., logging conventions, custom rules), propose migrating that content into `docs/skai/integration.md` first.
+- **Legacy candidates** (look like managed assets but lack the managed header): do not overwrite. Propose deletion or replacement, but only with explicit approval. If they contain project-specific content (e.g., logging conventions, custom rules), propose migrating that content into `skai/integration.md` first.
 - **Non-symlink or project-authored content**: treat as project-owned and STOP to ask the human what to do.
 
 Rationale: leaving legacy copies in place increases the chance that humans/agents keep reading the wrong file out of habit.

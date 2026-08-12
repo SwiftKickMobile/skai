@@ -1,12 +1,13 @@
 # Integration doc install/update guidance (shared)
 
-This is a shared guide for installers that create/update the host project's Integration doc at `docs/skai/integration.md`.
+This is a shared guide for installers that create/update the host project's Integration doc at `skai/integration.md`.
 
 ## Goals
 
 - The Integration doc is **project-owned operational glue**.
 - It must be **agent-usable** and **deterministic** (prefer CLI commands; avoid GUI instructions).
 - It must be safe to update on existing repos (don't delete/overwrite project-owned content).
+- It records project-specific overrides and evidence conventions; canonical SKAI-native defaults stay in SKAI guides and do not need to be copied here just to make them discoverable.
 
 ## Rules
 
@@ -65,4 +66,3 @@ Examples:
 - Legacy installer-oriented sections (e.g., "Installer setup tasks")
 
 Propose removing any such content and wait for approval before deleting.
-
