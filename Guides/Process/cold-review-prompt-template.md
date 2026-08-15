@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.cold-review-prompt-template
 Managed-Source: Guides/Process/cold-review-prompt-template.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-05
+Managed-Updated-At: 2026-08-15
 
 # Cold-Review Prompt Template
 
@@ -24,6 +24,13 @@ Replace each `{{SLOT}}`:
 - `{{FAILURE_MODES}}` -- recurring traps to check (e.g. append-without-restructure, jargon over plain language, scattered gate behavior, grab-bag findings).
 - `{{SIMULATION_STEPS}}` -- the workflow-specific steps a greenfield operator would walk (this skill's phases/gates).
 - `{{LEGACY_ARTIFACTS}}` -- predecessor / stale artifacts the reviewer must NOT treat as compliance targets.
+
+Optional slots for **scoped / empirical reviews** -- delete all four for a standard full review. They exist for reviews driven by observed behavioral failures of the skill under test, or for assessing specific draft edits:
+
+- `{{EXCLUDED_SURFACES}}` -- files or folders the reviewer must not read (change logs, run records, prior review dispositions -- anything reachable by search that carries the maintainer's or the history's framing). This is blindness protection, not scope.
+- `{{OBSERVED_FAILURES}}` -- observed behavioral failures of the skill executing as documented: per failure, the input, what was produced, and what was expected. Facts only -- no diagnosis, no suspected mechanism, no interview conclusions; those would warm the review with the maintainer's framing.
+- `{{PROPOSED_EDITS}}` -- draft edit(s) under assessment, each quoted in full with its intended location. Hypothetical -- not present in the reviewed files.
+- `{{REPORT_CHARTER}}` -- what the main report is scoped to (for example "findings that explain the observed failures" or "assessment of the proposed edits"). Out-of-charter findings still surface, briefly, in an appendix.
 
 Delete any slot that does not apply (e.g. a single-guide skill needs no multi-doc consistency lens; omit the legacy section if there are no legacy artifacts).
 
@@ -61,9 +68,26 @@ Read only as needed; do not treat as compliance targets unless a binding surface
 {{LEGACY_ARTIFACTS}}
 Treat the above as historical/contextual only. Do NOT issue a finding merely because a legacy artifact fails to match the current guide. Only flag one if (a) the current docs still route operators to it as active surface, (b) the docs fail to distinguish active from historical material, or (c) the workflow still depends on it in a way that would confuse a fresh operator. The test is whether the current docs are coherent and operable now -- not whether old files conform.
 
+## Files you must not read
+{{EXCLUDED_SURFACES}}
+Do not open these, and do not use search results drawn from them. They carry history and framing that would stop this review being cold. If a search leads you into one, discard what you saw rather than citing it.
+
 ## Settled dispositions -- do not re-raise
 {{SETTLED_DISPOSITIONS}}
 These were decided deliberately. Do not report them as findings, and do not recommend reopening them. If you believe one is actively causing a defect you can point to, say so once, briefly, under Open questions -- not as a finding.
+
+## Observed failures (evidence -- treat as fact)
+The skill under review, executing as documented, produced the following failure(s). This is observed behavior, not hypothesis. It joins the design spec as part of the standard: the documents as written permitted these outcomes, and finding what in them permits this is in scope.
+{{OBSERVED_FAILURES}}
+Do not encode these specific inputs, outputs, or their content into any recommended wording. A fix must generalize -- it should help on cases never tested. A recommendation that describes a listed case, however paraphrased, is answer-baking, not a fix; recommend the general mechanism instead.
+
+## Proposed edits under assessment (hypothetical -- not applied)
+The maintainer has drafted the following edit(s) intended to address the observed failures. They are hypothetical: NOT present in the files you are reading, and not to be treated as existing text. Assess them -- endorse, amend, or reject outright and recommend something else.
+{{PROPOSED_EDITS}}
+
+## Report charter
+{{REPORT_CHARTER}}
+The full read of every binding surface is still required -- your recommendations carry weight precisely because of it. Findings outside this charter do not belong in the main report: if any seem important, list them briefly in an appendix after the Verdict section of the Output.
 
 ## What recently changed (look hardest here)
 {{RECENTLY_REVISED}}
@@ -83,6 +107,8 @@ These are the same rules the maintainer is bound by. A recommendation that viola
 3. Can one principle cover the whole class, or is the fix per-instance? If you find yourself proposing a third sibling rule, you missed the generalization -- name the principle instead.
 
 **Prefer, in this order:** delete or relocate existing text · sharpen existing wording · add a worked ❌/✅ example · restate a rule at its point of use · (last resort) add a new rule, gate, or required field.
+
+**Stranded is not broken.** If the workflow gives its operator a standing escalation route for unspecified situations ("if the guide doesn't answer it, stop and escalate — never invent"), a gap that merely leaves the operator without an answer on a rare path is caught by that route by design — triage it `log-only` unless the strand has actually occurred. Reserve `accept` for text that teaches a wrong action: a misroute stated as mandatory, a false claim about what a tool enforces, a contradiction both of whose readings violate the spec.
 
 **Fix root causes, not symptoms.** Before listing findings, look for shared causes across them. If several findings are instances of one underlying problem, say so explicitly and recommend ONE consolidated fix for the cluster rather than N local patches. Naming the root cause is more useful than any individual fix.
 

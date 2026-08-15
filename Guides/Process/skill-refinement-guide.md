@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.skill-refinement
 Managed-Source: Guides/Process/skill-refinement-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-11
+Managed-Updated-At: 2026-08-15
 
 # Skill Refinement Guide
 
@@ -17,6 +17,8 @@ Use it when a cold review finds real problems in a skill's guide(s). Trivial cop
 ## The cold review
 
 The input is a **cold review**: a fresh, independent session that reads the skill's guide(s) and its design spec with no prior context and critically assesses fidelity, completeness, clarity, internal consistency, and conciseness. It produces findings — each with a severity and a suggested fix — and a verdict. The review is meant to be aggressive; it is not blunted to spare feelings.
+
+The findings need not come only from reading. A **scoped / empirical review** supplies observed behavioral failures of the skill executing as documented — and, optionally, draft edits to assess — through the template's optional slots; the reviewer still reads the full guide set cold, and everything downstream (triage, the codification bar, repair, closure) applies to its findings unchanged.
 
 To launch one, fill in the slots in [`cold-review-prompt-template.md`](cold-review-prompt-template.md) and hand the filled prompt to a fresh session. That reviewer must **not** read this guide or the template (both are refiner-facing and would bias the review); give it only the filled prompt and the files it names.
 
@@ -64,7 +66,7 @@ When a finding comes from an observed agent run, interview the original agent be
 **Codification check** — before classifying a finding as `accept`, work through this in order:
 
 1. *Does an existing rule already cover this case?* If yes, the fix is sharpening that rule or adding a ❌/✅ example to it — not a new rule.
-2. *Single observation, or recurring across cases?* If single (and not already in the coverage map from a prior pass), classify as `log only` — record it; codify only on recurrence.
+2. *Single observation, or recurring across cases?* If single (and not already in the coverage map from a prior pass), classify as `log only` — record it; codify only on recurrence. This bar gates **codification** — minting or strengthening rules from incidental observations. It does not gate repairing a deterministic document defect (a contradiction, a dangling reference), nor sharpening an existing rule to fix the empirically observed failure a scoped review was chartered on — there the observed failure itself is the evidence. Likewise `log only`, regardless of the finding's severity: a gap that merely strands the operator into the workflow's designed escalation route ("if the guide doesn't answer it, stop and escalate"), until the strand actually occurs — repair-at-any-likelihood is reserved for text that teaches a wrong action (a misroute stated as mandatory, a false tool claim, a contradiction both of whose readings violate the spec).
 3. *Can one principle cover the class, or is the fix per-instance?* If you find yourself adding a third sibling rule, you missed the generalization — look for the principle.
 
 Only when all three pass does adding a new rule fit. The failure mode this prevents: codifying from a single observation, adding sibling rules instead of generalizing, and writing new rules when the real issue is a rule the agent failed to apply.
@@ -108,6 +110,8 @@ Discuss it, get a decision, update the skill's design spec, then repair the guid
 - **Patch exactly one cluster, then STOP and run the self-check below in writing before touching the next cluster.** Do not batch several clusters into a single edit pass — patching every finding at once is the failure mode this prevents: it produces shallow fixes that break adjacent behavior. (Architecture findings are resolved and the spec updated *before* any cluster is patched — see above.)
 - Do not fold opportunistic cleanup into a repair — if it isn't needed to close a finding, leave it.
 - After each cluster, self-check (record the result before proceeding): Did I contradict adjacent text in the same file or a sibling guide? Did I leave a stale sentence teaching the old behavior? Did I move a rule away from the point where the agent needs it? Did I weaken an enforced rule into a suggestion?
+
+**Size budgets.** When a skill's design spec declares a size budget for its guide(s) — a cap on the guide set's total size (none declared: skip this paragraph) — it binds every repair: state each accepted fix's net size cost in the finding matrix, and when headroom is short, pair an addition with a compensating trim in the same cluster — a trim is a repair like any other and rides the same self-check and verification. A real defect whose fix cannot fit is a `human decision`, never a silent overrun. Weigh a ❌/✅ example by size as well as rule count — under a budget an example is often the most expensive fix available. At closure, record the guide set's net size change alongside the dispositions.
 
 ## Verify your repairs before the next review
 
@@ -156,6 +160,6 @@ Three tiers. Match the tier to the evidence, and do not default to a heavier one
 
 The disciplines below apply when a skill receives more than one refinement pass over time. A single-pass user can ignore this section.
 
-**Recurrence threshold.** Do not codify from a single observation. First sighting = `log only` (recorded in the coverage map). Second sighting in a different case = consider codification. Third = codify. The coverage map provides the cross-pass memory this rule depends on.
+**Recurrence threshold.** Do not codify from a single observation. First sighting = `log only` (recorded in the coverage map). Second sighting in a different case = consider codification. Third = codify. The coverage map provides the cross-pass memory this rule depends on. As in the codification check above, this thresholds *codification* — it never blocks fixing a deterministic document defect on first sight, or sharpening an existing rule against the chartered empirical failure of a scoped review.
 
 **Periodic restructure.** Every several passes, refactor the guide for accumulated cruft — consolidate overlapping rules, remove dead text, reorganize sections by what is actually load-bearing. Bloat is fought retrospectively as well as at the entry point. This is a deliberate pass of its own; do not fold it into a normal refinement pass.
