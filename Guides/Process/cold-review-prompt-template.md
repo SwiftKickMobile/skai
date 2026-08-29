@@ -2,37 +2,37 @@ Managed-By: skai
 Managed-Id: guide.cold-review-prompt-template
 Managed-Source: Guides/Process/cold-review-prompt-template.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-15
+Managed-Updated-At: 2026-08-29
 
 # Cold-Review Prompt Template
 
-A fill-in template for launching a **cold review** of a skill's guide(s) -- see `skill-refinement-guide.md`. The maintainer fills the slots below and hands the result to a **fresh, no-context session** (a different session from the one that will do the refinement). The cold reviewer produces findings; the refining session consumes them.
+A fill-in template for launching a **cold review** of a refinement target's guide(s) -- see `refinement-guide.md`. The maintainer fills the slots below and hands the result to a **fresh, no-context session** (a different session from the one that will do the refinement). The cold reviewer produces findings; the refining session consumes them.
 
-The cold reviewer must NOT read this template or `skill-refinement-guide.md` -- those are refiner-facing and would bias the review toward "what's codifiable" instead of a free, aggressive read. Give the reviewer only the filled prompt and the files it names.
+The cold reviewer must NOT read this template or `refinement-guide.md` -- those are refiner-facing and would bias the review toward "what's codifiable" instead of a free, aggressive read. Give the reviewer only the filled prompt and the files it names.
 
 ## How to fill it
 
 Replace each `{{SLOT}}`:
 
-- `{{SKILL_NAME}}` -- the skill under review.
+- `{{TARGET_NAME}}` -- the process or document set under review.
 - `{{GUIDES}}` -- the binding guide file(s) under review, with paths. The review target.
 - `{{SPEC}}` -- the design spec / standard the guide is judged against (path).
 - `{{SCOPE}}` -- what the review target is and is **not** responsible for: the span it covers, and what deliberately lives in another document, in tooling, or in a doc not yet written. Omitting this is the most common cause of a review that never converges -- a reviewer told "this is the binding surface" will fault a chapter for not being the whole book, round after round.
 - `{{CONTEXT_FILES}}` -- non-normative files the reviewer may consult for context (paths); mark them non-normative.
-- `{{SETTLED_DISPOSITIONS}}` -- decisions already made and closed: things the maintainer or project owner deliberately chose, and deferrals that are already scheduled. Give the *decisions only*, never the coverage map itself -- the map is refiner-facing and showing it would stop the review being cold. Omitting this is the second most common cause of a review that never converges: the coverage map is deliberately withheld from the reviewer, so without this slot nothing prevents a fresh reader re-raising settled ground every round.
+- `{{SETTLED_DISPOSITIONS}}` -- decisions already made and closed: things the maintainer or project owner deliberately chose, and deferrals that are already scheduled. Give the *decisions only*, never the findings log itself -- the log is refiner-facing and showing it would stop the review being cold. Omitting this is the second most common cause of a review that never converges: the findings log is deliberately withheld from the reviewer, so without this slot nothing prevents a fresh reader re-raising settled ground every round.
 - `{{RECENTLY_REVISED}}` -- a short list of what changed recently, so the reviewer looks hardest there.
 - `{{FAILURE_MODES}}` -- recurring traps to check (e.g. append-without-restructure, jargon over plain language, scattered gate behavior, grab-bag findings).
-- `{{SIMULATION_STEPS}}` -- the workflow-specific steps a greenfield operator would walk (this skill's phases/gates).
+- `{{SIMULATION_STEPS}}` -- the workflow-specific steps a greenfield operator would walk (this workflow's phases/gates).
 - `{{LEGACY_ARTIFACTS}}` -- predecessor / stale artifacts the reviewer must NOT treat as compliance targets.
 
-Optional slots for **scoped / empirical reviews** -- delete all four for a standard full review. They exist for reviews driven by observed behavioral failures of the skill under test, or for assessing specific draft edits:
+Optional slots for **scoped / empirical reviews** -- delete all four for a standard full review. They exist for reviews driven by observed behavioral failures of the target under test, or for assessing specific draft edits:
 
 - `{{EXCLUDED_SURFACES}}` -- files or folders the reviewer must not read (change logs, run records, prior review dispositions -- anything reachable by search that carries the maintainer's or the history's framing). This is blindness protection, not scope.
-- `{{OBSERVED_FAILURES}}` -- observed behavioral failures of the skill executing as documented: per failure, the input, what was produced, and what was expected. Facts only -- no diagnosis, no suspected mechanism, no interview conclusions; those would warm the review with the maintainer's framing.
+- `{{OBSERVED_FAILURES}}` -- observed behavioral failures of the target executing as documented: per failure, the input, what was produced, and what was expected. Facts only -- no diagnosis, no suspected mechanism, no interview conclusions; those would warm the review with the maintainer's framing.
 - `{{PROPOSED_EDITS}}` -- draft edit(s) under assessment, each quoted in full with its intended location. Hypothetical -- not present in the reviewed files.
 - `{{REPORT_CHARTER}}` -- what the main report is scoped to (for example "findings that explain the observed failures" or "assessment of the proposed edits"). Out-of-charter findings still surface, briefly, in an appendix.
 
-Delete any slot that does not apply (e.g. a single-guide skill needs no multi-doc consistency lens; omit the legacy section if there are no legacy artifacts).
+Delete any slot that does not apply (e.g. a single-guide target needs no multi-doc consistency lens; omit the legacy section if there are no legacy artifacts).
 
 ## Copy/paste prompt
 
@@ -43,7 +43,7 @@ The prompt-tainting failure mode this rule prevents: a maintainer composing the 
 **Quick check before handing off:** diff your filled prompt against the block below. The only differences should be (a) `{{SLOT}}` markers replaced with the filled content, and (b) entire slot sections deleted when not applicable. If the diff shows reworded prose, restructure it back to the verbatim form before handing off.
 
 ```text
-You are doing a fresh-eyes, critical cold review of the {{SKILL_NAME}} skill as documented. You have no prior conversation context; work only from the files named below.
+You are doing a fresh-eyes, critical cold review of {{TARGET_NAME}} as documented. You have no prior conversation context; work only from the files named below.
 
 This is a document/process review, NOT a coding task. Do not edit any file. Your job is to audit the guide(s) for gaps, ambiguities, contradictions, information-architecture problems, weak enforcement, and places where a fresh LLM operator would misuse or skip the process -- and to recommend a fix for each finding, in prose (never a patch or a rewritten file).
 
@@ -77,7 +77,7 @@ Do not open these, and do not use search results drawn from them. They carry his
 These were decided deliberately. Do not report them as findings, and do not recommend reopening them. If you believe one is actively causing a defect you can point to, say so once, briefly, under Open questions -- not as a finding.
 
 ## Observed failures (evidence -- treat as fact)
-The skill under review, executing as documented, produced the following failure(s). This is observed behavior, not hypothesis. It joins the design spec as part of the standard: the documents as written permitted these outcomes, and finding what in them permits this is in scope.
+The target under review, executing as documented, produced the following failure(s). This is observed behavior, not hypothesis. It joins the design spec as part of the standard: the documents as written permitted these outcomes, and finding what in them permits this is in scope.
 {{OBSERVED_FAILURES}}
 Do not encode these specific inputs, outputs, or their content into any recommended wording. A fix must generalize -- it should help on cases never tested. A recommendation that describes a listed case, however paraphrased, is answer-baking, not a fix; recommend the general mechanism instead.
 
@@ -87,7 +87,7 @@ The maintainer has drafted the following edit(s) intended to address the observe
 
 ## Report charter
 {{REPORT_CHARTER}}
-The full read of every binding surface is still required -- your recommendations carry weight precisely because of it. Findings outside this charter do not belong in the main report: if any seem important, list them briefly in an appendix after the Verdict section of the Output.
+The full read of every binding surface is still required -- your recommendations carry weight precisely because of it. Findings outside this charter do not belong in the main report: if any seem important, list them briefly in an appendix after the Verdict section of the Output, keeping the verification mark, consequence and reachability even where you drop the rest.
 
 ## What recently changed (look hardest here)
 {{RECENTLY_REVISED}}
@@ -136,20 +136,23 @@ Where the guide asserts what a script or tool enforces, guarantees, or produces,
 
 Do not spend findings on command *syntax* -- parse errors, unbound variables, exit codes, placeholder notation. Those are mechanically checkable and are the maintainer's job to check that way; a finding there costs a review round to do a linter's work. Do flag a command whose *documented meaning* is wrong: one that runs fine and does something other than what the prose claims.
 
-Never run anything mutating, destructive, or costly: no writes, no model calls, no network side effects. Prefer reading the implementation. Mark each finding **verified** (you read or ran something -- quote it) or **speculative** (reasoned from the text alone). Do not blur the two.
+Never run anything mutating, destructive, or costly: no writes, no model calls, no network side effects. Prefer reading the implementation. Mark each finding **verified** (you ran the command, or read the implementation behind the claim -- quote it) or **speculative** (reasoned from the reviewed documents alone). Do not blur the two: reading the documents under review is the assignment, not verification.
 
 ## Output
 A review report only. Structure it:
 0. Root causes -- if several findings share one underlying cause, name the cluster and recommend a single consolidated fix. If there are none, say so.
-1. Top findings first -- ordered by severity; code-review style with file paths + line references; behavioral/process risk, not wording nitpicks. Each finding carries:
-   - **Problem + risk**, marked **verified** (you ran it -- quote the output) or **speculative** (reasoned from reading).
+1. Findings -- code-review style with file paths + line references; behavioral/process risk, not wording nitpicks. Each finding carries:
+   - **Problem + risk**, marked **verified** (you ran the command, or read the implementation behind the claim -- quote it) or **speculative** (reasoned from the reviewed documents alone).
+   - **Consequence** -- what happens if the operator follows the document as written. Test in order, first match wins: `irreversible` (destroys work, or leaves the effort's own records unrecoverable or not comparable — ambiguity that changes what an operator does while leaving the inputs auditable is `divergent`, not this) · `divergent` (the operator stops, two operators following the same text do different things, or every operator is reliably sent to the same wrong outcome) · `cosmetic` (neither).
+   - **Reachability** -- how the operator gets there. Test in order, first match wins: `past-a-rule` (reaching it requires going against a clear rule the document states, with no competing instruction or worked example sending the operator there) · `normal` (the main path — a step taken on every round counts, even when it usually resolves to nothing) · `off-normal` (a branch reached only when a triggering event occurs: recovery, restart, abandonment, an optional branch).
    - **Recommended fix** -- the smallest change that resolves it coherently with the rest of the document, per the editing discipline above: name the section it belongs in, and whether it sharpens / relocates / deletes existing text or adds something new. If it requires touching text elsewhere to stay consistent, say where.
    - **Churn guard** -- the adjacent behavior or rule that must NOT change as a result.
    - **Triage** -- your call on how the maintainer should treat it: `accept` (real defect, fix is proportionate) · `log-only` (valid observation, but the fix costs more than the problem) · `human-decision` (the fix adds process weight -- a new gate, rule, checklist, or proof burden -- not a reviewer's call).
    - **Bloat flag** -- set it if the smallest sensible fix adds a new rule, gate, or required field.
+   Consequence and reachability are facts about the document, not a ranking -- state each plainly and do not weigh findings against one another.
    If you cannot name a proportionate fix, that is itself a signal: mark it `log-only` and say why.
 2. Simulation results -- where the process felt smooth vs brittle (normal path, any blocked case, legacy-encounter path).
-3. Open questions / tensions -- anything under-specified or internally conflicted; separate current-workflow ambiguity from historical-artifact noise.
+3. Open questions / tensions -- unresolved tensions that do not yet support a document-defect claim; separate current-workflow ambiguity from historical-artifact noise. An under-specification or conflict that puts the operator at risk stays a finding, even when you are unsure how to resolve it or would triage it `human-decision`.
 4. Verdict -- is the guide usable by a fresh LLM from scratch today? Biggest remaining risks?
 
 ## Style

@@ -106,7 +106,7 @@ Treat it as an authoring input, not a runtime read. Once the discussion phase is
 
 ### Standard structure for guides with gates
 
-If the guide has any STOP points / gates, inline the process-flow operational template in both sections. Do not reference `Guides/Core/process-flow.md` as a runtime dependency -- agents skip indirect references.
+If the guide is a gated workflow — one where the agent waits on the human and emits `⏳ GATE:` lines — inline the process-flow operational template in both sections. A bare "STOP" inside a method guide (stop and run the self-check; stop and present a tradeoff) is not a gate and needs neither section. Do not reference `Guides/Core/process-flow.md` as a runtime dependency -- agents skip indirect references.
 
 ```
 ## Gates

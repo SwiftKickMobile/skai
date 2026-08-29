@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.maintain-retro
 Managed-Source: maintain-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-05-27
+Managed-Updated-At: 2026-08-29
 
 # Maintenance retro checklist (LLM + human)
 
@@ -63,7 +63,7 @@ This retro is a **backstop for completeness**, not a git/diff report.
 - README link check: when `README.md` references a file or directory within this repo, ensure it is a markdown link (clickable in the browser), not just a bare backticked path.
 - If you added or substantially edited any files under `Guides/`:
   - Verify each changed/new guide has a managed header.
-  - Verify it has a `## Gates` section if it contains any STOP points/gates, and that it contains the standardized process-flow template (see `maintain-skai.md`, "Standard structure for guides with gates").
+  - Verify it has a `## Gates` section if it is a gated workflow — one where the agent waits on the human and emits `⏳ GATE:` lines — and that it contains the standardized process-flow template (see `maintain-skai.md`, "Standard structure for guides with gates"). A bare "STOP" inside a method guide (stop and run the self-check; stop and present a tradeoff) is not a gate and needs no `## Gates` section.
   - Search for terminology drift (e.g., "Next Command") and fix to "advance intent".
   - For each planned gate, verify the guide identifies a workflow-owned artifact, the specific gate/phase progress marker that remains while waiting (the unchecked `- [ ]` or the `🟡` in code), and the exact artifact change that happens only after advance intent.
   - Verify marker conventions match the canonical rule: `- [ ]` / `- [x]` in process artifacts (markdown workflow docs); `🟡` only in source files (test code, app code) where completion = removal. The canonical in-code case is `Guides/Test/unit-test-planning-guide.md`.

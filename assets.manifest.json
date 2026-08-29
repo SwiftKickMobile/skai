@@ -118,9 +118,9 @@
       "tags": ["core"]
     },
     {
-      "id": "guide.skill-refinement",
+      "id": "guide.refinement",
       "type": "guide",
-      "sourcePath": "Guides/Process/skill-refinement-guide.md",
+      "sourcePath": "Guides/Process/refinement-guide.md",
       "tags": ["core"]
     },
     {

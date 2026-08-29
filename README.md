@@ -318,6 +318,7 @@ Update `skai` to the latest release (or a target you name), review what changed,
 - Working documents (plans, specs, progress logs) live under [`skai/working-docs/`](skai/working-docs/) and are organized by your current git branch.
 - `<branch-path>` is the current branch name, with `/` decomposed into nested folders (so `feature/foo` becomes `feature/foo/`).
 - Working docs are ephemeral and typically git-ignored.
+- One exception: the refinement **findings log** at [`skai/refinement-reviews/`](skai/refinement-reviews/) is committed, one file per refined target. It carries what earlier refinement passes decided, so a later pass does not re-argue settled ground.
 
 ## Development guide (for contributors)
 
