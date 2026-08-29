@@ -6,9 +6,9 @@ Managed-Updated-At: 2026-08-29
 
 # Cold-Review Prompt Template
 
-A fill-in template for launching a **cold review** of a refinement target's guide(s) -- see `refinement-guide.md`. The maintainer fills the slots below and hands the result to a **fresh, no-context session** (a different session from the one that will do the refinement). The cold reviewer produces findings; the refining session consumes them.
+A fill-in template for launching a **cold review** of a refinement target's guide(s) -- see `process-refinement-guide.md`. The maintainer fills the slots below and hands the result to a **fresh, no-context session** (a different session from the one that will do the refinement). The cold reviewer produces findings; the refining session consumes them.
 
-The cold reviewer must NOT read this template or `refinement-guide.md` -- those are refiner-facing and would bias the review toward "what's codifiable" instead of a free, aggressive read. Give the reviewer only the filled prompt and the files it names.
+The cold reviewer must NOT read this template or `process-refinement-guide.md` -- those are refiner-facing and would bias the review toward "what's codifiable" instead of a free, aggressive read. Give the reviewer only the filled prompt and the files it names.
 
 ## How to fill it
 

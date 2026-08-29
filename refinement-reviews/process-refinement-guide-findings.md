@@ -1,4 +1,4 @@
-# Findings log — `refinement-guide.md` + `cold-review-prompt-template.md`
+# Findings log — `process-refinement-guide.md` + `cold-review-prompt-template.md`
 
 Cross-pass record of every cold-review finding against these two guides and what was decided.
 Consulted at triage; never shown to a cold reviewer. Extract settled decisions into the prompt's
@@ -8,7 +8,7 @@ Consulted at triage; never shown to a cold reviewer. Extract settled decisions i
 which assumes a host project. The skai repo has no `skai/` folder, so refining skai's own guides has
 no defined home for this log. Placed at the repo root by analogy. Same family as the standing
 observation that this process cannot commission a conforming cold review of itself — the template
-forbids the reviewer from reading `refinement-guide.md`, which is unavoidable when that guide is the
+forbids the reviewer from reading `process-refinement-guide.md`, which is unavoidable when that guide is the
 target.
 
 ## Pass 1 — 2026-08-28/29 · round scoring
@@ -69,7 +69,7 @@ Series 1 is recorded under the pre-collapse counting rule and is not comparable 
 | 2026-08-29 | Scoring is required for every round — the "structured tier and above" condition was never his and is removed |
 | 2026-08-29 | Keep the formula. Replacing it with bare consequence counts was proposed twice and refused |
 | 2026-08-29 | Score distinct defects, not reported findings — his design, after the same text scored 10.0 and 27.5 |
-| 2026-08-29 | Rename the skill: it refines processes, not skills. `guide.skill-refinement` → `guide.refinement` |
+| 2026-08-29 | Rename the skill: it refines processes, not skills. `guide.skill-refinement` → `guide.process-refinement` |
 | 2026-08-29 | The findings log is committed and belongs outside `working-docs/`; "coverage" was too abstract a name |
 | 2026-08-29 | Close by ruling without a confirming round |
 

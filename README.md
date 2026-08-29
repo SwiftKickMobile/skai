@@ -285,13 +285,30 @@ Completeness backstop that can be used at any point during any workflow. Reviews
 **Phases:**
 
 1. **Retro.** Agent performs the full checklist, reports findings, and completes immediately if no process suggestions were generated.
-2. **Process improvement follow-up (optional).** If the retro identifies process improvements, agent lists them in the retro output as `- [ ] S<n>` items and stops at a handoff gate. On `next`, the agent enters [`Guides/Process/process-improvement.md`](Guides/Process/process-improvement.md), which drafts `process-tickets.md`, lets the human review/edit the resulting `- [ ] T<n> Ticket: ...` entries, and files the remaining ones on `next`.
+2. **Process improvement follow-up (optional).** If the retro identifies process improvements, agent lists them in the retro output as `- [ ] S<n>` items and stops at a handoff gate. On `next`, the agent enters [`Guides/Process/ticket-filing.md`](Guides/Process/ticket-filing.md), which drafts `process-tickets.md`, lets the human review/edit the resulting `- [ ] T<n> Ticket: ...` entries, and files the remaining ones on `next`.
+
+### Process refinement (skill `skai-process-refinement`)
+
+Hardens a process guide against a cold review. A fresh, no-context session reads the guide set and attacks it; the refining session triages the findings, repairs one cluster at a time, scores the round, and decides whether to run another.
+
+- Guide [`Guides/Process/process-refinement-guide.md`](Guides/Process/process-refinement-guide.md)
+- Template [`Guides/Process/cold-review-prompt-template.md`](Guides/Process/cold-review-prompt-template.md)
+
+**Prerequisites:** The guide document(s) to refine, and a design spec to judge them against. Without a spec, close that gap first -- the spec is the standard every finding is weighed against.
+
+**Phases:**
+
+1. **Commission the review.** Fill the template's slots and hand the filled prompt to a fresh session. The reviewer must not see the refinement guide or the template itself -- both are refiner-facing and would bias it.
+2. **Triage.** Classify every finding `accept` / `log only` / `reject` / `human decision` against the codification bar, consulting the target's findings log so settled ground is not relitigated. Collapse findings that name one defect into a single row.
+3. **Score the round.** Before the first repair, record the round's score, defect counts, and noise count in the working document.
+4. **Repair.** One cluster at a time, with a written self-check after each, then verify the repairs before handing the guide back.
+5. **Stop or iterate.** Terminal is a fresh round over the current text with no new live findings, or the human approving the unimplemented ledger. Close the pass and append every disposition to the findings log.
 
 ### Suggestion (skill `skai-suggestion`)
 
-Ad-hoc process improvement suggestions outside of a retro. The agent helps the developer articulate an idea, problem, or feature request, captures it as a ticket draft, and optionally files it as a GitHub issue.
+The suggestion box for skai itself. A developer has an idea, request, or complaint about the skai dev process; the agent helps articulate it, captures it as a ticket draft, and optionally files it as a GitHub issue on the skai repo. It does not change any guide's content — that is [Process refinement](#process-refinement-skill-skai-process-refinement).
 
-- Guide [`Guides/Process/process-improvement.md`](Guides/Process/process-improvement.md)
+- Guide [`Guides/Process/ticket-filing.md`](Guides/Process/ticket-filing.md)
 
 **Prerequisites:** None -- can be triggered at any point during a session.
 

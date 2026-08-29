@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.dev-retro
 Managed-Source: Guides/Process/dev-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-05-27
+Managed-Updated-At: 2026-08-29
 
 # Dev-session retro (LLM + human)
 
@@ -32,11 +32,11 @@ In the planned gate line, `<what happens after your response>` should describe w
 If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
 
 Workflow-specific gate notes:
-- The process-improvement handoff is a non-standard planned gate. `Next` there means: hand the current SKAI process suggestions to `Guides/Process/process-improvement.md`, where that workflow will own ticket drafting, review, and filing.
+- The ticket-filing handoff is a non-standard planned gate. `Next` there means: hand the current SKAI process suggestions to `Guides/Process/ticket-filing.md`, where that workflow will own ticket drafting, review, and filing.
 - At that handoff gate, the retro output's `SKAI process suggestions` section is the handoff artifact. The unchecked `- [ ]` suggestion items there remain pending while waiting for the human to approve drafting.
 
 Planned gates for this workflow:
-- After the retro output is prepared and SKAI process suggestions have been identified, but before handing them off to the process-improvement workflow for drafting.
+- After the retro output is prepared and SKAI process suggestions have been identified, but before handing them off to the ticket-filing workflow for drafting.
 
 Workflow-specific blocked gates:
 - Required session artifacts are missing or cannot be located, so the retro cannot be completed with evidence.
@@ -59,12 +59,12 @@ Progress tracking:
 - This guide does not require a separate phase marker for ordinary retro work.
 - If SKAI process suggestions are generated, the workflow-owned handoff artifact is the retro output's `SKAI process suggestions` section.
 - In that section, each suggestion is a `- [ ]` item with a stable letter-led ID (`S1`, `S2`, …). The unchecked state shows it is pending handoff into the drafting workflow.
-- At the process-improvement handoff gate, STOP with the suggestion items still unchecked.
-- If the human gives advance intent at that handoff gate, transfer control to `Guides/Process/process-improvement.md` starting at Phase 1, step 2 using the unchecked `S<n>` suggestions as the draft inputs.
-- Do not draft `process-tickets.md` in this guide. `Guides/Process/process-improvement.md` owns ticket drafting, review, and filing.
+- At the ticket-filing handoff gate, STOP with the suggestion items still unchecked.
+- If the human gives advance intent at that handoff gate, transfer control to `Guides/Process/ticket-filing.md` starting at Phase 1, step 2 using the unchecked `S<n>` suggestions as the draft inputs.
+- Do not draft `process-tickets.md` in this guide. `Guides/Process/ticket-filing.md` owns ticket drafting, review, and filing.
 
 Workflow-specific advance behavior:
-- `auto` may complete the retro itself and may develop suggestions, but if any SKAI process suggestions were identified it must still STOP at the process-improvement handoff gate.
+- `auto` may complete the retro itself and may develop suggestions, but if any SKAI process suggestions were identified it must still STOP at the ticket-filing handoff gate.
 - Use `draft process tickets` as the stable bounded-auto target for this guide's planned handoff gate.
 
 ## Inputs (read what exists)
@@ -147,7 +147,7 @@ Output is two sections in the retro output, written directly as you reflect (not
 
 #### Session observations
 
-Agent behavior issues, project-specific friction, one-off observations, or problems outside the skai repo's scope. These are worth noting for the human but do not belong in the skai issue tracker and do not flow into the process-improvement handoff.
+Agent behavior issues, project-specific friction, one-off observations, or problems outside the skai repo's scope. These are worth noting for the human but do not belong in the skai issue tracker and do not flow into the ticket-filing handoff.
 
 Format: brief bullets, no progress markers. If none, say **"None."**
 
@@ -200,4 +200,4 @@ Then output only:
 - **Session observations** section from step 6 (brief bullets, no markers).
 - **SKAI process suggestions** section from step 6 (with `- [ ]` items and `S<n>` IDs if any).
 - If the "SKAI process suggestions" section has entries: end with `⏳ GATE: Next: Draft process tickets from these retro suggestions. Say "next" or what to change.`
-- On advance intent from that gate, follow `Guides/Process/process-improvement.md` starting at Phase 1, step 2.
+- On advance intent from that gate, follow `Guides/Process/ticket-filing.md` starting at Phase 1, step 2.

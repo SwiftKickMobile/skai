@@ -1,10 +1,10 @@
 Managed-By: skai
-Managed-Id: guide.process-improvement
-Managed-Source: Guides/Process/process-improvement.md
+Managed-Id: guide.ticket-filing
+Managed-Source: Guides/Process/ticket-filing.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-05-27
+Managed-Updated-At: 2026-08-29
 
-# Process improvement
+# Ticket filing
 
 Purpose: capture process improvement suggestions and file them as GitHub issues on the `skai` repo. Handles both ad-hoc suggestions (human describes a problem or idea) and retro handoffs (drafts already written by the retro).
 

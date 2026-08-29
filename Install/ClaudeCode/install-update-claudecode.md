@@ -132,6 +132,8 @@ Install these skills:
   - source: `Submodules/skai/Templates/skills/skai-ui-map-planning/SKILL.md`
 - `.claude/skills/skai-ui-map-implementation/SKILL.md`
   - source: `Submodules/skai/Templates/skills/skai-ui-map-implementation/SKILL.md`
+- `.claude/skills/skai-process-refinement/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-process-refinement/SKILL.md`
 - `.claude/skills/skai-suggestion/SKILL.md`
   - source: `Submodules/skai/Templates/skills/skai-suggestion/SKILL.md`
 - `.claude/skills/skai-dev-retro/SKILL.md`

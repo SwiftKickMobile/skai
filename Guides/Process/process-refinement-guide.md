@@ -1,10 +1,10 @@
 Managed-By: skai
-Managed-Id: guide.refinement
-Managed-Source: Guides/Process/refinement-guide.md
+Managed-Id: guide.process-refinement
+Managed-Source: Guides/Process/process-refinement-guide.md
 Managed-Adapter: repo-source
 Managed-Updated-At: 2026-08-29
 
-# Refinement Guide
+# Process Refinement Guide
 
 A process for refining a **refinement target** — the guide document(s) that tell an agent how to carry out some process — based on a cold review. Applies to any such document under development, whether or not it backs a skill.
 

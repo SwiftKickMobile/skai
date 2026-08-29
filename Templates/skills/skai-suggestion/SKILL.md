@@ -1,10 +1,10 @@
 ---
 name: skai-suggestion
-description: Make an skai suggestion. Use when the developer has a process improvement idea, hits process friction, or wants to file a process ticket outside of a retro.
+description: Suggestion box for skai itself — captures a developer's idea, request, or complaint about the skai dev process and files it as a GitHub issue on the skai repo. Use when someone wants to submit feedback about skai, or hits friction with it worth reporting. Not for changing a guide's content — that is skai-process-refinement.
 ---
 
-# SKAI: Suggestion
+# SKAI: Suggestion box
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Process/process-improvement.md` and follow it.
+- Read `Submodules/skai/Guides/Process/ticket-filing.md` and follow it.

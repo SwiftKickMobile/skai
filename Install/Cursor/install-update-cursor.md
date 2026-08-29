@@ -165,6 +165,8 @@ Install these skills:
   - source: `Submodules/skai/Templates/skills/skai-unit-test-infrastructure/SKILL.md`
 - `.cursor/skills/skai-unit-test-writing/SKILL.md`
   - source: `Submodules/skai/Templates/skills/skai-unit-test-writing/SKILL.md`
+- `.cursor/skills/skai-process-refinement/SKILL.md`
+  - source: `Submodules/skai/Templates/skills/skai-process-refinement/SKILL.md`
 - `.cursor/skills/skai-suggestion/SKILL.md`
   - source: `Submodules/skai/Templates/skills/skai-suggestion/SKILL.md`
 - `.cursor/skills/skai-dev-retro/SKILL.md`

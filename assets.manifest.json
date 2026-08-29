@@ -118,9 +118,9 @@
       "tags": ["core"]
     },
     {
-      "id": "guide.refinement",
+      "id": "guide.process-refinement",
       "type": "guide",
-      "sourcePath": "Guides/Process/refinement-guide.md",
+      "sourcePath": "Guides/Process/process-refinement-guide.md",
       "tags": ["core"]
     },
     {
@@ -136,10 +136,20 @@
       "tags": ["core"]
     },
     {
-      "id": "guide.process-improvement",
+      "id": "guide.ticket-filing",
       "type": "guide",
-      "sourcePath": "Guides/Process/process-improvement.md",
+      "sourcePath": "Guides/Process/ticket-filing.md",
       "tags": ["core"]
+    },
+    {
+      "id": "skill.skai-process-refinement",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-process-refinement/SKILL.md",
+      "tags": [
+        "adapter:cursor",
+        "adapter:claude-code",
+        "adapter:codex"
+      ]
     },
     {
       "id": "skill.skai-suggestion",
