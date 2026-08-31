@@ -94,6 +94,12 @@
       "tags": ["core"]
     },
     {
+      "id": "template.integration-section-requirements",
+      "type": "template",
+      "sourcePath": "Templates/docs/skai/integration-sections/requirements.md",
+      "tags": ["core"]
+    },
+    {
       "id": "template.codex-agents",
       "type": "template",
       "sourcePath": "Templates/agents/codex/AGENTS.md",
@@ -395,6 +401,42 @@
       "id": "skill.skai-ui-map-implementation",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-ui-map-implementation/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "guide.requirements-catalog",
+      "type": "guide",
+      "sourcePath": "Guides/Requirements/requirements-catalog.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.requirements-authoring",
+      "type": "guide",
+      "sourcePath": "Guides/Requirements/requirements-authoring.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.requirements-promotion",
+      "type": "guide",
+      "sourcePath": "Guides/Requirements/requirements-promotion.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.requirements-artifacts",
+      "type": "guide",
+      "sourcePath": "Guides/Requirements/requirements-artifacts.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "skill.skai-requirements-authoring",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-requirements-authoring/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "skill.skai-requirements-promotion",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-requirements-promotion/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     }
   ]

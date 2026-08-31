@@ -18,7 +18,7 @@ Orchestrates the work specification creation process. Work specifications provid
 **Overall Process:**
 1. **Planning Document Draft + Discussion**: Summarize the scope discussion into a planning document seeded with `- [ ]` discussion items (canonical Structured discussion items schema — see `Guides/Core/process-flow.md`). Resolve the items collaboratively; while any remain unresolved, the workflow is at a blocked gate.
 2. **API Sketch**: Capture the non-private API surface implied by the resolved planning discussion.
-3. **Requirements Normalization**: Promote product/system behaviors discovered during planning into the canonical requirements repository.
+3. **Requirements Normalization**: Hand the behaviors discovered during planning to requirements authoring, which captures them in a change package.
 4. **Work Spec First Pass**: Write high-level tasks only (no subtasks) for review.
 5. **Work Spec Second Pass**: Add detailed subtasks after approval.
 
@@ -59,7 +59,7 @@ Progress tracking:
 Planned gates for this workflow:
 - After all planning-discussion items are resolved (the first planned gate — emitted on resolution of the last item; advances to API sketch).
 - After completing the API sketch (human confirms readiness to proceed to requirements normalization).
-- After requirements normalization updates to `/requirements/**` (human acknowledges before proceeding).
+- After requirements normalization has produced a change package (human acknowledges before proceeding).
 - After the work spec first pass (high-level tasks only) for review.
 - After the work spec second pass (subtasks + traceability) for review.
 
@@ -91,7 +91,7 @@ Workflow-specific behavior — planning discussion:
 - **Planning — Create Planning Document:** summarize the scope discussion into a planning document; seed it with `- [ ]` discussion items per the canonical Structured discussion items schema; end the response with the discussion-phase blocked gate (or the discussion-complete planned gate if zero items were needed).
 - **Planning — Resolve Open Items:** continue the iterative discussion, updating the document as decisions are made. Each response re-emits the current blocked gate verbatim per the persistence rule, with the count updated to reflect remaining items.
 - **Planning — API Sketch:** after the discussion-complete planned gate is approved, write the API sketch using the resolved planning document as input.
-- **Requirements Normalization:** after the API sketch gate is approved, promote product/system behaviors from the planning document into the canonical requirements repository.
+- **Requirements Normalization:** after the API sketch gate is approved, hand the planning document's behaviors to requirements authoring; it produces the change package.
 - **Work Spec — First Pass:** create work specification with high-level tasks only (no subtasks, no Traceability). Allows human to review overall sequence before details.
 - **Work Spec — Second Pass:** add detailed subtasks, `- [ ]` task indicators with stable IDs, and the Traceability section.
 
@@ -217,7 +217,7 @@ Recommended phased planning shape:
     - `### Scope` (goal, in-scope, non-goals, dependencies, exit criteria)
     - `### Stage 1: Proposals, questions, discussion` (`- [ ]` items until resolved)
     - `### Stage 2: API sketch` (API "as of Phase 1")
-    - `### Requirements normalization` (what will be added/updated in `/requirements/**` for this phase)
+    - `### Requirements normalization` (what this phase hands to requirements authoring)
     - `### Work spec` (link to this phase's work spec)
     - `### Supersedes / changes vs earlier phases` (optional; explicit notes when Phase N counteracts Phase < N)
   - `## Phase 2: <name>` (repeat the same shape)
@@ -280,104 +280,29 @@ Gate: STOP and output the planned gate line.
 
 ---
 
-## Canonical Requirements (PRD) Normalization Step
+## Requirements Normalization Step
 
-After the planning phase is complete, product/system behaviors discovered during planning must be normalized into the canonical requirements repository.
+After the planning phase is complete, the product and system behaviors discovered during planning are
+captured as requirements — into a **change package**, never written directly into the catalog.
 
-**Process (lightweight):**
-1. Review the planning document.
-2. For each product or system behavior:
-   - If it already exists in the requirements repository → reuse its ID.
-   - If it is new or changes existing behavior → add or update a requirement entry in `/requirements/**`.
-3. Do not create tasks, subtasks, progress markers, or implementation decisions in the requirements repository.
+This workflow does not author requirements itself. Hand off to
+[`../Requirements/requirements-authoring.md`](../Requirements/requirements-authoring.md), which owns
+mode inference, the discussion over what planning left undecided, and the typed change items. The
+content rules — scopes, layout, requirement format, IDs, writing style — live in
+[`../Requirements/requirements-catalog.md`](../Requirements/requirements-catalog.md).
 
-**Rules:**
-- The requirements repository contains behavioral / contractual requirements only.
-- Requirements must be written as **implementation-agnostic black-box behavior**.
-- It must not name concrete types, functions, files, initializers, modules, targets, or third-party libraries/frameworks.
-- It must not contain progress markers of any kind (no `- [ ]` / 🟡 / TODO / pending markers — canonical requirements are not workflow artifacts).
-- Git history is the source of change/audit information.
-- Requirements must be placed into the correct scope folder as defined in
-  "Requirements Repository Organization".
+The package is promoted when this work ships, by
+[`../Requirements/requirements-promotion.md`](../Requirements/requirements-promotion.md), which is the
+only writer of the requirements catalog. Requirement IDs are assigned when the package is drafted, so the
+work spec can cite them before they are canonical.
 
-### Canonical requirements writing style (anti-implementation guidance)
-
-Write canonical requirements as if authored by a **product manager with no knowledge of the codebase**:
-
-- Focus on **user-visible behavior**, **domain invariants**, and **system contracts**.
-- Describe **what must be true**, not how it is achieved.
-- Every requirement should be verifiable from the outside (a user, QA, or another system), without reading code.
-
-**Do not include implementation/technical details such as:**
-
-- Specific data structures, algorithms, or execution strategies (e.g., "use caching", "use a queue", "debounce", "run in background task")
-- Storage mechanisms (e.g., "persist to disk as JSON", "CoreData", "SQLite", "FileStorage")
-- Concurrency / threading / actors / async design (e.g., "use async/await", "MainActor", "perform off the main thread")
-- Concrete Swift identifiers, file paths, or code formatting (backticked types, `.swift` filenames, method names, initializer signatures)
-- Tooling and patterns (dependency injection frameworks, logging frameworks, testing frameworks)
-
-**If a detail is important but inherently technical:**
-
-- Put it in the **work spec** under "Work-spec requirements (technical / transitional)" (e.g. `MIG-01`, `TEMP-02`) instead of the canonical requirements repo.
-
-#### Quick self-check (before writing to `/requirements/**`)
-
-- Can this be understood by a non-engineer without loss of meaning?
-- Does it mention *any* code identifier, file, module, dependency, or framework? If yes → rewrite.
-- Is it phrased as a behavior/contract ("must/should/will") rather than a plan ("implement/add/refactor")?
-
-#### Examples
-
-- ✅ "The system must detect and report circular references in templated documents."
-- ❌ "The `AssetCatalog` should DFS templates and throw `CircularReferenceError`."
-
-- ✅ "Users must be able to view all validation issues for an asset in a single report."
-- ❌ "Accumulate errors during parsing and return an aggregated error array."
-
-The work specification references canonical requirement IDs produced by this step.
+Unlike the retro's requirements handoff, this one is **not terminal**: requirements authoring ends
+with its own `🏁`, and this workflow then resumes at its next gate, with the package's IDs available
+to cite in the work spec. Under repository shape `none` this project keeps no catalog, so the step
+and its gate are skipped rather than handed off — authoring's stop under `none` is terminal and would
+not return here.
 
 Gate: STOP and output the planned gate line.
-
----
-
-## Requirements Repository Organization
-
-All canonical requirements MUST be written into `/requirements/**` using the following scope rules.
-
-Exactly one scope must be chosen for each requirement.
-
-### Scopes
-
-- `/requirements/platform`
-  System-wide and cross-app behavioral contracts.
-  (e.g. document formats, templating rules, identity rules, rendering semantics)
-
-- `/requirements/domains`
-  Business / domain rules shared across apps and tools.
-  (e.g. entities, invariants, validation rules, relationships, state transitions)
-
-- `/requirements/features`
-  Reusable, user-facing features shared across multiple consumer apps.
-  (e.g. search, favorites, offline, entitlements, content browsing)
-
-- `/requirements/apps`
-  App-specific behavior and flows.
-  (e.g. consumer app only rules, CMS-only behavior, app-specific integrations)
-
-### Placement rule
-
-When promoting requirements from planning:
-
-1. If the behavior applies to all apps → use `platform`
-2. Else if it defines domain meaning or rules → use `domains`
-3. Else if it is a reusable end-user feature across consumer apps → use `features`
-4. Else → use `apps/<app-name>`
-
-### Prohibited structures
-
-- Do NOT organize requirements by Xcode project.
-- Do NOT organize requirements by module or package.
-- Do NOT create per-target or per-framework requirement folders.
 
 ---
 
@@ -437,7 +362,8 @@ To avoid missing requirements from planning, include an inventory with stable ID
 This inventory is split into two scopes.
 
 #### Canonical requirements (by reference only)
-- List only IDs from the canonical requirements repository (e.g. `DOC-02`, `PROMPT-04`).
+- List only IDs from the canonical requirements catalog or from the change package this spec's planning produced (e.g. `DOC-02`, `PROMPT-04`).
+- Mark an ID that is not yet promoted as `(pending)` — it is citable but not yet canonical, and becomes canonical when the package is promoted as this work ships.
 - Do NOT restate or redefine their content here.
 - Do NOT use progress markers — these are reference IDs, not work items.
 
@@ -559,7 +485,7 @@ Rules:
 
 ## Writing Style
 
-**Scope note:** This section applies to **work specifications** (tasks, subtasks, and work-spec requirements), not to the canonical requirements repository in `/requirements/**`.
+**Scope note:** This section applies to **work specifications** (tasks, subtasks, and work-spec requirements), not to the canonical requirements catalog.
 
 ### Be Specific
 - ✅ "Add `deviceDistance: Float` field to `TractorBeamConfig` (default: 0.1)"

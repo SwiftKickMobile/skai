@@ -72,6 +72,7 @@ All guides live under a topical subdirectory within `Guides/`. Do not place guid
 | `Test/` | Unit testing (planning, infrastructure, writing) |
 | `Process/` | Retro, process problem reporting, ticket creation |
 | `UIMap/` | UI Map system: YAML format, platform references, planning/implementation methods, FigJam migration |
+| `Requirements/` | Requirements system: catalog content rules, authoring, promotion, artifact formats |
 
 When adding a new guide, place it in the most appropriate existing subdirectory. If none fits, propose a new subdirectory and document it here.
 

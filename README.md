@@ -27,6 +27,8 @@ Recommended host locations for agent-facing docs:
   - [Work spec implementation](#work-spec-implementation-skill-skai-work-spec-implementation)
   - [UI Map architecture](#ui-map-architecture-skill-skai-ui-map-architecture)
   - [UI Map implementation](#ui-map-implementation-skill-skai-ui-map-implementation)
+  - [Requirements authoring](#requirements-authoring-skill-skai-requirements-authoring)
+  - [Requirements promotion](#requirements-promotion-skill-skai-requirements-promotion)
   - [Unit testing](#unit-testing-skill-skai-unit-testing)
   - [Debugging](#debugging-skill-skai-debugging)
   - [Dev retro](#dev-retro-skill-skai-dev-retro)
@@ -189,7 +191,7 @@ After installation, workflows are available as **skills** that your agent activa
 
 ### Work spec creation (skill `skai-work-spec-creation`)
 
-Structured planning and specification for complex features. Produces a planning document (design decisions, API sketch), normalized product requirements, and a work specification (tasks, subtasks, requirements traceability).
+Structured planning and specification for complex features. Produces a planning document (design decisions, API sketch) and a work specification (tasks, subtasks, requirements traceability). Behaviors discovered during planning are handed to requirements authoring rather than written into the catalog here.
 
 - Guide [`Guides/Spec/work-spec-creation.md`](Guides/Spec/work-spec-creation.md)
 
@@ -199,7 +201,7 @@ Structured planning and specification for complex features. Produces a planning 
 
 1. **Planning document + design discussion.** Agent summarizes the discussion into a document seeded with `- [ ] D<n> [Kind] <summary>` discussion items per topic (each `[Question]`, `[Proposal]`, or `[Tradeoff]`). Optional: for large efforts, the planning document can be organized into explicit phase sections; each phase runs its own mini-cycle (discussion, API sketch, requirements normalization, work spec) before moving to the next. While any `- [ ]` item remains unresolved the workflow is at a blocked gate; the moment they're all resolved (check the box, append a `- **Decision**` sub-bullet) the agent emits the first planned gate to advance to API sketch.
 2. **API sketch.** Agent drafts the API surfaces implied by the design. Gate: human confirms the design is ready to proceed.
-3. **Requirements normalization.** Agent promotes behaviors from the planning document into canonical requirements. Gate: human acknowledges requirements updates.
+3. **Requirements normalization.** Agent hands the planning document's behaviors to requirements authoring, which captures them in a change package. Gate: human acknowledges the package.
 4. **Work spec first pass.** Agent writes top-level tasks only (no subtasks). Gate: human reviews the task list.
 5. **Work spec second pass.** Agent adds subtasks, requirement IDs, and traceability mapping. Gate: human reviews the completed work spec.
 
@@ -244,6 +246,34 @@ Conform app code to the proposed map in an architecture change package, then pro
 3. **Code Changes.** Agent writes typed, unchecked items with stable IDs and a Disposition (`implement` / `placeholder` / `planned` / `handoff`), ending with a terminal promote item when a proposed map exists. The checkbox records completion; Disposition records ownership. Gate: Code Changes ready.
 4. **Implement.** In Build, the agent executes owned items, build-verifies at chunk boundaries, and blocks while any handoff remains unchecked. In Plan, owned code work remains unchecked as `planned`. When a proposed map exists, promotion is the terminal item and runs only at the mode's completion point. Click-through QA is downstream, not a gate.
 
+### Requirements authoring (skill `skai-requirements-authoring`)
+
+Draft behavioral requirements into a change package under `skai/changes/<change-id>/`, resolve the questions they raise, and leave the package ready to promote. The canonical catalog at `requirements/**` stays frozen during authoring. Sources are open-ended -- designs, an existing implementation, a product brief, a planning document, or a change request -- and the mode (baseline vs. scoped change) is inferred from the catalog rather than declared.
+
+- Guide [`Guides/Requirements/requirements-authoring.md`](Guides/Requirements/requirements-authoring.md)
+- Content rules [`Guides/Requirements/requirements-catalog.md`](Guides/Requirements/requirements-catalog.md) -- scopes, layout, requirement format, IDs, writing style
+- Formats [`Guides/Requirements/requirements-artifacts.md`](Guides/Requirements/requirements-artifacts.md) -- requirement change items and change requests
+
+**Prerequisites:** Sources describing the behavior to capture. An existing catalog at `requirements/`, or the intent to start one.
+
+**Phases:**
+
+1. **Discussion.** Agent digests the inputs, infers the mode, drafts the requirement files, and seeds topic-organized `- [ ]` items for the decisions it cannot settle -- two sources disagreeing, behavior that looks like a defect rather than intent, an undefined boundary. Requirements are drafted under the agent's recommended reading and cite their open item, so the drafts always read as a complete catalog. Gate: human resolves each item.
+2. **Requirement changes.** Agent writes typed change items describing exactly the difference between the frozen catalog and the drafts, each naming its source. Ends with `🏁 Complete.` once the package is ready to promote.
+
+### Requirements promotion (skill `skai-requirements-promotion`)
+
+Write an approved change package into the canonical catalog. Promotion is the only writer of `requirements/**`, and it is a transformation rather than a copy: drafting scaffolding is stripped, IDs are checked against what the catalog already holds, and the writing-style rules get their last enforcement on the exact text about to become permanent. A package recording behavior that already ships promotes on approval; one recording behavior still to come promotes when the change ships.
+
+- Guide [`Guides/Requirements/requirements-promotion.md`](Guides/Requirements/requirements-promotion.md)
+
+**Prerequisites:** A change package at `skai/changes/<change-id>/` whose discussion is fully resolved and whose requirement change items match its drafts.
+
+**Phases:**
+
+1. **Promotion checks.** Agent screens the package for readiness, then writes an unchecked checklist covering ID stability, prefix collisions, cross-reference resolution, writing style, catalog traversability, and scaffolding removal, ending with the terminal write. Gate: human reviews what will become canon.
+2. **Execute.** Agent runs each check in order, records evidence, and writes the catalog. A failing check blocks and returns the package to authoring -- promotion never rewrites a requirement's prose. When the catalog itself is the problem, the agent raises a change request instead.
+
 ### Unit testing (skill `skai-unit-testing`)
 
 Plan-first testing workflow. The agent creates an orchestration document for the overall testing session, plans all tests upfront, runs one infrastructure pass across all planned tests, and then implements tests one logical section at a time (e.g. "Success Tests", "Error Handling Tests"). Handles new test suites, additions to existing suites, and fixing failing tests.
@@ -276,16 +306,17 @@ Repeats until the root cause is isolated.
 
 ### Dev retro (skill `skai-dev-retro`)
 
-Completeness backstop that can be used at any point during any workflow. Reviews what has transpired since the last retro (or since session start), identifies gaps, reconciles plan drift, updates documentation, backfills requirements, and reflects on process.
+Completeness backstop that can be used at any point during any workflow. Reviews what has transpired since the last retro (or since session start), identifies gaps, reconciles plan drift, updates documentation, captures behavior the requirements catalog does not yet reflect, and reflects on process.
 
 - Guide [`Guides/Process/dev-retro.md`](Guides/Process/dev-retro.md)
 
-**Prerequisites:** Work to review. The agent reads work specs, planning docs, evidence artifacts, and requirements produced since the last retro.
+**Prerequisites:** Work to review. The agent reads work specs, planning docs, evidence artifacts, the requirements catalog, and any open requirements change package.
 
 **Phases:**
 
-1. **Retro.** Agent performs the full checklist, reports findings, and completes immediately if no process suggestions were generated.
-2. **Process improvement follow-up (optional).** If the retro identifies process improvements, agent lists them in the retro output as `- [ ] S<n>` items and stops at a handoff gate. On `next`, the agent enters [`Guides/Process/ticket-filing.md`](Guides/Process/ticket-filing.md), which drafts `process-tickets.md`, lets the human review/edit the resulting `- [ ] T<n> Ticket: ...` entries, and files the remaining ones on `next`.
+1. **Retro.** Agent performs the full checklist, reports findings, and completes immediately if neither a requirements finding nor a process suggestion was generated.
+2. **Requirements follow-up (optional).** If the session revealed behavior the catalog does not reflect, the agent seeds a change package -- draft requirements plus `- [ ] D<n>` items for what it could not settle -- and stops at a handoff gate. It never writes the catalog itself. On `next`, the agent enters [`Guides/Requirements/requirements-authoring.md`](Guides/Requirements/requirements-authoring.md), which owns resolving the items and, in turn, promotion.
+3. **Process improvement follow-up (optional).** If the retro identifies process improvements, agent lists them in the retro output as `- [ ] S<n>` items and stops at a handoff gate. On `next`, the agent enters [`Guides/Process/ticket-filing.md`](Guides/Process/ticket-filing.md), which drafts `process-tickets.md`, lets the human review/edit the resulting `- [ ] T<n> Ticket: ...` entries, and files the remaining ones on `next`.
 
 ### Process refinement (skill `skai-process-refinement`)
 

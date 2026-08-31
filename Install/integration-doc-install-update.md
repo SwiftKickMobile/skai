@@ -48,7 +48,17 @@ When creating/updating the Integration doc:
      - `Templates/docs/skai/integration-sections/android-gradle.md`
    - remove irrelevant managed blocks if the stack is not present (or the human says omit).
    - Note: a project may use both `xcode` and `swift-package` sections (e.g., app targets built via Xcode and library submodules built as Swift packages).
-4. If required project-specific constants/mappings cannot be inferred:
+4. Insert/update the `requirements` managed block from
+   `Templates/docs/skai/integration-sections/requirements.md`. Unlike the stack sections above this
+   one is **not stack-dependent** — every project gets it, because every workflow that reads or
+   writes requirements needs to know the repository shape and where the catalog lives. A project
+   that keeps no requirements records shape `none`; that is what tells those workflows to skip.
+   - Infer where you can: an existing `requirements/` directory means shape `local` with that root.
+     Absence of one does not mean `none` — a greenfield project intending to keep requirements here
+     is `local`, and `none` is a deliberate opt-out. Do not guess `shared` — whether another repo
+     holds the catalog is the human's call.
+   - See `Guides/Requirements/requirements-catalog.md` for what each shape and scope means.
+5. If required project-specific constants/mappings cannot be inferred:
    - restore/leave 🟡 markers + instruction lines in the `required-values` block
    - STOP and ask the human the minimum questions needed
 

@@ -32,10 +32,15 @@ In the planned gate line, `<what happens after your response>` should describe w
 If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
 
 Workflow-specific gate notes:
+- The requirements handoff is a non-standard planned gate, emitted only when step 5 seeded a change package. `Next` there means: hand that package to `Guides/Requirements/requirements-authoring.md`, where that workflow will own resolving the discussion items and, in turn, promotion. Retro never resolves them itself and never writes the catalog.
+- At that handoff gate, the seeded package is the handoff artifact. Its unchecked `- [ ] D<n>` items remain pending while waiting for the human.
 - The ticket-filing handoff is a non-standard planned gate. `Next` there means: hand the current SKAI process suggestions to `Guides/Process/ticket-filing.md`, where that workflow will own ticket drafting, review, and filing.
 - At that handoff gate, the retro output's `SKAI process suggestions` section is the handoff artifact. The unchecked `- [ ]` suggestion items there remain pending while waiting for the human to approve drafting.
+- **Both handoffs come after the full retro output is prepared, and the requirements handoff comes first.** Complete all six checklist steps before emitting either gate: step 6's reflection can be informed by what step 5 found, and a half-run retro should never be left open while its handoffs are worked.
+- Emit one handoff gate at a time. Taking the requirements handoff enters another workflow and the retro does not resume afterwards — so when both handoffs are pending, say so in the summary at the first gate. The retro output is what keeps the second discoverable: its unchecked `- [ ] S<n>` items remain, and the human takes that handoff by invoking ticket filing when ready.
 
 Planned gates for this workflow:
+- After the retro output is prepared and step 5 seeded a change package, but before handing it off to requirements authoring. Skipped when step 5 found nothing.
 - After the retro output is prepared and SKAI process suggestions have been identified, but before handing them off to the ticket-filing workflow for drafting.
 
 Workflow-specific blocked gates:
@@ -78,8 +83,11 @@ Read the documents and artifacts that were produced or used during this session,
   - `skai/integration.md`
 - Evidence artifacts produced during the session:
   - build/test outputs, logs, result bundles/reports, screenshots/screen recordings, crash reports, etc.
-- The canonical requirements library:
-  - `/requirements/**` (or your org's equivalent)
+- The canonical requirements catalog:
+  - the requirements catalog, at the root named in `skai/integration.md`'s `Section: requirements`
+    block — not a literal path, which is wrong under the `shared` shape
+- Open requirements change packages:
+  - `skai/changes/*/requirements-authoring.md` — behavior already captured but not yet promoted. Read these before step 5 so it does not re-raise what is already pending.
 
 If any of these inputs are missing but required to perform the retro, STOP and ask the human where they are.
 
@@ -121,17 +129,19 @@ If you are not confident what should be documented, STOP and ask the human what 
 
 ### 5) Product requirements backfill (retro requirements)
 
-Goal: if the session discovered or clarified externally observable behavior, ensure `/requirements/**` reflects it.
+Goal: if the session discovered or clarified externally observable behavior, capture it so the catalog can reflect it.
 
-Rules (migrated from the former `retro-prd` process):
+Detection is this step's work, and it is unchanged:
 - Infer externally observable or cross-component behavioral contracts from the code + evidence from this session.
-- Compare them to the existing `/requirements/**` library.
-- Add missing requirements and update incorrect/outdated ones.
-- Do NOT introduce implementation details (types, functions, files, initializers).
-- Place each requirement using the project's scope rules (platform/domains/features/apps, etc.).
-- Do NOT add progress markers.
+- Compare them to the existing catalog and to any open change package. Under shape `none` this
+  project keeps no catalog, so step 5 seeds nothing.
+- Identify what is missing, and what is recorded but now incorrect or outdated.
 
-Only update `/requirements/**`.
+**Retro does not write the catalog.** Findings are seeded into a change package at `skai/changes/<change-id>/`, per `Guides/Requirements/requirements-authoring.md` — draft requirement files plus a `## Discussion` holding what this session could not settle as `- [ ] D<n>` items. Write the requirement under the recommended reading and cite its item rather than leaving a hole; content rules are in `Guides/Requirements/requirements-catalog.md`.
+
+If a package for this work is already open, add to it rather than creating a second. If the session found nothing, create no package and skip the requirements handoff gate.
+
+Retro seeds and hands off. It does not resolve discussion items and it does not promote; both belong to the requirements workflow.
 
 ### 6) Process reflection
 

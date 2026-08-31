@@ -114,7 +114,7 @@ When implementing Task N:
 - **Update API Inventory**: Check the box on any `- [ ]` APIs that were fully implemented by the completed task.
 
 **Important:**
-- Do NOT add or modify any progress markers in the canonical requirements repository (`/requirements/**`).
+- Do NOT add or modify any progress markers in the canonical requirements catalog.
 - Canonical requirements are referenced by ID only and never carry progress state.
 - All execution and progress tracking lives exclusively in the work spec.
 
