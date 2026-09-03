@@ -148,11 +148,11 @@ Every scene that presents a modal owns a `modalNavController` created with `reme
 
 | `modal_style` | Destination builder | Owner and behavior |
 |---|---|---|
-| `sheet` | `bottomSheet<Route> { … }` | `androidx.compose.material.navigation`; Material bottom sheet using the scene's `BottomSheetNavigator` configuration |
-| `full_screen` | `bottomSheetFullScreenModal<Route>(navHostController = modalNavController) { … }` | SKAI Compose; full-size Material 3 sheet, square by default, with partial expansion skipped |
+| `sheet` | `bottomSheetModal<Route>(navHostController = modalNavController) { … }` | SKAI Compose; Material 3 modal bottom sheet, rounded top corners by default, sized to content with partial expansion allowed |
+| `full_screen` | `bottomSheetFullScreenModal<Route>(navHostController = modalNavController) { … }` | SKAI Compose; full-size Material 3 sheet, rounded top corners by default, with partial expansion skipped |
 | `popover` | `dialog<Route> { … }` | Navigation Compose dialog destination |
 
-Projects may declare any other modal style. Their project-conventions document maps each non-standard style to the actual Compose destination builder or presentation mechanism; the scaffold writes that real project-defined routing call. If neither this table nor project conventions map a declared style, STOP in Discussion under the implementation guide's missing-mapping rule. The placeholder style descriptor records the map vocabulary for breadcrumb grouping but never chooses the builder.
+Projects may declare any other modal style. Their project-conventions document maps each non-standard style to the actual Compose destination builder or presentation mechanism; the scaffold writes that real project-defined routing call. If neither this table nor project conventions map a declared style, STOP in Discussion under the implementation guide's missing-mapping rule. The placeholder style descriptor records the map vocabulary for breadcrumb grouping but never chooses the builder. The M2 `bottomSheet` builder from `androidx.compose.material.navigation` is still hosted by `ModalNavHost` for legacy code only; new `sheet` destinations use `bottomSheetModal`.
 
 ```kotlin
 sealed class DashboardModalRoute : Route {
@@ -178,7 +178,9 @@ LaunchedEffect(Unit) {
 }
 
 ModalNavHost(navController = modalNavController) {
-    bottomSheet<DashboardModalRoute.Profile> { ProfileScreen() }
+    bottomSheetModal<DashboardModalRoute.Profile>(
+        navHostController = modalNavController,
+    ) { ProfileScreen() }
     bottomSheetFullScreenModal<DashboardModalRoute.MediaCapture>(
         navHostController = modalNavController,
     ) { MediaCaptureScreen() }

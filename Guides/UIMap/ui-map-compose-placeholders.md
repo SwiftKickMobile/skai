@@ -229,7 +229,7 @@ fun NoteScreen(viewModel: NoteViewModel = viewModel()) {
                     TagPickerScreen()
                 }
             }
-            bottomSheet<NoteModalRoute.ShareSheet> {
+            bottomSheetModal<NoteModalRoute.ShareSheet>(navHostController = modalNavController) {
                 PlaceholderModalScene(
                     "Note",
                     DomainColors.note,
