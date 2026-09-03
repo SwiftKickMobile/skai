@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.navigation.BottomSheetNavigator
 import androidx.compose.material.navigation.ModalBottomSheetLayout
+import androidx.compose.material.navigation.bottomSheet
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -19,15 +20,18 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.ComposeNavigatorDestinationBuilder
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.dialog
 import androidx.navigation.get
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
 /**
  * The one NavHost for a scene's modal group — hosts every modal flavor:
- * M2 `bottomSheet` destinations, `dialog` destinations, and
+ * M2 [bottomSheet] destinations, [dialog] destinations, [bottomSheetModal] destinations and
  * [bottomSheetFullScreenModal] destinations. Idles on [EmptyRoute] internally;
  * callers never declare it.
+ *
+ * NOTE: M3 [bottomSheetModal] should be favoured over M2 [bottomSheet] destinations.
  *
  * The [navController] must have been created with the navigator from
  * [rememberBottomSheetNavigator] attached (pass it to `rememberNavController`).
