@@ -220,7 +220,7 @@ NavHost(navController = navController, startDestination = viewState.startDestina
 
 ## Tab routing
 
-The view state carries `currentTabRoute`. The screen uses a pager and tab row, syncing the pager's position to the route via events.
+The scene owns a tab `NavHost` (a plain `NavHost` — tabs swap in place, no push animation) whose start destination is the primary tab: the first `TabRoute` case. Each tab is a `composable<TabRoute.X>` destination that calls the tab scene directly. The view model emits a `NavigateTab(route)` effect and the screen dispatches it with `navigateToTab`, which pops to the primary tab while saving the outgoing tab's state, restores the target tab's saved state, and reuses the existing entry when that tab is already current. So every tab keeps its own nested stack across switches, and back from any tab's root lands on the primary tab. The tab bar's selected item reads the current destination (`hasRoute`); the view state carries no separate current-tab field. Pass `resetState = true` to discard a tab's saved stack before switching to it.
 
 ```kotlin
 sealed class MainTabRoute : Route {
@@ -229,7 +229,47 @@ sealed class MainTabRoute : Route {
     @Serializable data object Settings: MainTabRoute()
 }
 
-data class MainViewState(val currentTabRoute: MainTabRoute = MainTabRoute.Home)
+data class SelectTab(val route: MainTabRoute) : MainViewEvent
+data class NavigateTab(val route: MainTabRoute) : MainViewEffect
+```
+
+```kotlin
+val tabNavController = rememberNavController()
+val currentTab = tabNavController.currentBackStackEntryAsState().value?.destination
+
+LaunchedEffect(Unit) {
+    viewModel.viewEffects.collect { effect ->
+        when (effect) {
+            is NavigateTab -> tabNavController.navigateToTab(effect.route)
+        }
+    }
+}
+
+Scaffold(
+    bottomBar = {
+        NavigationBar {
+            NavigationBarItem(
+                selected = currentTab?.hasRoute(MainTabRoute.Home::class) == true,
+                onClick = { viewModel.processEvent(SelectTab(MainTabRoute.Home)) },
+                icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                label = { Text("Home") },
+            )
+            // … one NavigationBarItem per tab
+        }
+    },
+) { insets ->
+    NavHost(
+        navController = tabNavController,
+        startDestination = MainTabRoute.Home,
+        modifier = Modifier.padding(insets),
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+    ) {
+        composable<MainTabRoute.Home>     { HomeScreen() }
+        composable<MainTabRoute.Library>  { LibraryScreen() }
+        composable<MainTabRoute.Settings> { SettingsScreen() }
+    }
+}
 ```
 
 ## Composite scenes

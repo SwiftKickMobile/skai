@@ -21,7 +21,8 @@ This is the key difference from SwiftUI. SwiftUI keeps **one** `NavigationStack`
 - **nav push** — the scene wraps itself in a `SlideNavHost` whose start destination (`NavStart`) is the scene's own body, with the pushed scenes as sibling destinations.
 - **modal** — the scene overlays a `ModalNavHost` (its own `modalNavController`) beside its body in a `Box`.
 - **child** — the scene hosts a plain `NavHost` inside a `PlaceholderChildHost`, swapping children with `navigateReplace`.
-- **leaf / tabbed-only / composite-only** — no host; the scene is just a `PlaceholderScene`.
+- **tab** — the scene declares typed tab routes and passes them to `PlaceholderScene`, which owns the tab `NavHost` (a plain `NavHost` whose start destination is the first tab) and switches tabs with `navigateToTab`.
+- **leaf / composite-only** — no host; the scene is just a `PlaceholderScene`.
 
 A scene that both pushes and presents modals owns both hosts. A pushed or modally-presented destination that itself navigates owns its own host in turn (nested hosts are expected and fine).
 
@@ -30,7 +31,7 @@ A scene that both pushes and presents modals owns both hosts. A pushed or modall
 - `PlaceholderScene(title, domainColor, routes, tabs)` or `PlaceholderScene(title, domainColor, routes, embedded = listOf({ … }))` — the scene body. `embedded` is a list of composite children. The current placeholder renderer does not support nonempty `tabs` and `embedded` together.
 - `PlaceholderRoute(label, kind, isCurrent = false) { action }` — one menu route. `kind` is `PlaceholderRouteKind.Nav`, `.Modal(style)`, or `.Child`. `isCurrent = true` omits it from the menu (used for the **active child**).
 - `PlaceholderModalStyle(id, title, index)` — one project-defined entry from the map's top-level `modal_styles` vocabulary. It labels and orders the breadcrumb section only; host code owns the actual presentation.
-- `PlaceholderTab(label, icon) { content }` — one tab. `icon` is an `ImageVector`.
+- `PlaceholderTab(label, route, icon) { content }` — one tab. `route` is the tab's typed `Route` case (the first tab is the primary tab and the tab host's start destination); `icon` is an `ImageVector`.
 - `PlaceholderChildHost(title, domainColor, routes) { content }` — hosts a child-routed scene full-bleed and contributes the parent's breadcrumb to the selected child.
 - `PlaceholderColors.domain(index)` — the domain palette by index, matched to the rendered map (mirrors `Bin/ui-map-render.py`).
 
@@ -85,7 +86,7 @@ You declare only `title` / `domainColor` / `routes` / `tabs` / `embedded` and wi
 - **Breadcrumb** — below the app bar: ancestors + this scene; each segment is a menu of that scene's routes. Sections appear as Nav, modal styles by their map declaration index, then Child. Routeless segments render dimmed; the **active child** is omitted; the row scrolls horizontally and opens on the trailing/current segment.
 - **Dismiss control** — the ✕, beside the breadcrumb, shown only when presented modally (via `PlaceholderModalScene`).
 - **Layout** — full-bleed (no border) for everything except **embedded composite content**, which gets a light-gray fill and is greedy: each embedded child takes an equal share of the available height (mirrors SwiftUI's maxHeight-infinity children). A crumb-less root or `NavStart` scene is still full-bleed.
-- **Tabs** — a bottom tab bar (`NavigationBar`); the breadcrumb is accumulated into each tab's content. Each tab takes an `ImageVector`.
+- **Tabs** — a bottom tab bar (`NavigationBar`) over the scene's tab `NavHost`; tabs switch with `navigateToTab`, so each tab keeps its own nested stack and back from any tab's root returns to the primary (first) tab. The breadcrumb is accumulated into each tab's content. Each tab takes an `ImageVector`.
 
 ## Route enums
 
@@ -139,7 +140,16 @@ fun AppScreen(viewModel: AppViewModel = viewModel()) {
 
 ### tab
 
-`tabs` on `PlaceholderScene`; each tab's content is the child scene's composable called directly (it owns its own hosts if it navigates — no wrapping at the tab). Give each tab a fitting `ImageVector`. Modal routes (if any) ride alongside in the same `Box` (see modal). If the same mapped scene also has composite children, use the unsupported-combined-shape stop above.
+Declare a `<Scene>TabRoute` enum (one `@Serializable` case per tab, at the top of the scene's ViewModel file) and pass `tabs` to `PlaceholderScene` with each tab's route. `PlaceholderScene` owns the tab `NavHost` — the first tab is the start destination — and switches tabs with `navigateToTab`, so per-tab state is saved and restored and back from any tab's root returns to the first tab. Each tab's content is the child scene's composable called directly (it owns its own hosts if it navigates — no wrapping at the tab). Give each tab a fitting `ImageVector`. Modal routes (if any) ride alongside in the same `Box` (see modal). If the same mapped scene also has composite children, use the unsupported-combined-shape stop above.
+
+```kotlin
+// 🟡 UI Map scaffold <change-id>
+sealed class LibraryTabRoute : Route {
+    @Serializable data object Notes : LibraryTabRoute()
+    @Serializable data object Folders : LibraryTabRoute()
+    @Serializable data object Trash : LibraryTabRoute()
+}
+```
 
 ```kotlin
 // 🟡 UI Map scaffold <change-id>
@@ -151,9 +161,9 @@ PlaceholderScene(
         PlaceholderRoute("Purchase Confirmation", PlaceholderRouteKind.Modal(ModalStyles.dialog)) { modalNavController.navigatePush(LibraryModalRoute.PurchaseConfirmation) },
     ),
     tabs = listOf(
-        PlaceholderTab("Notes", Icons.Default.Edit) { NotesScreen() },
-        PlaceholderTab("Folders", Icons.Default.Menu) { FoldersScreen() },
-        PlaceholderTab("Trash", Icons.Default.Delete) { TrashScreen() },
+        PlaceholderTab("Notes", LibraryTabRoute.Notes, Icons.Default.Edit) { NotesScreen() },
+        PlaceholderTab("Folders", LibraryTabRoute.Folders, Icons.Default.Menu) { FoldersScreen() },
+        PlaceholderTab("Trash", LibraryTabRoute.Trash, Icons.Default.Delete) { TrashScreen() },
     ),
 )
 ```

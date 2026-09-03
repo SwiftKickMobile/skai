@@ -2,8 +2,7 @@ package com.swiftkickmobile.skai.compose.navigation
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -135,7 +134,7 @@ fun ModalBottomSheetWrapper(
     var isVisible by rememberSaveable { mutableStateOf(true) }
     if (isVisible) {
         ModalBottomSheet(
-            modifier = if (isFullScreen) Modifier.fillMaxSize() else Modifier.fillMaxWidth(),
+            modifier = if (isFullScreen) Modifier.fillMaxHeight() else Modifier,
             sheetState = sheetState,
             shape = shape,
             sheetGesturesEnabled = dragToDismissEnabled,

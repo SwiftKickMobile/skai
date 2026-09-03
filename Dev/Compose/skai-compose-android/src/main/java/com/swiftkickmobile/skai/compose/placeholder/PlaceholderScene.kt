@@ -1,5 +1,7 @@
 package com.swiftkickmobile.skai.compose.placeholder
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -18,6 +20,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.swiftkickmobile.skai.compose.navigation.navigateToTab
 
 /** Shared layout constants mirroring SKAISwiftUI's `PlaceholderScene`. */
 private object PlaceholderDimens {
@@ -35,12 +43,14 @@ private object PlaceholderDimens {
  * - Root / leaf: full-bleed with a breadcrumb row.
  * - Full-bleed (carries crumbs from a child host / tab / push, or is modal):
  *   fills edge-to-edge, breadcrumb accumulates ancestors.
- * - Tabbed: a real bottom-tab scaffold; tab content accumulates this scene.
+ * - Tabbed: a real bottom-tab scaffold over a tab `NavHost` switched with
+ *   `navigateToTab`; tab content accumulates this scene.
  *
  * @param title The scene's name (the visible identifier).
  * @param domainColor The scene's domain tint.
  * @param routes Outgoing routes for this scene's breadcrumb menu; empty hides it.
- * @param tabs Tab children rendered as a bottom-tab scaffold; empty for non-tabbed.
+ * @param tabs Tab children rendered as a bottom-tab scaffold, each a typed
+ *   destination in the scene's tab `NavHost`; empty for non-tabbed.
  * @param embedded Composite/child scene placeholders, each itself a
  *   `PlaceholderScene` carrying its own inset fill; empty for a leaf scene.
  */
@@ -186,6 +196,12 @@ fun PlaceholderChildHost(
 
 // MARK: - Tabs
 
+/**
+ * A bottom-tab scaffold over the scene's tab `NavHost`. The first tab is the
+ * primary tab (start destination); switching goes through [navigateToTab], so
+ * each tab keeps its own nested state and back from any tab's root returns to
+ * the primary tab.
+ */
 @Composable
 private fun TabScaffold(
     title: String,
@@ -194,7 +210,8 @@ private fun TabScaffold(
     tabs: List<PlaceholderTab>,
     parentCrumbs: List<PlaceholderCrumb>,
 ) {
-    var selected by remember { mutableIntStateOf(0) }
+    val tabNavController = rememberNavController()
+    val currentDestination = tabNavController.currentBackStackEntryAsState().value?.destination
 
     // Delegate the breadcrumb to the tab content: accumulate this scene into the
     // crumbs the selected tab renders under its own layout.
@@ -203,10 +220,10 @@ private fun TabScaffold(
     Scaffold(
         bottomBar = {
             NavigationBar {
-                tabs.forEachIndexed { index, tab ->
+                tabs.forEach { tab ->
                     NavigationBarItem(
-                        selected = selected == index,
-                        onClick = { selected = index },
+                        selected = currentDestination?.hasRoute(tab.route::class) == true,
+                        onClick = { tabNavController.navigateToTab(tab.route) },
                         icon = { Icon(tab.icon, contentDescription = tab.label) },
                         label = { Text(tab.label) },
                     )
@@ -226,7 +243,17 @@ private fun TabScaffold(
                 LocalPlaceholderCrumbs provides effectiveCrumbs,
                 LocalPlaceholderIsEmbedded provides false,
             ) {
-                tabs[selected].content()
+                // Tabs swap in place — no push animation.
+                NavHost(
+                    navController = tabNavController,
+                    startDestination = tabs.first().route,
+                    enterTransition = { EnterTransition.None },
+                    exitTransition = { ExitTransition.None },
+                ) {
+                    tabs.forEach { tab ->
+                        composable(route = tab.route::class) { tab.content() }
+                    }
+                }
             }
         }
     }
