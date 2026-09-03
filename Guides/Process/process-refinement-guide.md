@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.process-refinement
 Managed-Source: Guides/Process/process-refinement-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-29
+Managed-Updated-At: 2026-09-03
 
 # Process Refinement Guide
 
@@ -32,13 +32,13 @@ Every refinement target should have a **design spec** — a plan, requirements d
 
 ## The refinement working document
 
-A refinement pass records its work in a **refinement working document**: the finding matrix, the triage decisions, the repair clusters, and the closure table — plus, at the structured tier (see *Scaling the ceremony*), the invariants, the canonical-ownership table, and each finding's rule impact map. It is a working document — create it following `Guides/Core/working-doc-conventions.md`, placed under `skai/working-docs/<branch-path>/<session-name>/`, named `<target-name>-refinement.md`. This is the same logic the work-spec creation guide uses for its plan and work-spec documents, and the UI Map implementation guide uses for its implementation working document: process artifacts are working docs, kept out of the target's own committed files.
+A refinement pass records its work in a **refinement working document**: the finding matrix, the triage decisions, the repair clusters, and the closure table — plus, at the structured tier (see *Scaling the ceremony*), the invariants, the canonical-ownership table, and each finding's rule impact map. It is a working document — create it following `Guides/Core/working-doc-conventions.md`, placed under `skai/working-docs/<branch-path>/<session-name>/` relative to the target's Git root, and named `<target-name>-refinement.md`. This is the same logic the work-spec creation guide uses for its plan and work-spec documents, and the UI Map implementation guide uses for its implementation working document: process artifacts are working docs, kept out of the target's own committed files.
 
 A trivial pass — a couple of clarity fixes — may skip the persisted document and keep the matrix inline in the conversation. Anything beyond that gets the working document.
 
 ## The findings log
 
-Across refinement passes on the same target, a **findings log** records every finding and its disposition. It lives at `skai/refinement-reviews/<target-name>-findings.md` — one per target, committed, with no branch or session in the path, because a pass months later has to find it. Each pass's closure entries append to it. It is not a working document: working docs are ephemeral and ignored by git, and this record is neither.
+Across refinement passes on the same target, a **findings log** records every finding and its disposition. It lives at `refinement-reviews/<target-name>-findings.md` relative to the target's Git root — one per target, committed, with no branch or session in the path, because a pass months later has to find it. Each pass's closure entries append to it. It is not a working document: working docs are ephemeral and ignored by git, and this record is neither.
 
 The log itself is never shown to the cold reviewer — it is refiner-facing and would stop the review being cold. What *is* shown is the short list of settled decisions extracted from it, via the prompt's `{{SETTLED_DISPOSITIONS}}` slot. Keeping those two distinct is what lets the review stay fresh while still not relitigating.
 

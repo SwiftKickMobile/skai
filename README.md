@@ -248,13 +248,13 @@ Conform app code to the proposed map in an architecture change package, then pro
 
 ### Requirements authoring (skill `skai-requirements-authoring`)
 
-Draft behavioral requirements into a change package under `skai/changes/<change-id>/`, resolve the questions they raise, and leave the package ready to promote. The canonical catalog at `requirements/**` stays frozen during authoring. Sources are open-ended -- designs, an existing implementation, a product brief, a planning document, or a change request -- and the mode (baseline vs. scoped change) is inferred from the catalog rather than declared.
+Draft behavioral requirements into a change package under `skai/changes/<change-id>/`, resolve the questions they raise, and leave the package ready to promote. The canonical local catalog defaults to `skai/requirements/**` and stays frozen during authoring; the Integration block may name another local or shared root. Sources are open-ended -- designs, an existing implementation, a product brief, a planning document, or a change request -- and the mode (baseline vs. scoped change) is inferred from the catalog rather than declared.
 
 - Guide [`Guides/Requirements/requirements-authoring.md`](Guides/Requirements/requirements-authoring.md)
 - Content rules [`Guides/Requirements/requirements-catalog.md`](Guides/Requirements/requirements-catalog.md) -- scopes, layout, requirement format, IDs, writing style
 - Formats [`Guides/Requirements/requirements-artifacts.md`](Guides/Requirements/requirements-artifacts.md) -- requirement change items and change requests
 
-**Prerequisites:** Sources describing the behavior to capture. An existing catalog at `requirements/`, or the intent to start one.
+**Prerequisites:** Sources describing the behavior to capture. An existing catalog at the Integration block's root, or the intent to start one.
 
 **Phases:**
 
@@ -263,7 +263,7 @@ Draft behavioral requirements into a change package under `skai/changes/<change-
 
 ### Requirements promotion (skill `skai-requirements-promotion`)
 
-Write an approved change package into the canonical catalog. Promotion is the only writer of `requirements/**`, and it is a transformation rather than a copy: drafting scaffolding is stripped, IDs are checked against what the catalog already holds, and the writing-style rules get their last enforcement on the exact text about to become permanent. A package recording behavior that already ships promotes on approval; one recording behavior still to come promotes when the change ships.
+Write an approved change package into the canonical catalog. Promotion is the only writer of the Integration block's requirements root (normally `skai/requirements/**` for a local catalog), and it is a transformation rather than a copy: drafting scaffolding is stripped, IDs are checked against what the catalog already holds, and the writing-style rules get their last enforcement on the exact text about to become permanent. A package recording behavior that already ships promotes on approval; one recording behavior still to come promotes when the change ships.
 
 - Guide [`Guides/Requirements/requirements-promotion.md`](Guides/Requirements/requirements-promotion.md)
 
@@ -363,10 +363,10 @@ Update `skai` to the latest release (or a target you name), review what changed,
 
 ### Working documents
 
-- Working documents (plans, specs, progress logs) live under [`skai/working-docs/`](skai/working-docs/) and are organized by your current git branch.
+- Working documents (plans, specs, progress logs) live under [`skai/working-docs/`](skai/working-docs/) in the target-owning repository and are organized by that repository's current git branch.
 - `<branch-path>` is the current branch name, with `/` decomposed into nested folders (so `feature/foo` becomes `feature/foo/`).
 - Working docs are ephemeral and typically git-ignored.
-- One exception: the refinement **findings log** at [`skai/refinement-reviews/`](skai/refinement-reviews/) is committed, one file per refined target. It carries what earlier refinement passes decided, so a later pass does not re-argue settled ground.
+- One exception: the refinement **findings log** at [`refinement-reviews/`](refinement-reviews/) in the target repository is committed, one file per refined target. It carries what earlier refinement passes decided, so a later pass does not re-argue settled ground.
 
 ## Development guide (for contributors)
 

@@ -14,6 +14,6 @@ Records where this project's requirements catalog lives. See
       simply has not started yet.
 
 - 🟡 **Requirements root**: {human response}
-  - INSTRUCTION: Path to the catalog root. For `local`, a path inside this repo, typically
-    `requirements/`. For `shared`, the path to the other repo's catalog, e.g.
+  - INSTRUCTION: Path to the catalog root. For `local`, a path inside this repo, normally
+    `skai/requirements/`. For `shared`, the path to the other repo's catalog, e.g.
     `Submodules/shared-requirements/requirements/`. Set to `n/a` for `none`.

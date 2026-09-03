@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- 2026-09-03 **Process-refinement collateral now follows the target repository.** The workflow resolves the Git root from the binding target path, uses that repository's branch for working documents, and stores durable findings at `refinement-reviews/` relative to the target root. This works identically when SKAI is opened directly or nested as a submodule and prevents parent projects from accumulating SKAI maintenance history. Re-run installed adapters to refresh the wrapper.
+
+- 2026-09-03 **Local requirements catalogs now default to `skai/requirements/`.** Requirements authoring and promotion still resolve the authoritative root from `skai/integration.md`; the catalog guide, examples, README, and Integration template use the SKAI-owned default. Installer updates treat a root-level `requirements/` tree as a permission-gated legacy move and stop on collisions. Existing projects should move the catalog, update the Integration requirements root, and re-run installed adapters.
+
+- 2026-09-02 **SKAI Compose is now the official UI Map routing and placeholder library.** `Dev/Compose` provides KMP and Android artifacts under `com.swiftkickmobile.skai`, with scene-local navigation hosts, route helpers, and Swift-parity placeholder context, indexed domain colors, and breadcrumb behavior. Project-defined modal-style descriptors label and order breadcrumb sections without owning presentation mechanics. The Compose UI Map guides now install the local library mechanically, distinguish shared KMP from Android-only conventions, use callable standard or project-defined modal mappings, and retain the combined dependency when production routing still uses it.
+
 ## Release 5 — 2026-08-30
 
 - 2026-08-27 **Requirements system added.** New `Guides/Requirements/` holds `requirements-catalog.md` (catalog content rules), `requirements-authoring.md`, `requirements-promotion.md`, and `requirements-artifacts.md`; new `Requirements/` subdirectory documented in `maintain-skai.md`. Adapters install two new skills, `skai-requirements-authoring` and `skai-requirements-promotion`; rerun every installed adapter to pick them up.

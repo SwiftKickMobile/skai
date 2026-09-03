@@ -2,17 +2,17 @@ Managed-By: skai
 Managed-Id: guide.working-doc-conventions
 Managed-Source: Guides/Core/working-doc-conventions.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-03-07
+Managed-Updated-At: 2026-09-03
 
 # Working Document Conventions
 
-Working documents (planning docs, work specs, test work docs, test artifacts) are ephemeral files that track in-progress work. They live under `skai/working-docs/`, are organized by git branch, and are grouped into named session folders so multiple efforts on the same branch do not collide.
+Working documents (planning docs, work specs, test work docs, test artifacts) are ephemeral files that track in-progress work. They live under `skai/working-docs/` in the Git repository that owns the workflow's target, are organized by that repository's branch, and are grouped into named session folders so multiple efforts on the same branch do not collide.
 
 ## Location
 
-All working documents live under `skai/working-docs/` at the project root.
+All working documents live under `skai/working-docs/` relative to the Git root that owns the workflow's target.
 
-Within `skai/working-docs/`, the current git branch name is used to create a subdirectory path. If the branch name contains `/`, each segment becomes a nested folder.
+Within `skai/working-docs/`, the owning repository's current git branch name is used to create a subdirectory path. If the branch name contains `/`, each segment becomes a nested folder.
 
 Inside the branch path, each workflow session must choose a required `session-name` folder. This session folder distinguishes separate efforts on the same branch and contains all primary documents and related artifacts for that effort.
 
@@ -40,9 +40,9 @@ Notes:
 
 ## Creating a working document
 
-1. Determine the current git branch:
+1. Determine the owning repository's current branch:
    ```bash
-   git branch --show-current
+   git -C <owner-repo-root> branch --show-current
    ```
 2. Choose a `session-name` for this effort.
 3. Construct the full path using the formula above (the calling guide specifies `<subpath>` and `<filename>`).

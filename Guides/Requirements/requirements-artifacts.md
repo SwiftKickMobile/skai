@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-artifacts
 Managed-Source: Guides/Requirements/requirements-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-27
+Managed-Updated-At: 2026-09-03
 
 # Requirements Artifact Formats
 
@@ -80,7 +80,7 @@ requirement or glossary entry added, changed, or retired is its own item, carryi
 are no diffs to show):
 
 ```markdown
-- R1 add folder: requirements/
+- R1 add folder: skai/requirements/
   - **Description** Creates the catalog root with `_requirements.md` and `glossary.md`. Four scopes
     declared; `platform/` and `domains/` populated by this package. `features/` and `apps/` get no
     folder until something goes in them.

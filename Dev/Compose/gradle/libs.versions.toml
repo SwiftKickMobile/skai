@@ -1,0 +1,61 @@
+[versions]
+# Build tools & language
+agp = "9.1.1"
+kotlin = "2.4.10"
+composeMultiplatform = "1.11.1"
+
+# AndroidX / Jetpack (Android-only)
+appcompat = "1.8.0"
+composeBom = "2026.08.00"
+coreKtx = "1.19.0"
+materialGoogle = "1.14.0"
+materialIconsExtended = "1.7.8"
+materialNavigation = "1.12.0"
+navigationCompose = "2.10.0"
+
+# Kotlin/Compose Multiplatform equivalents
+jetbrainsMaterialIconsExtended = "1.7.3"
+jetbrainsNavigationCompose = "2.9.2"
+material3 = "1.11.0-alpha07" # org.jetbrains.compose.material3 ships on its own train, decoupled from composeMultiplatform
+
+# Testing
+junit = "4.13.2"
+androidxJUnit = "1.3.0"
+androidxEspresso = "3.7.0"
+
+[libraries]
+# Jetpack Compose (Android-only, material versions managed by the BOM)
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-material = { group = "androidx.compose.material", name = "material" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+androidx-material-navigation = { module = "androidx.compose.material:material-navigation", version.ref = "materialNavigation" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+material = { group = "com.google.android.material", name = "material", version.ref = "materialGoogle" }
+
+# --- Kotlin/Compose Multiplatform equivalents ---
+# Unused by the Android library today; kept so a Compose Multiplatform port has deps ready to alias.
+compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "composeMultiplatform" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
+jetbrains-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "jetbrainsMaterialIconsExtended" }
+jetbrains-material-navigation = { module = "org.jetbrains.compose.material:material-navigation", version.ref = "composeMultiplatform" }
+jetbrains-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "jetbrainsNavigationCompose" }
+
+# Testing
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJUnit" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+# Kotlin/Compose Multiplatform equivalents (unused by the Android library today)
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-guide
 Managed-Source: Guides/UIMap/ui-map-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-11
+Managed-Updated-At: 2026-09-02
 
 # UI Map Guide
 
@@ -11,7 +11,7 @@ A UI Map is a YAML document that defines every scene in an app and the routing r
 This guide defines the platform-agnostic YAML format. Platform implementation patterns live in companion references:
 
 - [`ui-map-swiftui.md`](ui-map-swiftui.md) — implementing a UI Map in SwiftUI
-- [`ui-map-compose.md`](ui-map-compose.md) — implementing a UI Map in Jetpack Compose
+- [`ui-map-compose.md`](ui-map-compose.md) — implementing a UI Map in Compose Multiplatform or Android-only Jetpack Compose
 - [`ui-map-figjam.md`](ui-map-figjam.md) — the deprecated FigJam diagram format, for migrating existing projects
 
 ## Rendering and validation

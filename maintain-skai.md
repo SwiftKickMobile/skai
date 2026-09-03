@@ -301,7 +301,7 @@ Checks:
 - Examples or walkthroughs that show markers cleared without a preceding gate + advance intent step, unless the guide explicitly documents a narrower exception (for example, inline discussion items resolved during human-approved discussion).
 - `auto` sections that list gates bypassed by `auto` without labeling which gates are hard (not bypassed). If a guide has both soft and hard gates, the `## Gates` section should label the hard ones.
 - Inline "Gate:" signposts that add mechanics not present in the `## Gates` section (acceptable to say "Gate: STOP"; not acceptable to add new rules about what happens at the gate unless they are already defined in the gate model).
-- If the guide defines working-doc paths, any examples or artifact paths that place files directly under `skai/working-docs/<branch-path>/...` instead of `skai/working-docs/<branch-path>/<session-name>/...`.
+- If the guide defines working-doc paths, any path resolved outside the target-owning Git root or placed directly under `skai/working-docs/<branch-path>/...` instead of `skai/working-docs/<branch-path>/<session-name>/...`.
 
 ## README Usage section conventions
 

@@ -2,13 +2,54 @@ Managed-By: skai
 Managed-Id: guide.ui-map-compose
 Managed-Source: Guides/UIMap/ui-map-compose.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-11
+Managed-Updated-At: 2026-09-02
 
-# UI Map — Jetpack Compose Reference
+# UI Map — Compose Multiplatform Reference
 
-Platform reference for implementing a UI Map in Jetpack Compose. Companion to [`ui-map-guide.md`](ui-map-guide.md), which defines the platform-agnostic YAML format.
+Platform reference for implementing a UI Map in Compose Multiplatform or Android-only Jetpack Compose. Companion to [`ui-map-guide.md`](ui-map-guide.md), which defines the platform-agnostic YAML format.
 
 Each scene's routing is implemented locally: the view model emits one-shot navigation effects, and the screen subscribes and dispatches each effect to a Compose Navigation `NavController` scoped to that scene. There is no central router.
+
+## SKAI Compose library
+
+The route types, navigation hosts, navigation extensions, and placeholder UI in these Compose guides come from the local SKAI Compose build at `Submodules/skai/Dev/Compose`. Inspect the source set that will consume it before Code Changes:
+
+- Shared Compose code in `commonMain` uses `com.swiftkickmobile.skai:skai-compose-kmp`.
+- Android-only Compose code uses `com.swiftkickmobile.skai:skai-compose-android`.
+
+Use exactly one artifact in a consuming module. When the matching dependency is absent, attaching the included build and artifact is mechanical setup owned by UI Map implementation in Build; Plan records the setup without changing project files. From a conventional repository root, the Gradle settings entry is:
+
+```kotlin
+includeBuild("Submodules/skai/Dev/Compose")
+```
+
+Select one artifact for the consuming module, then place that dependency where the scene sources can see it. A KMP module declares the KMP artifact in `commonMain`; its platform source sets inherit the same classes, so do not add the Android artifact again:
+
+```kotlin
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation("com.swiftkickmobile.skai:skai-compose-kmp")
+        }
+    }
+}
+```
+
+A plain Android module declares only the Android artifact in its module dependencies:
+
+```kotlin
+dependencies {
+    implementation("com.swiftkickmobile.skai:skai-compose-android")
+}
+```
+
+Do not copy the library sources or hand-roll substitutes. If the submodule path is unavailable, or the project's toolchain or target constraints cannot consume either artifact, STOP in Discussion under the implementation guide's missing-mapping rule.
+
+Type-safe routes also require the Kotlin serialization compiler plugin on the **consuming module**; applying it inside the included library does not configure the host. Inspect the consuming module's plugins before Code Changes. When absent, adding `org.jetbrains.kotlin.plugin.serialization` at the Kotlin-compatible version established by the project is mechanical setup owned by UI Map implementation in Build; Plan records it without changing project files. If the project has no compatible plugin version or its conventions prohibit the plugin, STOP in Discussion under the same missing-mapping rule.
+
+The KMP artifact currently targets Android (minimum SDK 29), JVM, `iosArm64`, and `iosSimulatorArm64`; it has no `iosX64` target. The library build's README and version catalog are the authority for its current Kotlin, AGP, Gradle, and Compose versions.
+
+The library packages are `com.swiftkickmobile.skai.compose.navigation` and `com.swiftkickmobile.skai.compose.placeholder`.
 
 ## Scene file layout
 
@@ -16,13 +57,15 @@ Map scene IDs are lower snake case. Keep the map ID as the package name and conv
 
 ```
 trail_detail/
-  TrailDetailScreen.kt          // @Composable fun TrailDetailScreen(viewModel: TrailDetailViewModel = hiltViewModel())
-  TrailDetailViewModel.kt       // route enums at the top, then @HiltViewModel class TrailDetailViewModel : ViewModel()
+  TrailDetailScreen.kt          // @Composable fun TrailDetailScreen(...)
+  TrailDetailViewModel.kt       // route enums at the top, then the view-model class
   TrailDetailViewState.kt       // data class for observable scene state
   TrailDetailViewEvent.kt       // sealed interface — UI inputs to the view model
   TrailDetailViewEffect.kt      // sealed interface — one-shot outputs (navigation, toasts, etc.)
   views/                        // optional — TrailDetail's own subviews
 ```
+
+Place shared Compose scenes under the project's `commonMain` scenes root; place Android-only scenes under its Android source set. The project's established module and source-root conventions choose the exact prefix, while the domain/scene nesting below remains the same.
 
 All of a scene's route enums live at the top of its `<Scene>ViewModel.kt`, above the view-model class. A non-routing scene with no state to manage may omit the view model, view state, event, and effect files entirely — the composable stands alone.
 
@@ -34,7 +77,7 @@ Scenes in the YAML's top-level `common:` group are domain-agnostic. They live in
 
 ## Route enums
 
-Sealed classes implementing a `Route` marker interface, with `@Serializable` cases for type-safe Compose Navigation. Cases carry whatever associated values the destination needs as `data class` fields.
+Sealed classes implementing a `Route` marker interface, with `@Serializable` cases for type-safe Compose Navigation. Before adding them, confirm the consuming-module serialization-plugin prerequisite in **SKAI Compose library** above. Cases carry whatever associated values the destination needs as `data class` fields.
 
 ```kotlin
 sealed class DashboardNavRoute : Route {
@@ -45,15 +88,14 @@ sealed class DashboardNavRoute : Route {
 
 ## Scene state, events, and effects
 
-Every scene exposes three sealed types alongside its view model:
+A scene with state-management responsibility exposes three types alongside its view model; the stateless, non-routing exemption above remains valid:
 
 - `FooViewState` — a `data class` of observable state; exposed as `StateFlow<FooViewState>`.
 - `FooViewEvent` — a `sealed interface` of UI inputs; the screen calls `viewModel.processEvent(event)`.
 - `FooViewEffect` — a `sealed interface` of one-shot outputs (navigation, toast, etc.); exposed as `Flow<FooViewEffect>` from a `Channel`.
 
 ```kotlin
-@HiltViewModel
-class DashboardViewModel @Inject constructor() : ViewModel() {
+class DashboardViewModel : ViewModel() {
 
     private val _viewState = MutableStateFlow(DashboardViewState())
     val viewState: StateFlow<DashboardViewState> = _viewState.asStateFlow()
@@ -64,6 +106,8 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
     fun processEvent(event: DashboardViewEvent) { /* … */ }
 }
 ```
+
+The state/event/effect responsibilities are cross-platform; construction and dependency injection follow the consuming source set's project convention. Shared `commonMain` code uses the project's KMP-compatible ViewModel, lifecycle collection, and DI APIs. An Android-only module may use Hilt (`@HiltViewModel`, `@Inject`, and `hiltViewModel()`) when that is its established convention. If a scene needs a view model but the consuming source set has no defined compatible lifecycle/DI pattern, STOP in Discussion rather than introducing one during UI Map implementation.
 
 ## Nav routing
 
@@ -77,7 +121,7 @@ sealed class DashboardNavRoute : Route {
 data class Navigate(val route: DashboardNavRoute) : DashboardViewEffect
 
 @Composable
-fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
+fun DashboardScreen(viewModel: DashboardViewModel) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     val navController = rememberNavController()
 
@@ -98,15 +142,17 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
 
 ## Modal routing
 
-One `ModalRoute` enum per scene. Every modal destination has a required `modal_style` in the map; that agreed value selects the builder at the `NavHost` declaration site, not in the route enum. Do not infer or substitute a style during implementation:
+One `ModalRoute` enum per scene. Every modal destination has a required `modal_style` in the map; that agreed value selects the builder at the `NavHost` declaration site, not in the route enum. Do not infer or substitute a style during implementation.
 
-| `modal_style` | Builder |
-|---|---|
-| `sheet` | `bottomSheet<Route>` |
-| `full_screen` | `bottomSheetFullScreen<Route>` |
-| `popover` | `dialog<Route>` |
+Every scene that presents a modal owns a `modalNavController` created with `rememberNavController(rememberBottomSheetNavigator())` and overlays one `ModalNavHost`. SKAI defines these standard mappings:
 
-Projects document non-standard styles and deliberate overrides in their project-conventions document.
+| `modal_style` | Destination builder | Owner and behavior |
+|---|---|---|
+| `sheet` | `bottomSheet<Route> { … }` | `androidx.compose.material.navigation`; Material bottom sheet using the scene's `BottomSheetNavigator` configuration |
+| `full_screen` | `bottomSheetFullScreenModal<Route>(navHostController = modalNavController) { … }` | SKAI Compose; full-size Material 3 sheet, square by default, with partial expansion skipped |
+| `popover` | `dialog<Route> { … }` | Navigation Compose dialog destination |
+
+Projects may declare any other modal style. Their project-conventions document maps each non-standard style to the actual Compose destination builder or presentation mechanism; the scaffold writes that real project-defined routing call. If neither this table nor project conventions map a declared style, STOP in Discussion under the implementation guide's missing-mapping rule. The placeholder style descriptor records the map vocabulary for breadcrumb grouping but never chooses the builder.
 
 ```kotlin
 sealed class DashboardModalRoute : Route {
@@ -131,10 +177,12 @@ LaunchedEffect(Unit) {
     }
 }
 
-ModalBottomSheetNavHost(navController = modalNavController) {
-    bottomSheet<DashboardModalRoute.Profile>            { ProfileScreen() }
-    bottomSheetFullScreen<DashboardModalRoute.MediaCapture> { MediaCaptureScreen() }
-    dialog<DashboardModalRoute.RecordWarning>           { RecordWarningDialog() }
+ModalNavHost(navController = modalNavController) {
+    bottomSheet<DashboardModalRoute.Profile> { ProfileScreen() }
+    bottomSheetFullScreenModal<DashboardModalRoute.MediaCapture>(
+        navHostController = modalNavController,
+    ) { MediaCaptureScreen() }
+    dialog<DashboardModalRoute.RecordWarning> { RecordWarningDialog() }
 }
 ```
 
@@ -188,7 +236,7 @@ A composite parent has no route enum for its composite children — they're call
 
 ```kotlin
 @Composable
-fun DetailScreen(viewModel: DetailViewModel = hiltViewModel()) {
+fun DetailScreen(viewModel: DetailViewModel) {
     Column {
         HeaderView(/* … */)
         PlayerView(/* … */)

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-catalog
 Managed-Source: Guides/Requirements/requirements-catalog.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-27
+Managed-Updated-At: 2026-09-03
 
 # Requirements Catalog
 
@@ -104,8 +104,11 @@ this repo.
 
 ## Layout
 
+The default root for a local catalog is `skai/requirements/`; the project's Integration block is
+always authoritative and may name another local or shared root.
+
 ```
-requirements/
+<catalog-root>/
   _requirements.md              <- root index (system overview + map of scopes)
   glossary.md                   <- domain terms, and the catalog's second index
   platform/

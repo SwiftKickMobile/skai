@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-promotion
 Managed-Source: Guides/Requirements/requirements-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-27
+Managed-Updated-At: 2026-09-03
 
 # Requirements Promotion
 
@@ -251,7 +251,7 @@ Those citations are out of scope for all five.
 
 ## Evidence
 
-[evidence: C1; comm -23 <(grep -ohE '^## [A-Z-]+-[0-9]+' requirements/features/reminders.md | sed 's/^## //' | sort -u) <(grep -ohE '^## [A-Z-]+-[0-9]+' skai/changes/reminder-expiry/proposed-requirements/features/reminders.md | sed 's/^## //' | sort -u); comm -12 <(grep -rhoE '^## [A-Z-]+-[0-9]+ \(retired\)' requirements/ | grep -oE '[A-Z-]+-[0-9]+' | sort -u) <(grep -rhoE '^## [A-Z-]+-[0-9]+$' skai/changes/reminder-expiry/proposed-requirements/ | grep -oE '[A-Z-]+-[0-9]+' | sort -u); no ID dropped, none renumbered, no retired ID reused]
+[evidence: C1; comm -23 <(grep -ohE '^## [A-Z-]+-[0-9]+' skai/requirements/features/reminders.md | sed 's/^## //' | sort -u) <(grep -ohE '^## [A-Z-]+-[0-9]+' skai/changes/reminder-expiry/proposed-requirements/features/reminders.md | sed 's/^## //' | sort -u); comm -12 <(grep -rhoE '^## [A-Z-]+-[0-9]+ \(retired\)' skai/requirements/ | grep -oE '[A-Z-]+-[0-9]+' | sort -u) <(grep -rhoE '^## [A-Z-]+-[0-9]+$' skai/changes/reminder-expiry/proposed-requirements/ | grep -oE '[A-Z-]+-[0-9]+' | sort -u); no ID dropped, none renumbered, no retired ID reused]
 [evidence: C2; inspection of the prefix on each touched file's line in features/_features.md; both present, no new prefix introduced]
 [evidence: C3; every ID this package's new and changed text cites, resolved against the catalog plus the drafts; 0 unresolved]
 [evidence: C4; writing-style check over the changed requirements REMIND-04, REMIND-06, REMIND-09, against Required, Forbidden and Nothing that decays in full; FAILED on REMIND-06; output: skai/changes/reminder-expiry/evidence/promotion-run1-c4.md]
@@ -277,7 +277,7 @@ whose evidence is an inspection rather than a command:
 [evidence: C4; writing-style check over the changed prose — REMIND-04, REMIND-06, REMIND-09 and the `Expiry window` glossary entry — against Required, Forbidden and Nothing that decays in full; no mechanism named, no temporal reference, all four phrased as behavior]
 [evidence: C5; inspection — features/_features.md's line for reminders names expiry and dismissal, not just "reminders"; `Pending reminder` and `Expiry window` both have glossary entries pointing at REMIND-04 and REMIND-09; no behavioral claim outside a numbered requirement in the three written files]
 [evidence: C6; (D2), (D5) removed from REMIND-04 and REMIND-09; no other scaffolding present]
-[evidence: C7; wrote features/reminders.md, features/_features.md, glossary.md; 9 requirements landed; grep -E '\(D[0-9]+\)|- \[[ x]\]|🟡' requirements/features/reminders.md requirements/features/_features.md requirements/glossary.md returned nothing; inspection — no status field on any written requirement other than REMIND-07's (retired)]
+[evidence: C7; wrote features/reminders.md, features/_features.md, glossary.md; 9 requirements landed; grep -E '\(D[0-9]+\)|- \[[ x]\]|🟡' skai/requirements/features/reminders.md skai/requirements/features/_features.md skai/requirements/glossary.md returned nothing; inspection — no status field on any written requirement other than REMIND-07's (retired)]
 ```
 
 On failure, persist and link the full output, so `output` is required. Key its path to the run as

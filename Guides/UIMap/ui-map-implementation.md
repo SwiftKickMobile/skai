@@ -2,13 +2,13 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation
 Managed-Source: Guides/UIMap/ui-map-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-11
+Managed-Updated-At: 2026-09-02
 
 # UI Map Implementation
 
 The implementation method for the UI Map system. It executes or specifies the code work needed to conform to an approved map and promotes an approved proposed map when one exists. Use [`ui-map-implementation-artifacts.md`](ui-map-implementation-artifacts.md) for the code-change and evidence formats this skill produces, [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md) for the map-change items it consumes and the change requests it raises, and [`ui-map-guide.md`](ui-map-guide.md) for the YAML map.
 
-For platform-specific code conventions, load [`ui-map-swiftui.md`](ui-map-swiftui.md) for iOS/SwiftUI or [`ui-map-compose.md`](ui-map-compose.md) for Android/Compose. For placeholder scaffolding, load [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md) or [`ui-map-compose-placeholders.md`](ui-map-compose-placeholders.md) for the matching stack.
+For platform-specific code conventions, load [`ui-map-swiftui.md`](ui-map-swiftui.md) for SwiftUI or [`ui-map-compose.md`](ui-map-compose.md) for Compose Multiplatform or Android-only Jetpack Compose. For placeholder scaffolding, load [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md) or [`ui-map-compose-placeholders.md`](ui-map-compose-placeholders.md) for the matching stack.
 
 ## Purpose
 
@@ -46,7 +46,7 @@ Required:
 - The target map: when an architecture change package exists at `skai/changes/<change-id>/`, its proposed map (`proposed-ui-map.yaml`), render, and architecture artifact (`ui-map-architecture.md`) with `## Map Changes`; otherwise the official map for a no-package conformance run. A package is ready for implementation when its Discussion has no unchecked items, no change request remains `Proposed`, and its current `## Map Changes`, proposed YAML, and nonempty render are present.
 - The official map `skai/ui-map/ui-map.yaml`, the frozen baseline the change is measured against. (For a baseline there is none yet.)
 - The app codebase.
-- The platform convention guide: [`ui-map-swiftui.md`](ui-map-swiftui.md) for iOS/SwiftUI or [`ui-map-compose.md`](ui-map-compose.md) for Android/Compose.
+- The platform convention guide: [`ui-map-swiftui.md`](ui-map-swiftui.md) for SwiftUI or [`ui-map-compose.md`](ui-map-compose.md) for Compose Multiplatform or Android-only Jetpack Compose.
 - The matching placeholder guide whenever placeholder work is in scope during Audit, Plan, or Build: [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md) or [`ui-map-compose-placeholders.md`](ui-map-compose-placeholders.md). Omit it only when no placeholder work is in scope.
 - The artifact-format references: [`ui-map-implementation-artifacts.md`](ui-map-implementation-artifacts.md) (code-change items + evidence this skill writes) and [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md) (map-change items it reads, change requests it raises).
 - `skai/integration.md` for build/test commands, render overrides, and evidence paths. Do not invent project-specific commands; for rendering, use the SKAI default from [`ui-map-guide.md`](ui-map-guide.md) when no override exists.

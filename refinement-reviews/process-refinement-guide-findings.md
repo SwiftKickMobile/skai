@@ -4,12 +4,12 @@ Cross-pass record of every cold-review finding against these two guides and what
 Consulted at triage; never shown to a cold reviewer. Extract settled decisions into the prompt's
 `{{SETTLED_DISPOSITIONS}}` slot instead.
 
-**Path note (logged, not fixed).** The guide specifies `skai/refinement-reviews/<target>-findings.md`,
-which assumes a host project. The skai repo has no `skai/` folder, so refining skai's own guides has
-no defined home for this log. Placed at the repo root by analogy. Same family as the standing
-observation that this process cannot commission a conforming cold review of itself — the template
-forbids the reviewer from reading `process-refinement-guide.md`, which is unavoidable when that guide is the
-target.
+**Path note (closed 2026-09-03).** Collateral now resolves from the binding target's owning Git root,
+not the caller's working directory. Findings live at `<target-repo-root>/refinement-reviews/`; working
+documents live at `<target-repo-root>/skai/working-docs/` and use that repository's branch. This works
+when SKAI is opened directly or nested as a submodule. The separate standing observation remains:
+this process cannot commission a conforming cold review of itself because the template forbids the
+reviewer from reading `process-refinement-guide.md`, which is unavoidable when that guide is the target.
 
 ## Pass 1 — 2026-08-28/29 · round scoring
 
