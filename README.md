@@ -228,23 +228,23 @@ Create or change the app's UI Map as an architecture artifact. Produces a change
 
 **Phases:**
 
-1. **Discussion.** Agent digests the inputs and drafts topic-organized map decisions with inline `- [ ]` items (questions, proposals, tradeoffs). Gate: human resolves each item before map changes are written.
-2. **Map changes.** Agent translates the resolved decisions into typed map changes, writes the package's proposed map, and renders that proposal for validation and review. Ends with `🏁 Complete.` once the valid architecture package is in place.
+1. **Discussion.** Agent digests the inputs, drafts topic-organized map decisions with inline `- [ ]` items (questions, proposals, tradeoffs), and maintains a provisional proposed map and render as soon as there is enough structure to review. The preview reflects the agent's current recommendations and is updated as decisions change. Gate: human resolves every discussion item.
+2. **Map changes.** Agent diffs the frozen official map against the reviewed proposal, records the differences as typed map-change items, finalizes deferrals and assumptions/TODOs, and validates and renders the finished proposal. Ends with `🏁 Complete.` once the valid architecture package is in place.
 
 ### UI Map implementation (skill `skai-ui-map-implementation`)
 
-Conform app code to the proposed map in an architecture change package, then promote that map to official. The guide covers the audit, alignment discussion, checkbox-tracked code changes and their ownership dispositions, placeholder scaffolding, build verification, and change requests back to architecture.
+Execute or specify the structural code work needed to conform to the target UI Map. The target is the proposed map when an architecture change package exists, or the official map for a no-package conformance run. The guide covers the audit, alignment discussion, checkbox-tracked code changes and their ownership dispositions, placeholder scaffolding, build verification, change requests back to architecture, and promotion of an approved proposed map.
 
 - Guide [`Guides/UIMap/ui-map-implementation.md`](Guides/UIMap/ui-map-implementation.md)
 
-**Prerequisites:** A change package at `skai/changes/<change-id>/` (proposed map + render + architecture artifact) and the app codebase; with no change package, the official `skai/ui-map/ui-map.yaml` is the frozen target. Run mode (Plan vs Build) is inferred from context.
+**Prerequisites:** The app codebase and an identifiable target map: either a ready change package at `skai/changes/<change-id>/` (proposed map + render + architecture artifact) or the official `skai/ui-map/ui-map.yaml` for conformance work. Run mode (Plan vs Build) is inferred from context.
 
 **Stages:**
 
 1. **Audit.** Agent compares the codebase to the target map within the change's scope and separates UI-map-owned work, concrete handoffs, and map-level change requests.
 2. **Discussion.** Agent resolves the non-mechanical decisions the audit raises. Gate: discussion complete.
 3. **Code Changes.** Agent writes typed, unchecked items with stable IDs and a Disposition (`implement` / `placeholder` / `planned` / `handoff`), ending with a terminal promote item when a proposed map exists. The checkbox records completion; Disposition records ownership. Gate: Code Changes ready.
-4. **Implement.** In Build, the agent executes owned items, build-verifies at chunk boundaries, and blocks while any handoff remains unchecked. In Plan, owned code work remains unchecked as `planned`. When a proposed map exists, promotion is the terminal item and runs only at the mode's completion point. Click-through QA is downstream, not a gate.
+4. **Implement.** In Build, the agent executes owned items, verifies a fresh green build, and blocks before completion or promotion while any handoff remains unchecked. In Plan, owned code work remains unchecked as `planned`; the reviewed specification is the deliverable. When a proposed map exists, Plan promotes it after specification approval, while Build promotes it only after code conformance is green. Click-through QA is downstream, not a gate.
 
 ### Requirements authoring (skill `skai-requirements-authoring`)
 
