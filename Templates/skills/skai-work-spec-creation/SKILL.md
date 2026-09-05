@@ -1,9 +1,9 @@
 ---
 name: skai-work-spec-creation
-description: Creates work specs using skai (planning, API sketch, and work spec creation with `- [ ]` task checkpoints). Use when the user asks to plan work or write a work spec.
+description: Designs software changes using skai with open-ended inputs, proposal-led discussion, and an API-diff review surface. Use when the user asks to design or author a work spec; implementation planning is handed to skai-work-spec-implementation.
 ---
 
-# SKAI: Work spec creation
+# SKAI: Work spec design
 
 ## Instructions
 

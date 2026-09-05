@@ -1,6 +1,6 @@
 ---
 name: skai-work-spec-implementation
-description: Executes work specs step-by-step using skai (begin/next/continue commands, `- [ ]` task lifecycle, and auto mode). Use when the user says begin, next, continue, or asks to implement a work spec task.
+description: Turns an approved skai work-spec design into a task list, obtains one plan approval, then implements and verifies continuously. Use when the user asks to write the implementation plan or build an approved work-spec design.
 ---
 
 # SKAI: Work spec implementation

@@ -23,7 +23,7 @@ Recommended host locations for agent-facing docs:
 - [IDE clutter / autocomplete](#ide-clutter--autocomplete-recommended)
 - [Usage](#usage)
   - [How all workflows work](#how-all-workflows-work)
-  - [Work spec creation](#work-spec-creation-skill-skai-work-spec-creation)
+  - [Work spec design](#work-spec-design-skill-skai-work-spec-creation)
   - [Work spec implementation](#work-spec-implementation-skill-skai-work-spec-implementation)
   - [UI Map architecture](#ui-map-architecture-skill-skai-ui-map-architecture)
   - [UI Map implementation](#ui-map-implementation-skill-skai-ui-map-implementation)
@@ -176,8 +176,7 @@ After installation, workflows are available as **skills** that your agent activa
    - `⏳ GATE: Blocked: <reason>. Resolve and say "next" to continue.`
    - `🏁 Complete. Let me know if anything needs adjustment.` (not a gate -- workflow finished)
 4. Saying "next" (or similar) at a checkpoint counts as approval to proceed.
-5. Adding **"auto"** to advance intent tells the agent to proceed without stopping at checkpoints, unless a universal STOP condition applies (e.g. "next auto", "begin auto").
-6. You can bound auto: **"auto to <milestone>"** means "proceed until you are about to begin the milestone, then stop" (e.g. "next auto to task 7").
+5. Some workflows support **"auto"** and **"auto to <milestone>"** to bypass planned gates. The work-spec skills intentionally do not: their reduced gate set is advanced by a supervisor, which may be a human or an authorized agent.
 
 **Agent note-taking and progress tracking.** The agent keeps structured notes so you can pick up where you left off. Two marker conventions coexist:
 
@@ -189,33 +188,31 @@ After installation, workflows are available as **skills** that your agent activa
 
 **Retros on demand.** At any point you can ask the agent to **"retro"** to check for gaps, update documents, backfill requirements, and reflect on process.
 
-### Work spec creation (skill `skai-work-spec-creation`)
+### Work spec design (skill `skai-work-spec-creation`)
 
-Structured planning and specification for complex features. Produces a planning document (design decisions, API sketch) and a work specification (tasks, subtasks, requirements traceability). Behaviors discovered during planning are handed to requirements authoring rather than written into the catalog here.
+Turn open-ended feature input into a technical design whose primary review surface is a complete diff of changed production APIs. The agent fills gaps with proposals, keeps the design and API Sketch current through discussion, and invokes UI Map Architecture or requirements backfill when their owned artifacts are needed. It does not write the implementation task list or code.
 
 - Guide [`Guides/Spec/work-spec-creation.md`](Guides/Spec/work-spec-creation.md)
 
-**Prerequisites:** Discuss the feature or problem with the agent in some detail before initiating the process -- scope, motivating use cases, architecture, solution approaches. A thorough upfront discussion produces a much higher quality first draft and minimizes iteration. A Jira ticket, feature request, or problem statement is a good starting point.
+**Prerequisites:** Any useful input: a discussion, design, ticket, requirements, another specification, source code, or a combination.
 
 **Phases:**
 
-1. **Planning document + design discussion.** Agent summarizes the discussion into a document seeded with `- [ ] D<n> [Kind] <summary>` discussion items per topic (each `[Question]`, `[Proposal]`, or `[Tradeoff]`). Optional: for large efforts, the planning document can be organized into explicit phase sections; each phase runs its own mini-cycle (discussion, API sketch, requirements normalization, work spec) before moving to the next. While any `- [ ]` item remains unresolved the workflow is at a blocked gate; the moment they're all resolved (check the box, append a `- **Decision**` sub-bullet) the agent emits the first planned gate to advance to API sketch.
-2. **API sketch.** Agent drafts the API surfaces implied by the design. Gate: human confirms the design is ready to proceed.
-3. **Requirements normalization.** Agent hands the planning document's behaviors to requirements authoring, which captures them in a change package. Gate: human acknowledges the package.
-4. **Work spec first pass.** Agent writes top-level tasks only (no subtasks). Gate: human reviews the task list.
-5. **Work spec second pass.** Agent adds subtasks, requirement IDs, and traceability mapping. Gate: human reviews the completed work spec.
+1. **Draft and discuss.** Agent writes the design and API Sketch from the available inputs, filling gaps with recommended `D<n>` proposals. The sketch remains current while the supervisor resolves material decisions. Gate: supervisor approves the resolved design direction and API.
+2. **Complete design.** Agent writes the remaining implementation-relevant design, invokes required sibling workflows, and completes for handoff or transitions directly into Work Spec Implementation. Optional delivery slicing appears only when the scope outgrows one iteration.
 
 ### Work spec implementation (skill `skai-work-spec-implementation`)
 
-Execute tasks from a completed work spec, one top-level task per cycle.
+Audit an approved work-spec design against the codebase, create its concrete task list, then implement and verify it continuously after one plan approval. Supports plan-only architect/developer handoff and same-agent design-to-build flow.
 
 - Guide [`Guides/Spec/work-spec-implementation.md`](Guides/Spec/work-spec-implementation.md)
 
-**Prerequisites:** A completed work spec.
+**Prerequisites:** A ready work-spec design and project build/test/runtime commands in [`skai/integration.md`](skai/integration.md).
 
-**Phases (repeating):**
+**Phases:**
 
-1. **Implement next top-level task.** Agent implements all subtasks under Task N. Gate: agent stops after finishing Task N and waits before moving to Task N+1.
+1. **Audit and plan.** Agent inspects the design, code, tests, and required sibling artifacts, then writes the whole implementation task list with observable completion and verification. Gate: supervisor approves the completed design and implementation plan.
+2. **Implement continuously.** Agent executes all runnable owned tasks without per-task gates, records fresh evidence, invokes the Unit Testing and UI Map Implementation workflows when applicable, and blocks only on unresolved design, missing tooling, handoffs, or required human testing.
 
 ### UI Map architecture (skill `skai-ui-map-architecture`)
 

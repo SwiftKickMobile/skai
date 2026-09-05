@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.process-refinement
 Managed-Source: Guides/Process/process-refinement-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-29
+Managed-Updated-At: 2026-09-04
 
 # Process Refinement Guide
 
@@ -32,7 +32,7 @@ Every refinement target should have a **design spec** — a plan, requirements d
 
 ## The refinement working document
 
-A refinement pass records its work in a **refinement working document**: the finding matrix, the triage decisions, the repair clusters, and the closure table — plus, at the structured tier (see *Scaling the ceremony*), the invariants, the canonical-ownership table, and each finding's rule impact map. It is a working document — create it following `Guides/Core/working-doc-conventions.md`, placed under `skai/working-docs/<branch-path>/<session-name>/`, named `<target-name>-refinement.md`. This is the same logic the work-spec creation guide uses for its plan and work-spec documents, and the UI Map implementation guide uses for its implementation working document: process artifacts are working docs, kept out of the target's own committed files.
+A refinement pass records its work in a **refinement working document**: the finding matrix, the triage decisions, the repair clusters, and the closure table — plus, at the structured tier (see *Scaling the ceremony*), the invariants, the canonical-ownership table, and each finding's rule impact map. It is a working document — create it following `Guides/Core/working-doc-conventions.md`, placed under `skai/working-docs/<branch-path>/<session-name>/`, named `<target-name>-refinement.md`. This is the same working-doc convention used by the work-spec and UI Map workflows: process artifacts are kept out of the target's own committed files.
 
 A trivial pass — a couple of clarity fixes — may skip the persisted document and keep the matrix inline in the conversation. Anything beyond that gets the working document.
 
