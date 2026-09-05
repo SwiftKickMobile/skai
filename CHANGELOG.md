@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- 2026-09-03 **Compose placeholder tab labels no longer wrap.** Tab labels are constrained to one line and ellipsized when five-item navigation bars leave insufficient width, preserving consistent icon alignment.
+
 - 2026-09-03 **Process-refinement collateral now follows the target repository.** The workflow resolves the Git root from the binding target path, uses that repository's branch for working documents, and stores durable findings at `refinement-reviews/` relative to the target root. This works identically when SKAI is opened directly or nested as a submodule and prevents parent projects from accumulating SKAI maintenance history. Re-run installed adapters to refresh the wrapper.
 
 - 2026-09-03 **Local requirements catalogs now default to `skai/requirements/`.** Requirements authoring and promotion still resolve the authoritative root from `skai/integration.md`; the catalog guide, examples, README, and Integration template use the SKAI-owned default. Installer updates treat a root-level `requirements/` tree as a permission-gated legacy move and stop on collisions. Existing projects should move the catalog, update the Integration requirements root, and re-run installed adapters.
