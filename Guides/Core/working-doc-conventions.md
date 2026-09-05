@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.working-doc-conventions
 Managed-Source: Guides/Core/working-doc-conventions.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-03
+Managed-Updated-At: 2026-09-04
 
 # Working Document Conventions
 
@@ -54,8 +54,8 @@ Notes:
 
 ## Examples
 
-- Work spec planning:
-  - `skai/working-docs/<branch-path>/observable-wrapper/observable-wrapper-plan.md`
+- Work spec design:
+  - `skai/working-docs/<branch-path>/observable-wrapper/observable-wrapper-design.md`
 - Work spec implementation:
   - `skai/working-docs/<branch-path>/observable-wrapper/observable-wrapper-impl.md`
 - Unit testing orchestration:

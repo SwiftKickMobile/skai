@@ -23,7 +23,7 @@ Recommended host locations for agent-facing docs:
 - [IDE clutter / autocomplete](#ide-clutter--autocomplete-recommended)
 - [Usage](#usage)
   - [How all workflows work](#how-all-workflows-work)
-  - [Work spec creation](#work-spec-creation-skill-skai-work-spec-creation)
+  - [Work spec design](#work-spec-design-skill-skai-work-spec-creation)
   - [Work spec implementation](#work-spec-implementation-skill-skai-work-spec-implementation)
   - [UI Map architecture](#ui-map-architecture-skill-skai-ui-map-architecture)
   - [UI Map implementation](#ui-map-implementation-skill-skai-ui-map-implementation)
@@ -176,8 +176,7 @@ After installation, workflows are available as **skills** that your agent activa
    - `⏳ GATE: Blocked: <reason>. Resolve and say "next" to continue.`
    - `🏁 Complete. Let me know if anything needs adjustment.` (not a gate -- workflow finished)
 4. Saying "next" (or similar) at a checkpoint counts as approval to proceed.
-5. Adding **"auto"** to advance intent tells the agent to proceed without stopping at checkpoints, unless a universal STOP condition applies (e.g. "next auto", "begin auto").
-6. You can bound auto: **"auto to <milestone>"** means "proceed until you are about to begin the milestone, then stop" (e.g. "next auto to task 7").
+5. Some workflows support **"auto"** and **"auto to <milestone>"** to bypass planned gates. The work-spec skills intentionally do not: their reduced gate set is advanced by a supervisor, which may be a human or an authorized agent.
 
 **Agent note-taking and progress tracking.** The agent keeps structured notes so you can pick up where you left off. Two marker conventions coexist:
 
@@ -189,33 +188,31 @@ After installation, workflows are available as **skills** that your agent activa
 
 **Retros on demand.** At any point you can ask the agent to **"retro"** to check for gaps, update documents, backfill requirements, and reflect on process.
 
-### Work spec creation (skill `skai-work-spec-creation`)
+### Work spec design (skill `skai-work-spec-creation`)
 
-Structured planning and specification for complex features. Produces a planning document (design decisions, API sketch) and a work specification (tasks, subtasks, requirements traceability). Behaviors discovered during planning are handed to requirements authoring rather than written into the catalog here.
+Turn open-ended feature input into a technical design whose primary review surface is a complete diff of changed production APIs. The agent fills gaps with proposals, keeps the design and API Sketch current through discussion, and invokes UI Map Architecture or requirements backfill when their owned artifacts are needed. It does not write the implementation task list or code.
 
 - Guide [`Guides/Spec/work-spec-creation.md`](Guides/Spec/work-spec-creation.md)
 
-**Prerequisites:** Discuss the feature or problem with the agent in some detail before initiating the process -- scope, motivating use cases, architecture, solution approaches. A thorough upfront discussion produces a much higher quality first draft and minimizes iteration. A Jira ticket, feature request, or problem statement is a good starting point.
+**Prerequisites:** Any useful input: a discussion, design, ticket, requirements, another specification, source code, or a combination.
 
 **Phases:**
 
-1. **Planning document + design discussion.** Agent summarizes the discussion into a document seeded with `- [ ] D<n> [Kind] <summary>` discussion items per topic (each `[Question]`, `[Proposal]`, or `[Tradeoff]`). Optional: for large efforts, the planning document can be organized into explicit phase sections; each phase runs its own mini-cycle (discussion, API sketch, requirements normalization, work spec) before moving to the next. While any `- [ ]` item remains unresolved the workflow is at a blocked gate; the moment they're all resolved (check the box, append a `- **Decision**` sub-bullet) the agent emits the first planned gate to advance to API sketch.
-2. **API sketch.** Agent drafts the API surfaces implied by the design. Gate: human confirms the design is ready to proceed.
-3. **Requirements normalization.** Agent hands the planning document's behaviors to requirements authoring, which captures them in a change package. Gate: human acknowledges the package.
-4. **Work spec first pass.** Agent writes top-level tasks only (no subtasks). Gate: human reviews the task list.
-5. **Work spec second pass.** Agent adds subtasks, requirement IDs, and traceability mapping. Gate: human reviews the completed work spec.
+1. **Draft and discuss.** Agent writes the design and API Sketch from the available inputs, filling gaps with recommended `D<n>` proposals. The sketch remains current while the supervisor resolves material decisions. Gate: supervisor approves the resolved design direction and API.
+2. **Complete design.** Agent writes the remaining implementation-relevant design, invokes required sibling workflows, and completes for handoff or transitions directly into Work Spec Implementation. Optional delivery slicing appears only when the scope outgrows one iteration.
 
 ### Work spec implementation (skill `skai-work-spec-implementation`)
 
-Execute tasks from a completed work spec, one top-level task per cycle.
+Audit an approved work-spec design against the codebase, create its concrete task list, then implement and verify it continuously after one plan approval. Supports plan-only architect/developer handoff and same-agent design-to-build flow.
 
 - Guide [`Guides/Spec/work-spec-implementation.md`](Guides/Spec/work-spec-implementation.md)
 
-**Prerequisites:** A completed work spec.
+**Prerequisites:** A ready work-spec design and project build/test/runtime commands in [`skai/integration.md`](skai/integration.md).
 
-**Phases (repeating):**
+**Phases:**
 
-1. **Implement next top-level task.** Agent implements all subtasks under Task N. Gate: agent stops after finishing Task N and waits before moving to Task N+1.
+1. **Audit and plan.** Agent inspects the design, code, tests, and required sibling artifacts, then writes the whole implementation task list with observable completion and verification. Gate: supervisor approves the completed design and implementation plan.
+2. **Implement continuously.** Agent executes all runnable owned tasks without per-task gates, records fresh evidence, invokes the Unit Testing and UI Map Implementation workflows when applicable, and blocks only on unresolved design, missing tooling, handoffs, or required human testing.
 
 ### UI Map architecture (skill `skai-ui-map-architecture`)
 
@@ -228,23 +225,23 @@ Create or change the app's UI Map as an architecture artifact. Produces a change
 
 **Phases:**
 
-1. **Discussion.** Agent digests the inputs and drafts topic-organized map decisions with inline `- [ ]` items (questions, proposals, tradeoffs). Gate: human resolves each item before map changes are written.
-2. **Map changes.** Agent translates the resolved decisions into typed map changes, writes the package's proposed map, and renders that proposal for validation and review. Ends with `🏁 Complete.` once the valid architecture package is in place.
+1. **Discussion.** Agent digests the inputs, drafts topic-organized map decisions with inline `- [ ]` items (questions, proposals, tradeoffs), and maintains a provisional proposed map and render as soon as there is enough structure to review. The preview reflects the agent's current recommendations and is updated as decisions change. Gate: human resolves every discussion item.
+2. **Map changes.** Agent diffs the frozen official map against the reviewed proposal, records the differences as typed map-change items, finalizes deferrals and assumptions/TODOs, and validates and renders the finished proposal. Ends with `🏁 Complete.` once the valid architecture package is in place.
 
 ### UI Map implementation (skill `skai-ui-map-implementation`)
 
-Conform app code to the proposed map in an architecture change package, then promote that map to official. The guide covers the audit, alignment discussion, checkbox-tracked code changes and their ownership dispositions, placeholder scaffolding, build verification, and change requests back to architecture.
+Execute or specify the structural code work needed to conform to the target UI Map. The target is the proposed map when an architecture change package exists, or the official map for a no-package conformance run. The guide covers the audit, alignment discussion, checkbox-tracked code changes and their ownership dispositions, placeholder scaffolding, build verification, change requests back to architecture, and promotion of an approved proposed map.
 
 - Guide [`Guides/UIMap/ui-map-implementation.md`](Guides/UIMap/ui-map-implementation.md)
 
-**Prerequisites:** A change package at `skai/changes/<change-id>/` (proposed map + render + architecture artifact) and the app codebase; with no change package, the official `skai/ui-map/ui-map.yaml` is the frozen target. Run mode (Plan vs Build) is inferred from context.
+**Prerequisites:** The app codebase and an identifiable target map: either a ready change package at `skai/changes/<change-id>/` (proposed map + render + architecture artifact) or the official `skai/ui-map/ui-map.yaml` for conformance work. Run mode (Plan vs Build) is inferred from context.
 
 **Stages:**
 
 1. **Audit.** Agent compares the codebase to the target map within the change's scope and separates UI-map-owned work, concrete handoffs, and map-level change requests.
 2. **Discussion.** Agent resolves the non-mechanical decisions the audit raises. Gate: discussion complete.
 3. **Code Changes.** Agent writes typed, unchecked items with stable IDs and a Disposition (`implement` / `placeholder` / `planned` / `handoff`), ending with a terminal promote item when a proposed map exists. The checkbox records completion; Disposition records ownership. Gate: Code Changes ready.
-4. **Implement.** In Build, the agent executes owned items, build-verifies at chunk boundaries, and blocks while any handoff remains unchecked. In Plan, owned code work remains unchecked as `planned`. When a proposed map exists, promotion is the terminal item and runs only at the mode's completion point. Click-through QA is downstream, not a gate.
+4. **Implement.** In Build, the agent executes owned items, verifies a fresh green build, and blocks before completion or promotion while any handoff remains unchecked. In Plan, owned code work remains unchecked as `planned`; the reviewed specification is the deliverable. When a proposed map exists, Plan promotes it after specification approval, while Build promotes it only after code conformance is green. Click-through QA is downstream, not a gate.
 
 ### Requirements authoring (skill `skai-requirements-authoring`)
 

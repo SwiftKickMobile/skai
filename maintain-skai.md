@@ -4,7 +4,7 @@ This file is instructions for an LLM making changes **to the `skai` repo itself*
 
 ## Safety defaults
 
-- Do not commit unless explicitly asked.
+- Do not commit unless explicitly asked. A request to cut a release explicitly authorizes the release commit and tag, but not a push.
 - Do not delete files unless explicitly asked.
 - Do not add dependencies unless explicitly asked.
 - Keep edits minimal and reversible.
@@ -49,7 +49,7 @@ When you change assets, keep these in sync:
 
 ## Release planning
 
-Releases are cut by the human using normal git release mechanisms — a `v<N>` tag on the release commit. The human decides the scope and timing; the agent never cuts a release on its own. `CHANGELOG.md` mirrors this: a `## Unreleased` staging section at the top, frozen `## Release <N>` sections below it (newest first), and a legacy `## Released` bucket at the bottom for entries that predate release numbering.
+Releases are cut only when the human asks. A request to cut a release authorizes the agent to prepare and create the release commit and its `v<N>` tag using normal git release mechanisms; pushing still requires a separate request. `CHANGELOG.md` mirrors this: a `## Unreleased` staging section at the top, frozen `## Release <N>` sections below it (newest first), and a legacy `## Released` bucket at the bottom for entries that predate release numbering.
 
 **Default:** new changelog entries go under `## Unreleased`, which is a staging log (see the `CHANGELOG.md` rules above) — left to accumulate, not consolidated as you go.
 
@@ -58,8 +58,9 @@ Releases are cut by the human using normal git release mechanisms — a `v<N>` t
 1. **Consolidate** the whole `## Unreleased` stack into clean notes for the installing agent — merge related entries, drop superseded intermediate steps, group by theme. Cross-check `git log` since the previous release so nothing host-affecting is missed.
 2. **Convert** the `## Unreleased` heading to `## Release <N> — <YYYY-MM-DD>`; those bullets are now frozen.
 3. **Open** a fresh empty `## Unreleased` at the top.
+4. **Verify and cut** the release: stage the complete release scope, create the release commit, and tag that commit `v<N>`. Do not push unless the human also asks.
 
-The human tags the release commit `v<N>` and pushes it. That tag is the anchor the update workflow targets by default; the `## Release <N>` heading and the `v<N>` tag name the same release.
+The tag is the anchor the update workflow targets by default; the `## Release <N>` heading and the `v<N>` tag name the same release.
 
 ## Guides/ subdirectory convention
 
@@ -68,7 +69,7 @@ All guides live under a topical subdirectory within `Guides/`. Do not place guid
 | Subdirectory | Purpose |
 |---|---|
 | `Core/` | Cross-cutting foundations: debugging, working-doc conventions, update installation |
-| `Spec/` | Work spec creation and implementation |
+| `Spec/` | Work spec design and implementation |
 | `Test/` | Unit testing (planning, infrastructure, writing) |
 | `Process/` | Retro, process problem reporting, ticket creation |
 | `UIMap/` | UI Map system: YAML format, platform references, planning/implementation methods, FigJam migration |
