@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.debugging-core
 Managed-Source: Guides/Core/debugging-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-05-27
+Managed-Updated-At: 2026-09-06
 
 # Debugging / Problem-Resolution Guide (Core)
 
@@ -10,7 +10,7 @@ Goal: prevent "guessing fixes" loops by using evidence, clear tactics, and expli
 
 ## Gates
 
-Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+Core rule: every time the agent is waiting on the operator, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
 
 **Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
@@ -23,14 +23,14 @@ Use these standard gate lines:
 Planned gates are the expected review points of this workflow. At each planned gate:
 1. Summarize what you did and what should happen next.
 2. End with the planned gate line.
-3. STOP and wait for the human.
+3. STOP and wait for the operator.
 
-In the planned gate line, `<what happens after your response>` should describe what the agent will do after the human gives advance intent. If the gate is non-standard, make it describe the exact human response or handoff needed to resume the workflow.
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the operator gives advance intent. If the gate is non-standard, make it describe the exact operator response or handoff needed to resume the workflow.
 
-If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
+If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the operator resolves it.
 
 Workflow-specific gate notes:
-- The pre-experiment gate is often a non-standard planned gate. When the human must run the experiment, the normal response is to provide the experiment output or ask for changes to the experiment. `Next` there only means "proceed with this proposed experiment" when the agent can run the experiment itself.
+- The pre-experiment gate is often a non-standard planned gate. When the operator must run the experiment, the normal response is to provide the experiment output or ask for changes to the experiment. `Next` there only means "proceed with this proposed experiment" when the agent can run the experiment itself.
 - The root-cause, fix, and verify/close gates are hard planned gates. `auto` does not bypass them.
 - The pre-experiment and post-experiment gates are the normal iteration gates. `auto` may bypass them when the workflow is still gaining discriminating evidence.
 
@@ -50,24 +50,24 @@ Rules:
 - "we should...", "let's..." = discussion/context-setting, NOT authorization.
 - Outside a gate, interpret "begin"/"next"/"continue" using the workflow's active-phase rules below. Do not use them to skip hard approval gates or clear unrelated progress markers.
 
-`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit human resolution.
+`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit operator resolution.
 `auto to <milestone>` = auto-advance but STOP before the named planned gate. Use stable, workflow-specific milestone names.
 
 Progress tracking:
-- Default rule: a progress marker (per `Guides/Core/process-flow.md`, "Progress markers") means TODO or pending approval. Do not clear it without human approval.
+- Default rule: a progress marker (per `Guides/Core/process-flow.md`, "Progress markers") means TODO or pending approval. Do not clear it without operator approval.
 - This workflow currently uses inline discussion rather than a required debugging work document, so it does not own any progress markers of its own.
 - The active debugging state lives in the conversation itself: current facts, possibility space, selected tactic, proposed experiment, and latest evidence.
-- At the pre-experiment gate, STOP after proposing the smallest discriminating experiment and wait for the human to run it or redirect it.
-- At the pre-experiment gate, the normal resume signal is experiment evidence from the human, not advance intent.
+- At the pre-experiment gate, STOP after proposing the smallest discriminating experiment and wait for the operator to run it or redirect it.
+- At the pre-experiment gate, the normal resume signal is experiment evidence from the operator, not advance intent.
 - At the post-experiment gate, STOP after interpreting the evidence and proposing the next step.
-- At the root-cause, fix, and verify/close gates, STOP and wait for explicit human approval before advancing.
+- At the root-cause, fix, and verify/close gates, STOP and wait for explicit operator approval before advancing.
 
 Workflow-specific advance behavior:
 - `auto` may bypass the post-experiment iteration gate while the workflow is still in evidence-gathering mode.
-- `auto` does not bypass a pre-experiment gate when the human must run the experiment and provide evidence.
+- `auto` does not bypass a pre-experiment gate when the operator must run the experiment and provide evidence.
 - `auto` does not bypass the root-cause, fix, or verify/close hard gates.
 - Use `root cause`, `fix`, and `verify` as the stable bounded-auto targets for this guide.
-- At the pre-experiment gate, advance intent is only relevant when the agent can run the proposed experiment itself. When the human must run it, the workflow resumes on evidence rather than on `next`.
+- At the pre-experiment gate, advance intent is only relevant when the agent can run the proposed experiment itself. When the operator must run it, the workflow resumes on evidence rather than on `next`.
 
 ## Required mindset
 
@@ -75,12 +75,12 @@ Workflow-specific advance behavior:
 - **Hypotheses guide experiments**: use hypotheses to decide what to measure, not as conclusions.
 - **One change per experiment**: avoid bundling multiple changes that confuse causality.
 
-## Human-in-the-loop contract
+## Operator-in-the-loop contract
 
 In most projects the agent cannot run the app or observe runtime behavior directly.
 
 - The **agent** proposes the smallest next experiment and explains what it will prove/disprove.
-- The **human** runs the experiment and provides outputs (logs, test output, screenshots, traces, crash reports).
+- The **operator** runs the experiment and provides outputs (logs, test output, screenshots, traces, crash reports), or escalates when it cannot.
 
 ## Pick a tactic, justify it, reassess
 
@@ -88,10 +88,10 @@ For each iteration:
 1. State the current best explanation space (2-4 possibilities).
 2. Pick a tactic and justify why it's the best next step.
 3. Design the smallest discriminating experiment.
-4. Run (human) → report evidence → update the possibility space.
+4. Run (operator) → report evidence → update the possibility space.
 5. If the tactic isn't producing new discriminating evidence quickly, switch tactics.
 
-Gate: before each experiment, state the current possibility space, tactic choice, and proposed discriminating experiment, then STOP at the pre-experiment gate. When the human is the one running the experiment, end with a gate line that asks them to run it and share the output, or tell you what to change first.
+Gate: before each experiment, state the current possibility space, tactic choice, and proposed discriminating experiment, then STOP at the pre-experiment gate. When the operator is the one running the experiment, end with a gate line that asks them to run it and share the output, or tell you what to change first.
 
 ## Debugging toolbox (core)
 
@@ -108,7 +108,7 @@ Gate: before each experiment, state the current possibility space, tactic choice
   - Workflow:
     1. write a hypothesis
     2. add the smallest log(s) that will confirm/refute it
-    3. have the human run and paste the output
+    3. have the operator run and paste the output
     4. state *facts* from the output (no "probably/maybe")
 
 - **Partition the possibility space**
@@ -168,7 +168,7 @@ Inspection-only exception (narrow):
 1. **Observe the symptom**: actual vs expected.
 2. **Form a hypothesis**: keep it tentative.
 3. **Collect evidence**: often via the Facts-first logging tactic.
-4. **Wait for evidence**: the human runs and provides output.
+4. **Wait for evidence**: the operator runs and provides output.
 5. **State facts**: report what the evidence shows.
 6. **Repeat** until the root cause statement is isolated.
 
@@ -213,12 +213,11 @@ Gate: STOP at the verify/close gate and wait for explicit approval before conclu
 
 Use the blocked gate and STOP when:
 - **Expected behavior is ambiguous**: product intent is required before you can design a valid discriminating experiment.
-- **Required evidence is missing**: the human has not provided the output needed to proceed.
-- **Stalled progress**: you've iterated without gaining discriminating evidence. Ask the human for a direction change (different tactic, broader/narrower possibility space, additional evidence, or a workaround). This applies even in `auto`.
+- **Required evidence is missing**: the operator has not provided the output needed to proceed.
+- **Stalled progress**: you've iterated without gaining discriminating evidence. Ask the operator for a direction change (different tactic, broader/narrower possibility space, additional evidence, or a workaround). This applies even in `auto`.
 
 ## Adapter notes (minimal)
 
 Adapters should only cover:
 - Logging APIs and how to capture/share evidence for a stack
 - Known tooling limitations that affect evidence collection
-

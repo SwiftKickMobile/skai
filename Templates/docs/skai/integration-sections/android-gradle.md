@@ -2,7 +2,7 @@
 
 Provide copy/pasteable, non-interactive `./gradlew` commands.
 
-Placeholders like `<Variant>`, `<ModulePath>`, and `<TestNamePattern>` are **variables** the agent fills per task context (and asks the human only if unclear).
+Placeholders like `<Variant>`, `<ModulePath>`, and `<TestNamePattern>` are **variables** the agent fills per task context (and asks the operator only if unclear).
 
 ### Build / compile
 

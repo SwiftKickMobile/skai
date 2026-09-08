@@ -12,4 +12,4 @@ description: Enforces evidence-first debugging using skai (facts-first, partitio
   - `Submodules/skai/Guides/Core/debugging-guide.md`
 - Follow the rule's minimal loop and use the guide's tactics.
 - If you choose the bisection tactic, also read `Submodules/skai/Guides/Core/debugging-tactic-code-bisection.md`.
-- If required evidence is unavailable, STOP and ask the human for the minimum output/artifacts needed.
+- If required evidence is unavailable, STOP and ask the operator for the minimum output/artifacts needed.

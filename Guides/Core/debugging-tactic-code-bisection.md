@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.debugging-tactic-code-bisection
 Managed-Source: Guides/Core/debugging-tactic-code-bisection.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-05-27
+Managed-Updated-At: 2026-09-06
 
 # Debugging tactic: code bisection
 
@@ -12,7 +12,7 @@ This is not `git bisect` (history search). This is code-level bisection within a
 
 ## Gates
 
-Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+Core rule: every time the agent is waiting on the operator, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
 
 **Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
@@ -25,15 +25,15 @@ Use these standard gate lines:
 Planned gates are the expected review points of this tactic. At each planned gate:
 1. Summarize what you did and what should happen next.
 2. End with the planned gate line.
-3. STOP and wait for the human.
+3. STOP and wait for the operator.
 
-In the planned gate line, `<what happens after your response>` should describe what the agent will do after the human gives advance intent. If the gate is non-standard, make it describe the exact human response or handoff needed to resume the workflow.
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the operator gives advance intent. If the gate is non-standard, make it describe the exact operator response or handoff needed to resume the workflow.
 
-If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
+If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the operator resolves it.
 
 Workflow-specific gate notes:
 - Starting git-based bisection is a hard planned gate because it creates temporary commits and branches.
-- Isolating the smallest failing delta is also a hard planned gate: this tactic stops there and hands control back to the main debugging workflow or the human's next decision.
+- Isolating the smallest failing delta is also a hard planned gate: this tactic stops there and hands control back to the main debugging workflow or the operator's next decision.
 
 Planned gates for this workflow:
 - Before starting git-based bisection: after explaining why bisection is the right tactic, what branch/worktree setup will be created, and why temporary commits are required.
@@ -52,11 +52,11 @@ Rules:
 - "we should...", "let's..." = discussion/context-setting, NOT authorization.
 - Outside a gate, interpret "begin"/"next"/"continue" using the tactic's active-step rules below. Do not use them to skip required approval for temporary commits or to jump straight from isolation into applying a fix.
 
-`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit human resolution.
+`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit operator resolution.
 `auto to <milestone>` = auto-advance but STOP before the named planned gate. Use stable, workflow-specific milestone names.
 
 Progress tracking:
-- Default rule: a progress marker (per `Guides/Core/process-flow.md`, "Progress markers") means TODO or pending approval. Do not clear it without human approval.
+- Default rule: a progress marker (per `Guides/Core/process-flow.md`, "Progress markers") means TODO or pending approval. Do not clear it without operator approval.
 - This tactic currently uses inline discussion rather than a required bisection work document, so it does not own any progress markers of its own.
 - The active state lives in the conversation plus the temporary branch/worktree and the sequence of bisection commits.
 - At the start gate, STOP before creating the temporary branch/worktree or making the first bisection commit.
@@ -132,7 +132,7 @@ When you have isolated the smallest failing delta:
 
 - STOP and present the minimal diff + evidence.
 - Switch back to the previous branch (the branch under work) before doing any real fix work.
-- Human decides whether to apply a real fix (separate from the bisection branch) or continue bisecting.
+- The operator decides whether to apply a real fix (separate from the bisection branch) or continue bisecting.
 
-Optional cleanup (permission-gated): deleting the temporary bisection branch is a separate action and should be done only if the human explicitly asks.
+Optional cleanup (permission-gated): deleting the temporary bisection branch is a separate action and should be done only if the operator explicitly asks.
 

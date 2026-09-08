@@ -10,7 +10,7 @@ When filling or updating the Integration doc (`skai/integration.md`):
 
 ## Testing stack defaults
 
-Observed defaults from real Android projects (use as initial suggestions when seeding the Integration doc, but confirm with the developer):
+Observed defaults from real Android projects (use as initial suggestions when seeding the Integration doc, but confirm with the operator):
 
 - Unit tests: JUnit4 + MockK + kotlinx-coroutines-test (when coroutines are involved).
 - Instrumentation tests: AndroidX JUnit + Espresso.

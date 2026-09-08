@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: policy.swift-code-organization
 Managed-Source: Policies/swift-code-organization.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-02-28
+Managed-Updated-At: 2026-09-06
 
 # Swift Code Organization (Swift-only)
 
@@ -68,5 +68,4 @@ Within each type, use `MARK` comments to organize code into sections.
 - 100% API types exempt from sections
 - `MARK` comments must have blank line after
 - Use `// MARK: - <name>` format exactly
-- If the policy conflicts with existing codebase conventions (e.g., a different section ordering or different `MARK` naming for protocol conformances), STOP and ask the human which convention to follow for this repo. Do not silently switch to “match the codebase” or “follow the policy” without an explicit decision.
-
+- If the policy conflicts with existing codebase conventions (e.g., a different section ordering or different `MARK` naming for protocol conformances), STOP and ask the operator which convention to follow for this repo or to escalate. Do not silently switch to “match the codebase” or “follow the policy” without an explicit decision.

@@ -2,14 +2,14 @@ Managed-By: skai
 Managed-Id: guide.requirements-authoring
 Managed-Source: Guides/Requirements/requirements-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-27
+Managed-Updated-At: 2026-09-06
 
 # Requirements Authoring
 
 ## Purpose
 
 Draft behavioral requirements into a **change package**, resolve the open questions they raise with
-the human, and leave the package ready to promote.
+the operator, and leave the package ready to promote.
 
 The catalog is canonical and is never written by this workflow. Drafts and
 discussion live in the package; [`requirements-promotion.md`](requirements-promotion.md) is the only
@@ -34,7 +34,7 @@ A package lives at `skai/changes/<change-id>/` and holds:
 | `requirements-promotion.md` | promotion's artifact; may be absent |
 | `evidence/` | check output promotion persisted; may be absent |
 
-If the change ID is clear from the user's input, use it. If not, do not create the artifact yet:
+If the change ID is clear from the operator's input, use it. If not, do not create the artifact yet:
 propose a short kebab-case default and stop at the blocked gate rather than guessing. When deriving a
 proposal from the current branch, use only the final path component, not the full branch path; for
 example, `work/billing-ui` proposes `billing-ui`. Once the change ID is resolved, create the artifact
@@ -95,7 +95,7 @@ handled on reopen.
 
 ## Gates
 
-Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+Core rule: every time the agent is waiting on the operator, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
 
 **Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
@@ -108,11 +108,11 @@ Use these standard gate lines:
 Planned gates are the expected review points of this workflow. At each planned gate:
 1. Summarize what you did and what should happen next.
 2. End with the planned gate line.
-3. STOP and wait for the human.
+3. STOP and wait for the operator.
 
-In the planned gate line, `<what happens after your response>` should describe what the agent will do after the human gives advance intent. If the gate is non-standard, make it describe the exact human response or handoff needed to resume the workflow.
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the operator gives advance intent. If the gate is non-standard, make it describe the exact operator response or handoff needed to resume the workflow.
 
-If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
+If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the operator resolves it.
 
 Workflow-specific gate notes:
 - The Discussion gate uses the canonical discussion-phase behavior: while any `- [ ]` items remain in
@@ -127,7 +127,7 @@ Workflow-specific gate notes:
   [`requirements-promotion.md`](requirements-promotion.md), including the writing-style check. They are
   enumerated once, there, so nothing is discovered late and the two workflows cannot drift apart. Stop
   at `C5`: `C6` and `C7` belong to promotion.
-  The gate presents what the human reviews; fix the artifact before gating.
+  The gate presents what the operator reviews; fix the artifact before gating.
 - There is no separate "draft is ready, please review" gate. The drafting response itself ends with
   whichever gate applies — blocked when it produced items, planned when it produced none.
 
@@ -140,7 +140,7 @@ Workflow-specific blocked gates:
 - The change ID cannot be determined from the input, so the package has no path yet.
 - The Integration doc has no `Section: requirements` block, its values are unfilled, or the shape is
   `none` — so this project either cannot say where its catalog lives or keeps none. The resolution is the
-  human filling the block's 🟡 values, or — if the block is absent entirely — re-running the skai
+  operator filling the block's 🟡 values, or — if the block is absent entirely — re-running the skai
   installation update. Say which applies; under `none` the stop is terminal, and `next` does not
   resolve it.
 - A new requirement needs a prefix that collides with one already in use, and the resolution is a
@@ -157,7 +157,7 @@ Rules:
 - "we should...", "let's..." = discussion/context-setting, NOT authorization.
 - Outside a gate, interpret "begin"/"next"/"continue" using the workflow's active-phase rules below. Do not use them to skip phases or clear unrelated progress markers.
 
-`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit human resolution.
+`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit operator resolution.
 `auto to <milestone>` = auto-advance but STOP before the named planned gate. Valid milestone in this workflow: `discussion complete` — the workflow's single planned gate.
 
 Progress tracking:
@@ -165,13 +165,13 @@ Progress tracking:
 - **Two conventions, by artifact type:**
   - **`- [ ]` / `- [x]` in process artifacts** (markdown workflow docs). Completion is checking the box — the artifact preserves the audit trail of resolved items.
   - **`🟡` in source files** seeded or planned by a skai workflow. Completion is **removal** of the marker.
-- Default rule: a progress marker means TODO or pending approval. Do not clear it without human approval.
+- Default rule: a progress marker means TODO or pending approval. Do not clear it without operator approval.
 - At a planned gate, advance intent is the approval signal for clearing the guide-owned progress markers completed by the phase that just finished.
-- Ordering rule: the agent first stops and waits at the gate, then clears the approved markers only after the human gives advance intent.
+- Ordering rule: the agent first stops and waits at the gate, then clears the approved markers only after the operator gives advance intent.
 
 **Workflow-specific marker lifecycle.** This workflow owns exactly one marker: the `- [ ] D<n>` items
 in `## Discussion` of the authoring artifact. They follow the discussion exception rather than the
-default gate rule — each item is resolved individually during the discussion loop, on the human's
+default gate rule — each item is resolved individually during the discussion loop, on the operator's
 explicit approval of *that item*, by checking its box and appending `- **Decision** <resolution>.`
 Advance intent at the Discussion gate does not clear them; by the time that gate is reached they are
 already clear.
@@ -183,7 +183,7 @@ canon. The `(D#)` citations are scaffolding promotion strips, not markers.
 
 **Workflow-specific `auto` behavior.** `auto` is useful for a baseline package where the inputs fully
 specify the requirements, batching Requirement Changes after drafting. It never bypasses the
-Discussion blocked gate: unresolved items are human decisions, and `auto` does not resolve them.
+Discussion blocked gate: unresolved items are operator decisions, and `auto` does not resolve them.
 
 ## Initiation
 
@@ -241,7 +241,7 @@ turn. The gate comes once, after the last subject this package covers.
 
 Two sources that disagree is a Discussion item, never a silent choice. An implementation that does
 something which looks like a defect rather than intent is a Discussion item too — proposing which,
-with a recommendation, is the agent's job; deciding is the human's.
+with a recommendation, is the agent's job; deciding is the operator's.
 
 ### Working a scoped change
 
@@ -255,7 +255,7 @@ like any other placement call — it burns an ID and re-points every work spec c
 
 ## Discussion
 
-`## Discussion` holds the decisions this package needs from the human. Topics are `###` subsections
+`## Discussion` holds the decisions this package needs from the operator. Topics are `###` subsections
 with their items inline. Do not create aggregator sections (`## Questions`, `## Open Items`) that
 pull items out of their topics.
 
@@ -264,14 +264,14 @@ Item line: `- [ ] D<n> [Kind] <summary>`, where `[Kind]` is `[Question]`, `[Prop
 **Question**, **Options**, **Detail**, **Why**, and **Decision** on resolution.
 
 **Every item carries a recommendation.** A `[Tradeoff]` names which option the agent recommends and
-why; a `[Question]` — reserved for cases with no basis to recommend — is rare. An item the human
+why; a `[Question]` — reserved for cases with no basis to recommend — is rare. An item the operator
 cannot answer with "yes" is an item that will sit unresolved.
 
 ### What earns an item
 
 Seed an item only where a real decision is needed. If the inputs determine the requirement, write it
 and move on; the draft files are the review surface. Requirements that are obvious from the source
-do not need the human's approval to exist.
+do not need the operator's approval to exist.
 
 An uncertainty whose resolution would change what a requirement *says* is an item; what the drafts
 take as given is an assumption. Items are earned by: two sources disagreeing, behavior that looks like a defect rather than intent, a
@@ -324,7 +324,7 @@ scaffolding: promotion strips it.
 
 ### Resolution
 
-On the human's explicit approval of an item: check the box and append `- **Decision** <resolution>.`
+On the operator's explicit approval of an item: check the box and append `- **Decision** <resolution>.`
 as the last sub-bullet. The original question stays visible — the decision is appended, never
 substituted.
 
@@ -353,10 +353,10 @@ End with
 `🏁 Complete. Let me know if anything needs adjustment.`
 
 Do not promote as a continuation of this workflow. A package recording behavior that **already
-ships** promotes on the human's approval, which the `🏁` invites but does not assume; one recording
+ships** promotes on the operator's approval, which the `🏁` invites but does not assume; one recording
 behavior **still to come** promotes when the work ships, which may be much later and in another
 session. The test is the behavior, not the mode. Either way promotion is invoked separately —
-say which of the two applies so the human knows whether the next move is theirs now or later.
+say which of the two applies so the operator knows whether the next move is theirs now or later.
 
 ## Artifact maintenance
 

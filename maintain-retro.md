@@ -2,9 +2,9 @@ Managed-By: skai
 Managed-Id: guide.maintain-retro
 Managed-Source: maintain-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-29
+Managed-Updated-At: 2026-09-06
 
-# Maintenance retro checklist (LLM + human)
+# Maintenance retro checklist (agent + operator)
 
 Use this after making changes to `skai` to ensure nothing was forgotten.
 
@@ -63,7 +63,7 @@ This retro is a **backstop for completeness**, not a git/diff report.
 - README link check: when `README.md` references a file or directory within this repo, ensure it is a markdown link (clickable in the browser), not just a bare backticked path.
 - If you added or substantially edited any files under `Guides/`:
   - Verify each changed/new guide has a managed header.
-  - Verify it has a `## Gates` section if it is a gated workflow — one where the agent waits on the human and emits `⏳ GATE:` lines — and that it contains the standardized process-flow template (see `maintain-skai.md`, "Standard structure for guides with gates"). A bare "STOP" inside a method guide (stop and run the self-check; stop and present a tradeoff) is not a gate and needs no `## Gates` section.
+  - Verify a gated workflow uses one of the forms allowed by `maintain-skai.md`, "Standard structure for guides with gates": separate standardized `## Gates` / `## Advance intent` sections, or a self-contained `## Gates and control flow` section. An explicitly deprecated migration/reference guide may keep equivalent rules inline. A bare "STOP" inside a method guide (stop and run the self-check; stop and present a tradeoff) is not a gate and needs no gate section.
   - Search for terminology drift (e.g., "Next Command") and fix to "advance intent".
   - For each planned gate, verify the guide identifies a workflow-owned artifact, the specific gate/phase progress marker that remains while waiting (the unchecked `- [ ]` or the `🟡` in code), and the exact artifact change that happens only after advance intent.
   - Verify marker conventions match the canonical rule: `- [ ]` / `- [x]` in process artifacts (markdown workflow docs); `🟡` only in source files (test code, app code) where completion = removal. The canonical in-code case is `Guides/Test/unit-test-planning-guide.md`.
@@ -79,10 +79,10 @@ Reflect on the session since the last retro (or since session start). Consider:
 - **Pattern violations**: Did you break an established convention? What cue did you miss, and what check would have caught it earlier?
 - **Recurring friction**: Were there repeated failures (e.g., tooling issues, encoding problems, ambiguous instructions) that a process change could prevent?
 - **Missing knowledge**: Did you lack context that a skill, rule, or documentation improvement would provide? Would a new skill or rule help future LLMs avoid the same mistake?
-- **Documentation gaps**: Are there undocumented invariants, conventions, or patterns that you had to learn from human correction?
-- **Human corrections**: Did the human have to point out something you should have caught yourself? What was the root cause -- a missing check, a missing convention, or a gap in your understanding of the system?
+- **Documentation gaps**: Are there undocumented invariants, conventions, or patterns that you had to learn from operator correction?
+- **Operator corrections**: Did the operator have to point out something you should have caught yourself? What was the root cause -- a missing check, a missing convention, or a gap in your understanding of the system?
 
-Output: 1-4 concrete suggestions (not vague observations). Each suggestion should name the specific file or artifact to create/update and what it should say. The human will decide which to act on.
+Output: 1-4 concrete suggestions (not vague observations). Each suggestion should name the specific file or artifact to create/update and what it should say. The operator will decide which to act on.
 
 If nothing stands out, say **"No process suggestions."**
 
@@ -91,7 +91,6 @@ If nothing stands out, say **"No process suggestions."**
 - Always start your message with a one-line declaration that the retro was performed:
   - `Maintenance retro: DONE`
 - If you fixed misses during the retro: list what you fixed (1-6 bullets), then list any remaining follow-ups.
-- If you found misses you did not fix (because they require human decision): list them as **actionable follow-ups** (1-6 bullets).
+- If you found misses you did not fix (because they require operator decision): list them as **actionable follow-ups** (1-6 bullets).
 - If you found none: say **"Maintenance retro complete; no misses found."**
 - Include process suggestions from step 6 (if any) as a separate **"Process suggestions"** section at the end.
-

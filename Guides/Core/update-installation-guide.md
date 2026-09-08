@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.update-installation
 Managed-Source: Guides/Core/update-installation-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-12
+Managed-Updated-At: 2026-09-06
 
 # Update Installation Guide
 
@@ -10,7 +10,7 @@ Updates the `skai` submodule and re-runs installed adapter runbooks.
 
 ## Gates
 
-Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+Core rule: every time the agent is waiting on the operator, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
 
 **Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
@@ -23,11 +23,11 @@ Use these standard gate lines:
 Planned gates are the expected review points of this workflow. At each planned gate:
 1. Summarize what you did and what should happen next.
 2. End with the planned gate line.
-3. STOP and wait for the human.
+3. STOP and wait for the operator.
 
-In the planned gate line, `<what happens after your response>` should describe what the agent will do after the human gives advance intent. If the gate is non-standard, make it describe the exact human response or handoff needed to resume the workflow.
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the operator gives advance intent. If the gate is non-standard, make it describe the exact operator response or handoff needed to resume the workflow.
 
-If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
+If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the operator resolves it.
 
 Planned gates for this workflow:
 - After reporting what changed (changelog summary or `git log` fallback), but before running the adapter install/update runbooks.
@@ -45,7 +45,7 @@ Rules:
 - "we should...", "let's..." = discussion/context-setting, NOT authorization.
 - Outside a gate, interpret "begin"/"next"/"continue" using the workflow's active-step rules below. Do not use them to skip required prerequisite checks.
 
-`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit human resolution.
+`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit operator resolution.
 `auto to <milestone>` = auto-advance but STOP before the named planned gate. Use stable, workflow-specific milestone names.
 
 Progress tracking:
@@ -61,7 +61,7 @@ Workflow-specific advance behavior:
 ## Prerequisites
 
 - `skai/install-state.json` or the legacy `docs/skai/install-state.json` must exist (created by the initial install).
-  - If both are missing, STOP and tell the human to run the initial install/update runbook for each adapter first.
+  - If both are missing, STOP and tell the operator to run the initial install/update runbook for each adapter first.
 
 ## Procedure
 
@@ -76,9 +76,9 @@ Read `skai/install-state.json`; if it is absent and `docs/skai/install-state.jso
 
 ### 2. Choose the update target
 
-Default to the **latest release** -- the highest `v<N>` tag. Use a different target only when the human names one:
+Default to the **latest release** -- the highest `v<N>` tag. Use a different target only when the operator names one:
 
-| Human says | Target |
+| Operator says | Target |
 |---|---|
 | (nothing) | latest `v<N>` release tag -- the default |
 | "head of current branch" | HEAD of the submodule's checked-out branch |
@@ -96,7 +96,7 @@ Resolve the target to a SHA. For the default, the latest release tag is:
 git tag --list 'v*' --sort=-v:refname | head -1
 ```
 
-If the default is requested but no `v<N>` tag exists, STOP with a blocked gate -- there is no release to target yet (the human can re-run naming a branch head or commit).
+If the default is requested but no `v<N>` tag exists, STOP with a blocked gate -- there is no release to target yet (the operator can re-run naming a branch head or commit).
 
 ### 3. Check whether an update is needed
 
@@ -110,7 +110,7 @@ Check out the target in the submodule:
 git -C <submodulePath> checkout <target-sha>
 ```
 
-The host repo's submodule pointer now references the target; the human commits that pointer change as usual.
+The host repo's submodule pointer now references the target; the operator commits that pointer change as usual.
 
 ### 5. Report what changed
 

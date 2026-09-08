@@ -26,10 +26,10 @@ The Integration doc contains:
 
 Installers may only create/update/remove content inside managed blocks.
 
-### `required-values` block (human-filled form)
+### `required-values` block (operator-filled form)
 
-The `required-values` block is a managed "form" that humans fill in:
-- Humans should remove 🟡 markers and delete any `INSTRUCTION:` lines once they fill a value.
+The `required-values` block is a managed "form" that operators fill in:
+- Operators should remove 🟡 markers and delete any `INSTRUCTION:` lines once they fill a value.
 - Installers must preserve filled values and must only restore 🟡 + instruction lines when required information is missing.
 
 Standard instruction format:
@@ -46,7 +46,7 @@ When creating/updating the Integration doc:
      - `Templates/docs/skai/integration-sections/xcode.md`
      - `Templates/docs/skai/integration-sections/swift-package.md`
      - `Templates/docs/skai/integration-sections/android-gradle.md`
-   - remove irrelevant managed blocks if the stack is not present (or the human says omit).
+   - remove irrelevant managed blocks if the stack is not present (or the operator says omit).
    - Note: a project may use both `xcode` and `swift-package` sections (e.g., app targets built via Xcode and library submodules built as Swift packages).
 4. Insert/update the `requirements` managed block from
    `Templates/docs/skai/integration-sections/requirements.md`. Unlike the stack sections above this
@@ -59,11 +59,11 @@ When creating/updating the Integration doc:
      exist, stop on the collision rather than merging or choosing one. Absence of either does not mean
      `none` — a greenfield project intending to keep requirements here is `local` with the default
      `skai/requirements/` root, and `none` is a deliberate opt-out. Do not guess `shared` — whether
-     another repo holds the catalog is the human's call.
+     another repo holds the catalog is the operator's call.
    - See `Guides/Requirements/requirements-catalog.md` for what each shape and scope means.
 5. If required project-specific constants/mappings cannot be inferred:
    - restore/leave 🟡 markers + instruction lines in the `required-values` block
-   - STOP and ask the human the minimum questions needed
+   - STOP and ask the operator the minimum questions needed
 
 Discovery guidance (avoid brittle filename checklists):
 - When migrating "legacy integration glue" into the Integration doc, **search broadly** (README, `docs/`, CI config/scripts, prior agent/rule docs) for build/test commands, destinations, and artifact path conventions.

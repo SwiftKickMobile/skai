@@ -23,7 +23,7 @@ Rules:
 
 ## Determining today's date
 
-Whenever a date is needed (for `Managed-Updated-At`, CHANGELOG entries, `install-state.json`, or any other purpose), **always run `date +%Y-%m-%d` in the terminal** to get the current date. Do not rely on dates from the system prompt or conversation context -- they may be stale or in a different timezone than the human.
+Whenever a date is needed (for `Managed-Updated-At`, CHANGELOG entries, `install-state.json`, or any other purpose), **always run `date +%Y-%m-%d` in the terminal** to get the current date. Do not rely on dates from the system prompt or conversation context -- they may be stale or in a different timezone than the operator.
 
 ## Notes
 
@@ -50,9 +50,29 @@ Rules:
 - `Managed-Id` must match an entry in `assets.manifest.json`.
 - Previously installed skills may have adapter-prefixed IDs (e.g., `cursor-skill.skai-debugging`); treat these as managed (the marker is present) and overwrite with the current ID format.
 
+## Cursor rule files (`.cursor/rules/**/*.mdc`)
+
+Cursor rule files require YAML frontmatter at the top. Stamp the managed marker comment immediately
+after the closing `---`, using the same one-line format as skill files. Treat the file as managed only
+when that marker is present and its `Managed-Id` matches `assets.manifest.json`.
+
 ## Symlinks
 
 Symlinks cannot "contain" a managed header. For symlinked installs, treat a host path as managed if it is a symlink pointing at the expected `skai` target path.
+
+## Project-owned Markdown instruction files
+
+When SKAI instructions must be added to an existing project-owned `AGENTS.md` or `CLAUDE.md`, preserve
+the existing file and manage only this delimited block:
+
+```markdown
+<!-- BEGIN Managed-By: skai | Section: agent-instructions -->
+...
+<!-- END Managed-By: skai | Section: agent-instructions -->
+```
+
+The block contains the applicable agent template body after its first `#` heading. Adding the block
+requires operator approval at the install plan gate; later installers may update only the block.
 
 ## Ignore files (`.gitignore`, `.cursorignore`, `.claudeignore`)
 

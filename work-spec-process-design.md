@@ -7,7 +7,7 @@ creation) and implementation processes. It is the standard used to write and col
 guides; it is not another guide an executing agent must read.
 
 The modernization must make the guides smaller and the process more autonomous while preserving
-human control where expertise has the most leverage. The core process applies to software changes
+operator control where expertise has the most leverage. The core process applies to software changes
 generally, while its first optimization and validation target is feature work in existing mobile apps.
 
 ## Authority and references
@@ -45,7 +45,7 @@ Baseline recorded 2026-09-04, measured with `wc -c`:
 
 The replacement guides have a combined size cap of **35,000 bytes**. Record each guide's size, the
 combined size, and the delta from both the baseline and the cap after the first rewrite and every
-refinement round. A real defect whose fix cannot fit is a supervisor decision rather than a silent overrun.
+refinement round. A real defect whose fix cannot fit is an operator decision rather than a silent overrun.
 
 A proposed new gate, artifact, checklist, duplicated field, or proof burden is a complexity
 tradeoff, not an automatic improvement. Simplification must not move required runtime instructions
@@ -64,8 +64,8 @@ declared mode.
 ### P2. The agent supplies the proposal
 
 Incomplete input becomes the agent's current recommendation, not a questionnaire, blank, `TBD`, or
-neutral menu. Discussion items let the supervisor refine material judgment calls; they do not
-delegate ordinary design work back to the supervisor.
+neutral menu. Discussion items let the operator refine material judgment calls; they do not
+delegate ordinary design work back to the operator.
 
 ### P3. The API sketch is the primary review surface
 
@@ -93,8 +93,8 @@ approval of the completed design and implementation plan. Open discussion items 
 discussion gate. There are no first-pass/second-pass work-spec gates or default per-task gates.
 
 The work-spec skills do not define `auto` or `auto to`. A planned gate requires an approval decision
-from the supervisor. The supervisor is the actor outside the executing workflow that reviews gates
-and supplies feedback or advance intent; it may be a human or an authorized agent. The executing agent
+from the operator. The operator is the actor outside the executing workflow that reviews gates
+and supplies feedback or advance intent; it may be a human or parent agent. The executing agent
 does not approve its own gates. Individual skills do not prescribe delegation or escalation behavior.
 A blocked gate is never bypassed.
 
@@ -131,7 +131,7 @@ of duplicating their content or progress state.
 
 ### P10. Review attention follows leverage
 
-A decision requires supervisor review when it creates a long-lived contract, has broad blast radius, is
+A decision requires operator review when it creates a long-lived contract, has broad blast radius, is
 costly to reverse, commits the project to an external system, or materially constrains future work.
 The agent handles ordinary reversible implementation choices. This principle, rather than a fixed
 catalog of domains, determines what earns a discussion item or supporting review material.
@@ -241,11 +241,11 @@ direction and API sketch are approved together at the first gate.
 ## Discussion
 
 Use SKAI's structured discussion-item format with stable `D#` IDs under the topics they concern.
-Each item contains the agent's recommendation and resolves only on explicit supervisor approval of that
+Each item contains the agent's recommendation and resolves only on explicit operator approval of that
 item. A tradeoff names its options and recommends one. A rare question with insufficient evidence
 still has a provisional resolution so the API sketch remains complete.
 
-Only a choice warranting conscious supervisor judgment earns an item. Implications forced by the inputs,
+Only a choice warranting conscious operator judgment earns an item. Implications forced by the inputs,
 repository conventions, or existing architecture are encoded directly.
 
 Selecting a third-party service or library is in scope when the change depends on it. The agent
@@ -274,11 +274,11 @@ rules. Do not add a general phase checklist merely to narrate the workflow.
 The process is implemented by two separate skills. Work Spec Design produces the completed design
 document. Work Spec Implementation consumes it, creates the work spec, and executes it. The boundary
 supports an architect-to-developer handoff without requiring one: when the initiating request includes
-implementation, the same agent transitions between skills without another supervisor response.
+implementation, the same agent transitions between skills without another operator response.
 
 ### 1. Initiate design
 
-The supervisor initiates design or work-spec authoring with any available input. The agent reads that
+The operator initiates design or work-spec authoring with any available input. The agent reads that
 input, relevant repository sources, applicable canonical requirements, and project-specific integration
 information. It chooses a concise spec name when one is evident and creates the design document. Only
 a genuinely unresolvable artifact identity blocks creation.
@@ -286,7 +286,7 @@ a genuinely unresolvable artifact identity blocks creation.
 ### 2. Draft and discuss
 
 The agent writes the design through API Sketch in one pass, supplying a complete recommendation and
-seeding only material discussion items. Supervisor feedback updates the discussion, design, and sketch
+seeding only material discussion items. Operator feedback updates the discussion, design, and sketch
 together. Local approval resolves individual `D#` items; it is not advance intent for the workflow.
 When a required sibling workflow must run during the draft, it temporarily owns the active gate; the
 agent resumes and emits the Work Spec Design gate after the sibling completes.
@@ -304,7 +304,7 @@ needed. A material API or design defect returns to step 2; ordinary implementati
 
 For a design-only request, the skill completes with the design document ready for a developer. When
 the request also includes implementation, the same agent transitions directly to Work Spec
-Implementation. The skill boundary is not another supervisor gate.
+Implementation. The skill boundary is not another operator gate.
 
 ### 5. Plan implementation
 
@@ -314,7 +314,7 @@ conventions, derives verification from `skai/integration.md`, and confirms that 
 source and every in-scope design obligation has a task or explicit disposition.
 
 If the required Integration commands are absent or unfilled, implementation planning blocks until the
-supervisor establishes them through the normal SKAI installation/update process. Greenfield work is
+operator establishes them through the normal SKAI installation/update process. Greenfield work is
 not an exception; the intended commands may name the project structure the setup tasks will create.
 
 If the audit exposes a material problem in the approved design, implementation blocks and returns the
@@ -337,7 +337,7 @@ step 5 without recreating the design gates. It still creates or refreshes the wo
 implementation-plan approval before changing code. A material stale-design conflict blocks and
 returns to design.
 
-The workflow completes after the final task is checked. A blocked task remains unchecked. The supervisor
+The workflow completes after the final task is checked. A blocked task remains unchecked. The operator
 may bound a run before a stable `T#`, but stepwise approval is not the default.
 
 ## Optional delivery slicing
@@ -388,12 +388,12 @@ Missing behavior that already ships is requirements backfill. When `skai/integra
 requirements catalog, Work Spec Design invokes Requirements Authoring to create or reopen its change
 package; do not place provisional canonical requirements in the design document or work spec. Each
 workflow retains its own artifacts and gates. Backfill blocks the design only when its unresolved
-behavior is needed to settle the design. Otherwise, Design records the backfill need for the supervisor
+behavior is needed to settle the design. Otherwise, Design records the backfill need for the operator
 to orchestrate separately and continues without waiting. If the project keeps no catalog, record the
 missing behavior as a non-blocking assumption.
 
 New behavior being planned does not automatically invoke Requirements Authoring. It remains grounded
-in the supplied product input and approved design unless the supervisor separately initiates requirements
+in the supplied product input and approved design unless the operator separately initiates requirements
 work. Requirements Promotion is never an automatic continuation of work-spec creation or implementation.
 
 ## Verification and testing
@@ -412,7 +412,7 @@ project-specific design decision.
 
 When human testing is known during planning, place one precisely scoped `handoff` task last in the work
 spec. State the scenario, expected result, and evidence needed. The agent completes every preceding
-task before reaching the final unchecked handoff and blocked gate. Once the supervisor supplies passing
+task before reaching the final unchecked handoff and blocked gate. Once the operator supplies passing
 evidence, the agent records it, checks the task, and completes.
 
 If the need for human testing is discovered unexpectedly, stop immediately at a blocked gate and leave
@@ -457,11 +457,11 @@ A cold reviewer should verify:
 6. Optional slicing is invisible in the common case and lightweight when activated.
 7. Requirements work is absent except for correctly routed backfill.
 8. Each round reports guide sizes and deltas from the 45,512-byte baseline and 35,000-byte cap; the
-   combined guides do not exceed the cap without an explicit supervisor decision.
+   combined guides do not exceed the cap without an explicit operator decision.
 9. A fresh agent can execute from the artifacts and linked inputs without chat history.
 10. The same core process handles an existing mobile feature, third-party service adoption, a
     greenfield web product, and a whole-app port without adding unused structure to the mobile case.
-11. Neither work-spec guide defines `auto`; supervisor approval advances planned gates, while blocked
+11. Neither work-spec guide defines `auto`; operator approval advances planned gates, while blocked
     gates still stop.
 12. API Sketch covers production interaction surfaces, includes module-visible API, excludes tests
     and implementation-local details, and applies the stated Swift, Kotlin, and JavaScript/TypeScript

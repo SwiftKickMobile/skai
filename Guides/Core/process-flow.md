@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.process-flow
 Managed-Source: Guides/Core/process-flow.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-05-27
+Managed-Updated-At: 2026-09-06
 
 # Process flow (house style reference)
 
@@ -10,7 +10,7 @@ Purpose: canonical definitions for process-flow mechanics (gates, advance intent
 
 ## Gates
 
-Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line.
+Core rule: every time the agent is waiting on the operator, the message must end with a `⏳ GATE:` line.
 
 The only normal exception is full workflow completion, which uses:
 
@@ -24,7 +24,7 @@ Once a `⏳ GATE:` line is emitted, every subsequent response from the agent —
 
 The gate stays "on" between turns. Re-emitting the gate line at the end of every response is mandatory, not optional.
 
-Why: long back-and-forth stretches across many responses. By turn five or ten, the human (and sometimes the agent) can no longer see the original gate line without scrolling back, and the conversation can drift onto an unstated implicit gate. The persistence rule fixes this mechanically — the current gate is always visible in the latest response.
+Why: long back-and-forth stretches across many responses. By turn five or ten, the operator (and sometimes the agent) can no longer see the original gate line without scrolling back, and the conversation can drift onto an unstated implicit gate. The persistence rule fixes this mechanically — the current gate is always visible in the latest response.
 
 Rules:
 - Re-emit the *same* gate line, verbatim. Do not paraphrase, shorten, or omit it across turns.
@@ -45,13 +45,13 @@ At a planned gate:
 - The agent summarizes what it did and what should happen next.
 - The message ends with:
   - `⏳ GATE: Next: <what happens after your response>. Say "next" or what to change.`
-- The agent STOPs and waits for the human.
+- The agent STOPs and waits for the operator.
 
-In the planned gate line, `<what happens after your response>` should describe what the agent will do after the human gives advance intent. If the gate is non-standard, it should instead describe the exact human response or handoff needed to resume the workflow.
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the operator gives advance intent. If the gate is non-standard, it should instead describe the exact operator response or handoff needed to resume the workflow.
 
 ### Blocked gates
 
-Blocked gates are unexpected stops that require human input before the workflow can continue.
+Blocked gates are unexpected stops that require operator input before the workflow can continue.
 
 Use:
 
@@ -83,9 +83,9 @@ Rules:
 Some workflows use local working markers inside an active phase or discussion loop.
 
 In those workflows:
-- Human approval of a specific local item may authorize clearing that item's local marker (checking `- [ ]` to `- [x]` in a process artifact, or removing the 🟡 in code).
+- Operator approval of a specific local item may authorize clearing that item's local marker (checking `- [ ]` to `- [x]` in a process artifact, or removing the 🟡 in code).
 - That local approval does **not** automatically count as advance intent for the whole workflow.
-- The workflow still advances phases only when it reaches a gate and the human then gives advance intent there.
+- The workflow still advances phases only when it reaches a gate and the operator then gives advance intent there.
 
 Use a local approval model only when the workflow explicitly documents that narrower exception.
 
@@ -93,17 +93,17 @@ Use a local approval model only when the workflow explicitly documents that narr
 
 `auto` means: apply advance intent repeatedly, bypassing planned gates until the workflow reaches completion or a required stop.
 
-Blocked gates always require explicit human resolution. `auto` does not bypass them.
+Blocked gates always require explicit operator resolution. `auto` does not bypass them.
 
 ### `auto to <target>`
 
-Bounded auto is a universal capability: the human may specify an upper bound, e.g. `auto to <target>`.
+Bounded auto is a universal capability: the operator may specify an upper bound, e.g. `auto to <target>`.
 
 Meaning:
 - Auto-advance as in `auto`, but STOP before the named workflow target.
 - The target must refer to a stable identifier in the current workflow.
 - The guide should define workflow-specific target names when helpful.
-- If the target reference is unclear or there are multiple plausible interpretations, STOP and ask the human what target they mean.
+- If the target reference is unclear or there are multiple plausible interpretations, STOP and ask the operator what target they mean.
 
 Examples (infer from context):
 - Work spec implementation: `"next auto to task 7"`
@@ -136,12 +136,12 @@ The rest of this section applies to both marker conventions unless noted.
 ### Default marker model
 
 Default rule:
-- A progress marker means TODO, or "implemented but pending approval". The agent does not clear it until the human approves.
+- A progress marker means TODO, or "implemented but pending approval". The agent does not clear it until the operator approves.
 - At a planned gate, advance intent is the approval signal for clearing the guide-owned markers completed by the phase that just finished.
 
 Ordering rule:
 - The agent first STOPs and waits at the gate.
-- The agent clears the approved markers — checking `- [ ]` to `- [x]` in a process artifact, removing 🟡 in code — only after the human gives advance intent.
+- The agent clears the approved markers — checking `- [ ]` to `- [x]` in a process artifact, removing 🟡 in code — only after the operator gives advance intent.
 
 ### Gate/phase markers vs local working markers
 
@@ -153,7 +153,7 @@ When both exist:
 - Keep them distinct in the most natural workflow artifact.
 - Local approvals clear local working markers.
 - Advance intent clears the gate/phase marker.
-- The workflow guide must document the exact human intent that authorizes clearing each marker type.
+- The workflow guide must document the exact operator intent that authorizes clearing each marker type.
 
 ### Custom marker lifecycles
 
@@ -162,8 +162,8 @@ Workflows may define narrower marker lifecycles when the default model would mis
 When a guide does this, it must document:
 - where the markers live
 - which markers track gate/phase state vs local working state
-- what human intent authorizes clearing each kind
-- that the agent clears them only after that human intent is received
+- what operator intent authorizes clearing each kind
+- that the agent clears them only after that operator intent is received
 
 ### Marker update protocol
 
@@ -200,7 +200,7 @@ Tooling expectation:
 
 ## Structured discussion items
 
-Workflows with a "discussion phase" — where the agent proposes and the human refines or redirects — use a structured schema for each discussion item. This schema is canonical for any discussion-based workflow (work-spec planning, UI Map architecture, UI Map implementation, etc.).
+Workflows with a "discussion phase" — where the agent proposes and the operator refines or redirects — use a structured schema for each discussion item. This schema is canonical for any discussion-based workflow (work-spec planning, UI Map architecture, UI Map implementation, etc.).
 
 ### Item line
 
@@ -212,8 +212,8 @@ Workflows with a "discussion phase" — where the agent proposes and the human r
 
 ### Kind taxonomy
 
-- `[Question]` — needs human input; the agent has no basis to recommend. Rare — propose a default whenever there is one.
-- `[Proposal]` — the agent recommends a course of action; the human accepts / rejects / modifies.
+- `[Question]` — needs operator input; the agent has no basis to recommend. Rare — propose a default whenever there is one.
+- `[Proposal]` — the agent recommends a course of action; the operator accepts / rejects / modifies.
 - `[Tradeoff]` — two or more options **plus the agent's recommended pick and why**. Never a neutral menu.
 
 The agent always takes a position: every item carries a recommendation, and a `[Tradeoff]` names which option it recommends.
@@ -232,7 +232,7 @@ Sub-bullet labels are **bold** with no separator after the label — the bold we
 
 ### Resolution
 
-On the human's explicit approval of an item:
+On the operator's explicit approval of an item:
 1. Check the box (`- [x]`).
 2. Append `- **Decision** <succinct resolution>.` as the last sub-bullet.
 
@@ -242,7 +242,7 @@ The original question/proposal/tradeoff stays visible. The decision is appended,
 
 A discussion phase is gated by the state of its items, not by a separate phase-completion checkpoint:
 
-- **While one or more `- [ ]` items remain unresolved**, the agent emits a **blocked** gate at the end of each response. The blocker *is* the unresolved items; the human unblocks by resolving them one at a time.
+- **While one or more `- [ ]` items remain unresolved**, the agent emits a **blocked** gate at the end of each response. The blocker *is* the unresolved items; the operator unblocks by resolving them one at a time.
 
   `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to <next phase>.`
 
@@ -252,13 +252,13 @@ A discussion phase is gated by the state of its items, not by a separate phase-c
 
 The discussion-resolution gate is itself the first planned gate — there is no separate "draft is ready, please review" gate before the discussion begins. The drafting response ends with either the blocked gate (typical) or the planned gate (when the draft produced zero items).
 
-This pattern makes the discussion-phase state explicit at every turn: the agent is either blocked on the human's decisions or asking permission to advance. There is no in-between "discussion still going, no gate" state.
+This pattern makes the discussion-phase state explicit at every turn: the agent is either blocked on the operator's decisions or asking permission to advance. There is no in-between "discussion still going, no gate" state.
 
 ### Topic-organized, items inline
 
 Each topic is its own `###` subsection. The topic's `- [ ]` items live directly inside it.
 
-**Anti-pattern: aggregator sections.** Do NOT create workflow-shaped sections (`## Questions`, `## Decisions`, `## Tradeoffs`, `## Open Items`) that pull items out of their topics and roll them up. The aggregator-section anti-pattern adds indirection that makes the discussion harder for the human to manage, and it breaks the "marker count = real decisions" property when topic headings get marked alongside their items.
+**Anti-pattern: aggregator sections.** Do NOT create workflow-shaped sections (`## Questions`, `## Decisions`, `## Tradeoffs`, `## Open Items`) that pull items out of their topics and roll them up. The aggregator-section anti-pattern adds indirection that makes the discussion harder for the operator to manage, and it breaks the "marker count = real decisions" property when topic headings get marked alongside their items.
 
 The marker count across the discussion equals the number of real decisions. If a heading is being marked, or an aggregator section is forming, both signals indicate the schema is being misused.
 

@@ -106,6 +106,12 @@
       "tags": ["adapter:codex"]
     },
     {
+      "id": "template.claude-code-instructions",
+      "type": "template",
+      "sourcePath": "Templates/agents/claude-code/CLAUDE.md",
+      "tags": ["adapter:claude-code"]
+    },
+    {
       "id": "guide.work-spec-creation",
       "type": "guide",
       "sourcePath": "Guides/Spec/work-spec-creation.md",

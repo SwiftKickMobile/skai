@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture
 Managed-Source: Guides/UIMap/ui-map-architecture.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-11
+Managed-Updated-At: 2026-09-06
 
 # UI Map Architecture
 
@@ -25,7 +25,7 @@ The workflow runs in two stages:
 
 One document. Create it at `skai/changes/<change-id>/ui-map-architecture.md`.
 
-If the change ID is clear from the user's input, use it. If not, do not create the artifact yet. Ask inline for the change ID, propose a short kebab-case default when possible, and wait. When deriving a proposal from the current branch, use only the final path component, not the full branch path; for example, `work/billing-ui` proposes `billing-ui`. Once the change ID is resolved, create the artifact at its final path.
+If the change ID is clear from the operator's input, use it. If not, do not create the artifact yet. Ask inline for the change ID, propose a short kebab-case default when possible, and wait. When deriving a proposal from the current branch, use only the final path component, not the full branch path; for example, `work/billing-ui` proposes `billing-ui`. Once the change ID is resolved, create the artifact at its final path.
 
 Skeleton:
 
@@ -76,7 +76,7 @@ At a planned gate: summarize what you did, include the current map-preview statu
 - The rendered map is invalid or cannot be produced.
 - The request requires app-code tasks, file moves, build steps, or implementation sequencing rather than a map artifact.
 
-The human resolves the cause (resolves items, fixes inputs, revises decisions); the agent re-evaluates and emits the appropriate gate on the next response.
+The operator resolves the cause (resolves items, fixes inputs, revises decisions); the agent re-evaluates and emits the appropriate gate on the next response.
 
 **Advance intent** — moves past a planned gate. Signals: "next", "continue", "go ahead", "do it". Recognized only after this guide has emitted a `⏳ GATE: Next:` line. Expected deliverables named in the initiating request are not advance intent and never skip Discussion. "we should..." / "let's..." is discussion, NOT authorization.
 
@@ -100,13 +100,13 @@ Open items use one format:
 
 `- [ ] D<n> [Kind] <summary>` — a letter-led id, a bracketed Kind, and a plain-language summary. The id is `D1`, `D2`, ... across the whole Discussion section; IDs are continuous and never renumbered, so each decision has a stable handle the Map Changes section can cite. The Kind is one of:
 
-- `[Question]` — needs the human's input; the agent has no basis to recommend. Rare — propose a default whenever there is one.
-- `[Proposal]` — the agent recommends a course of action; the human accepts / rejects / modifies.
-- `[Tradeoff]` — two or more options **plus the agent's recommended pick and why**; the human confirms or chooses differently. Never a neutral menu.
+- `[Question]` — needs the operator's input; the agent has no basis to recommend. Rare — propose a default whenever there is one.
+- `[Proposal]` — the agent recommends a course of action; the operator accepts / rejects / modifies.
+- `[Tradeoff]` — two or more options **plus the agent's recommended pick and why**; the operator confirms or chooses differently. Never a neutral menu.
 
-The agent always takes a position: every item carries a recommendation, and a Tradeoff names which option it recommends. When a decision's resolution differs across the items it affects, expand it into a sub-list **bucketed by proposed resolution** — one bucket per resolution, the affected items under it — so the human can confirm or override per bucket. When all items share one resolution, state it once with a count; do not repeat it per item.
+The agent always takes a position: every item carries a recommendation, and a Tradeoff names which option it recommends. When a decision's resolution differs across the items it affects, expand it into a sub-list **bucketed by proposed resolution** — one bucket per resolution, the affected items under it — so the operator can confirm or override per bucket. When all items share one resolution, state it once with a count; do not repeat it per item.
 
-**When a choice becomes a discussion item.** The agent always takes a position, so "discussion needed" is not "I can't decide" — it is "the human should consciously confirm this one." Raise a choice as a `D#` item only when it is **both**:
+**When a choice becomes a discussion item.** The agent always takes a position, so "discussion needed" is not "I can't decide" — it is "the operator should consciously confirm this one." Raise a choice as a `D#` item only when it is **both**:
 
 - **Unforced** — the design, a UI Map convention, or clear ownership doesn't settle it; your pick is a genuine judgment call among options that each fit, not a reading of what's shown. (Tell: an honest justification of "A fits, though B would too" is unforced; "the design shows a sheet" or "a transient overlay is conventionally a sheet" is forced.)
 - **Material** — picking differently reshapes the map: a different route container (nav vs. modal), different nesting, or a different domain — not a cosmetic attribute (a sheet's style, a note, a name).
@@ -123,7 +123,7 @@ Use `###` subsections only for actual Discussion topics: one or more `D#` items,
 
 **Drafting:**
 
-- *Baseline map* — summarize the Goal and Inputs, then encode the map the inputs describe, seeding Discussion only for the choices that meet the bar above. If the input directly names the app structure, feature areas, screens, and route relationships, encode that structure without asking the human to approve the straightforward translation; the rendered preview is the review surface for feedback.
+- *Baseline map* — summarize the Goal and Inputs, then encode the map the inputs describe, seeding Discussion only for the choices that meet the bar above. If the input directly names the app structure, feature areas, screens, and route relationships, encode that structure without asking the operator to approve the straightforward translation; the rendered preview is the review surface for feedback.
 - *Scoped map change* — summarize the active scope and current map context, then seed Discussion only for decisions needed to express that map change.
 - *Reopen (including a change request)* — summarize the new input and its evidence in Goal/Inputs. If the requested adjustment is coherent and fully specified, update the provisional preview and draft no *new* discussion items — but retain the artifact's existing resolved items that still explain the current map. Never replace `## Discussion` with the empty state on a reopened artifact, especially when map change items still cite those decisions (`D#`). Seed Discussion only when incorporation, rejection, supersession, or map representation requires a real decision.
 - If the inputs fully specify the map, draft no new items. Use the empty Discussion state only when the section has no retained resolved items.
@@ -146,11 +146,11 @@ Seed the proposed map from the current official map (`skai/ui-map/ui-map.yaml`);
 
 Add or update `## Provisional preview` in `ui-map-architecture.md` with paths to the proposed map and render and a status line saying they are provisional until Discussion resolves and Map Changes completes.
 
-The proposed map reflects the agent's current proposals and any resolved decisions. It is a discussion aid, not approval. Open discussion items remain the source of truth for unresolved decisions. When the human changes direction, update the proposed map to match the current proposal state before the next gate when tooling allows.
+The proposed map reflects the agent's current proposals and any resolved decisions. It is a discussion aid, not approval. Open discussion items remain the source of truth for unresolved decisions. When the operator changes direction, update the proposed map to match the current proposal state before the next gate when tooling allows.
 
 The proposed map is YAML-first. Do not investigate render tooling before the artifact exists. If there is not enough concrete structure to produce a useful render, say so in `## Provisional preview`. Before a gate, check the proposed map for map-validity choices the renderer cannot infer: reused scenes with more than one inbound route need a visual home, and every modal destination needs an agreed `modal_style` from the declared vocabulary. Resolve such choices by the bar above: default when the map is obvious, raise a discussion item only when the choice is unforced and material. Once `proposed-ui-map.yaml` exists and has enough structure to review, attempt to render it before the next gate: use any project-specific override first; otherwise use the default SKAI renderer from [`ui-map-guide.md`](ui-map-guide.md). If the render is not produced, the artifact and gate response must state the concrete reason — missing SKAI root, missing runtime dependency, renderer failure, invalid YAML, not useful yet, or another specific blocker. Do not leave render status as merely pending, and do not invent a non-SKAI render command.
 
-**Structural self-check before gating.** The renderer validates schema and semantics but not the authoring conventions — a non-collapsed single-root domain or a flattened scene renders fine. Before each gate, check the provisional against *Authoring a UI Map* in [`ui-map-guide.md`](ui-map-guide.md): single-root domains collapsed, non-root scenes nested under the route that reaches them, reused scenes with one home and a `primary_parent`, `common:` only for domain-agnostic scenes, and every section the human reads consistent with the current proposed map — notes and assumptions describe nothing superseded, no now-resolved decision is still called `pending`, `open`, or `unresolved`, and on a reopen the inherited `## Map Changes` and `## Deferrals` — which describe the prior pass — are marked pending re-derivation rather than left reading as current. Fix the artifact before gating — the gate presents what the human reviews.
+**Structural self-check before gating.** The renderer validates schema and semantics but not the authoring conventions — a non-collapsed single-root domain or a flattened scene renders fine. Before each gate, check the provisional against *Authoring a UI Map* in [`ui-map-guide.md`](ui-map-guide.md): single-root domains collapsed, non-root scenes nested under the route that reaches them, reused scenes with one home and a `primary_parent`, `common:` only for domain-agnostic scenes, and every section the operator reads consistent with the current proposed map — notes and assumptions describe nothing superseded, no now-resolved decision is still called `pending`, `open`, or `unresolved`, and on a reopen the inherited `## Map Changes` and `## Deferrals` — which describe the prior pass — are marked pending re-derivation rather than left reading as current. Fix the artifact before gating — the gate presents what the operator reviews.
 
 **Domain structure line.** In `## Provisional preview`, record and keep current a one-line domain summary: name every domain, and for each non-collapsed (`scenes:`) domain list its root scenes. Collapsed domains are named only; a bucket lists its roots:
 
@@ -158,7 +158,7 @@ The proposed map is YAML-first. Do not investigate render tooling before the art
 Domains: shell, tickets, billing (collapsed); reports (bucket — roots: ticket_report, billing_report)
 ```
 
-Writing this forces the single-root check into the open — a bucket whose root list has one entry must be collapsed (rename the domain to that scene), not left as a `scenes:` wrapper. Keep the line current whenever the domain set changes; the human reviews it alongside the render.
+Writing this forces the single-root check into the open — a bucket whose root list has one entry must be collapsed (rename the domain to that scene), not left as a `scenes:` wrapper. Keep the line current whenever the domain set changes; the operator reviews it alongside the render.
 
 Before every gate line, include a short map-preview status:
 
@@ -214,16 +214,16 @@ After drafting, and after each subsequent response, update the artifact before s
 `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to Map Changes.`
 `⏳ GATE: Next: Discussion complete. Say "next" to write Map Changes.`
 
-**Discussion loop:** the agent proposes, the human refines or redirects. Discussion items are live working topics until resolved, not a frozen first draft.
+**Discussion loop:** the agent proposes, the operator refines or redirects. Discussion items are live working topics until resolved, not a frozen first draft.
 
 As the conversation evolves:
-- Revise an unresolved item when the human clarifies or redirects its proposal.
+- Revise an unresolved item when the operator clarifies or redirects its proposal.
 - Split an unresolved item when one topic becomes multiple map decisions. Keep the original ID on the first resulting item and assign new IDs to the others.
 - Add a follow-up item when a decision exposes a new map decision that was not visible before.
 - Remove an unresolved item when the direction changes so it no longer applies. The architecture artifact should stay focused on the current map, not preserve every abandoned branch.
 - Do not add follow-up items for unknowns that can be represented as assumptions, TODOs, or non-blocking notes without changing scene/route architecture.
 
-Keep IDs stable and never renumber existing items. Each `- [ ]` item resolves on the human's explicit approval — check the box (`- [x]`) and append a `- **Decision** <succinct resolution>.` line as the last sub-bullet of the item. Keep resolved decisions only when they still explain the current map. If a later direction subsumes, contradicts, or makes a resolved item misleading, collapse the topic around the current decision: revise the surviving item and remove stale items rather than carrying redundant history forward. Resolved items are not meeting minutes, but they must not erase why the decision existed: when the human changes or rejects a recommendation, keep enough of the original options, proposal, and rationale to show what was changed, then use the Decision line for the current outcome. Keep the Kind label (`Question` / `Proposal` / `Tradeoff`) in the title so the original shape of the decision stays visible. No separate "Decisions" section — decisions stay inline next to their topic.
+Keep IDs stable and never renumber existing items. Each `- [ ]` item resolves on the operator's explicit approval — check the box (`- [x]`) and append a `- **Decision** <succinct resolution>.` line as the last sub-bullet of the item. Keep resolved decisions only when they still explain the current map. If a later direction subsumes, contradicts, or makes a resolved item misleading, collapse the topic around the current decision: revise the surviving item and remove stale items rather than carrying redundant history forward. Resolved items are not meeting minutes, but they must not erase why the decision existed: when the operator changes or rejects a recommendation, keep enough of the original options, proposal, and rationale to show what was changed, then use the Decision line for the current outcome. Keep the Kind label (`Question` / `Proposal` / `Tradeoff`) in the title so the original shape of the decision stays visible. No separate "Decisions" section — decisions stay inline next to their topic.
 
 **Completeness:** Discussion is done when every `- [ ]` item has been checked off (`- [x]`). STOP at the advancing gate; `next` here advances to Map Changes.
 
@@ -248,7 +248,7 @@ Once the advancing gate passes, produce the typed map change items by **diffing 
 
 Map change items are written and updated only in Map Changes, never during Discussion.
 
-**The final map is the reviewed provisional.** Write the structure the human approved at the gate; do not silently re-derive or restructure it here. If realizing the map exposes a needed correction — the provisional cannot be made valid without one — make the minimal fix, record it in Map Changes / Assumptions, and re-render. A structural change beyond a validity fix is a new decision: return to Discussion and re-gate rather than changing the shape after approval.
+**The final map is the reviewed provisional.** Write the structure the operator approved at the gate; do not silently re-derive or restructure it here. If realizing the map exposes a needed correction — the provisional cannot be made valid without one — make the minimal fix, record it in Map Changes / Assumptions, and re-render. A structural change beyond a validity fix is a new decision: return to Discussion and re-gate rather than changing the shape after approval.
 
 `## Map Changes` describes exactly the differences between the frozen official map and the proposed map. Since the official map does not move, that diff is recomputable at any time: when the artifact is reopened for new work and already holds map change items from earlier passes, recompute the diff and reconcile the existing items against it — never reset or regenerate the section. An item that still matches a difference keeps its `M#` id and justification; a new difference gets a new item; a difference that no longer holds (the proposed map moved back) loses its item. The ids and rationale are the part a raw diff cannot reconstruct.
 

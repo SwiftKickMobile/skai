@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.unit-test-planning
 Managed-Source: Guides/Test/unit-test-planning-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-05-27
+Managed-Updated-At: 2026-09-06
 
 # Unit Test Planning Guide
 
@@ -12,7 +12,7 @@ Defines the process for creating complete test plans with ALL test stubs and doc
 
 ## Gates
 
-Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+Core rule: every time the agent is waiting on the operator, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
 
 **Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
@@ -25,11 +25,11 @@ Use these standard gate lines:
 Planned gates are the expected review points of this workflow. At each planned gate:
 1. Summarize what was planned and what should happen next.
 2. End with the planned gate line.
-3. STOP and wait for the human.
+3. STOP and wait for the operator.
 
-In the planned gate line, `<what happens after your response>` should describe what the agent will do after the human gives advance intent.
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the operator gives advance intent.
 
-If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
+If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the operator resolves it.
 
 When the workflow finishes, return control to the parent testing workflow.
 
@@ -51,7 +51,7 @@ Progress tracking (canonical in-code marker case):
 
 This workflow is the canonical example of the in-code progress-marker convention (see `Guides/Core/process-flow.md`, "Progress markers"). The artifact produced by this workflow is source code (test files), so `🟡` markers are used on section MARK comments and `@Test` function declarations to indicate TODO state. Completion is **removal** of the marker as tests are written and pass downstream (in `Guides/Test/unit-test-writing-guide.md`). This is the in-code branch of the two-convention model; process artifacts in other workflows use `- [ ]` / `- [x]` instead.
 
-- Default rule: a `🟡` marker means TODO or pending approval. Do not remove it without human approval.
+- Default rule: a `🟡` marker means TODO or pending approval. Do not remove it without operator approval.
 - In this workflow, section-level and test-level `🟡` markers in the planned test files remain in place when planning completes.
 - Advance intent at the planning-complete gate returns control to the parent testing workflow; it does not remove the planned test sections/tests.
 - Planning ambiguities should stop with the blocked gate line and leave all planning markers in place.
@@ -167,14 +167,14 @@ When planning tests for multiple types:
 **All tests require:**
 - Descriptive camelCase name
 - **`@Test("...")` display name** -- concise behavior sentence for test navigator and CI output (not a duplicate of the function name)
-- **Concise, but sufficient doc comment** that explains **what** the test verifies and **how** it verifies it (enough for human review/approval).
+- **Concise, but sufficient doc comment** that explains **what** the test verifies and **how** it verifies it (enough for operator review/approval).
   - Prefer 1-3 short lines; add more only when needed for clarity.
 - **Body with `Issue.record("Test not yet implemented")` to mark as failing TODO**
 
 **Doc Comment Guidelines:**
 - Keep it concise, but sufficient to describe what the test verifies and how it verifies it
 - Be specific about the behavior being validated; include key setup only if it is not obvious
-- Make it clear enough for human review and approval
+- Make it clear enough for operator review and approval
 
 **Creating Complete Test Plan:**
 
@@ -519,7 +519,7 @@ Use MARK comments to organize (following code-organization pattern):
 
 ### Documentation
 - Doc comments should explain what the test verifies (and briefly how it verifies it if not obvious)
-- Keep it concise, but sufficient for human review/approval
+- Keep it concise, but sufficient for operator review/approval
 - Focus on behavior, not implementation details
 
 ---
@@ -533,8 +533,8 @@ Use MARK comments to organize (following code-organization pattern):
 - Add detailed doc comments for every test
 - Leave all bodies empty or with `// TODO`
 - Follow MARK organization pattern
-- Present complete plan to human
-- Wait for human to choose which section to start
+- Present the complete plan to the operator
+- Wait for the operator to choose which section to start
 
 ---
 

@@ -19,15 +19,15 @@ Do not store secrets here.
 
 ### Repositories and tooling
 
-- **Primary IDE(s)**: {human response}
-- **Languages/frameworks**: {human response}
-- 🟡 **CI**: {human response}
+- **Primary IDE(s)**: {operator response}
+- **Languages/frameworks**: {operator response}
+- 🟡 **CI**: {operator response}
   - INSTRUCTION: Name the CI system if you have one (GitHub Actions, Buildkite, etc.), or write "none".
 
 ### Destinations (multi-platform supported)
 
 - 🟡 **Default destinations** (project-wide constants; used by Xcode command templates)
-  {human response}
+  {operator response}
   - INSTRUCTION: List one destination per platform you support (iOS / macOS / visionOS / etc.). The agent selects `<DefaultDestination>` based on task context.
   - Format: copy/pasteable `xcodebuild -destination` string.
   - Example:
@@ -38,17 +38,17 @@ Do not store secrets here.
 ### Xcode container + scheme/test-plan conventions (if applicable)
 
 - 🟡 **Xcode container**
-  {human response}
+  {operator response}
   - INSTRUCTION: Specify the canonical build container as either a project or workspace path (choose one):
     - project: `<ProjectDir>/<Project>.xcodeproj`
     - workspace: `<Workspace>.xcworkspace`
 
 - 🟡 **Scheme selection rule**
-  {human response}
+  {operator response}
   - INSTRUCTION: Describe how to pick the scheme for "the module under work". If it's "scheme == module name", say so.
 
 - 🟡 **Test plan rule** (if applicable)
-  {human response}
+  {operator response}
   - INSTRUCTION: If you use test plans, state the rule (often "test plan name == scheme name"). Otherwise write "not used".
 
 - **Mapping table** (optional; include only if rules aren't enough)
@@ -57,42 +57,42 @@ Do not store secrets here.
 ### UI / instrumentation tests (if applicable)
 
 - 🟡 **How to run UI/instrumentation tests**
-  {human response}
+  {operator response}
   - INSTRUCTION: Provide the canonical command(s) or write "not used".
 
 - 🟡 **Device/simulator requirements**
-  {human response}
+  {operator response}
   - INSTRUCTION: State required devices/OS versions or special setup, or write "none".
 
-### Output and evidence collection (human-in-the-loop)
+### Output and evidence collection (operator-in-the-loop)
 
 Purpose: define the project-specific "evidence contract" so agents can debug deterministically when they cannot directly observe runtime behavior.
 
 - 🟡 **Where command output is captured**
-  {human response}
-  - INSTRUCTION: Provide the canonical paths/naming (and whether the human should paste full content vs paste the path to the captured file).
+  {operator response}
+  - INSTRUCTION: Provide the canonical paths/naming (and whether the operator should paste full content vs paste the path to the captured file).
 
 - 🟡 **Test artifacts** (if applicable)
-  {human response}
+  {operator response}
   - INSTRUCTION: Provide artifact path conventions for structured test results (stack-specific). Examples: Xcode `.xcresult` + extracted JSON; Android JUnit XML under `**/build/test-results/**` and HTML reports under `**/build/reports/tests/**`.
 
 - 🟡 **Runtime/UI evidence**
-  {human response}
+  {operator response}
   - INSTRUCTION: Where logs are found and what artifacts to provide (screenshots, recordings, crash reports).
 
 - 🟡 **Known limitations**
-  {human response}
+  {operator response}
   - INSTRUCTION: List any tooling limitations that affect evidence collection (e.g., missing test log visibility) and the workaround.
 
 ### Project structure notes
 
 - Main targets/modules:
-  {human response}
+  {operator response}
 - 🟡 Test targets/modules:
-  {human response}
+  {operator response}
   - INSTRUCTION: List test targets/modules so the agent can choose the right test runner commands. For Xcode projects, this also supports forming `-only-testing:` selectors and choosing schemes correctly.
 - 🟡 Any special conventions needed for imports, fixtures, or test discovery:
-  {human response}
+  {operator response}
   - INSTRUCTION: Document any repo-specific conventions that affect tests.
 
 <!-- END Managed-By: skai | Section: required-values -->
@@ -108,4 +108,3 @@ Purpose: define the project-specific "evidence contract" so agents can debug det
 
 <!-- BEGIN Managed-By: skai | Section: android-gradle -->
 <!-- END Managed-By: skai | Section: android-gradle -->
-

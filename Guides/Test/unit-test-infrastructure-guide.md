@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.unit-test-infrastructure
 Managed-Source: Guides/Test/unit-test-infrastructure-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-05-27
+Managed-Updated-At: 2026-09-06
 
 # Unit Test Infrastructure Guide
 
@@ -18,7 +18,7 @@ Defines the process for identifying, implementing, and compiling test infrastruc
 
 ## Gates
 
-Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+Core rule: every time the agent is waiting on the operator, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
 
 **Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
@@ -31,11 +31,11 @@ Use these standard gate lines:
 Planned gates are the expected review points of this workflow. At each planned gate:
 1. Summarize what was completed and what should happen next.
 2. End with the planned gate line.
-3. STOP and wait for the human.
+3. STOP and wait for the operator.
 
-In the planned gate line, `<what happens after your response>` should describe what the agent will do after the human gives advance intent.
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the operator gives advance intent.
 
-If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
+If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the operator resolves it.
 
 When the workflow finishes, return control to the parent testing workflow.
 
@@ -56,7 +56,7 @@ Rules:
 
 Progress tracking:
 - Default marker convention: `- [ ]` / `- [x]` in the infrastructure work document (process artifact). See `Guides/Core/process-flow.md`, "Progress markers".
-- Default rule: a `- [ ]` phase item means TODO or pending approval. Do not check the box without human approval.
+- Default rule: a `- [ ]` phase item means TODO or pending approval. Do not check the box without operator approval.
 - This workflow has a conditional marker model:
   - If Phase 1 concludes no infrastructure changes are required, do not create an infrastructure work document and do not invent phase items.
   - If Phase 1 concludes infrastructure changes are required, the infrastructure work document owns the phase items:
@@ -141,7 +141,7 @@ Progress tracking:
 
 **Always propose HOW to test, never whether to test.**
 
-**During this phase, never skip a test because it requires a production code change.** If testing a component requires a protocol wrapper, dependency injection, or other production code abstraction, propose the minimal change as infrastructure and ask the human for approval.
+**During this phase, never skip a test because it requires a production code change.** If testing a component requires a protocol wrapper, dependency injection, or other production code abstraction, propose the minimal change as infrastructure and ask the operator for approval.
 
 ---
 
@@ -266,7 +266,7 @@ See `skai/integration.md` for the project's test utility locations and available
 - Enables consistent testing approach
 - Solves a common testing problem
 
-**Always propose to human before implementing.**
+**Always propose to the operator before implementing.**
 
 ---
 
@@ -430,8 +430,8 @@ read_file path/to/Mocks/MockService.swift
 
 2. **Document in work document** what infrastructure was created
 
-3. **Work through the spec with human:**
-   - Human will say "Start task N" or "Proceed to next task"
+3. **Work through the spec with the operator:**
+   - The operator will say "Start task N" or "Proceed to next task"
    - Implement each task following the project's code organization policy (stack-specific)
    - Continue until all infrastructure tasks are complete
 

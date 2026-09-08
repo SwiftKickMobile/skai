@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture-artifacts
 Managed-Source: Guides/UIMap/ui-map-architecture-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-07
+Managed-Updated-At: 2026-09-06
 
 # UI Map Architecture Artifact Formats
 
@@ -29,7 +29,7 @@ Implementation-side artifact formats (code change items, build evidence) live in
 - **Type** — `<operation> <element>`.
   - operations: `add` | `remove` | `move` | `modify`
   - map elements: `domain` | `scene` | `route` | `scene-attribute`
-- **Source** (the leading token of Justification) — one of: `Upstream requirement` | `Human spec` | `Resolved decision` | `Agent proposal` | `Guide convention` | `Project convention` | `Map` | `Migration mapping` | `Change request`. When the source is a spec, requirement, or change request, the Justification is just the citation. `Resolved decision: D#` cites a resolved Discussion item — the `D#` item's Decision line shows whether the outcome was human-directed, approved as proposed, or revised. `Agent proposal` is an agent-originated map choice that did not go through Discussion, and carries a real rationale. `Project convention` means the project's README or equivalent project-conventions doc is the authority.
+- **Source** (the leading token of Justification) — one of: `Upstream requirement` | `Human spec` | `Resolved decision` | `Agent proposal` | `Guide convention` | `Project convention` | `Map` | `Migration mapping` | `Change request`. When the source is a spec, requirement, or change request, the Justification is just the citation. `Resolved decision: D#` cites a resolved Discussion item — the `D#` item's Decision line shows whether the outcome was operator-directed, approved as proposed, or revised. `Agent proposal` is an agent-originated map choice that did not go through Discussion, and carries a real rationale. `Project convention` means the project's README or equivalent project-conventions doc is the authority.
 
 Entries are written top-down in structural order — domain-level changes first, then scenes, then routes — mirroring the map and the rendered diagram. Items carry no checkbox: the change is realized by the proposed map and render that accompany the section.
 

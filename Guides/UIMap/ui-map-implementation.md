@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation
 Managed-Source: Guides/UIMap/ui-map-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-02
+Managed-Updated-At: 2026-09-06
 
 # UI Map Implementation
 
@@ -23,7 +23,7 @@ When a proposed map exists, implementation works against it, then **promotes** i
 
 **Invariant — structure, not features.** Implementation changes and creates *structure* — scaffolding new scenes, wiring routes, moving, renaming, aligning code to the platform conventions — but never *feature content*: no business logic, no real UI, no data beyond placeholder labels. A scene it scaffolds is a minimal placeholder that compiles, routes correctly, and is visibly identifiable in the running app.
 
-This workflow is one part of a larger agent session, not the system of record for every task in that session. Keep unrelated feature, bug, and product work out of the UI Map implementation artifact, including disclaimers that label it excluded or outside scope; session orchestration or that work's own skill and artifacts own it. If such work appears alongside a UI Map request, complete the separable UI-map-owned work through `🏁` before session orchestration starts the unrelated work, even when both happen in the same overall agent turn. Record `handoff` only when external work directly affects UI Map conformance or reconciliation. Block only when the UI Map work itself cannot proceed without that work or an external decision.
+This workflow is one part of a larger agent session, not the system of record for every task in that session. Keep unrelated feature, bug, and product work out of the UI Map implementation artifact, including disclaimers that label it excluded or outside scope; session orchestration or that work's own skill and artifacts own it. If such work appears alongside a UI Map request, run the separable UI-map-owned work through `🏁` when it can proceed. If it blocks, return the blocked gate to the operator; session orchestration may continue unrelated work. Record `handoff` only when external work directly affects UI Map conformance or reconciliation. Block only when the UI Map work itself cannot proceed without that work or an external decision.
 
 Implementation runs in four stages:
 
@@ -59,7 +59,7 @@ If no change package is present, conform code to the official `skai/ui-map/ui-ma
 
 ## Implementation artifact
 
-Create the implementation artifact in the change package, parallel to the architecture artifact: `skai/changes/<change-id>/ui-map-implementation.md`. When a change package is present, use its `<change-id>`. When there is none — a conformance run against the official map — resolve the id the way the architecture skill does: if it is clear from the user's input, use it; if not, do not create the artifact yet — ask inline for the change ID, propose a short kebab-case default when possible (deriving from the current branch, use only its final path component, e.g. `work/billing-ui` → `billing-ui`), and wait.
+Create the implementation artifact in the change package, parallel to the architecture artifact: `skai/changes/<change-id>/ui-map-implementation.md`. When a change package is present, use its `<change-id>`. When there is none — a conformance run against the official map — resolve the id the way the architecture skill does: if it is clear from the operator's input, use it; if not, do not create the artifact yet — ask inline for the change ID, propose a short kebab-case default when possible (deriving from the current branch, use only its final path component, e.g. `work/billing-ui` → `billing-ui`), and wait.
 
 Skeleton:
 
@@ -92,7 +92,7 @@ At a planned gate, first reread the implementation artifact and remove any refer
 **Planned gates** — `next` advances:
 
 - Discussion complete — emitted when every `- [ ]` discussion item is resolved (`- [x]`) and no change request is open. Advances to Code Changes.
-- Code Changes ready — the human reviews the spec. `next` executes the unchecked items this mode owns (the *Implement* stage): in **Plan**, when a proposed map exists, the only executable item is the terminal promote item, so `next` promotes, checks that item, and completes; without a proposed map, `next` completes with the official map unchanged. In **Build**, `next` runs and checks the `implement` / `placeholder` items — scaffolds and mechanical conformance, the green build, then the promote when one exists — to completion, or a blocked gate if any `handoff` item remains unchecked.
+- Code Changes ready — the operator reviews the spec. `next` executes the unchecked items this mode owns (the *Implement* stage): in **Plan**, when a proposed map exists, the only executable item is the terminal promote item, so `next` promotes, checks that item, and completes; without a proposed map, `next` completes with the official map unchanged. In **Build**, `next` runs and checks the `implement` / `placeholder` items — scaffolds and mechanical conformance, the green build, then the promote when one exists — to completion, or a blocked gate if any `handoff` item remains unchecked.
 
 **Completion** — when the run carries a map change, both modes end by performing and checking the terminal promote item, then `🏁` (Plan right after the Code Changes gate; Build once the scaffolds build green). Without a map change, they complete with the official map unchanged. A Build still holding unchecked `handoff` items ends at a blocked gate first (see *Completion*).
 
@@ -104,9 +104,9 @@ At a planned gate, first reread the implementation artifact and remove any refer
 - Build/render commands or overrides are missing or broken (for rendering, only when an override is broken or the SKAI default cannot run).
 - A build failure points at a map flaw, requirement conflict, or project constraint rather than a clear local fix.
 - UI Map conformance cannot proceed without feature content beyond placeholder/navigation work.
-- Ambiguity: a finding or task cannot be interpreted without human or architecture input.
+- Ambiguity: a finding or task cannot be interpreted without operator or architecture input.
 
-The human resolves the cause (resolves items, fixes inputs, updates the package); the agent re-evaluates and emits the appropriate gate on the next response.
+The operator resolves the cause (resolves items, fixes inputs, updates the package); the agent re-evaluates and emits the appropriate gate on the next response.
 
 **Advance intent** moves past a planned gate. Signals: "next", "continue", "go ahead", "do it"; recognized only after a `⏳ GATE:` line. Deliverables named in the initiating request (e.g. "implement the UI map") are not advance intent and never skip Discussion. "we should..." / "let's..." is discussion, not authorization. `auto` bypasses planned gates only — never a blocked gate. `auto to <milestone>` stops before a named gate (`discussion complete`, `code changes ready`).
 
@@ -114,7 +114,7 @@ The human resolves the cause (resolves items, fixes inputs, updates the package)
 
 On initiation, load the required inputs, infer the Mode from context (see *Run mode*), and create the implementation artifact. Then run the scoped audit: compare the codebase to the **target map** — the proposed map when a change package exists, otherwise the official map. The audit is exhaustive within its reach: inspect every applicable scene and route in scope, deriving and checking its expected identity and canonical home before declaring conformance.
 
-The request and change package set the audit's reach. When a package exists, its `## Map Changes` is the spine: a baseline audits the whole codebase against the whole proposed map; a scoped change audits only the affected subset. Architecture `## Deferrals` are context about intentionally postponed map work, not implementation findings or `T#` sources; include work only when the current target-map/code audit independently yields a conformance finding. A no-package conformance request audits the scope named by the request against the official map. Do not expand into a general cleanup audit unless the human explicitly requests it. If you discover a deviation outside that reach, surface it to session orchestration rather than adding it to this artifact; include it only after the human explicitly expands the run's scope.
+The request and change package set the audit's reach. When a package exists, its `## Map Changes` is the spine: a baseline audits the whole codebase against the whole proposed map; a scoped change audits only the affected subset. Architecture `## Deferrals` are context about intentionally postponed map work, not implementation findings or `T#` sources; include work only when the current target-map/code audit independently yields a conformance finding. A no-package conformance request audits the scope named by the request against the official map. Do not expand into a general cleanup audit unless the operator explicitly requests it. If you discover a deviation outside that reach, surface it to session orchestration rather than adding it to this artifact; include it only after the operator explicitly expands the run's scope.
 
 The audit surfaces two kinds of gap: **code that deviates** from the target map, and **map scenes with no code yet** (scaffolding). Three starting conditions shape what it finds:
 
@@ -146,33 +146,33 @@ Before assigning a disposition, confirm that the map plus the loaded platform an
 
 1. **Implement** — a mechanical fix or a placeholder scaffold the skill does itself; becomes a `T#` code-change item. Mechanical changes default here: placeholder scaffolds for new scenes in scope; file/folder moves that mirror the target map's domains; renames that align scene IDs and code names; route enum or route-host placement that follows the platform convention guide; missing imports or simple local compile fixes caused by these.
 2. **Hand off** — a concrete, verifiable non-mechanical change outside UI Map implementation ownership that directly affects conformance: the required outcome is already defined, but another workflow, skill, person, or PR must do the work → an unchecked `handoff` `T#`. In Build this stops the run at a blocked gate; in Plan it is part of the spec. Examples: rewriting existing runtime behavior, refactoring cross-cutting navigation infrastructure, or changing established project conventions to an already-defined pattern. A scene newly added by the active proposed map is UI-map-owned placeholder work in Build or `planned` work in Plan. A pre-existing official-map scene with no code in a shipped or brownfield app is a `handoff` unless the active request explicitly scopes it as new scaffold work. Unrelated feature work elsewhere in the session is not a finding and does not belong in this artifact.
-3. **Request change** — only when the target **map itself** must change (a clear flaw, infeasible as specified, a poor decision worth revisiting). The skill never edits the map, so it proposes a change request in Discussion and, only after explicit approval, raises the request and blocks its own Code Changes until the map is updated — the heaviest stop, so prefer a blocked gate or handoff unless the map is genuinely at fault or the human directs it.
+3. **Request change** — only when the target **map itself** must change (a clear flaw, infeasible as specified, a poor decision worth revisiting). The skill never edits the map, so it proposes a change request in Discussion and, only after explicit approval, raises the request and blocks its own Code Changes until the map is updated — the heaviest stop, so prefer a blocked gate or handoff unless the map is genuinely at fault or the operator directs it.
 
 The implement/handoff line is the mechanical/non-mechanical line for work that affects UI Map conformance **after the conforming outcome is known**. A brownfield case may produce `handoff` items plus a mechanical slice, so a Build lands that thin slice and then blocks at completion on the unchecked handoff remainder. The audit's mix of dispositions does not reclassify the run: `Mode` remains the ownership scope inferred at initiation.
 
 ## Discussion
 
-Findings that need a **decision** are resolved here, mirroring the architecture skill's discussion. A finding whose disposition is already clear needs no discussion item — it goes straight into Code Changes when that stage runs: a UI-map-owned finding as `implement`/`placeholder` in Build or `planned` in Plan, and a **clear-cut handoff as `handoff`** (the human weighs in on handoff work at the completion blocked gate, so a plainly non-mechanical handoff does not also need discussing first). Reserve Discussion for genuine decisions: a `[Question]` with no default, including a missing required guide/project mapping; a `[Tradeoff]`; an ambiguous implement-vs-handoff call; or a finding that the map itself is wrong (decision: raise a change request). A missing mapping remains an open Discussion item and blocks Code Changes until the human or owning authority supplies it. So a new-app baseline, or a run whose only non-mechanical findings are clear-cut handoffs, often leaves Discussion empty.
+Findings that need a **decision** are resolved here, mirroring the architecture skill's discussion. A finding whose disposition is already clear needs no discussion item — it goes straight into Code Changes when that stage runs: a UI-map-owned finding as `implement`/`placeholder` in Build or `planned` in Plan, and a **clear-cut handoff as `handoff`** (the operator weighs in on handoff work at the completion blocked gate, so a plainly non-mechanical handoff does not also need discussing first). Reserve Discussion for genuine decisions: a `[Question]` with no default, including a missing required guide/project mapping; a `[Tradeoff]`; an ambiguous implement-vs-handoff call; or a finding that the map itself is wrong (decision: raise a change request). A missing mapping remains an open Discussion item and blocks Code Changes until the operator or owning authority supplies it. So a new-app baseline, or a run whose only non-mechanical findings are clear-cut handoffs, often leaves Discussion empty.
 
 ### Item format
 
 Discussion items are `D#`, whether the decision comes from an audit finding or an implementation choice. Each item line is `- [ ] <id> [Kind] <summary>`, with Kind one of:
 
-- `[Question]` — needs the human's input; the agent has no basis to recommend. Rare: propose a default whenever there is one.
-- `[Proposal]` — the agent recommends a course of action; the human accepts, rejects, or modifies.
+- `[Question]` — needs the operator's input; the agent has no basis to recommend. Rare: propose a default whenever there is one.
+- `[Proposal]` — the agent recommends a course of action; the operator accepts, rejects, or modifies.
 - `[Tradeoff]` — two or more options plus the agent's recommended pick and why. Never a neutral menu.
 
 A finding that the *map* itself is wrong is not a separate Kind: it is an ordinary `[Proposal]` / `[Tradeoff]` whose recommended action — and `Decision` — is to raise a change request (see *Raising a change request* below).
 
-Sub-bullet labels are **bold** with no separator after: `Concern` always, then either `Proposal` or `Question`; `Options` for a Tradeoff; `Detail` when helpful; `Why` for the rationale; `Decision` added on resolution. On the human's explicit approval, check the box (`- [x]`) and append `- **Decision** <succinct resolution>.`. Keep sibling items tight: no blank lines between `- [ ]` items under one heading.
+Sub-bullet labels are **bold** with no separator after: `Concern` always, then either `Proposal` or `Question`; `Options` for a Tradeoff; `Detail` when helpful; `Why` for the rationale; `Decision` added on resolution. On the operator's explicit approval, check the box (`- [x]`) and append `- **Decision** <succinct resolution>.`. Keep sibling items tight: no blank lines between `- [ ]` items under one heading.
 
 ### Organization and gate
 
-Use topic sections that reflect the code or map area, not aggregator sections. A finding belongs where its reasoning is easiest to review; one whose proposed resolution is a change request stays here until the human explicitly approves it.
+Use topic sections that reflect the code or map area, not aggregator sections. A finding belongs where its reasoning is easiest to review; one whose proposed resolution is a change request stays here until the operator explicitly approves it.
 
 ### Raising a change request
 
-When the human explicitly approves a Discussion decision to request a map change, check that `D#`, append its Decision, then immediately write one markdown file at `skai/changes/<change-id>/change-requests/ui-map-<nnn>.md` and link it under the implementation artifact's `## Change Requests`. Use the format in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md): `Change Request Status: Proposed`, a `Reviewer Response`, and the concern and requested map change. Number from `ui-map-001.md`.
+When the operator explicitly approves a Discussion decision to request a map change, check that `D#`, append its Decision, then immediately write one markdown file at `skai/changes/<change-id>/change-requests/ui-map-<nnn>.md` and link it under the implementation artifact's `## Change Requests`. Use the format in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md): `Change Request Status: Proposed`, a `Reviewer Response`, and the concern and requested map change. Number from `ui-map-001.md`.
 
 Do not create the request while its `D#` is unresolved, and do not enter or populate `## Code Changes` after creating it. Emit the change-request blocked gate immediately; the run resumes and re-audits only after architecture updates the map and no change request remains open.
 

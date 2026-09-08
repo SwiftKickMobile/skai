@@ -21,7 +21,7 @@ This policy defines how installers and update runbooks must behave in the presen
 - Deprecated install artifacts should be identified during discovery and proposed for cleanup (permission-gated).
 - Legacy candidates must not be overwritten by default.
   - Migrate by generating new managed outputs in the current target locations.
-  - Default migration plan should propose a cleanup action for any legacy candidates that are known install artifacts (delete or replace-with-symlink), but never execute without explicit human approval.
+  - Default migration plan should propose a cleanup action for any legacy candidates that are known install artifacts (delete or replace-with-symlink), but never execute without explicit operator approval.
 
 ## When destination path already exists
 

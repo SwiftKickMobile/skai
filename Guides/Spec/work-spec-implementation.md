@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-implementation
 Managed-Source: Guides/Spec/work-spec-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-04
+Managed-Updated-At: 2026-09-06
 
 # Work Spec Implementation
 
@@ -33,11 +33,11 @@ and ends at its Discussion gate. For a missing external input, stop at a blocked
 approval from chat history or repair the design inside the task list.
 
 Before auditing or writing the work spec, require `skai/integration.md` to define the build, test, and
-runtime commands this work needs. Missing or unfilled commands are a blocked gate; the supervisor
+runtime commands this work needs. Missing or unfilled commands are a blocked gate; the operator
 establishes them through normal SKAI install/update, then resumes planning. Greenfield work is not an
 exception—the commands may name the project structure its setup tasks will create.
 
-The supervisor's request determines the endpoint without a stored mode:
+The operator's request determines the endpoint without a stored mode:
 
 - **Plan**: create the work spec, obtain approval, and finish for handoff without changing code.
 - **Build**: create the work spec, obtain approval, and implement it.
@@ -94,7 +94,7 @@ Every in-scope design obligation maps to a task or an explicit deferral/handoff,
 what it realizes. Completion criteria describe observable outcomes, not merely that code exists or
 the project builds. Verification proves those outcomes as directly as available tooling permits.
 
-`## Deferrals` lists only in-scope obligations the supervisor approves leaving undone at the
+`## Deferrals` lists only in-scope obligations the operator approves leaving undone at the
 implementation-plan gate. Adding a deferral after approval changes scope and blocks for renewed plan
 approval. Handoffs remain tasks with a Disposition; do not duplicate them here.
 
@@ -129,7 +129,7 @@ Example:
 
 ## Gates
 
-Whenever waiting on the supervisor, end with the active gate line and re-emit it verbatim on every
+Whenever waiting on the operator, end with the active gate line and re-emit it verbatim on every
 response until the gate changes. Name the artifact path and what awaits review; for a planned gate,
 also state what approval does. Do not invent intermediate gates. Completion is not a gate.
 
@@ -143,15 +143,16 @@ verification, deferrals, and handoffs, then use this skill's only approval gate:
 - Build request: `⏳ GATE: Next: Design and implementation plan ready. Say "next" to approve them and begin implementation, or what to change.`
 - Plan request: `⏳ GATE: Next: Design and implementation plan ready. Say "next" to approve them for handoff, or what to change.`
 
-When the supervisor requested a bounded run, reaching the boundary reuses this same gate category:
+When the operator requested a bounded run, reaching the boundary reuses this same gate category:
 
 `⏳ GATE: Next: Stopped before <T#> as requested. Say "next" to continue implementation, or what to change.`
 
 Advance intent resumes an active bounded run without another audit; a re-initiated skill follows
 *Inputs and initiation*.
 
-The supervisor is the human or authorized agent outside this workflow that reviews gates; the
-executing agent never approves its own. This guide does not prescribe delegation or escalation.
+The operator is the human or parent agent that requested the workflow. The executing agent never
+approves its own work where independent review is required. See
+`Policies/universal-stop-conditions.md` for the operator model.
 
 While an invoked sibling is active, end responses with only its gate line; resume this skill after
 the sibling's completion line.
@@ -161,7 +162,7 @@ the sibling's completion line.
 Advance intent ("next", "continue", "go ahead", "do it") advances a planned gate only after that
 gate is emitted. "We should" and "let's" are discussion. There is no `auto` mode.
 
-At a blocked gate, the supervisor resolves the cause; on the next response the agent re-evaluates and
+At a blocked gate, the operator resolves the cause; on the next response the agent re-evaluates and
 emits the appropriate gate. Bare advance intent while unresolved re-emits the blocked gate.
 
 Tasks use stable `T#` checkboxes. At the implementation-plan gate, every unverified task remains
@@ -283,7 +284,7 @@ Stop at a blocked gate when:
 
 Leave the current task unchecked and identify the smallest decision or external change needed. For a
 non-design blocker, record `[evidence: blocked — needs <result>]` on the task before waiting, then
-record the supervisor's resolution there before resuming. A
+record the operator's resolution there before resuming. A
 design/API problem transfers control to Work Spec Design in the same response; do not emit a separate
 implementation-side blocked gate first. Once active, Design reopens the artifact, records the problem
 as a new `D#`, and ends at its Discussion gate. When the design returns ready, re-audit, revise the
@@ -294,7 +295,7 @@ a task pass. Do not edit the design from this skill.
 
 ## Completion
 
-For Plan, complete after supervisor approval with all implementation tasks still unchecked:
+For Plan, complete after operator approval with all implementation tasks still unchecked:
 
 `🏁 Complete. The implementation plan is approved for handoff.`
 

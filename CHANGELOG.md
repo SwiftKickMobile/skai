@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- 2026-09-06 **Workflow authority now follows the operator chain.** Every workflow's operator is the
+  human or parent agent that requested it; agents return gates and blockers to that operator, which
+  may resolve them within delegated authority or escalate. Authorization, debugging, requirements,
+  UI Map, testing, review, maintenance, and installation guidance now use that model, while literal
+  human testing, provenance, and human-owned overrides remain distinct.
+
+- 2026-09-06 **Adapters load the operator model automatically.** Codex now installs its managed
+  instructions at the standard root `AGENTS.md` target, Claude Code gains the managed
+  `template.claude-code-instructions` asset, and Cursor emits authorization and stop policies as
+  `alwaysApply` rules with frontmatter-safe managed markers. Existing project-owned instruction
+  files receive only an approved managed block. Re-run every installed adapter; treat the former
+  `.agents/AGENTS.md` Codex instruction target as legacy while retaining `.agents/skills/`.
+
 - 2026-09-03 **Compose placeholder tab labels no longer wrap.** Tab labels are constrained to one line and ellipsized when five-item navigation bars leave insufficient width, preserving consistent icon alignment.
 
 - 2026-09-03 **Process-refinement collateral now follows the target repository.** The workflow resolves the Git root from the binding target path, uses that repository's branch for working documents, and stores durable findings at `refinement-reviews/` relative to the target root. This works identically when SKAI is opened directly or nested as a submodule and prevents parent projects from accumulating SKAI maintenance history. Re-run installed adapters to refresh the wrapper.

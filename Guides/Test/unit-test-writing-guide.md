@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.unit-test-writing
 Managed-Source: Guides/Test/unit-test-writing-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-05-27
+Managed-Updated-At: 2026-09-06
 
 # Unit Test Writing & Execution Guide
 
@@ -16,7 +16,7 @@ Defines the process for writing and executing test logic.
 
 ## Gates
 
-Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+Core rule: every time the agent is waiting on the operator, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
 
 **Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
@@ -29,11 +29,11 @@ Use these standard gate lines:
 Planned gates are the expected review points of this workflow. At each planned gate:
 1. Summarize what was completed and what should happen next.
 2. End with the planned gate line.
-3. STOP and wait for the human.
+3. STOP and wait for the operator.
 
-In the planned gate line, `<what happens after your response>` should describe what the agent will do after the human gives advance intent.
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the operator gives advance intent.
 
-If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
+If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the operator resolves it.
 
 When the workflow finishes, return control to the parent testing workflow.
 
@@ -67,7 +67,7 @@ This workflow uses both progress-marker conventions because it produces both kin
 - `- [ ]` / `- [x]` in the **work document** (process artifact, markdown).
 - `🟡` in the **test files** (in-code, where completion is removal of the marker as tests are written and pass).
 
-Default rule: a progress marker (either `- [ ]` or `🟡`) means TODO or pending approval. Do not clear it without human approval.
+Default rule: a progress marker (either `- [ ]` or `🟡`) means TODO or pending approval. Do not clear it without operator approval.
 
 Work document:
 - The work document's checklist has two `- [ ]` phase items: `- [ ] Phase 1: Write Tests` and `- [ ] Phase 2: Execute & Fix`.
@@ -80,7 +80,7 @@ Work document:
 
 Test files (in code):
 - Test-function and section `🟡` markers in the test file are local work markers for the tests in scope.
-- Once a test passes and the human gives advance intent, remove `🟡` from that test function. If all tests in a section pass, also remove `🟡` from the section MARK comment.
+- Once a test passes and the operator gives advance intent, remove `🟡` from that test function. If all tests in a section pass, also remove `🟡` from the section MARK comment.
 
 If work stops due to ambiguity, missing evidence, test-execution failure, or a proposed production-code fix, do not change any markers — neither check the box on the phase item nor remove `🟡` from test functions.
 
@@ -113,7 +113,7 @@ If work stops due to ambiguity, missing evidence, test-execution failure, or a p
 6. Tests skipped due to missing infrastructure → planned gate
 7. Advance intent → return control to the parent workflow with the skipped tests' `🟡` markers still present and `Phase 2: Execute & Fix` still unchecked.
 
-**Missing infrastructure during writing:** If you discover a test requires infrastructure that was not provided during the infrastructure phase, do not create the infrastructure inline. Skip the test (mark it as blocked on infrastructure), document what is missing, and continue with the rest of the section. Once the runnable tests in the section have been handled, STOP at the skipped-tests planned gate and return control to the parent workflow so the human can decide whether to re-enter the infrastructure phase before more writing continues.
+**Missing infrastructure during writing:** If you discover a test requires infrastructure that was not provided during the infrastructure phase, do not create the infrastructure inline. Skip the test (mark it as blocked on infrastructure), document what is missing, and continue with the rest of the section. Once the runnable tests in the section have been handled, STOP at the skipped-tests planned gate and return control to the parent workflow so the operator can decide whether to re-enter the infrastructure phase before more writing continues.
 
 **Two scenarios:**
 - **Writing new tests**: Start at Phase 1
@@ -217,7 +217,7 @@ If work stops due to ambiguity, missing evidence, test-execution failure, or a p
 
 **Important:** Do NOT run tests yet. Wait for advance intent.
 
-**Note:** `🟡` remains on test functions during Phase 1. `- [ ] Phase 1: Write Tests` in the work document also remains unchecked until the human gives advance intent at the Phase 1 gate.
+**Note:** `🟡` remains on test functions during Phase 1. `- [ ] Phase 1: Write Tests` in the work document also remains unchecked until the operator gives advance intent at the Phase 1 gate.
 
 ---
 
@@ -476,7 +476,7 @@ struct MyComponentTests {
    - Fix the error
    - Re-run the test command
    - Repeat validation until test actually runs
-   - **If you cannot determine why tests didn't run**: Document what you tried and consult with human
+   - **If you cannot determine why tests didn't run**: Document what you tried and consult the operator
    - End with the blocked gate line.
 
    **Only proceed to step 3 when you can confirm:**
@@ -552,7 +552,7 @@ When resolving test failures, follow the project's Debugging / Problem-Resolutio
 - See `Guides/Core/debugging-guide.md` for the evidence-first loop and approval gates.
 - Select a debugging tactic (e.g., partitioning, minimal working implementation, bisect) and state *why* it's the best next step.
 - Prefer experiments that produce discriminating evidence over "guessing fixes."
-- Use explicit stop conditions: if you need runtime output you can't access, pause and ask the human to run tests and provide the output/logs.
+- Use explicit stop conditions: if you need runtime output you can't access, pause and ask the operator to run tests and provide the output/logs.
 
 **Process:**
 1. **Extract structured assertion failure details** - This is CRITICAL for understanding what failed
@@ -588,7 +588,7 @@ When resolving test failures, follow the project's Debugging / Problem-Resolutio
    - Compare expected vs actual values from assertion failure
    - Check for common patterns below
 6. **Propose fix** - Document the proposed solution in work document and STOP with the blocked gate line
-7. **Wait for approval / advance intent** - Human reviews and approves before you apply the fix
+7. **Wait for approval / advance intent** - The operator reviews and approves before you apply the fix
 8. **Apply fix** - Make the approved changes
 9. **Re-run test** - Verify it passes
 10. **Repeat if needed** - If still failing, return to step 1 (extract assertion details)
@@ -597,14 +597,14 @@ When resolving test failures, follow the project's Debugging / Problem-Resolutio
 - **Production code first** - Check the code under test before assuming test infrastructure is broken
 - **Trust isolation results** - If a test fails in complete isolation with consistent values, the bug is in production code
 - **Simple explanations first** - Logic bugs are more likely than framework issues
-- **Listen to evidence** - When user provides contradictory evidence, stop and reconsider your hypothesis
+- **Listen to evidence** - When the operator provides contradictory evidence, stop and reconsider your hypothesis
 - **Facts vs guesses** - Never state assumptions as facts. Clearly label: Facts (what logs/code show), Hypothesis (what you think), Unknown (what needs verification)
 
-**When to ask for human determination:**
-- **Business rules/domain questions**: Ask human about product behavior, UX decisions, timing rules, notification preferences
+**When to ask for operator determination:**
+- **Business rules/domain questions**: Ask the operator about product behavior, UX decisions, timing rules, notification preferences
 - **Obvious bugs**: Fix without asking - logic errors, wrong variables, crashes, off-by-one errors
 
-**How to report issues requiring human determination:**
+**How to report issues requiring operator determination:**
 
 Document in work document with:
 1. Brief context (what scenario you're testing)
@@ -632,7 +632,7 @@ with `option: .includeMetadata` (line 194), but the tests expect `.excludeMetada
 **Update test vs production code:**
 - Update production code if test reveals a real bug or recent changes broke functionality
 - Update test if assumptions are wrong, behavior intentionally changed, or test is too brittle
-- Always discuss with human before deciding which to change
+- Always discuss with the operator before deciding which to change
 
 ---
 

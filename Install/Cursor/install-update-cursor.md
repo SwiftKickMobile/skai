@@ -7,7 +7,9 @@ This document is the canonical Cursor install/update runbook.
 - `assets.manifest.json`
 - `Install/managed-header.md`
 - `Install/conflict-precedence-policy.md`
+- `Policies/unauthorized-changes.md`
 - `Policies/safe-operations.md`
+- `Policies/universal-stop-conditions.md`
 - `Templates/docs/skai/integration.md`
 
 Key responsibilities:
@@ -58,21 +60,21 @@ Prepare a concrete plan:
  - Deprecated install artifact cleanup proposals (explicitly permission-gated):
    - remove managed outputs that were installed by older versions of this runbook but are no longer part of the current install targets
 
-Required gray-area checks (ask the human, then reflect the decision in the plan):
+Required gray-area checks (ask the operator, then reflect the decision in the plan):
 - Search for legacy debugging rule candidates (common examples: `.cursor/rules/debugging*.mdc`, `.cursor/rules/*debug*.mdc`, or other Cursor rules that encode project-specific logging/API conventions).
   - If found, propose:
     1) migrating any project-specific logging/API conventions they contain into `skai/integration.md`, then
     2) deleting those legacy debugging rule files (only with explicit approval).
   - When reporting discovery, list the candidates you found; do not emit "not found" lines for example filenames you didn't find.
 
-### 4) Confirm (human gate)
+### 4) Confirm (operator gate)
 
-Present the plan and wait for human approval before writing.
+Present the plan and wait for operator approval before writing.
 
 If updating the submodule, include an "update review" section:
 - Summarize changes between the old SHA and new SHA for relevant paths:
   - `Guides/`, `Policies/`, `Templates/`, `Install/`, `assets.manifest.json`, `README.md`
-- If you cannot compute the diff yourself, STOP and ask the human to provide the diff output.
+- If you cannot compute the diff yourself, STOP and ask the operator to provide the diff output.
 
 ### 5) Execute (safe order)
 
@@ -83,9 +85,9 @@ If updating the submodule, include an "update review" section:
      - Create/seed the Integration doc from `Templates/docs/skai/integration.md`.
      - Fill only what you can source with high confidence.
      - Add explicit 🟡 placeholders for missing items.
-     - STOP and ask the human for the missing items before proceeding with the rest of the install.
+     - STOP and ask the operator for the missing items before proceeding with the rest of the install.
    - When filling "Build / compile" and "Unit tests", prefer non-interactive command-line commands (e.g., `xcodebuild ...`) over GUI instructions ("open Xcode…"). If you can't produce command-line commands with high confidence, leave 🟡 placeholders and ask.
-   - For Xcode projects: never invent a simulator/device model. If a canonical `xcodebuild -destination` string is not already established in-repo, propose one and ask the human to confirm before writing it.
+   - For Xcode projects: never invent a simulator/device model. If a canonical `xcodebuild -destination` string is not already established in-repo, propose one and ask the operator to confirm before writing it.
    - Follow `Install/integration-doc-install-update.md` for how to update the Integration doc safely (managed blocks + human overrides).
 3.5 Create/update ignore files (permission-gated if the files already exist and are project-owned):
    - Update `.gitignore` by inserting/updating a managed block:
@@ -102,7 +104,7 @@ If updating the submodule, include an "update review" section:
 Required Integration doc fields to request (minimum set):
 - Build/compile command(s)
 - Unit test command(s): run all + run a single test/subset
-- How to capture full output (paths/artifacts the human should paste back)
+- How to capture full output (paths/artifacts the operator should paste back)
 - Simulator/device destination conventions (if applicable)
 - Known evidence-capture limitations (if any)
 
@@ -117,13 +119,18 @@ Create these directories in the host repo:
 The Cursor adapter writes `.mdc` files directly into the host repo.
 
 Rules:
-- Each generated `.mdc` begins with the managed header (see `Install/managed-header.md`).
-- For updates, overwrite only when the destination is missing or already has the managed header.
-- Determine stack (Swift/Xcode vs Android/Kotlin, etc.) by inspecting the host repo, then ask the human to confirm before writing.
+- Each generated `.mdc` begins with Cursor YAML frontmatter followed immediately by the managed marker
+  comment described in `Install/managed-header.md`.
+- For updates, overwrite only when the destination is missing or already has that managed marker.
+- Determine stack (Swift/Xcode vs Android/Kotlin, etc.) by inspecting the host repo, then ask the operator to confirm before writing.
 
-Initial supported stacks:
-- Swift/Xcode: generate `.mdc` with `globs: ["**/*.swift"]`.
-- Android/Kotlin: generate `.mdc` with `globs: ["**/*.kt", "**/*.kts"]`.
+Generate `unauthorized-changes.mdc`, `safe-operations.mdc`, and
+`universal-stop-conditions.mdc` with `alwaysApply: true` and no stack globs. These rules govern the
+session, including non-code discussion and delegation.
+
+Apply stack globs to the remaining generated rules:
+- Swift/Xcode: `globs: ["**/*.swift"]`.
+- Android/Kotlin: `globs: ["**/*.kt", "**/*.kts"]`.
 
 Recommended generated rules (filenames are stable):
 - `.cursor/rules/skai/coding-patterns.mdc` ← `Policies/coding-patterns.md`
@@ -209,6 +216,6 @@ During discovery, if you find artifacts that appear to be from older installatio
 
 - **Managed symlinks** (symlinks into `Submodules/skai/...`): propose deleting them (only with explicit approval).
 - **Legacy candidates** (look like managed assets but lack the managed header): do not overwrite. Propose deletion or replacement, but only with explicit approval. If they contain project-specific content (e.g., logging conventions, custom rules), propose migrating that content into `skai/integration.md` first.
-- **Non-symlink or project-authored content**: treat as project-owned and STOP to ask the human what to do.
+- **Non-symlink or project-authored content**: treat as project-owned and STOP to ask the operator what to do.
 
 Rationale: leaving legacy copies in place increases the chance that humans/agents keep reading the wrong file out of habit.

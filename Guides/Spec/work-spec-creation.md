@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-creation
 Managed-Source: Guides/Spec/work-spec-creation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-04
+Managed-Updated-At: 2026-09-06
 
 # Work Spec Design
 
@@ -17,13 +17,13 @@ directly into that skill, or the completed design may be handed to another devel
 
 ## Inputs and initiation
 
-Start when the supervisor asks to design or author a work spec. Input may be a conversation, design,
+Start when the operator asks to design or author a work spec. Input may be a conversation, design,
 ticket, requirements, another specification, source code, or any combination. There is no intake form
 or declared mode.
 
 Digest the supplied material and inspect the repository for the current architecture and conventions.
 Read `skai/integration.md` and applicable canonical requirements when they exist. Do not ask the
-supervisor to restate facts the inputs or repository answer. Resolve the spec name from context when
+operator to restate facts the inputs or repository answer. Resolve the spec name from context when
 possible; if no stable artifact identity can be proposed, stop at a blocked gate before creating it.
 
 Choose a concise `<spec-name>` and create:
@@ -87,7 +87,7 @@ This structural screen is authoritative. Do not add a mutable readiness status.
 
 ## Gates
 
-Whenever waiting on the supervisor, end with the active gate line and re-emit it verbatim on every
+Whenever waiting on the operator, end with the active gate line and re-emit it verbatim on every
 response until the gate changes. Name the artifact path and what awaits review; for a planned gate,
 also state what approval does. Do not invent intermediate gates. Completion is not a gate.
 
@@ -103,8 +103,9 @@ When none remain, use this skill's only planned gate:
 
 `⏳ GATE: Next: Discussion complete. Review the design decisions and API sketch, then say "next" to approve them and complete the design.`
 
-The supervisor is the human or authorized agent outside this workflow that reviews gates; the
-executing agent never approves its own. This guide does not prescribe delegation or escalation.
+The operator is the human or parent agent that requested the workflow. The executing agent never
+approves its own work where independent review is required. See
+`Policies/universal-stop-conditions.md` for the operator model.
 
 While an invoked sibling is active, only its gate is active; resume this skill after the sibling's
 completion line.
@@ -114,10 +115,10 @@ completion line.
 Advance intent ("next", "continue", "go ahead", "do it") advances a planned gate only after that
 gate is emitted. "We should" and "let's" are discussion. There is no `auto` mode.
 
-At a blocked gate, the supervisor resolves the cause; on the next response the agent re-evaluates and
+At a blocked gate, the operator resolves the cause; on the next response the agent re-evaluates and
 emits the appropriate gate. Bare advance intent while unresolved re-emits the blocked gate.
 
-Discussion uses stable, never-renumbered `D#` checkboxes in tight topic lists. Explicit supervisor
+Discussion uses stable, never-renumbered `D#` checkboxes in tight topic lists. Explicit operator
 approval checks one item and appends its Decision; it is not advance intent. The planned gate appears
 only after every item is checked, and advance intent there authorizes `## Implementation Design`.
 
@@ -158,10 +159,10 @@ exists.
 resolution used by the API Sketch. Every other item is a `[Proposal]` or `[Tradeoff]` with a
 recommended answer.
 
-A choice earns a `D#` only when supervisor review has leverage: it creates a long-lived contract,
+A choice earns a `D#` only when operator review has leverage: it creates a long-lived contract,
 has broad blast radius, is costly to reverse, commits to an external system, or materially constrains
 future work. Clear implications of the inputs, project conventions, or existing architecture are
-encoded directly. Answer a supervisor question directly; make it a `D#` only when the answer itself
+encoded directly. Answer an operator question directly; make it a `D#` only when the answer itself
 requires a material choice.
 
 On explicit approval, preserve the item, check it, and append:
@@ -261,14 +262,14 @@ Invoke sibling workflows only when their owned artifact is needed:
 
 - When `skai/ui-map/ui-map.yaml` exists, invoke
   [`../UIMap/ui-map-architecture.md`](../UIMap/ui-map-architecture.md) for a new or changed scene,
-  route, or domain. If no official map exists, invoke the sibling only when the supervisor approves a
+  route, or domain. If no official map exists, invoke the sibling only when the operator approves a
   material `D#` adopting one; otherwise describe the UI design in this document. Its completed package
   becomes an input.
 - When `skai/integration.md` declares a requirements catalog, invoke
   [`../Requirements/requirements-authoring.md`](../Requirements/requirements-authoring.md) if existing
   shipping behavior needed by this work is absent. It owns the backfill package and its gates. The
   backfill runs here only when an open `D#` or the current slice's API Sketch cannot be resolved
-  without it. Otherwise record the need for separate supervisor orchestration and continue. If the
+  without it. Otherwise record the need for separate operator orchestration and continue. If the
   project keeps no catalog, record the missing behavior as an assumption. New behavior being planned
   does not automatically trigger requirements authoring.
 

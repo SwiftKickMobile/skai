@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.process-refinement
 Managed-Source: Guides/Process/process-refinement-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-04
+Managed-Updated-At: 2026-09-06
 
 # Process Refinement Guide
 
@@ -61,19 +61,19 @@ When a finding comes from an observed agent run, interview the original agent be
 - **accept** — a real defect that warrants a fix to the guide.
 - **log only** — valid observation that does not meet the codification bar (see below). Record it in the findings log; do not change the guide.
 - **reject** — fails to establish a live defect: guesswork, ignores ownership already clear in the docs, or treats a hypothetical misuse as a normal-use failure. Reasoning from the documents rather than from running something is *not* grounds to reject — that is the reviewer's `speculative` evidence mark, and it is most of what a review of a process guide can offer.
-- **human decision** — a live defect, but the likely fix adds *process weight*: a new gate, a mirror/duplicate field, a checklist, a proof burden, extra validation, a wrapper, repeated re-approval. Not the refining agent's call.
+- **operator decision** — a live defect, but the likely fix adds *process weight*: a new gate, a mirror/duplicate field, a checklist, a proof burden, extra validation, a wrapper, repeated re-approval. Not the refining agent's call.
 
 **Codification check** — before classifying a finding as `accept`, work through this in order:
 
 1. *Does an existing rule already cover this case?* If yes, the fix is sharpening that rule or adding a ❌/✅ example to it — not a new rule.
-2. *Single observation, or recurring across cases?* If single (and not already in the findings log from a prior pass), classify as `log only` — record it; codify only on recurrence. This bar gates **codification** — minting or strengthening rules from incidental observations. It does not gate repairing a deterministic document defect (a contradiction, a dangling reference), nor sharpening an existing rule to fix the empirically observed failure a scoped review was chartered on — there the observed failure itself is the evidence. Likewise `log only`, regardless of the finding's severity: a gap that merely strands the operator into the workflow's designed escalation route ("if the guide doesn't answer it, stop and escalate"), until the strand actually occurs — repair-at-any-likelihood is reserved for text that teaches a wrong action (a misroute stated as mandatory, a false tool claim, a contradiction both of whose readings violate the spec).
+2. *Single observation, or recurring across cases?* If single (and not already in the findings log from a prior pass), classify as `log only` — record it; codify only on recurrence. This bar gates **codification** — minting or strengthening rules from incidental observations. It does not gate repairing a deterministic document defect (a contradiction, a dangling reference), nor sharpening an existing rule to fix the empirically observed failure a scoped review was chartered on — there the observed failure itself is the evidence. Likewise `log only`, regardless of the finding's severity: a gap that merely strands the agent into the workflow's designed escalation route ("if the guide doesn't answer it, stop and escalate"), until the strand actually occurs — repair-at-any-likelihood is reserved for text that teaches a wrong action (a misroute stated as mandatory, a false tool claim, a contradiction both of whose readings violate the spec).
 3. *Can one principle cover the class, or is the fix per-instance?* If you find yourself adding a third sibling rule, you missed the generalization — look for the principle.
 
 Only when all three pass does adding a new rule fit. The failure mode this prevents: codifying from a single observation, adding sibling rules instead of generalizing, and writing new rules when the real issue is a rule the agent failed to apply.
 
-## The `human decision` rule
+## The `operator decision` rule
 
-For every `human decision` finding, STOP before editing and present the tradeoff plainly:
+For every `operator decision` finding, STOP before editing and present the tradeoff plainly:
 
 - the real failure the reviewer is worried about
 - what existing rule or artifact already covers it, if anything
@@ -81,7 +81,7 @@ For every `human decision` finding, STOP before editing and present the tradeoff
 - the heavier, control-oriented fix
 - a recommendation
 
-Do not implement the heavy fix unless the human explicitly chooses it. Record the decision; don't re-litigate it in the same pass.
+Do not implement the heavy fix unless the operator explicitly chooses it. Record the decision; don't re-litigate it in the same pass.
 
 ## Finding matrix
 
@@ -117,13 +117,13 @@ Discuss it, get a decision, update the target's design spec, then repair the gui
 - Do not fold opportunistic cleanup into a repair — if it isn't needed to close a finding, leave it.
 - After each cluster, self-check (record the result before proceeding): Did I contradict adjacent text in the same file or a sibling guide? Did I leave a stale sentence teaching the old behavior? Did I move a rule away from the point where the agent needs it? Did I weaken an enforced rule into a suggestion?
 
-**Size budgets.** When a target's design spec declares a size budget for its guide(s) — a cap on the guide set's total size (none declared: skip this paragraph) — it binds every repair: state each accepted fix's net size cost in the finding matrix, and when headroom is short, pair an addition with a compensating trim in the same cluster — a trim is a repair like any other and rides the same self-check and verification. A real defect whose fix cannot fit is a `human decision`, never a silent overrun. Weigh a ❌/✅ example by size as well as rule count — under a budget an example is often the most expensive fix available. At closure, record the guide set's net size change alongside the dispositions.
+**Size budgets.** When a target's design spec declares a size budget for its guide(s) — a cap on the guide set's total size (none declared: skip this paragraph) — it binds every repair: state each accepted fix's net size cost in the finding matrix, and when headroom is short, pair an addition with a compensating trim in the same cluster — a trim is a repair like any other and rides the same self-check and verification. A real defect whose fix cannot fit is an `operator decision`, never a silent overrun. Weigh a ❌/✅ example by size as well as rule count — under a budget an example is often the most expensive fix available. At closure, record the guide set's net size change alongside the dispositions.
 
 ## Verify your repairs before the next review
 
 **A review round must never be spent on something a check could have caught.** It is minutes of expensive reasoning; a script is a second and never forgets a case. Before handing the guide back for another round:
 
-- **Run everything the guide tells an operator to run.** Not just "does it parse" — does it exit the way the prose claims, and does a guard actually stop when its input is missing? A guard that prints a warning and returns success reads as safe and is not.
+- **Run everything the guide tells an agent to run.** Not just "does it parse" — does it exit the way the prose claims, and does a guard actually stop when its input is missing? A guard that prints a warning and returns success reads as safe and is not.
 - **Re-read the implementation behind every claim you changed.** If the guide says a tool enforces something, confirm it still does.
 - **After changing a tool, search the guide for every mention of it.** Prose that describes tooling goes stale silently — the guide keeps promising what the tool stopped doing. Search; do not rely on remembering where you wrote it.
 
@@ -142,7 +142,7 @@ Append every entry to the target's findings log at this step, so future passes h
 Sometimes one refinement effort runs several review → repair rounds back-to-back on the same document, rather than passes separated in time. Four rules keep that from becoming an endless loop:
 
 - **Start the findings log at round 1**, not when you notice you are re-litigating, and append each round's dispositions before commissioning the next review — otherwise "already settled" is unknowable when you score. It is what lets you answer a repeated finding with "logged — see the prior disposition" instead of relitigating it.
-- **Stop rule.** Convergence is only ever declared by a fresh round over the current text — a round you repaired after can never be the terminal round. Terminal means either: **(a)** the round produced no new live findings in the binding review target (re-raises are answered by the findings log; findings outside the target route to their owning document), or **(b)** findings remain that the refiner argues should not be implemented — presented per *The `human decision` rule* as the complete unimplemented ledger, and the human approves; record the ruling in the findings log, so convergence-by-ruling is distinguishable from convergence-by-clean-round. A round of *misfired* findings is neither — that is a prompt defect (see "When the findings are wrong, suspect the prompt" in *The cold review*); fix the prompt and rerun. The old convergence shape — all in scope, all sharpen-level, no bloat flags — is an approach signal, never the stop.
+- **Stop rule.** Convergence is only ever declared by a fresh round over the current text — a round you repaired after can never be the terminal round. Terminal means either: **(a)** the round produced no new live findings in the binding review target (re-raises are answered by the findings log; findings outside the target route to their owning document), or **(b)** findings remain that the refiner argues should not be implemented — presented per *The `operator decision` rule* as the complete unimplemented ledger, and the operator approves; record the ruling in the findings log, so convergence-by-ruling is distinguishable from convergence-by-clean-round. A round of *misfired* findings is neither — that is a prompt defect (see "When the findings are wrong, suspect the prompt" in *The cold review*); fix the prompt and rerun. The old convergence shape — all in scope, all sharpen-level, no bloat flags — is an approach signal, never the stop.
 - **Consolidation trigger.** If your fix in one round becomes the finding in the next, stop patching. That is the observable symptom of editing with a keyhole view: you are closing findings locally while the document drifts. Group the outstanding findings by root cause and restructure — then review again. **If it happens twice, consolidating is not enough** — the problem is your editing method, not the document's structure. Move to the structured tier in *Scaling the ceremony*.
 - **Watch who the findings are about.** A round whose findings are mostly *your own previous repairs* is not measuring the document any more; it is measuring you. Count them each round — it is the clearest convergence signal you have, and it points at a fix no additional review round can deliver.
 

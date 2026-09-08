@@ -8,17 +8,18 @@ This adapter is **stack-aware** (Xcode/Swift, Android/Kotlin, etc.). It detects 
 
 Assume the following, unless the host repo already establishes a different working convention:
 
-- Codex instructions live at `.agents/AGENTS.md`.
+- Codex instructions live at `AGENTS.md` in the project root.
 - Agent-facing skills live at `.agents/skills/skai-*/` (managed skill wrappers pointing to submodule sources).
 - Mixed-agent repos may also contain `.cursor/**` or `.claude/**`; those belong to their own adapters and are out of scope for Codex install/update.
 
-If any assumption is false in the host repo's setup, STOP and ask the human what file/path/convention to use.
+If any assumption is false in the host repo's setup, STOP and ask the operator what file/path/convention to use.
 
 ## Inputs (required reading)
 
 - `assets.manifest.json`
 - `Install/managed-header.md`
 - `Install/conflict-precedence-policy.md`
+- `Policies/unauthorized-changes.md`
 - `Policies/safe-operations.md`
 - `Policies/universal-stop-conditions.md`
 - `Templates/docs/skai/integration.md`
@@ -36,7 +37,7 @@ Follow the discover -> classify -> plan -> confirm -> execute workflow.
   - Xcode/Swift: `.xcodeproj`, `.xcworkspace`, `Package.swift`, `*.swift`
   - Android/Kotlin: `build.gradle`, `settings.gradle`, `*.kt`, `*.kts`
   - Otherwise: generic (no stack addendum needed)
-  - Confirm the detected stack with the developer.
+  - Confirm the detected stack with the operator.
 - **Detect other agent context** (for coexistence rules):
   - Note whether `.cursor/` exists (for optional `.cursorignore` setup).
   - Note whether `.claude/` exists (for optional `.claudeignore` setup).
@@ -67,14 +68,14 @@ Prepare a concrete plan:
 - Canonical SKAI project-artifact path migrations and any destination conflicts
 - Legacy cleanup proposals (permission-gated)
 
-### 4) Confirm (human gate)
+### 4) Confirm (operator gate)
 
-Present the plan and wait for human approval before writing.
+Present the plan and wait for operator approval before writing.
 
 If updating the submodule, include an "update review" section:
 - Summarize changes between the old SHA and new SHA for relevant paths:
   - `Guides/`, `Policies/`, `Templates/`, `Install/`, `assets.manifest.json`, `README.md`
-- If you cannot compute the diff yourself, STOP and ask the human to provide the diff output.
+- If you cannot compute the diff yourself, STOP and ask the operator to provide the diff output.
 
 ### 5) Execute (safe order)
 
@@ -85,13 +86,21 @@ If updating the submodule, include an "update review" section:
      - Create/seed the Integration doc from `Templates/docs/skai/integration.md`.
      - Fill only what you can source with high confidence.
      - Add explicit 🟡 placeholders for missing items.
-     - STOP and ask the human for the missing items before proceeding.
+     - STOP and ask the operator for the missing items before proceeding.
    - Prefer non-interactive command-line commands over GUI instructions. If you can't produce command-line commands with high confidence, leave 🟡 placeholders and ask.
    - **Stack-specific integration doc guidance**: if a stack was detected, read the corresponding addendum for additional rules:
      - Xcode/Swift -> `Install/Codex/stack-xcode.md`
      - Android/Kotlin -> `Install/Codex/stack-android.md`
    - Follow `Install/integration-doc-install-update.md` for how to update the Integration doc safely (managed blocks + human overrides).
-4. Create/update `.agents/AGENTS.md` by copying `Templates/agents/codex/AGENTS.md` and stamping the managed header with `Managed-Id: template.codex-agents`, `Managed-Source: Submodules/skai/Templates/agents/codex/AGENTS.md`, and `Managed-Adapter: codex`.
+4. Create/update the root `AGENTS.md` from `Templates/agents/codex/AGENTS.md`. For a missing or
+   managed destination, copy the template and stamp the managed header with
+   `Managed-Id: template.codex-agents`,
+   `Managed-Source: Submodules/skai/Templates/agents/codex/AGENTS.md`, and
+   `Managed-Adapter: codex`. Never overwrite a project-owned instruction file. Instead, propose the
+   `agent-instructions` managed block defined in `Install/managed-header.md`, containing the exact
+   template body after its first `#` heading. Operator approval at the confirm gate authorizes adding
+   that block while preserving all existing content. Treat `.agents/AGENTS.md` as a legacy
+   instruction target; do not rely on it for automatic discovery.
 5. Install Codex skills into `.agents/skills/` (see "Installing Codex skills" below).
 6. Create/update ignore files (permission-gated if they already exist and are project-owned):
    - Update `.gitignore` by inserting/updating a managed block:
@@ -105,7 +114,7 @@ If updating the submodule, include an "update review" section:
 Required Integration doc fields to request (minimum set):
 - Build/compile command(s)
 - Unit test command(s): run all + run a single test/subset
-- How to capture full output (paths/artifacts the human should paste back)
+- How to capture full output (paths/artifacts the operator should paste back)
 - Device/simulator/emulator conventions (if applicable)
 - Known evidence-capture limitations (if any)
 
@@ -183,4 +192,4 @@ Rules:
 During discovery, if you find artifacts that appear to be from older installations (symlinks pointing into the submodule, guide copies without managed headers, skills that have been renamed or replaced), propose a cleanup plan:
 
 - **Managed symlinks** (symlinks into `Submodules/skai/...`): safe to delete (installer-created artifacts, no approval needed). Remove the containing directory if empty after cleanup.
-- **Non-symlink or project-authored content**: treat as project-owned and STOP to ask the human what to do.
+- **Non-symlink or project-authored content**: treat as project-owned and STOP to ask the operator what to do.

@@ -1,3 +1,9 @@
+Managed-By: skai
+Managed-Id: policy.error-handling
+Managed-Source: Policies/error-handling.md
+Managed-Adapter: repo-source
+Managed-Updated-At: 2026-09-06
+
 # Error Handling Policy
 
 This is a project policy describing how errors should be shaped, logged, and reported. It is intentionally implementation-agnostic. Code examples (if any) are illustrative only.
