@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- 2026-09-10 **UI Map renderer draws a reused scene in the container that defines it.** When a scene's `primary_parent` reaches it by more than one route kind, the canonical instance now renders in the route container the map defines the scene under, instead of the first kind in the renderer's fixed order. A scene defined under `child` and referenced from `modal` on the same parent previously drew its canonical box in the modal wrapper. `Guides/UIMap/ui-map-guide.md` documents the rule and gains a worked example; re-run installed adapters to refresh it.
+
 ## Release 6 — 2026-09-04
 
 - 2026-09-04 **Work-spec creation is now API-first Work Spec Design.** `Guides/Spec/work-spec-creation.md` keeps its installed path and id but now accepts open-ended inputs, fills gaps with agent proposals, maintains a complete changed-production-API sketch during Discussion, and has one supervisor approval before completing the design. The working artifact is now `<spec-name>-design.md` instead of `<spec-name>-plan.md`; requirements normalization, task-list authoring, formal phased mini-cycles, and `auto` were removed from this side of the workflow. Optional delivery slices appear only when activated.

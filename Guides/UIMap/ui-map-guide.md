@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-guide
 Managed-Source: Guides/UIMap/ui-map-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-11
+Managed-Updated-At: 2026-09-10
 
 # UI Map Guide
 
@@ -193,6 +193,17 @@ thumbnail_slider:
 ```
 
 With a single inbound reference, `primary_parent` is unnecessary — the only parent is implicitly primary.
+
+When the primary parent reaches the scene by more than one route kind, the canonical instance renders in the container that *defines* the scene; the other kinds get pointers. Define the scene under the route you want it drawn in:
+
+```yaml
+app:                       # reaches login by both child and modal
+  child:
+    - login:               # defined here, so the canonical instance renders here
+        primary_parent: app
+  modal:
+    - login                # pointer
+```
 
 ### Annotations
 
