@@ -74,6 +74,7 @@ Paste ONE of these prompts into your agent chat (from the host repo root).
 > - If the `Submodules/skai` submodule is missing, add it there.
 > - Do a discovery pass first, then propose a migration plan, then WAIT for approval before writing.
 > - Use `skai/integration.md` ([`skai/integration.md`](skai/integration.md)) as the project-owned Integration doc and migrate any legacy build/test command notes into it (do not delete legacy files unless I explicitly approve).
+> - Treat `CLAUDE.md` as project-owned: write only inside its skai `instructions` block.
 > - Only overwrite files that contain the managed header (`Managed-By: skai`). Treat lookalike files without the header as legacy candidates.
 
 #### Codex prompt
@@ -83,7 +84,7 @@ Paste ONE of these prompts into your agent chat (from the host repo root).
 > - If the `Submodules/skai` submodule is missing, add it there.
 > - Do a discovery pass first, then propose a migration plan, then WAIT for approval before writing.
 > - Use `skai/integration.md` ([`skai/integration.md`](skai/integration.md)) as the project-owned Integration doc and migrate any legacy build/test command notes into it (do not delete legacy files unless I explicitly approve).
-> - Use `.agents/AGENTS.md` as the Codex instruction file.
+> - Treat root `AGENTS.md` as the Codex instruction file and as project-owned: write only inside its skai `instructions` block.
 > - Only overwrite files that contain the managed header (`Managed-By: skai`). Treat lookalike files without the header as legacy candidates.
 
 These runbooks work with any IDE (JetBrains, Xcode, Android Studio, VS Code, etc.) or standalone agent environment. Stack-aware runbooks auto-detect the project stack and apply the appropriate guidance.
@@ -117,6 +118,8 @@ Add a GitHub MCP server to your IDE's MCP configuration with a personal access t
 
 - **Integration doc (project-owned)**: [`skai/integration.md`](skai/integration.md) is the single source of truth for project-specific commands/paths (build/test/lint/etc). Templates live in [`Templates/`](Templates/).
 - **Managed files**: host-project files written by the installer have a required header (see [`Install/managed-header.md`](Install/managed-header.md)). The installer overwrites only files that already contain this header.
+- **Managed blocks in project-owned files**: the Integration doc, the ignore files, and the agent instruction files (`CLAUDE.md`, root `AGENTS.md`) belong to the project. The installer writes only inside a delimited `BEGIN/END Managed-By: skai` block in each and never touches the rest — put your own instructions, such as a pointer to the repo's README, outside the block (see [`Install/managed-header.md`](Install/managed-header.md), "Managed blocks in project-owned files").
+- **Where artifacts live**: the requirements catalog and the official UI Map may sit in this repo or in a sub-repo shared with other platforms; change packages (`skai/changes/`) live beside the artifact they change. The guides never assume this repo — an agent that can't tell which repo holds an artifact stops. Point your README at the catalog and the map (the instruction file's "Start here" line leads agents there) so it never has to ask.
 - **Legacy installs**: lookalike files without the header are treated as **legacy candidates** and are not overwritten by default (see [`Install/conflict-precedence-policy.md`](Install/conflict-precedence-policy.md)).
 
 ## Integration document (how to use it)
@@ -221,7 +224,7 @@ Create or change the app's UI Map as an architecture artifact. Produces a change
 - Guide [`Guides/UIMap/ui-map-architecture.md`](Guides/UIMap/ui-map-architecture.md)
 - Example [`Guides/UIMap/ui-map-demo.md`](Guides/UIMap/ui-map-demo.md) -- a complete UI Map in YAML with its rendered diagram
 
-**Prerequisites:** Product/design/story inputs for a baseline map or scoped map change. Existing maps live at `skai/ui-map/ui-map.yaml`; architecture change artifacts live under `skai/changes/<change-id>/`.
+**Prerequisites:** Product/design/story inputs for a baseline map or scoped map change. Existing maps live at `skai/ui-map/ui-map.yaml` and architecture change artifacts under `skai/changes/<change-id>/`, in the repo that holds the map.
 
 **Phases:**
 

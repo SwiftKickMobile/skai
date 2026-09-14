@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation
 Managed-Source: Guides/UIMap/ui-map-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-11
+Managed-Updated-At: 2026-09-13
 
 # UI Map Implementation
 
@@ -42,6 +42,8 @@ The skill **infers** its run mode from context at initiation and records it in t
 ## Inputs
 
 Required:
+
+Paths in this guide are relative to the repo that holds the official map. If you can't tell which repo that is, STOP at a blocked gate.
 
 - The target map: when an architecture change package exists at `skai/changes/<change-id>/`, its proposed map (`proposed-ui-map.yaml`), render, and architecture artifact (`ui-map-architecture.md`) with `## Map Changes`; otherwise the official map for a no-package conformance run. A package is ready for implementation when its Discussion has no unchecked items, no change request remains `Proposed`, and its current `## Map Changes`, proposed YAML, and nonempty render are present.
 - The official map `skai/ui-map/ui-map.yaml`, the frozen baseline the change is measured against. (For a baseline there is none yet.)

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-guide
 Managed-Source: Guides/UIMap/ui-map-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-10
+Managed-Updated-At: 2026-09-13
 
 # UI Map Guide
 
@@ -18,7 +18,7 @@ This guide defines the platform-agnostic YAML format. Platform implementation pa
 
 SKAI owns the default UI Map renderer. Use `Bin/ui-map-render.py` from the current SKAI checkout unless the project provides an explicit override.
 
-For an installed project, look first for the SKAI checkout at `Submodules/skai`. If SKAI is installed elsewhere, use that root instead. The renderer takes the map to render and the SVG to write; for the official map:
+For an installed project, look first for the SKAI checkout at `Submodules/skai`. If SKAI is installed elsewhere, use that root instead. The renderer takes the map to render and the SVG to write — paths relative to the repo that holds the map; for the official map:
 
 ```
 uv run <skai-root>/Bin/ui-map-render.py skai/ui-map/ui-map.yaml --svg skai/ui-map/ui-map.svg

@@ -26,6 +26,7 @@ When you change assets, keep these in sync:
 - `assets.manifest.json`
   - add/move/rename assets here
   - keep `id` stable when possible
+  - edit it as text; never round-trip it through a JSON serializer, which reflows every `tags` array and turns a two-line change into a whole-file diff
 - `README.md`
   - update the Usage section for developer-facing skills (see "README Usage section conventions" below)
 - `CHANGELOG.md`
@@ -42,6 +43,10 @@ When you change assets, keep these in sync:
    - Codex installer installs them into host repos at `.agents/skills/`
    - **Wrapper pattern (invariant)**: skill templates must be thin wrappers -- a few lines that point the LLM at the corresponding Guide(s) in `Guides/`. All substantive logic lives in the Guide, not in the skill template. This keeps the files copied into host projects small and ensures the Guide is the single source of truth.
    - When adding a new skill: start by writing the Guide under `Guides/`, then create the skill wrapper that references it. This order prevents accidentally inlining logic into the skill template.
+   - A skill is installed wherever its `assets.manifest.json` entry's `adapter:` tags say (`adapter:cursor`, `adapter:claude-code`, `adapter:codex`). The adapter runbooks derive their install set from those tags and list no skills themselves — a new skill without adapter tags installs nowhere.
+ - Agent instruction files (if you change what an agent is told at session start):
+   - the file skeleton is `Templates/agents/instructions.md`, the block interior is `Templates/agents/instructions-block.md`, and the composition rules (which policies, heading demotion, no skills list) live in `Install/agent-instructions-install-update.md` — shared by the Claude Code and Codex adapters so the two files cannot drift
+   - the Cursor adapter delivers policies as `.mdc` rules and never writes into root `AGENTS.md`
  - Install state file:
    - All adapter runbooks write `skai/install-state.json` on successful completion.
    - The `update-installation` skill reads this file to determine which adapters to re-run and what SHA was last applied.
@@ -342,7 +347,7 @@ To preserve that:
 - **Managed overwrites only**:
   - Generated host files are overwriteable only if they contain the managed header (`Install/managed-header.md`).
   - **Symlinks** are overwriteable only if they point at the expected `Submodules/skai/...` targets (symlinks cannot contain headers).
-  - **Managed blocks**: some project-owned files (e.g., ignore files, Integration doc) are updated only inside delimited managed blocks.
+  - **Managed blocks**: project-owned files — the Integration doc, ignore files, and the agent instruction files (`CLAUDE.md`, root `AGENTS.md`) — are updated only inside delimited managed blocks (`Install/managed-header.md`, "Managed blocks in project-owned files"). They never carry a line-1 managed header.
 - **Legacy candidates are permission-gated**:
   - Identify legacy candidates.
   - Propose delete/replace (often replace-with-symlink), but do not execute without explicit approval.

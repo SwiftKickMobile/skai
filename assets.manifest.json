@@ -100,10 +100,16 @@
       "tags": ["core"]
     },
     {
-      "id": "template.codex-agents",
+      "id": "template.agent-instructions",
       "type": "template",
-      "sourcePath": "Templates/agents/codex/AGENTS.md",
-      "tags": ["adapter:codex"]
+      "sourcePath": "Templates/agents/instructions.md",
+      "tags": ["adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "template.agent-instructions-block",
+      "type": "template",
+      "sourcePath": "Templates/agents/instructions-block.md",
+      "tags": ["adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "guide.work-spec-creation",
@@ -251,6 +257,12 @@
       "id": "install-policy.integration-doc-install-update",
       "type": "install-policy",
       "sourcePath": "Install/integration-doc-install-update.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "install-policy.agent-instructions-install-update",
+      "type": "install-policy",
+      "sourcePath": "Install/agent-instructions-install-update.md",
       "tags": ["core"]
     },
     {

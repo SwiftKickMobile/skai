@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-promotion
 Managed-Source: Guides/Requirements/requirements-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-27
+Managed-Updated-At: 2026-09-13
 
 # Requirements Promotion
 
@@ -160,7 +160,7 @@ The workflow starts on an explicit signal — "promote the requirements", "promo
 equivalent. That signal often comes right after authoring completes, but it is still a signal:
 promotion is never a continuation authoring runs into on its own.
 
-On the signal, identify the package. Open packages are the directories under `skai/changes/` that
+On the signal, identify the package. Paths in this guide are relative to the repo that holds the catalog. If you can't tell which repo that is, STOP at a blocked gate. Open packages are the directories under `skai/changes/` that
 hold a `requirements-authoring.md` and are not yet promoted (see *Completion*) — `skai/changes/` also
 holds other workflows' packages. If more than one is open and the signal does not name which, that is
 a blocked gate rather than a guess.
@@ -168,7 +168,7 @@ a blocked gate rather than a guess.
 Read `skai/integration.md`'s `Section: requirements` block before writing anything: it names the
 repository shape and the catalog root this package promotes into.
 
-Under the `shared` shape that root is **outside this repo** — a submodule's working tree. Say so
+Under the `shared` shape that root — and the package, which lives beside it — is **outside this repo**, in a submodule's working tree. Say so
 before writing, naming the path, so it is never a surprise that a promotion touched files elsewhere.
 Writing them is all this workflow does; what happens to those changes afterwards is the human's.
 

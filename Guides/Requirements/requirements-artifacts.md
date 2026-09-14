@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-artifacts
 Managed-Source: Guides/Requirements/requirements-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-27
+Managed-Updated-At: 2026-09-13
 
 # Requirements Artifact Formats
 
@@ -12,7 +12,7 @@ a downstream reader resolves any field or value here without reading the authori
 scopes, layout, requirement format, IDs, writing style — see
 [`requirements-catalog.md`](requirements-catalog.md).
 
-A change package lives at `skai/changes/<change-id>/`. It holds the draft catalog files
+A change package lives at `skai/changes/<change-id>/` in the repo that holds the catalog. It holds the draft catalog files
 (`proposed-requirements/**`) and the authoring artifact (`requirements-authoring.md`), whose
 `## Requirement Changes` section lists **requirement change items**. The package may also hold
 **change requests** raised by promotion. Both formats are defined below.
