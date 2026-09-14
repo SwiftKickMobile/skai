@@ -31,6 +31,7 @@ Follow the discover → classify → plan → confirm → execute workflow.
   - specifically scan for prior `skai` install targets under `.cursor/**` (do not assume current targets only):
     - `.cursor/skills/**`
     - `.cursor/agent/**` (deprecated install target; see cleanup guidance below)
+  - root `AGENTS.md`, for awareness only: Cursor reads it, but its skai `instructions` block is written by the Claude Code and Codex adapters (`Install/agent-instructions-install-update.md`). Never write into it from this adapter — Cursor's policies are delivered as `.mdc` rules
   - `docs/**`
   - the known legacy and canonical SKAI project-artifact paths in `Install/conflict-precedence-policy.md`
   - any "integration glue" docs/notes (build/test commands, destinations, artifact paths), wherever they live (README, docs, CI scripts, etc.)
@@ -117,7 +118,7 @@ Create these directories in the host repo:
 The Cursor adapter writes `.mdc` files directly into the host repo.
 
 Rules:
-- Each generated `.mdc` begins with the managed header (see `Install/managed-header.md`).
+- Each generated `.mdc` starts with its YAML frontmatter (`description`, `globs`, `alwaysApply`), followed immediately by the managed marker comment (see `Install/managed-header.md`, "Cursor rule files"). Nothing may precede the frontmatter — Cursor ignores a rule file whose first line is not `---`.
 - For updates, overwrite only when the destination is missing or already has the managed header.
 - Determine stack (Swift/Xcode vs Android/Kotlin, etc.) by inspecting the host repo, then ask the human to confirm before writing.
 
@@ -144,35 +145,9 @@ Rules:
 - Each destination `SKILL.md` is considered managed only if it contains the managed marker comment described in `Install/managed-header.md`.
 - Overwrite only if destination is missing or already contains the managed marker.
 
-Install these skills:
-- `.cursor/skills/skai-debugging/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-debugging/SKILL.md`
-- `.cursor/skills/skai-work-spec-creation/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-work-spec-creation/SKILL.md`
-- `.cursor/skills/skai-work-spec-implementation/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-work-spec-implementation/SKILL.md`
-- `.cursor/skills/skai-ui-map-architecture/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-ui-map-architecture/SKILL.md`
-- `.cursor/skills/skai-ui-map-planning/SKILL.md` (deprecated compatibility entry point)
-  - source: `Submodules/skai/Templates/skills/skai-ui-map-planning/SKILL.md`
-- `.cursor/skills/skai-ui-map-implementation/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-ui-map-implementation/SKILL.md`
-- `.cursor/skills/skai-unit-testing/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-unit-testing/SKILL.md`
-- `.cursor/skills/skai-unit-test-planning/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-unit-test-planning/SKILL.md`
-- `.cursor/skills/skai-unit-test-infrastructure/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-unit-test-infrastructure/SKILL.md`
-- `.cursor/skills/skai-unit-test-writing/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-unit-test-writing/SKILL.md`
-- `.cursor/skills/skai-process-refinement/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-process-refinement/SKILL.md`
-- `.cursor/skills/skai-suggestion/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-suggestion/SKILL.md`
-- `.cursor/skills/skai-dev-retro/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-dev-retro/SKILL.md`
-- `.cursor/skills/skai-update-installation/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-update-installation/SKILL.md`
+Which skills to install is decided by `assets.manifest.json`, not by a list in this runbook: install every asset of type `skill` whose `tags` include `adapter:cursor`. For each such asset the skill name is its `id` without the `skill.` prefix; copy `Submodules/skai/Templates/skills/<name>/SKILL.md` to `.cursor/skills/<name>/SKILL.md` and stamp the marker as above. Skip nothing the manifest lists, add nothing it doesn't.
+
+On update, also compare the installed managed skills under `.cursor/skills/` with that set: a managed skill the manifest no longer tags for this adapter is a legacy candidate — propose its removal in the plan and do not delete it without approval.
 
 ## Install state file
 

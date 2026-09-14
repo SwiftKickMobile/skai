@@ -1,6 +1,6 @@
 # Managed File Header (Required)
 
-Any file generated/maintained by `skai` in a host project must start with this header block.
+Any file generated/maintained by `skai` in a host project must start with this header block, with three exceptions defined below: files whose format requires YAML frontmatter first (skill files, Cursor `.mdc` rule files) carry the header as a marker comment after the frontmatter; symlinks are identified by target; and **managed block files** — project-owned files skai writes a delimited block into — carry no header at all.
 
 ## Header format
 
@@ -50,15 +50,41 @@ Rules:
 - `Managed-Id` must match an entry in `assets.manifest.json`.
 - Previously installed skills may have adapter-prefixed IDs (e.g., `cursor-skill.skai-debugging`); treat these as managed (the marker is present) and overwrite with the current ID format.
 
+## Cursor rule files (`.cursor/rules/**/*.mdc`)
+
+Cursor parses a rule file only if its YAML frontmatter (`description`, `globs`, `alwaysApply`) is the very first thing in the file, so the standard header cannot be the first lines. Treat an `.mdc` file as managed if it contains the managed marker comment **immediately after the closing `---` of the frontmatter**, in the same form as skill files:
+
+```markdown
+---
+description: Enforce error handling patterns WHEN writing code that throws
+globs: ["**/*.swift"]
+alwaysApply: true
+---
+<!-- Managed-By: skai | Managed-Id: policy.error-handling | Managed-Source: Submodules/skai/Policies/error-handling.md | Managed-Adapter: cursor | Managed-Updated-At: 2026-09-13 -->
+
+# Error Handling Policy
+...
+```
+
+Rules:
+- Never place anything above the frontmatter. A header above it makes Cursor ignore the rule.
+- Installers may overwrite an `.mdc` only when this marker is present (or when the destination does not exist).
+
 ## Symlinks
 
 Symlinks cannot "contain" a managed header. For symlinked installs, treat a host path as managed if it is a symlink pointing at the expected `skai` target path.
 
-## Ignore files (`.gitignore`, `.cursorignore`, `.claudeignore`)
+## Managed blocks in project-owned files
 
-Ignore files are typically gitignore-style and are often project-owned. Installers must not overwrite them wholesale.
+Some files skai writes into belong to the project: the Integration doc (`skai/integration.md`), the ignore files (`.gitignore`, `.cursorignore`, `.claudeignore`), and the agent instruction files (`CLAUDE.md`, root `AGENTS.md`). Installers never overwrite these wholesale. Instead each such file holds one or more **managed blocks**, delimited by markers, and the installer owns only what lies between the markers.
 
-Instead, installers may manage a delimited block using comment markers, for example:
+Marker grammar — HTML comments in markdown files, `#` comments in ignore files:
+
+```markdown
+<!-- BEGIN Managed-By: skai | Section: <section-id> -->
+... skai-owned content ...
+<!-- END Managed-By: skai | Section: <section-id> -->
+```
 
 ```
 # BEGIN Managed-By: skai
@@ -66,4 +92,14 @@ Instead, installers may manage a delimited block using comment markers, for exam
 # END Managed-By: skai
 ```
 
-The installer may create the file if it does not exist, and may update only the block if it exists.
+A file containing at least one such block is a **managed block file** (see `Install/conflict-precedence-policy.md`). It carries no line-1 managed header: a header would classify the whole file as skai's and license overwriting the project's content.
+
+Rules:
+- If the file does not exist, the installer creates it from the corresponding template — the template's project-owned part is written once and never touched again.
+- If the file exists and lacks the block, the installer appends the block (at the end unless the template fixes a position). Nothing else in the file changes.
+- If the block exists, the installer replaces only the content between its markers.
+- If a block's section no longer applies (a stack that is no longer present, a section the human asked to omit), the installer removes that block, markers included, and nothing else.
+- Content outside every block is project-owned. Installers never edit, reorder, or reformat it.
+- `Section:` ids are stable across releases; renaming one is a migration and must appear in `CHANGELOG.md`.
+
+Per-file specifics live with the guide that owns the file: `Install/integration-doc-install-update.md` for the Integration doc, `Install/agent-instructions-install-update.md` for the instruction files, and each adapter runbook for its ignore file.

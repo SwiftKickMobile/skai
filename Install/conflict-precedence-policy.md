@@ -7,7 +7,7 @@ This policy defines how installers and update runbooks must behave in the presen
 - **Managed file**: contains the managed header (`Managed-By: skai`).
 - **Managed skill file**: a skill file at `.cursor/skills/**/SKILL.md`, `.claude/skills/**/SKILL.md`, or `.agents/skills/**/SKILL.md` that contains the managed marker comment described in `Install/managed-header.md`.
 - **Managed symlink**: a symlink created by the installer that points at the expected repo-owned target path.
-- **Managed block file**: a project-owned file that contains a delimited managed block (begin/end markers) that the installer may update in-place (e.g., ignore files).
+- **Managed block file**: a project-owned file that contains a delimited managed block (begin/end markers) that the installer may update in-place. The Integration doc (`skai/integration.md`), the ignore files, and the agent instruction files (`CLAUDE.md`, root `AGENTS.md`) are managed block files; they carry no line-1 managed header (see `Install/managed-header.md`, "Managed blocks in project-owned files").
 - **Legacy candidate**: appears to be an older copy of a managed asset but lacks the managed header.
 - **Project-owned file**: anything else (custom project content).
 
@@ -31,6 +31,7 @@ This policy defines how installers and update runbooks must behave in the presen
   - If it points to the expected `skai` target: treat as managed symlink → update/replace as needed.
   - Otherwise: treat as project-owned → do not overwrite.
 - If destination exists and contains a managed block: treat as managed block file → update only the block.
+- If destination is an agent instruction file (`CLAUDE.md`, root `AGENTS.md`) that carries a line-1 managed header and no block — the whole-file form installed before managed blocks existed — it is a managed file: regenerate it from the instruction template, which yields the block form. State this in the plan; it is an overwrite the human confirms.
 - If destination exists and is not managed:
   - Treat it as project-owned by default.
   - If it looks like a legacy candidate, classify it as legacy candidate and do not overwrite.

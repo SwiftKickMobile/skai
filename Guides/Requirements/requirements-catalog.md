@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-catalog
 Managed-Source: Guides/Requirements/requirements-catalog.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-27
+Managed-Updated-At: 2026-09-13
 
 # Requirements Catalog
 
@@ -91,7 +91,8 @@ Where the catalog lives varies by project. From any given repo there are three p
   not-yet.
 - **`shared`** — the catalog is in another repo, typically pulled in as a submodule. This repo keeps
   none of its own. Common for a pair of platform repos — an iOS app and an Android app — that
-  implement one product and therefore have one set of requirements.
+  implement one product and therefore have one set of requirements. Change packages live with the
+  catalog: in that repo's `skai/changes/`, never in this one.
 - **`none`** — this project keeps no catalog, and requirements workflows skip.
 
 Every shape has exactly **one** catalog, so a requirement ID is unambiguous everywhere and IDs are

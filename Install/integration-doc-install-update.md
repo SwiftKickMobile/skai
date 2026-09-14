@@ -24,7 +24,7 @@ The Integration doc contains:
   - `<!-- BEGIN Managed-By: skai | Section: ... -->`
   - `<!-- END Managed-By: skai | Section: ... -->`
 
-Installers may only create/update/remove content inside managed blocks.
+Installers may only create/update/remove content inside managed blocks. The general rules for managed blocks — create the block if missing, replace only between the markers, remove a block whose section no longer applies, never touch anything outside — are defined once in `Install/managed-header.md`, "Managed blocks in project-owned files"; this guide adds only what is specific to the Integration doc.
 
 ### `required-values` block (human-filled form)
 

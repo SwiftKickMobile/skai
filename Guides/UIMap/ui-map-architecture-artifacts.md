@@ -2,13 +2,13 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture-artifacts
 Managed-Source: Guides/UIMap/ui-map-architecture-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-07
+Managed-Updated-At: 2026-09-13
 
 # UI Map Architecture Artifact Formats
 
 The typed formats the architecture skill produces and consumes. This is the consumer-facing layer: a downstream reader resolves any field or value here without reading the authoring method ([`ui-map-architecture.md`](ui-map-architecture.md)). For the YAML map format itself, see [`ui-map-guide.md`](ui-map-guide.md).
 
-A change package lives at `skai/changes/<change-id>/`. It holds the proposed map (`proposed-ui-map.yaml`), its render (`proposed-ui-map.svg`), and the architecture artifact (`ui-map-architecture.md`) — whose `## Map Changes` section lists **map change items**. The architecture skill also consumes **change requests** raised by downstream implementation. Both formats are defined below.
+A change package lives at `skai/changes/<change-id>/` in the repo that holds the official map. It holds the proposed map (`proposed-ui-map.yaml`), its render (`proposed-ui-map.svg`), and the architecture artifact (`ui-map-architecture.md`) — whose `## Map Changes` section lists **map change items**. The architecture skill also consumes **change requests** raised by downstream implementation. Both formats are defined below.
 
 Implementation-side artifact formats (code change items, build evidence) live in `ui-map-implementation-artifacts.md`; the architecture skill does not need them. Implementation reads both references — it consumes map change items and raises change requests defined here, and authors its own formats defined there.
 

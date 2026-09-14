@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-authoring
 Managed-Source: Guides/Requirements/requirements-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-27
+Managed-Updated-At: 2026-09-13
 
 # Requirements Authoring
 
@@ -197,9 +197,9 @@ On the signal:
 1. Read `skai/integration.md`'s `Section: requirements` block to learn this project's repository
    shape and where the catalog lives. If it cannot answer that — or, under `shared`, the root it
    names does not resolve — stop at the blocked gate below. **Never fall back to a literal path**,
-   and never read an unresolved root as an empty catalog.
+   and never read an unresolved root as an empty catalog. Paths in this guide are relative to the repo that holds the catalog. If you can't tell which repo that is, STOP at a blocked gate.
 2. Read [`requirements-catalog.md`](requirements-catalog.md) and the existing catalog.
-3. Scan `skai/changes/*/requirements-authoring.md`. If an unpromoted package for this work already
+3. Scan `skai/changes/*/requirements-authoring.md` in that repo. If an unpromoted package for this work already
    exists — including one seeded by another workflow — reopen it rather than creating a second; see
    below.
 4. Otherwise resolve the change id and create the artifact — see *The change package* — then record
