@@ -14,15 +14,15 @@ generally, while its first optimization and validation target is feature work in
 
 Use these references when writing and reviewing the replacement guides:
 
-- [`maintain-skai.md`](maintain-skai.md), especially Guide house style.
-- [`Guides/Core/process-flow.md`](Guides/Core/process-flow.md) for gates, advance intent, markers,
+- [`maintain-skai.md`](../../internal/maintain-skai.md), especially Guide house style.
+- [`Guides/Core/process-flow.md`](../../Guides/Core/process-flow.md) for gates, advance intent, markers,
   and structured discussion items.
-- [`Guides/UIMap/ui-map-architecture.md`](Guides/UIMap/ui-map-architecture.md) and
-  [`Guides/UIMap/ui-map-implementation.md`](Guides/UIMap/ui-map-implementation.md) for open-ended
+- [`Guides/UIMap/ui-map-architecture.md`](../../Guides/UIMap/ui-map-architecture.md) and
+  [`Guides/UIMap/ui-map-implementation.md`](../../Guides/UIMap/ui-map-implementation.md) for open-ended
   input, proposal-led discussion, a continuously updated review surface, ownership boundaries, and
   implementation dispositions.
-- [`Guides/Requirements/requirements-authoring.md`](Guides/Requirements/requirements-authoring.md)
-  and [`Guides/Requirements/requirements-promotion.md`](Guides/Requirements/requirements-promotion.md)
+- [`Guides/Requirements/requirements-authoring.md`](../../Guides/Requirements/requirements-authoring.md)
+  and [`Guides/Requirements/requirements-promotion.md`](../../Guides/Requirements/requirements-promotion.md)
   for focused artifacts, inferred entry conditions, workflow ownership, and verification before a
   canonical write.
 
@@ -139,7 +139,7 @@ catalog of domains, determines what earns a discussion item or supporting review
 ## Artifacts
 
 Both default artifacts are working documents under the session folder required by
-[`Guides/Core/working-doc-conventions.md`](Guides/Core/working-doc-conventions.md):
+[`Guides/Core/working-doc-conventions.md`](../../Guides/Core/working-doc-conventions.md):
 
 ```text
 skai/working-docs/<branch-path>/<spec-name>/

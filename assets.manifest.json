@@ -106,6 +106,12 @@
       "tags": ["adapter:codex"]
     },
     {
+      "id": "template.claude-instructions",
+      "type": "template",
+      "sourcePath": "Templates/agents/claudecode/CLAUDE.md",
+      "tags": ["adapter:claude-code"]
+    },
+    {
       "id": "guide.work-spec-creation",
       "type": "guide",
       "sourcePath": "Guides/Spec/work-spec-creation.md",
@@ -166,7 +172,7 @@
     {
       "id": "guide.ticket-implementation",
       "type": "guide",
-      "sourcePath": "maintain-tickets.md",
+      "sourcePath": "internal/maintain-tickets.md",
       "tags": ["core"]
     },
     {
@@ -192,6 +198,12 @@
       "type": "guide",
       "sourcePath": "Guides/Test/unit-test-writing-guide.md",
       "tags": ["adapter:xcode", "swift"]
+    },
+    {
+      "id": "runbook.install-update",
+      "type": "runbook",
+      "sourcePath": "Install/install-update.md",
+      "tags": ["core"]
     },
     {
       "id": "runbook.cursor-install-update",
@@ -310,7 +322,7 @@
     {
       "id": "guide.maintain-retro",
       "type": "guide",
-      "sourcePath": "maintain-retro.md",
+      "sourcePath": "internal/maintain-retro.md",
       "tags": ["core"]
     },
     {
@@ -413,6 +425,12 @@
       "id": "guide.requirements-authoring",
       "type": "guide",
       "sourcePath": "Guides/Requirements/requirements-authoring.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.requirements-baseline",
+      "type": "guide",
+      "sourcePath": "Guides/Requirements/requirements-baseline.md",
       "tags": ["core"]
     },
     {

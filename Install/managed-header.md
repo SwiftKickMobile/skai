@@ -1,10 +1,12 @@
-# Managed File Header (Required)
+# Managed Content (Required)
 
-Any file generated/maintained by `skai` in a host project must start with this header block.
+Files that `skai` writes into a host project are marked so an install/update can tell what it owns.
+There are three forms. The template for a file — or, for skills, the installer's stamping rule — shows which one it uses; the installer applies the
+matching rule.
 
-## Header format
+## Whole-file header
 
-The first lines of the file must be:
+The first lines of the file are:
 
 ```
 Managed-By: skai
@@ -14,56 +16,53 @@ Managed-Adapter: <adapter-id>
 Managed-Updated-At: <yyyy-mm-dd>
 ```
 
-Rules:
-- Header must appear at the very top of the file.
-- Header keys and casing must match exactly.
-- `Managed-Id` must match an entry in `assets.manifest.json`.
-- Installer/update overwrites a file only when this header is present (or the destination does not exist).
-- `Managed-Updated-At` should only change when the file content actually changes. If the source template is unchanged and the destination already has the managed header, **skip the file** -- do not rewrite it just to bump the date. This avoids unnecessary diffs during submodule updates.
+The installer owns the whole file. It overwrites the file only when this header is present or the
+file does not exist. If the format needs comment prefixes, prefix each header line with the file's
+comment marker, keeping the same keys.
 
-## Determining today's date
+## Marker comment
 
-Whenever a date is needed (for `Managed-Updated-At`, CHANGELOG entries, `install-state.json`, or any other purpose), **always run `date +%Y-%m-%d` in the terminal** to get the current date. Do not rely on dates from the system prompt or conversation context -- they may be stale or in a different timezone than the human.
-
-## Notes
-
-- For file formats that require comment prefixes, the header should still be present as plain text at the top of the file unless that breaks the format. If it breaks the format, adapt by prefixing each line with the file's comment marker while preserving the same keys.
-
-## Skill files (`.cursor/skills/**/SKILL.md`, `.claude/skills/**/SKILL.md`, `.agents/skills/**/SKILL.md`)
-
-Skill files require YAML frontmatter at the top of the file, so the standard managed header cannot appear as the literal first lines.
-
-For these files, treat a skill file as managed if it contains a managed marker comment **immediately after the YAML frontmatter**, for example:
+For files whose format requires something else first (YAML frontmatter), the same keys appear as one
+comment immediately after it:
 
 ```markdown
 ---
 name: skai-debugging
 description: ...
 ---
-<!-- Managed-By: skai | Managed-Id: skill.skai-debugging | Managed-Source: Submodules/skai/Templates/skills/skai-debugging/SKILL.md | Managed-Adapter: cursor | Managed-Updated-At: 2026-02-17 -->
+<!-- Managed-By: skai | Managed-Id: skill.skai-debugging | Managed-Source: Submodules/skai/Templates/skills/skai-debugging/SKILL.md | Managed-Adapter: cursor | Managed-Updated-At: <yyyy-mm-dd> -->
 ```
 
-The shared skill templates at `Templates/skills/*/SKILL.md` do **not** contain the managed marker. Each installer stamps it at copy time with the appropriate `Managed-Adapter` value (`cursor`, `claude-code`, or `codex`).
+Same rule as a whole-file header: the installer owns the file and overwrites it only when the marker
+is present or the file does not exist. Shared templates do not contain the marker; each installer
+stamps it at copy time with its own `Managed-Adapter`. Older markers may carry adapter-prefixed ids
+(`cursor-skill.skai-debugging`); treat them as managed and rewrite to the current id.
 
-Rules:
-- Installers may overwrite a skill file only when this marker is present (or when the destination does not exist).
+## Delimited block
+
+For files the project owns, the installer owns only a block:
+
+```
+<!-- BEGIN Managed-By: skai | Managed-Id: <asset-id> | Managed-Adapter: <adapter-id> | Managed-Updated-At: <yyyy-mm-dd> -->
+...
+<!-- END Managed-By: skai -->
+```
+
+(Where `<!-- -->` is not a comment, as in ignore files, use the file's comment marker: `# BEGIN Managed-By: skai` / `# END Managed-By: skai`. That form carries no keys.)
+
+The installer creates the file from its template if absent, stamping the marker's `Managed-Updated-At`;
+otherwise it replaces the content between the markers and the marker's date, and touches nothing
+else. A file with no block is not overwritten; the block is appended after approval. A file carrying a whole-file header where a block is
+now expected is converted: the header lines become the `BEGIN` marker (`Managed-Source` is dropped; the template is
+the source) and an `END` marker closes the managed content.
+
+## Common rules
+
+- Keys and casing must match exactly.
 - `Managed-Id` must match an entry in `assets.manifest.json`.
-- Previously installed skills may have adapter-prefixed IDs (e.g., `cursor-skill.skai-debugging`); treat these as managed (the marker is present) and overwrite with the current ID format.
+- `Managed-Updated-At` changes only when the content changes. If the source is unchanged and the
+  destination is already managed, skip the file rather than rewriting it to bump the date.
 
-## Symlinks
+## Determining today's date
 
-Symlinks cannot "contain" a managed header. For symlinked installs, treat a host path as managed if it is a symlink pointing at the expected `skai` target path.
-
-## Ignore files (`.gitignore`, `.cursorignore`, `.claudeignore`)
-
-Ignore files are typically gitignore-style and are often project-owned. Installers must not overwrite them wholesale.
-
-Instead, installers may manage a delimited block using comment markers, for example:
-
-```
-# BEGIN Managed-By: skai
-... patterns ...
-# END Managed-By: skai
-```
-
-The installer may create the file if it does not exist, and may update only the block if it exists.
+Whenever a date is needed (for `Managed-Updated-At`, CHANGELOG entries, `install-state.json`, or any other purpose), **always run `date +%Y-%m-%d` in the terminal** to get the current date. Do not rely on dates from the system prompt or conversation context -- they may be stale or in a different timezone than the supervisor.

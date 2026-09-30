@@ -19,17 +19,17 @@ This is a shared guide for installers that create/update the host project's Inte
 ## Managed blocks
 
 The Integration doc contains:
-- a human-owned "Special instructions / overrides" section (must be read and obeyed first)
+- a project-owned "Special instructions / overrides" section (must be read and obeyed first)
 - LLM-managed blocks delimited by:
   - `<!-- BEGIN Managed-By: skai | Section: ... -->`
   - `<!-- END Managed-By: skai | Section: ... -->`
 
 Installers may only create/update/remove content inside managed blocks.
 
-### `required-values` block (human-filled form)
+### `required-values` block (project-owned form)
 
-The `required-values` block is a managed "form" that humans fill in:
-- Humans should remove 🟡 markers and delete any `INSTRUCTION:` lines once they fill a value.
+The `required-values` block is a managed "form" the project owner fills in:
+- The project owner replaces each `{supervisor response}` placeholder with the value, and should remove 🟡 markers and delete any `INSTRUCTION:` lines once they fill a value.
 - Installers must preserve filled values and must only restore 🟡 + instruction lines when required information is missing.
 
 Standard instruction format:
@@ -46,7 +46,7 @@ When creating/updating the Integration doc:
      - `Templates/docs/skai/integration-sections/xcode.md`
      - `Templates/docs/skai/integration-sections/swift-package.md`
      - `Templates/docs/skai/integration-sections/android-gradle.md`
-   - remove irrelevant managed blocks if the stack is not present (or the human says omit).
+   - remove irrelevant managed blocks if the stack is not present (or the supervisor says omit).
    - Note: a project may use both `xcode` and `swift-package` sections (e.g., app targets built via Xcode and library submodules built as Swift packages).
 4. Insert/update the `requirements` managed block from
    `Templates/docs/skai/integration-sections/requirements.md`. Unlike the stack sections above this
@@ -56,11 +56,11 @@ When creating/updating the Integration doc:
    - Infer where you can: an existing `requirements/` directory means shape `local` with that root.
      Absence of one does not mean `none` — a greenfield project intending to keep requirements here
      is `local`, and `none` is a deliberate opt-out. Do not guess `shared` — whether another repo
-     holds the catalog is the human's call.
+     holds the catalog is the supervisor's call.
    - See `Guides/Requirements/requirements-catalog.md` for what each shape and scope means.
 5. If required project-specific constants/mappings cannot be inferred:
    - restore/leave 🟡 markers + instruction lines in the `required-values` block
-   - STOP and ask the human the minimum questions needed
+   - STOP and ask the supervisor the minimum questions needed
 
 Discovery guidance (avoid brittle filename checklists):
 - When migrating "legacy integration glue" into the Integration doc, **search broadly** (README, `docs/`, CI config/scripts, prior agent/rule docs) for build/test commands, destinations, and artifact path conventions.

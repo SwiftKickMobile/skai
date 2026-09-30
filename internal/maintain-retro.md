@@ -1,10 +1,10 @@
 Managed-By: skai
 Managed-Id: guide.maintain-retro
-Managed-Source: maintain-retro.md
+Managed-Source: internal/maintain-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-29
+Managed-Updated-At: 2026-09-30
 
-# Maintenance retro checklist (LLM + human)
+# Maintenance retro checklist (agent + supervisor)
 
 Use this after making changes to `skai` to ensure nothing was forgotten.
 
@@ -30,20 +30,21 @@ This retro is a **backstop for completeness**, not a git/diff report.
 - Ensure `CHANGELOG.md` reflects major user-visible changes. Review each change made since the last retro and verify it has a corresponding entry if user-visible.
   - Changelog is release notes: prefer multiple short bullets over a single mega-entry.
 - Ensure `assets.manifest.json` is updated if you added/moved/renamed any installable asset or installer dependency (templates/sections/runbooks/policies).
+- Ensure every managed file edited since the last retro carries a `Managed-Updated-At` no earlier than that edit.
 - Ensure `README.md` is updated if needed:
   - Quick start prompts if any runbook paths changed
   - Usage section: ensure the workflow descriptions and phases match the updated guide checkpoint/gate behavior (and add/update any guide inventory section if your README has one).
   - Any new conventions/invariants developers need to know
-- Ensure `maintain-skai.md` is updated if you changed invariants or introduced a new maintenance rule.
+- Ensure `internal/maintain-skai.md` is updated if you changed invariants or introduced a new maintenance rule.
 
 ## 3) Integration doc architecture checks (common misses)
 
 - If you changed Integration behavior:
-  - `Templates/docs/skai/integration.md` still has a human-owned "Special instructions / overrides" section.
+  - `Templates/docs/skai/integration.md` still has a project-owned "Special instructions / overrides" section.
   - Stack-specific templates exist under `Templates/docs/skai/integration-sections/`.
   - Runbooks still describe how to merge/update/remove the managed blocks.
   - 🟡 is used only for true project-specific constants/mappings (not for variables or standard procedures).
-  - Integration section templates are **integration-doc-ready** content (no 🟡 TODO lists; no installer/human instruction prose; include copy/pasteable CLI templates with `<...>` variables).
+  - Integration section templates are **integration-doc-ready** content (no 🟡 TODO lists; no installer/supervisor instruction prose; include copy/pasteable CLI templates with `<...>` variables).
 
 ## 4) Installer safety checks
 
@@ -51,19 +52,18 @@ This retro is a **backstop for completeness**, not a git/diff report.
   - discover → classify → plan → confirm → execute
   - permission-gated deletion/replacement of legacy candidates
   - managed headers for generated files
-  - managed symlinks by validated target path
   - managed blocks for project-owned files like ignore files / Integration doc
 
 ## 5) Consistency checks
 
-**Record the result of every check, even when clean.** For each check below, write down either `0 occurrences` (with the search / inspection used — file paths, `grep` / `rg` pattern, or "visual review of section X") or a list of occurrences classified per-check (`<path>:<line>` → `false positive (intentional per …)` / `to fix` / `to revisit`). Reading the check and self-certifying "done" without a recorded result is the failure mode this rule prevents — a `0 occurrences` line with the search used is the minimum evidence. This matches the recording discipline used by `maintain-skai.md` § Sanity scan.
+**Record the result of every check, even when clean.** For each check below, write down either `0 occurrences` (with the search / inspection used — file paths, `grep` / `rg` pattern, or "visual review of section X") or a list of occurrences classified per-check (`<path>:<line>` → `false positive (intentional per …)` / `to fix` / `to revisit`). Reading the check and self-certifying "done" without a recorded result is the failure mode this rule prevents — a `0 occurrences` line with the search used is the minimum evidence. This matches the recording discipline used by `internal/maintain-skai.md` § Sanity scan.
 
 - Search for stale paths (e.g. old install target directories) and update all occurrences.
 - Ensure new files referenced by runbooks exist at those paths.
 - README link check: when `README.md` references a file or directory within this repo, ensure it is a markdown link (clickable in the browser), not just a bare backticked path.
 - If you added or substantially edited any files under `Guides/`:
   - Verify each changed/new guide has a managed header.
-  - Verify it has a `## Gates` section if it is a gated workflow — one where the agent waits on the human and emits `⏳ GATE:` lines — and that it contains the standardized process-flow template (see `maintain-skai.md`, "Standard structure for guides with gates"). A bare "STOP" inside a method guide (stop and run the self-check; stop and present a tradeoff) is not a gate and needs no `## Gates` section.
+  - Verify it has a `## Gates` section if it is a gated workflow — one where the agent waits on the supervisor and emits `⏳ GATE:` lines — and that it contains the standardized process-flow template (see `internal/maintain-skai.md`, "Standard structure for guides with gates"). A bare "STOP" inside a method guide (stop and run the self-check; stop and present a tradeoff) is not a gate and needs no `## Gates` section.
   - Search for terminology drift (e.g., "Next Command") and fix to "advance intent".
   - For each planned gate, verify the guide identifies a workflow-owned artifact, the specific gate/phase progress marker that remains while waiting (the unchecked `- [ ]` or the `🟡` in code), and the exact artifact change that happens only after advance intent.
   - Verify marker conventions match the canonical rule: `- [ ]` / `- [x]` in process artifacts (markdown workflow docs); `🟡` only in source files (test code, app code) where completion = removal. The canonical in-code case is `Guides/Test/unit-test-planning-guide.md`.
@@ -79,10 +79,10 @@ Reflect on the session since the last retro (or since session start). Consider:
 - **Pattern violations**: Did you break an established convention? What cue did you miss, and what check would have caught it earlier?
 - **Recurring friction**: Were there repeated failures (e.g., tooling issues, encoding problems, ambiguous instructions) that a process change could prevent?
 - **Missing knowledge**: Did you lack context that a skill, rule, or documentation improvement would provide? Would a new skill or rule help future LLMs avoid the same mistake?
-- **Documentation gaps**: Are there undocumented invariants, conventions, or patterns that you had to learn from human correction?
-- **Human corrections**: Did the human have to point out something you should have caught yourself? What was the root cause -- a missing check, a missing convention, or a gap in your understanding of the system?
+- **Documentation gaps**: Are there undocumented invariants, conventions, or patterns that you had to learn from supervisor correction?
+- **Supervisor corrections**: Did the supervisor have to point out something you should have caught yourself? What was the root cause -- a missing check, a missing convention, or a gap in your understanding of the system?
 
-Output: 1-4 concrete suggestions (not vague observations). Each suggestion should name the specific file or artifact to create/update and what it should say. The human will decide which to act on.
+Output: 1-4 concrete suggestions (not vague observations). Each suggestion should name the specific file or artifact to create/update and what it should say. The supervisor will decide which to act on.
 
 If nothing stands out, say **"No process suggestions."**
 
@@ -91,7 +91,7 @@ If nothing stands out, say **"No process suggestions."**
 - Always start your message with a one-line declaration that the retro was performed:
   - `Maintenance retro: DONE`
 - If you fixed misses during the retro: list what you fixed (1-6 bullets), then list any remaining follow-ups.
-- If you found misses you did not fix (because they require human decision): list them as **actionable follow-ups** (1-6 bullets).
+- If you found misses you did not fix (because they require supervisor decision): list them as **actionable follow-ups** (1-6 bullets).
 - If you found none: say **"Maintenance retro complete; no misses found."**
 - Include process suggestions from step 6 (if any) as a separate **"Process suggestions"** section at the end.
 

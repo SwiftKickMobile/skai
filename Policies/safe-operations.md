@@ -10,7 +10,7 @@ This policy applies to agents executing the `skai` workflows, including install/
 - Do not delete project files unless explicitly asked.
 - Do not add dependencies unless explicitly asked.
 - Do not revert changes unless explicitly asked.
-- Hard prohibition: do not run destructive/irreversible operations unless the human explicitly approves that specific operation. If unsure, STOP and ask.
+- Hard prohibition: do not run destructive/irreversible operations unless the supervisor explicitly approves that specific operation. If unsure, STOP and ask.
 - `auto` never bypasses this rule.
 - Prefer minimal, reversible changes.
 - Before overwriting anything, determine whether the file is managed vs project-owned.
@@ -19,7 +19,7 @@ This policy applies to agents executing the `skai` workflows, including install/
 
 ## Explicit approval requirement (destructive operations)
 
-"Explicit approval" means the human clearly instructs you to run the specific destructive operation now (an imperative request), not merely to discuss options or describe what the command would do.
+"Explicit approval" means the supervisor clearly instructs you to run the specific destructive operation now (an imperative request), not merely to discuss options or describe what the command would do.
 
 If the user intent is ambiguous, treat it as NOT approved and STOP to ask: "Do you want me to run <exact command>?"
 

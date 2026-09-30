@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: policy.universal-stop-conditions
 Managed-Source: Policies/universal-stop-conditions.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-03-06
+Managed-Updated-At: 2026-09-30
 
 # Universal STOP Conditions (Agent Policy)
 
-These conditions override `auto` and any other advance intent. When any condition is true, STOP immediately and wait for the human.
+These conditions override `auto` and any other advance intent. When any condition is true, STOP immediately and wait for the supervisor.
 
 ## Conditions
 

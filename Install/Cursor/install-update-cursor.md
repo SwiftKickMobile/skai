@@ -39,40 +39,38 @@ Follow the discover → classify → plan → confirm → execute workflow.
 ### 2) Classify
 
 Classify each discovered artifact:
-- **Managed**: has the managed header (`Managed-By: skai`) → safe to overwrite.
-- **Managed symlink**: a symlink that points into `Submodules/skai/...` at the expected target path → safe to replace/update.
-- **Legacy candidate**: looks like a managed asset but lacks the header → do not overwrite.
-- **Project-owned**: custom → do not overwrite.
+- **Managed file**: carries the managed header, or the marker comment after frontmatter (`Install/managed-header.md`) → overwrite.
+- **Managed block**: contains `BEGIN`/`END` managed-block markers → replace only the block.
+- **Not managed**: neither → do not overwrite (a managed block may be inserted, permission-gated). If it looks like an old install artifact (a stale copy of a managed asset, a symlink into `Submodules/skai/...`), propose cleanup; never act without approval.
 
 ### 3) Plan (no changes yet)
 
 Prepare a concrete plan:
 - Files to create
-- Files to update (managed only, including managed symlinks)
+- Files to update (managed only)
 - Legacy candidates to supersede (create new managed files in canonical locations)
 - Integration doc migration items (move legacy integration glue into `skai/integration.md`)
 - Canonical SKAI project-artifact path migrations and any destination conflicts
 - Legacy cleanup proposals (explicitly permission-gated):
   - delete legacy candidates
-  - or replace legacy candidates with symlinks to the new canonical locations
  - Deprecated install artifact cleanup proposals (explicitly permission-gated):
    - remove managed outputs that were installed by older versions of this runbook but are no longer part of the current install targets
 
-Required gray-area checks (ask the human, then reflect the decision in the plan):
+Required gray-area checks (ask the supervisor, then reflect the decision in the plan):
 - Search for legacy debugging rule candidates (common examples: `.cursor/rules/debugging*.mdc`, `.cursor/rules/*debug*.mdc`, or other Cursor rules that encode project-specific logging/API conventions).
   - If found, propose:
     1) migrating any project-specific logging/API conventions they contain into `skai/integration.md`, then
     2) deleting those legacy debugging rule files (only with explicit approval).
   - When reporting discovery, list the candidates you found; do not emit "not found" lines for example filenames you didn't find.
 
-### 4) Confirm (human gate)
+### 4) Confirm (supervisor gate)
 
-Present the plan and wait for human approval before writing.
+Present the plan and wait for supervisor approval before writing.
 
 If updating the submodule, include an "update review" section:
 - Summarize changes between the old SHA and new SHA for relevant paths:
   - `Guides/`, `Policies/`, `Templates/`, `Install/`, `assets.manifest.json`, `README.md`
-- If you cannot compute the diff yourself, STOP and ask the human to provide the diff output.
+- If you cannot compute the diff yourself, STOP and ask the supervisor to provide the diff output.
 
 ### 5) Execute (safe order)
 
@@ -83,10 +81,10 @@ If updating the submodule, include an "update review" section:
      - Create/seed the Integration doc from `Templates/docs/skai/integration.md`.
      - Fill only what you can source with high confidence.
      - Add explicit 🟡 placeholders for missing items.
-     - STOP and ask the human for the missing items before proceeding with the rest of the install.
+     - STOP and ask the supervisor for the missing items before proceeding with the rest of the install.
    - When filling "Build / compile" and "Unit tests", prefer non-interactive command-line commands (e.g., `xcodebuild ...`) over GUI instructions ("open Xcode…"). If you can't produce command-line commands with high confidence, leave 🟡 placeholders and ask.
-   - For Xcode projects: never invent a simulator/device model. If a canonical `xcodebuild -destination` string is not already established in-repo, propose one and ask the human to confirm before writing it.
-   - Follow `Install/integration-doc-install-update.md` for how to update the Integration doc safely (managed blocks + human overrides).
+   - For Xcode projects: never invent a simulator/device model. If a canonical `xcodebuild -destination` string is not already established in-repo, propose one and ask the supervisor to confirm before writing it.
+   - Follow `Install/integration-doc-install-update.md` for how to update the Integration doc safely (managed blocks + supervisor overrides).
 3.5 Create/update ignore files (permission-gated if the files already exist and are project-owned):
    - Update `.gitignore` by inserting/updating a managed block:
      - Add `skai/working-docs/` so ephemeral working documents are not committed.
@@ -96,13 +94,13 @@ If updating the submodule, include an "update review" section:
    - If `.claudeignore` exists, propose inserting/updating an equivalent managed block to exclude `.cursor/**` (ask approval before changing).
 4. Generate managed Cursor `.mdc` rule files into `.cursor/rules/skai/`.
 5. Install `skai` Cursor skills into `.cursor/skills/`.
-6. If approved, perform legacy cleanup (delete or replace with symlinks).
+6. If approved, perform legacy cleanup (delete).
 7. Write/update `skai/install-state.json` (see "Install state file" below).
 
 Required Integration doc fields to request (minimum set):
 - Build/compile command(s)
 - Unit test command(s): run all + run a single test/subset
-- How to capture full output (paths/artifacts the human should paste back)
+- How to capture full output (paths/artifacts the supervisor should paste back)
 - Simulator/device destination conventions (if applicable)
 - Known evidence-capture limitations (if any)
 
@@ -119,7 +117,7 @@ The Cursor adapter writes `.mdc` files directly into the host repo.
 Rules:
 - Each generated `.mdc` begins with the managed header (see `Install/managed-header.md`).
 - For updates, overwrite only when the destination is missing or already has the managed header.
-- Determine stack (Swift/Xcode vs Android/Kotlin, etc.) by inspecting the host repo, then ask the human to confirm before writing.
+- Determine stack (Swift/Xcode vs Android/Kotlin, etc.) by inspecting the host repo, then ask the supervisor to confirm before writing.
 
 Initial supported stacks:
 - Swift/Xcode: generate `.mdc` with `globs: ["**/*.swift"]`.
@@ -207,8 +205,8 @@ Rules:
 
 During discovery, if you find artifacts that appear to be from older installations (symlinks pointing into the submodule, guide/rule copies without managed headers, skills that have been renamed or replaced), propose a cleanup plan:
 
-- **Managed symlinks** (symlinks into `Submodules/skai/...`): propose deleting them (only with explicit approval).
+- **Symlinks** into `Submodules/skai/...`: an abandoned install mechanism; propose deleting them (only with explicit approval).
 - **Legacy candidates** (look like managed assets but lack the managed header): do not overwrite. Propose deletion or replacement, but only with explicit approval. If they contain project-specific content (e.g., logging conventions, custom rules), propose migrating that content into `skai/integration.md` first.
-- **Non-symlink or project-authored content**: treat as project-owned and STOP to ask the human what to do.
+- **Non-symlink or project-authored content**: treat as project-owned and STOP to ask the supervisor what to do.
 
-Rationale: leaving legacy copies in place increases the chance that humans/agents keep reading the wrong file out of habit.
+Rationale: leaving legacy copies in place increases the chance that people/agents keep reading the wrong file out of habit.
