@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- 2026-10-03 **Maintenance retro verifies migration instructions.** `internal/maintain-retro.md` (`guide.maintain-retro`) now checks every host-install-affecting change against the maintainer changelog contract, including handling existing artifacts. Refresh the SKAI checkout to use the revised retro; no existing host artifact transformation is required.
+
 - 2026-10-03 **Installer skills are manifest-driven.** All three adapters install every `skill` asset tagged for them, using its `sourcePath`; this adds previously omitted requirements skills. Re-run every installed adapter. Obsolete managed SKAI skills are proposed for cleanup during discovery, never removed without approval.
 - 2026-10-03 **Shared instruction composition and root Codex file.** Claude Code and Codex retain Release 7's dated managed blocks and existing template ids, but compose the block from new `Templates/agents/instructions-block.md` (`template.agent-instructions-block`) and applicable policies via new `Install/agent-instructions-install-update.md` (`install-policy.agent-instructions-install-update`). Codex installs root `AGENTS.md` instead of `.agents/AGENTS.md`; re-run both adapters. Migrate custom content from the old Codex file before separately approving cleanup. The single install entry prompt and Release 7 ownership rules remain unchanged.
 - 2026-10-03 **Cursor rule frontmatter comes first.** Re-run Cursor to regenerate older header-first managed `.mdc` rules with frontmatter followed by their marker comment.

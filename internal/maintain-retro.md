@@ -27,7 +27,7 @@ This retro is a **backstop for completeness**, not a git/diff report.
 
 ## 2) Required bookkeeping
 
-- Ensure `CHANGELOG.md` reflects major user-visible changes. Review each change made since the last retro and verify it has a corresponding entry if user-visible.
+- For each host-install-affecting change since the last retro, verify `CHANGELOG.md` meets `internal/maintain-skai.md`'s `Required bookkeeping` migration contract: it tells the upgrading agent how to handle existing artifacts, not only what future outputs will look like. Fix missing or unusable migration instructions; pure-internal changes with no host effect need no entry.
   - Changelog is release notes: prefer multiple short bullets over a single mega-entry.
 - Ensure `assets.manifest.json` is updated if you added/moved/renamed any installable asset or installer dependency (templates/sections/runbooks/policies).
 - Ensure every managed file edited since the last retro carries a `Managed-Updated-At` no earlier than that edit.

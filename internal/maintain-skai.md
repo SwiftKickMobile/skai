@@ -17,7 +17,7 @@ This file is instructions for an LLM making changes **to the `skai` repo itself*
    - installer/runbook change
    - template change
    - repo metadata change (manifest/changelog/readme)
-3. Propose a short plan and then proceed.
+3. Propose a short plan and then proceed. For a host-affecting change, assess migration needs under `Required bookkeeping` while preparing that plan.
 4. After significant edits (multi-file changes, path moves, installer behavior changes), run `internal/maintain-retro.md` and fix straightforward misses immediately.
 
 ## Required bookkeeping (most common misses)
@@ -32,7 +32,7 @@ When you change assets, keep these in sync:
   - update the Usage section for developer-facing skills (see "README Usage section conventions" below)
 - `CHANGELOG.md`
   - add an entry under the top `## Unreleased` section for changes that affect a host installation (prefix each line item with the date, `YYYY-MM-DD`)
-  - **Audience: the installing agent, not a supervisor reader.** Entries are consumed by the agent updating an existing host installation. Each must give that agent what it needs to migrate: assets renamed or moved (state old path → new path), assets added or removed, managed-block / managed-header changes, and anything that must be re-run. Omit pure-internal changes that don't touch a host (working-doc edits, test-harness tweaks, refactors with no asset effect).
+  - **Audience: the installing agent, not a supervisor reader.** When proposing a host-affecting change, assess its impact on existing artifacts as well as future outputs; this assessment does not require access to a host checkout. Entries must give the updating agent what it needs to migrate: asset renames/moves (old path → new path), additions/removals, managed-content changes, required reruns, and existing-artifact transformations. For a transformation, state what to discover, how to transform it, what to preserve, and how to verify it. If execution is uncertain, inspect `Guides/Core/update-installation-guide.md` and the relevant adapter runbook before proposing installer changes. Omit pure-internal changes that don't touch a host (working-doc edits, test-harness tweaks, refactors with no asset effect).
   - **`## Unreleased` is a staging log, not finished notes.** Entries stack up across sessions as work lands — that is expected. Within your own session, write the *net* entry for your change; don't narrate your own back-and-forth (no "add X" then "rename X to Y" in the same batch). Do not rewrite or reconcile earlier sessions' Unreleased entries as you go — you may lack their context. Cross-session overlaps are merged later, at the cut (see `## Release planning` below).
   - released sections are frozen: below a `## Release <N>` heading (or the legacy `## Released` bucket), entries are append-only history — fix an outright error, but never rewrite shipped scope.
   - always determine the date by running `date +%Y-%m-%d` in the terminal (see `Install/managed-header.md`, "Determining today's date")
