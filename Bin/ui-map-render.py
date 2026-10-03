@@ -83,7 +83,8 @@ the demo doc and the guide describe the same conventions in prose.
      a. `primary_parent: X` set → canonical instance renders inside X's wrapper
         that routes to this scene. The route kind is the unique kind connecting
         X to this scene; if X routes to this scene via multiple kinds, the
-        first declared kind wins.
+        kind whose container defines the scene wins, falling back to the first
+        declared kind when the scene is defined elsewhere.
      b. Exactly one inbound reference → that single parent's wrapper.
      c. Zero inbound references → root scene: declared at top level, no
         enclosing wrapper.
@@ -281,6 +282,7 @@ def _walk_item(
     scenes: dict[str, dict[str, Any]],
     edges: list[tuple[str, str, str]],
     scene_domain: dict[str, str | None],
+    definition_site: dict[str, tuple[str | None, str | None]],
 ) -> None:
     scene_id, body = _scene_id_and_body(item)
     if parent_id is not None and route_kind is not None:
@@ -291,30 +293,45 @@ def _walk_item(
         raise SemanticError(f"Duplicate canonical home for scene '{scene_id}'")
     scenes[scene_id] = body
     scene_domain[scene_id] = domain_id
+    definition_site[scene_id] = (parent_id, route_kind)
     for kind in ROUTE_KINDS:
         for sub_item in body.get(kind, []) or []:
-            _walk_item(sub_item, scene_id, kind, domain_id, scenes, edges, scene_domain)
+            _walk_item(
+                sub_item, scene_id, kind, domain_id, scenes, edges, scene_domain, definition_site
+            )
 
 
 def build_model(data: dict[str, Any]) -> Model:
     scenes: dict[str, dict[str, Any]] = {}
     edges: list[tuple[str, str, str]] = []
     scene_domain: dict[str, str | None] = {}
+    definition_site: dict[str, tuple[str | None, str | None]] = {}
     domain_order: list[str] = []
 
     for domain_id, domain_data in data["domains"].items():
         domain_order.append(domain_id)
         if "scenes" in domain_data:
             for item in domain_data["scenes"]:
-                _walk_item(item, None, None, domain_id, scenes, edges, scene_domain)
+                _walk_item(
+                    item, None, None, domain_id, scenes, edges, scene_domain, definition_site
+                )
         else:
             _walk_item(
-                {domain_id: domain_data}, None, None, domain_id, scenes, edges, scene_domain
+                {domain_id: domain_data},
+                None,
+                None,
+                domain_id,
+                scenes,
+                edges,
+                scene_domain,
+                definition_site,
             )
 
     common_items = data.get("common", []) or []
     for item in common_items:
-        _walk_item(item, None, None, COMMON_DOMAIN_ID, scenes, edges, scene_domain)
+        _walk_item(
+            item, None, None, COMMON_DOMAIN_ID, scenes, edges, scene_domain, definition_site
+        )
     if common_items:
         domain_order.append(COMMON_DOMAIN_ID)
 
@@ -335,7 +352,14 @@ def build_model(data: dict[str, Any]) -> Model:
             kinds = [k for (p, k) in inbound[sid] if p == pp]
             if not kinds:
                 raise SemanticError(f"primary_parent '{pp}' does not route to '{sid}'")
-            visual_parent[sid] = (pp, kinds[0])
+            # When the primary parent reaches this scene by more than one route
+            # kind, render the canonical instance in the container the map
+            # actually defines it under; otherwise fall back to route order.
+            def_parent, def_kind = definition_site.get(sid, (None, None))
+            if def_parent == pp and def_kind in kinds:
+                visual_parent[sid] = (pp, def_kind)
+            else:
+                visual_parent[sid] = (pp, kinds[0])
         elif len(inbound[sid]) == 1:
             visual_parent[sid] = inbound[sid][0]
         elif len(inbound[sid]) == 0:
