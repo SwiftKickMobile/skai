@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.ui-map-guide
 Managed-Source: Guides/UIMap/ui-map-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-10
+Managed-Updated-At: 2026-10-03
 
 # UI Map Guide
 
-A UI Map is a YAML document that defines every scene in an app and the routing relationships between them. The map is the single source of truth for the app's UI architecture; implementation should mirror it directly. A render script produces a visual diagram from the YAML for human review.
+A UI Map is a YAML document that defines every scene in an app and the routing relationships between them. The map is the single source of truth for the app's UI architecture; implementation should mirror it directly. A render script produces a visual diagram from the YAML for review.
 
 This guide defines the platform-agnostic YAML format. Platform implementation patterns live in companion references:
 
@@ -194,13 +194,14 @@ thumbnail_slider:
 
 With a single inbound reference, `primary_parent` is unnecessary — the only parent is implicitly primary.
 
-When the primary parent reaches the scene by more than one route kind, the canonical instance renders in the container that *defines* the scene; the other kinds get pointers. Define the scene under the route you want it drawn in:
+When the primary parent reaches the scene by more than one route kind and defines it in one of those containers, the canonical instance renders in that container; the other kinds get pointers. If the scene is defined elsewhere, the renderer falls back to the first matching kind in its fixed order (`nav`, `modal`, `composite`, `tab`, `child`). Define the scene under the route you want it drawn in:
 
 ```yaml
 app:                       # reaches login by both child and modal
   child:
     - login:               # defined here, so the canonical instance renders here
         primary_parent: app
+        modal_style: sheet # declared in the map's modal_styles vocabulary
   modal:
     - login                # pointer
 ```

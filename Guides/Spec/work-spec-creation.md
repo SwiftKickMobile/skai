@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-creation
 Managed-Source: Guides/Spec/work-spec-creation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-04
+Managed-Updated-At: 2026-09-30
 
 # Work Spec Design
 
@@ -103,8 +103,9 @@ When none remain, use this skill's only planned gate:
 
 `⏳ GATE: Next: Discussion complete. Review the design decisions and API sketch, then say "next" to approve them and complete the design.`
 
-The supervisor is the human or authorized agent outside this workflow that reviews gates; the
-executing agent never approves its own. This guide does not prescribe delegation or escalation.
+The supervisor is the human or authorized agent outside this workflow that resolves its discussion
+items and reviews its gates; the executing agent does not resolve or approve its own. This guide
+does not prescribe delegation or escalation.
 
 While an invoked sibling is active, only its gate is active; resume this skill after the sibling's
 completion line.

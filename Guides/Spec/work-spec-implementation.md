@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-implementation
 Managed-Source: Guides/Spec/work-spec-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-04
+Managed-Updated-At: 2026-09-30
 
 # Work Spec Implementation
 
@@ -150,8 +150,9 @@ When the supervisor requested a bounded run, reaching the boundary reuses this s
 Advance intent resumes an active bounded run without another audit; a re-initiated skill follows
 *Inputs and initiation*.
 
-The supervisor is the human or authorized agent outside this workflow that reviews gates; the
-executing agent never approves its own. This guide does not prescribe delegation or escalation.
+The supervisor is the human or authorized agent outside this workflow that resolves its discussion
+items and reviews its gates; the executing agent does not resolve or approve its own. This guide
+does not prescribe delegation or escalation.
 
 While an invoked sibling is active, end responses with only its gate line; resume this skill after
 the sibling's completion line.
@@ -224,14 +225,14 @@ then stop when none can advance:
 
 `⏳ GATE: Blocked: <T#> requires <external result> for <scenario>. Provide the result to continue.`
 
-Known human testing is one final handoff task stating the scenario, expected result, and evidence:
+Known manual testing is one final handoff task stating the scenario, expected result, and evidence:
 
-`⏳ GATE: Blocked: <T#> requires human test evidence for <scenario>. Provide the result to continue.`
+`⏳ GATE: Blocked: <T#> requires manual test evidence for <scenario>. Provide the result to continue.`
 
 Record a passing result, check the handoff, and resume; on failure keep it unchecked and return to the
 affected task.
 
-### Unexpected human testing
+### Unexpected manual testing
 
 If agent tooling unexpectedly cannot establish a required result, leave the current task unchecked
 and block immediately, naming the smallest scenario, expected result, and evidence needed. Do not

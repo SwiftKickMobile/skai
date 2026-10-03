@@ -7,7 +7,7 @@ description: Maintains the skai repository itself (invariants, templates, runboo
 
 ## Instructions
 
-- Read `maintain-skai.md` and follow it as the source of truth.
+- Read `internal/maintain-skai.md` and follow it as the source of truth.
 - If you touch Integration templates or behavior, also read `Install/integration-doc-install-update.md`.
-- After any significant edit set (multi-file change, path moves, installer behavior changes, new assets/skills, integration template changes), run the checklist in `maintain-retro.md` and report only misses/follow-ups.
+- After any significant edit set (multi-file change, path moves, installer behavior changes, new assets/skills, integration template changes), run the checklist in `internal/maintain-retro.md` and report only misses/follow-ups.
 

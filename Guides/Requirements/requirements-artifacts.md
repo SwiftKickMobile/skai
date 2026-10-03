@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-artifacts
 Managed-Source: Guides/Requirements/requirements-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-27
+Managed-Updated-At: 2026-09-30
 
 # Requirements Artifact Formats
 
@@ -43,7 +43,7 @@ reported as removed. Each entry:
   [`requirements-catalog.md`](requirements-catalog.md)) | `modify glossary entry` | `retire glossary entry`. Retiring a glossary entry removes it — only a
   requirement keeps its heading and takes `(retired)`.
 - **Source** (the leading token of Justification) — one of: `Design` | `Implementation` |
-  `Human spec` | `Resolved decision` | `Agent inference` | `Change request` | `Catalog`. When the
+  `Supervisor input` | `Resolved decision` | `Agent inference` | `Change request` | `Catalog`. When the
   source is a design, a spec, or a change request, the Justification is just the citation.
   `Resolved decision: D#` cites a resolved Discussion item. `Agent inference` is a requirement the
   agent derived rather than read directly from a source, and carries a real rationale.
@@ -84,7 +84,7 @@ are no diffs to show):
   - **Description** Creates the catalog root with `_requirements.md` and `glossary.md`. Four scopes
     declared; `platform/` and `domains/` populated by this package. `features/` and `apps/` get no
     folder until something goes in them.
-  - **Justification** Human spec: the product description and scope set were confirmed at drafting.
+  - **Justification** Supervisor input: the product description and scope set were confirmed at drafting.
   - **Touches** _requirements.md, glossary.md
 
 - R2 add file: domains/note.md

@@ -4,43 +4,28 @@ This policy defines how installers and update runbooks must behave in the presen
 
 ## File classes
 
-- **Managed file**: contains the managed header (`Managed-By: skai`).
-- **Managed skill file**: a skill file at `.cursor/skills/**/SKILL.md`, `.claude/skills/**/SKILL.md`, or `.agents/skills/**/SKILL.md` that contains the managed marker comment described in `Install/managed-header.md`.
-- **Managed symlink**: a symlink created by the installer that points at the expected repo-owned target path.
-- **Managed block file**: a project-owned file that contains a delimited managed block (begin/end markers) that the installer may update in-place (e.g., ignore files).
-- **Legacy candidate**: appears to be an older copy of a managed asset but lacks the managed header.
-- **Project-owned file**: anything else (custom project content).
+- **Managed file**: carries the managed header, or the marker comment after frontmatter (`Install/managed-header.md`). The installer owns the file.
+- **Managed block**: contains `BEGIN`/`END` managed-block markers. The installer owns only the block.
+- **Not managed**: neither. The installer owns nothing here. A file that looks like an old install artifact -- a stale copy of a managed asset, or a symlink into `Submodules/skai/...` -- is a **legacy candidate**: it may be proposed for cleanup, never acted on without approval.
 
 ## Core rules
 
-- Never overwrite project-owned files.
-- Managed files may be overwritten deterministically.
-- Managed skill files may be overwritten deterministically when the managed marker is present.
-- Managed symlinks may be overwritten deterministically if they already point to an `skai` target.
-- Managed block files may be updated deterministically, but only within the managed block.
-- Deprecated install artifacts should be identified during discovery and proposed for cleanup (permission-gated).
-- Legacy candidates must not be overwritten by default.
-  - Migrate by generating new managed outputs in the current target locations.
-  - Default migration plan should propose a cleanup action for any legacy candidates that are known install artifacts (delete or replace-with-symlink), but never execute without explicit human approval.
+- A managed file may be overwritten deterministically.
+- A managed block may be updated deterministically, but only within the block.
+- Anything not managed is never overwritten. Migrate by generating new managed outputs in the current canonical location; propose cleanup of legacy candidates as a separate, permission-gated step.
 
 ## When destination path already exists
 
-- If destination does not exist: create it.
-- If destination exists and is managed: overwrite/update it.
-- If destination exists and is a symlink:
-  - If it points to the expected `skai` target: treat as managed symlink → update/replace as needed.
-  - Otherwise: treat as project-owned → do not overwrite.
-- If destination exists and contains a managed block: treat as managed block file → update only the block.
-- If destination exists and is not managed:
-  - Treat it as project-owned by default.
-  - If it looks like a legacy candidate, classify it as legacy candidate and do not overwrite.
-  - Create the new managed output in the current canonical location (e.g., `.cursor/rules/skai/`) with a non-conflicting name only if needed.
+- If the destination does not exist: create it.
+- If it is a managed file: overwrite it.
+- If it contains a managed block: update only the block.
+- Otherwise: do not overwrite it; inserting a managed block into it is permitted, permission-gated. If it is a legacy candidate, propose cleanup. Create the new managed output in the canonical location with a non-conflicting name only if needed.
 
 ## Cleanup step (always explicit)
 
 Cleanup of legacy candidates is always a separate step:
 - Present the list of legacy candidates.
-- Ask whether to delete, keep, replace with a symlink, or strip overlapping content.
+- Ask whether to delete, keep, or strip overlapping content.
 - Do not delete or strip without explicit approval.
 
 ## Canonical project-artifact path migration

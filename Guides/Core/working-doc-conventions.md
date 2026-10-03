@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.working-doc-conventions
 Managed-Source: Guides/Core/working-doc-conventions.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-04
+Managed-Updated-At: 2026-09-30
 
 # Working Document Conventions
 
@@ -20,7 +20,7 @@ Inside the branch path, each workflow session must choose a required `session-na
 
 Where:
 - `<branch-path>` = the current git branch name, with `/` decomposed into nested directories
-- `<session-name>` = a human-distinguishable name for the current effort on that branch
+- `<session-name>` = a short name for this effort on that branch
 - `<subpath>` = workflow-specific subfolder (may be empty)
 - `<filename>` = the document name (specified by the workflow guide)
 
