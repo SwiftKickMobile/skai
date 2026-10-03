@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-catalog
 Managed-Source: Guides/Requirements/requirements-catalog.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-13
+Managed-Updated-At: 2026-10-03
 
 # Requirements Catalog
 
@@ -13,7 +13,7 @@ requirements — what the system must do, observed from the outside. This guide 
 catalog contains, how it is organized, and how a single requirement is written.
 
 Its primary audience is the **agent**. When implementing, debugging, or testing, an agent consults
-the catalog to learn what behavior the system must exhibit. Humans read it too, but the agent is the
+the catalog to learn what behavior the system must exhibit. People read it too, but the agent is the
 consumer that shapes the conventions here: predictable layout, stable IDs, and enough indexing that
 a relevant requirement can be found without reading everything.
 

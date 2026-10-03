@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.ui-map-guide
 Managed-Source: Guides/UIMap/ui-map-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-13
+Managed-Updated-At: 2026-10-03
 
 # UI Map Guide
 
-A UI Map is a YAML document that defines every scene in an app and the routing relationships between them. The map is the single source of truth for the app's UI architecture; implementation should mirror it directly. A render script produces a visual diagram from the YAML for human review.
+A UI Map is a YAML document that defines every scene in an app and the routing relationships between them. The map is the single source of truth for the app's UI architecture; implementation should mirror it directly. A render script produces a visual diagram from the YAML for review.
 
 This guide defines the platform-agnostic YAML format. Platform implementation patterns live in companion references:
 
@@ -18,10 +18,10 @@ This guide defines the platform-agnostic YAML format. Platform implementation pa
 
 SKAI owns the default UI Map renderer. Use `Bin/ui-map-render.py` from the current SKAI checkout unless the project provides an explicit override.
 
-For an installed project, look first for the SKAI checkout at `Submodules/skai`. If SKAI is installed elsewhere, use that root instead. The renderer takes the map to render and the SVG to write — paths relative to the repo that holds the map; for the official map:
+For an installed project, look first for the SKAI checkout at `Submodules/skai`. If SKAI is installed elsewhere, use that root instead. The renderer takes the map to render and the SVG to write — map and SVG paths resolved against the repo that holds the map, which may be separate from the app and SKAI repos. For the official map:
 
 ```
-uv run <skai-root>/Bin/ui-map-render.py skai/ui-map/ui-map.yaml --svg skai/ui-map/ui-map.svg
+uv run <skai-root>/Bin/ui-map-render.py <map-repo-root>/skai/ui-map/ui-map.yaml --svg <map-repo-root>/skai/ui-map/ui-map.svg
 ```
 
 `skai/integration.md` may override this command or add project-specific evidence-capture requirements. It does not need to repeat the SKAI default. If no override exists, use the default renderer and block only when the SKAI root, renderer, runtime dependency, SVG dependency, or validation result prevents a valid render.
@@ -194,13 +194,14 @@ thumbnail_slider:
 
 With a single inbound reference, `primary_parent` is unnecessary — the only parent is implicitly primary.
 
-When the primary parent reaches the scene by more than one route kind, the canonical instance renders in the container that *defines* the scene; the other kinds get pointers. Define the scene under the route you want it drawn in:
+When the primary parent reaches the scene by more than one route kind and defines it in one of those containers, the canonical instance renders in that container; the other kinds get pointers. If the scene is defined elsewhere, the renderer falls back to the first matching kind in its fixed order (`nav`, `modal`, `composite`, `tab`, `child`). Define the scene under the route you want it drawn in:
 
 ```yaml
 app:                       # reaches login by both child and modal
   child:
     - login:               # defined here, so the canonical instance renders here
         primary_parent: app
+        modal_style: sheet # declared in the map's modal_styles vocabulary
   modal:
     - login                # pointer
 ```

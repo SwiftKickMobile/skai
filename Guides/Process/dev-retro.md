@@ -2,9 +2,9 @@ Managed-By: skai
 Managed-Id: guide.dev-retro
 Managed-Source: Guides/Process/dev-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-29
+Managed-Updated-At: 2026-10-03
 
-# Dev-session retro (LLM + human)
+# Dev-session retro (agent + supervisor)
 
 Purpose: a completeness backstop for an LLM-driven development session in a host repo. This retro covers **everything since the previous dev retro** (if any); if none, it covers the current session.
 
@@ -12,7 +12,9 @@ Do not do a git/diff report unless asked. Prefer evidence-backed review and cons
 
 ## Gates
 
-Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+Core rule: every time the agent is waiting on the supervisor, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+
+The supervisor is the human or authorized agent outside this workflow that resolves its discussion items and reviews its gates; the executing agent does not resolve or approve its own.
 
 **Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
@@ -25,19 +27,19 @@ Use these standard gate lines:
 Planned gates are the expected review points of this workflow. At each planned gate:
 1. Summarize what you did and what should happen next.
 2. End with the planned gate line.
-3. STOP and wait for the human.
+3. STOP and wait for the supervisor.
 
-In the planned gate line, `<what happens after your response>` should describe what the agent will do after the human gives advance intent. If the gate is non-standard, make it describe the exact human response or handoff needed to resume the workflow.
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the supervisor gives advance intent. If the gate is non-standard, make it describe the exact supervisor response or handoff needed to resume the workflow.
 
-If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
+If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
 Workflow-specific gate notes:
 - The requirements handoff is a non-standard planned gate, emitted only when step 5 seeded a change package. `Next` there means: hand that package to `Guides/Requirements/requirements-authoring.md`, where that workflow will own resolving the discussion items and, in turn, promotion. Retro never resolves them itself and never writes the catalog.
-- At that handoff gate, the seeded package is the handoff artifact. Its unchecked `- [ ] D<n>` items remain pending while waiting for the human.
+- At that handoff gate, the seeded package is the handoff artifact. Its unchecked `- [ ] D<n>` items remain pending while waiting for the supervisor.
 - The ticket-filing handoff is a non-standard planned gate. `Next` there means: hand the current SKAI process suggestions to `Guides/Process/ticket-filing.md`, where that workflow will own ticket drafting, review, and filing.
-- At that handoff gate, the retro output's `SKAI process suggestions` section is the handoff artifact. The unchecked `- [ ]` suggestion items there remain pending while waiting for the human to approve drafting.
+- At that handoff gate, the retro output's `SKAI process suggestions` section is the handoff artifact. The unchecked `- [ ]` suggestion items there remain pending while waiting for the supervisor to approve drafting.
 - **Both handoffs come after the full retro output is prepared, and the requirements handoff comes first.** Complete all six checklist steps before emitting either gate: step 6's reflection can be informed by what step 5 found, and a half-run retro should never be left open while its handoffs are worked.
-- Emit one handoff gate at a time. Taking the requirements handoff enters another workflow and the retro does not resume afterwards — so when both handoffs are pending, say so in the summary at the first gate. The retro output is what keeps the second discoverable: its unchecked `- [ ] S<n>` items remain, and the human takes that handoff by invoking ticket filing when ready.
+- Emit one handoff gate at a time. Taking the requirements handoff enters another workflow and the retro does not resume afterwards — so when both handoffs are pending, say so in the summary at the first gate. The retro output is what keeps the second discoverable: its unchecked `- [ ] S<n>` items remain, and the supervisor takes that handoff by invoking ticket filing when ready.
 
 Planned gates for this workflow:
 - After the retro output is prepared and step 5 seeded a change package, but before handing it off to requirements authoring. Skipped when step 5 found nothing.
@@ -55,17 +57,17 @@ Rules:
 - "we should...", "let's..." = discussion/context-setting, NOT authorization.
 - Outside a gate, interpret "begin"/"next"/"continue" using the workflow's active-phase rules below. Do not use them to skip required review or filing decisions.
 
-`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit human resolution.
+`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit supervisor resolution.
 `auto to <milestone>` = auto-advance but STOP before the named planned gate. Use stable, workflow-specific milestone names.
 
 Progress tracking:
 - Default marker convention: `- [ ]` / `- [x]` in the retro output (process artifact). See `Guides/Core/process-flow.md`, "Progress markers".
-- Default rule: a `- [ ]` item means TODO or pending approval. Do not check it without human approval.
+- Default rule: a `- [ ]` item means TODO or pending approval. Do not check it without supervisor approval.
 - This guide does not require a separate phase marker for ordinary retro work.
 - If SKAI process suggestions are generated, the workflow-owned handoff artifact is the retro output's `SKAI process suggestions` section.
 - In that section, each suggestion is a `- [ ]` item with a stable letter-led ID (`S1`, `S2`, …). The unchecked state shows it is pending handoff into the drafting workflow.
 - At the ticket-filing handoff gate, STOP with the suggestion items still unchecked.
-- If the human gives advance intent at that handoff gate, transfer control to `Guides/Process/ticket-filing.md` starting at Phase 1, step 2 using the unchecked `S<n>` suggestions as the draft inputs.
+- If the supervisor gives advance intent at that handoff gate, transfer control to `Guides/Process/ticket-filing.md` starting at Phase 1, step 2 using the unchecked `S<n>` suggestions as the draft inputs.
 - Do not draft `process-tickets.md` in this guide. `Guides/Process/ticket-filing.md` owns ticket drafting, review, and filing.
 
 Workflow-specific advance behavior:
@@ -87,9 +89,9 @@ Read the documents and artifacts that were produced or used during this session,
   - the requirements catalog, at the root named in `skai/integration.md`'s `Section: requirements`
     block — not a literal path, which is wrong under the `shared` shape
 - Open requirements change packages:
-  - `skai/changes/*/requirements-authoring.md` — behavior already captured but not yet promoted. Read these before step 5 so it does not re-raise what is already pending.
+  - `skai/changes/*/requirements-authoring.md` in the catalog repo named by the app Integration doc — behavior already captured but not yet promoted. Read these before step 5 so it does not re-raise what is already pending.
 
-If any of these inputs are missing but required to perform the retro, STOP and ask the human where they are.
+If any of these inputs are missing but required to perform the retro, STOP and ask the supervisor where they are.
 
 ## Retro checklist
 
@@ -108,7 +110,7 @@ Identify:
 - what assumptions were made
 - what risks remain
 
-For each gap, propose the smallest next verification step (or STOP and ask the human for required evidence).
+For each gap, propose the smallest next verification step (or STOP and ask the supervisor for required evidence).
 
 ### 3) Plan drift / consistency
 
@@ -125,7 +127,7 @@ If the session changed behavior, conventions, or integration details:
   - integration doc values/commands (inside managed blocks only, if using `skai` Integration format)
   - process docs/runbooks (if a repeatable workflow changed)
 
-If you are not confident what should be documented, STOP and ask the human what level of documentation is expected.
+If you are not confident what should be documented, STOP and ask the supervisor what level of documentation is expected.
 
 ### 5) Product requirements backfill (retro requirements)
 
@@ -137,7 +139,7 @@ Detection is this step's work, and it is unchanged:
   project keeps no catalog, so step 5 seeds nothing.
 - Identify what is missing, and what is recorded but now incorrect or outdated.
 
-**Retro does not write the catalog.** Findings are seeded into a change package at `skai/changes/<change-id>/`, per `Guides/Requirements/requirements-authoring.md` — draft requirement files plus a `## Discussion` holding what this session could not settle as `- [ ] D<n>` items. Write the requirement under the recommended reading and cite its item rather than leaving a hole; content rules are in `Guides/Requirements/requirements-catalog.md`.
+**Retro does not write the catalog.** Resolve the catalog repository from the app Integration doc before seeding; an unknown or unresolved root blocks rather than falling back to the app repo. Findings are seeded into that repository's `skai/changes/<change-id>/`, per `Guides/Requirements/requirements-authoring.md` — draft requirement files plus a `## Discussion` holding what this session could not settle as `- [ ] D<n>` items. Write the requirement under the recommended reading and cite its item rather than leaving a hole; content rules are in `Guides/Requirements/requirements-catalog.md`.
 
 If a package for this work is already open, add to it rather than creating a second. If the session found nothing, create no package and skip the requirements handoff gate.
 
@@ -150,14 +152,14 @@ Reflect on the session since the last retro (or since session start). Consider:
 - **Pattern violations**: Did you break an established convention or project pattern? What cue did you miss, and what check would have caught it earlier?
 - **Recurring friction**: Were there repeated failures (e.g., build issues, test flakiness, tooling problems, unclear requirements) that a process or infrastructure change could prevent?
 - **Missing knowledge**: Did you lack context that a rule, skill, or documentation improvement would provide?
-- **Documentation gaps**: Are there undocumented invariants, conventions, or patterns that you had to learn the hard way or that the human had to explain?
-- **Human corrections**: Did the human have to point out something you should have caught yourself? What was the root cause -- a missing check, a missing convention, or a gap in your understanding of the project?
+- **Documentation gaps**: Are there undocumented invariants, conventions, or patterns that you had to learn the hard way or that the supervisor had to explain?
+- **Supervisor corrections**: Did the supervisor have to point out something you should have caught yourself? What was the root cause -- a missing check, a missing convention, or a gap in your understanding of the project?
 
 Output is two sections in the retro output, written directly as you reflect (not brainstormed then sorted).
 
 #### Session observations
 
-Agent behavior issues, project-specific friction, one-off observations, or problems outside the skai repo's scope. These are worth noting for the human but do not belong in the skai issue tracker and do not flow into the ticket-filing handoff.
+Agent behavior issues, project-specific friction, one-off observations, or problems outside the skai repo's scope. These are worth noting for the supervisor but do not belong in the skai issue tracker and do not flow into the ticket-filing handoff.
 
 Format: brief bullets, no progress markers. If none, say **"None."**
 
@@ -192,10 +194,10 @@ Example:
 - [ ] S1 Retro forgets to scan README for stale paths
   - **Friction/problem** Three retros in a row missed a stale `Templates/` reference because the consistency check didn't run on README.
   - **Evidence/example** This session's retro skipped step 5 (consistency check) and shipped with a stale path.
-  - **Failure mode** Stale paths in README slip into production until a human notices them.
-  - **Candidate approach** Add a README path-staleness check to `maintain-retro.md` step 5.
-  - **Likely files** `maintain-retro.md`.
-  - **Verification** Next retro flags the stale path; human verifies.
+  - **Failure mode** Stale paths in README slip into production until a supervisor notices them.
+  - **Candidate approach** Add a README path-staleness check to `internal/maintain-retro.md` step 5.
+  - **Likely files** `internal/maintain-retro.md`.
+  - **Verification** Next retro flags the stale path; supervisor verifies.
 ```
 
 ## Retro output (keep it short)

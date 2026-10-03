@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-promotion
 Managed-Source: Guides/Requirements/requirements-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-13
+Managed-Updated-At: 2026-10-03
 
 # Requirements Promotion
 
@@ -31,7 +31,7 @@ Promotion waits only when the requirements describe behavior the system **does n
 promoting early would make the catalog claim something untrue. That test, not the package's mode,
 decides:
 
-- **Behavior that already ships** — promote on the human's approval. A backfill of shipping behavior is here,
+- **Behavior that already ships** — promote on the supervisor's approval. A backfill of shipping behavior is here,
   and so is a scoped change recording behavior that already shipped, which is what a retro-seeded
   package usually is.
 - **Behavior still to come** — promote when the change ships, which may be much later and in another
@@ -52,7 +52,9 @@ artifact:
 
 ## Gates
 
-Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+Core rule: every time the agent is waiting on the supervisor, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+
+The supervisor is the human or authorized agent outside this workflow that resolves its discussion items and reviews its gates; the executing agent does not resolve or approve its own.
 
 **Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
@@ -65,15 +67,15 @@ Use these standard gate lines:
 Planned gates are the expected review points of this workflow. At each planned gate:
 1. Summarize what you did and what should happen next.
 2. End with the planned gate line.
-3. STOP and wait for the human.
+3. STOP and wait for the supervisor.
 
-In the planned gate line, `<what happens after your response>` should describe what the agent will do after the human gives advance intent. If the gate is non-standard, make it describe the exact human response or handoff needed to resume the workflow.
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the supervisor gives advance intent. If the gate is non-standard, make it describe the exact supervisor response or handoff needed to resume the workflow.
 
-If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
+If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
 Workflow-specific gate notes:
 - The Promotion Checks gate is the workflow's single review point. `Next` there means: execute the
-  listed checks, record evidence, and write the catalog. The human reviews *what will become canon*
+  listed checks, record evidence, and write the catalog. The supervisor reviews *what will become canon*
   — the requirements themselves, not the mechanics — so the summary names the files and the count of
   requirements the write puts into the catalog — every requirement in the files being written,
   carried-forward ones included, because the write replaces whole files — not the checklist and not
@@ -92,7 +94,7 @@ Workflow-specific blocked gates:
 - A verifying check (`C1`–`C5`) fails **on the package** during execution. The checks are enumerated
   once, under *Promotion Checks*; a `C7` fault found after the write is repaired in place instead,
   and a failure whose cause is the catalog goes to *Raising a change request*.
-- The human asks at the Promotion Checks gate for a change to any requirement's wording — rewriting
+- The supervisor asks at the Promotion Checks gate for a change to any requirement's wording — rewriting
   is authoring.
 - The catalog contradicts what is landing, and the contradiction is load-bearing enough that writing
   would leave canon inconsistent.
@@ -102,13 +104,13 @@ Workflow-specific blocked gates:
   terminal, and `next` does not resolve it.
 
 A failed check, a failed readiness condition, a requested wording change, and a load-bearing catalog
-contradiction take a workflow-specific line rather than the standard one, because nothing the human
+contradiction take a workflow-specific line rather than the standard one, because nothing the supervisor
 can do at the console resolves them — the package goes back to authoring, and inviting a `next` here
 would restart the whole checklist:
 
 `⏳ GATE: Blocked: <C# | readiness condition | requested wording | catalog contradiction> failed — <what failed>. The package returns to authoring; re-run promotion once it is resolved.`
 
-The other two take the standard line, naming what the human supplies — the package, or the block's
+The other two take the standard line, naming what the supervisor supplies — the package, or the block's
 values. Under `none` the bullet above governs: nothing supplies a catalog.
 
 ## Advance intent
@@ -120,7 +122,7 @@ Rules:
 - "we should...", "let's..." = discussion/context-setting, NOT authorization.
 - Outside a gate, interpret "begin"/"next"/"continue" using the workflow's active-phase rules below. Do not use them to skip phases or clear unrelated progress markers.
 
-`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit human resolution.
+`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit supervisor resolution.
 `auto to <milestone>` = auto-advance but STOP before the named planned gate. Valid milestones in this workflow: `promotion checks`.
 
 Progress tracking:
@@ -128,9 +130,9 @@ Progress tracking:
 - **Two conventions, by artifact type:**
   - **`- [ ]` / `- [x]` in process artifacts** (markdown workflow docs). Completion is checking the box — the artifact preserves the audit trail of resolved items.
   - **`🟡` in source files** seeded or planned by a skai workflow. Completion is **removal** of the marker.
-- Default rule: a progress marker means TODO or pending approval. Do not clear it without human approval.
+- Default rule: a progress marker means TODO or pending approval. Do not clear it without supervisor approval.
 - At a planned gate, advance intent is the approval signal for clearing the guide-owned progress markers completed by the phase that just finished.
-- Ordering rule: the agent first stops and waits at the gate, then clears the approved markers only after the human gives advance intent.
+- Ordering rule: the agent first stops and waits at the gate, then clears the approved markers only after the supervisor gives advance intent.
 
 **Workflow-specific marker lifecycle.** This workflow owns the `- [ ] C<n>` items in
 `## Promotion Checks`. Every item is written unchecked while the gate is open — they are the gate's
@@ -160,17 +162,19 @@ The workflow starts on an explicit signal — "promote the requirements", "promo
 equivalent. That signal often comes right after authoring completes, but it is still a signal:
 promotion is never a continuation authoring runs into on its own.
 
-On the signal, identify the package. Paths in this guide are relative to the repo that holds the catalog. If you can't tell which repo that is, STOP at a blocked gate. Open packages are the directories under `skai/changes/` that
-hold a `requirements-authoring.md` and are not yet promoted (see *Completion*) — `skai/changes/` also
-holds other workflows' packages. If more than one is open and the signal does not name which, that is
-a blocked gate rather than a guess.
+Read the app repo's `skai/integration.md` `Section: requirements` block first: it names the
+repository shape and catalog root. Resolve the repository that holds the catalog before looking for
+packages. `skai/changes/` is relative to that repository, including under `shared`; an unknown or
+unresolved repository is a blocked gate, never an empty catalog or a host-repo fallback.
 
-Read `skai/integration.md`'s `Section: requirements` block before writing anything: it names the
-repository shape and the catalog root this package promotes into.
+Then identify the package. Open packages are directories under that repo's `skai/changes/` holding
+an unpromoted `requirements-authoring.md` (see *Completion*); the directory also holds other
+workflows' packages. More than one open package with no named target is a blocked gate rather than
+a guess.
 
 Under the `shared` shape that root — and the package, which lives beside it — is **outside this repo**, in a submodule's working tree. Say so
 before writing, naming the path, so it is never a surprise that a promotion touched files elsewhere.
-Writing them is all this workflow does; what happens to those changes afterwards is the human's.
+Writing them is all this workflow does; what happens to those changes afterwards is the supervisor's.
 
 ### Readiness screen
 

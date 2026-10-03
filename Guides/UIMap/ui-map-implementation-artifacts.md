@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation-artifacts
 Managed-Source: Guides/UIMap/ui-map-implementation-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-13
+Managed-Updated-At: 2026-10-03
 
 # UI Map Implementation Artifact Formats
 

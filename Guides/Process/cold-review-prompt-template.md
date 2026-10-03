@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.cold-review-prompt-template
 Managed-Source: Guides/Process/cold-review-prompt-template.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-29
+Managed-Updated-At: 2026-09-30
 
 # Cold-Review Prompt Template
 
@@ -16,7 +16,7 @@ Replace each `{{SLOT}}`:
 
 - `{{TARGET_NAME}}` -- the process or document set under review.
 - `{{GUIDES}}` -- the binding guide file(s) under review, with paths. The review target.
-- `{{SPEC}}` -- the design spec / standard the guide is judged against (path).
+- `{{SPEC}}` -- the design spec / standard the guide is judged against: `skai/refinement-reviews/<target-name>-design.md`.
 - `{{SCOPE}}` -- what the review target is and is **not** responsible for: the span it covers, and what deliberately lives in another document, in tooling, or in a doc not yet written. Omitting this is the most common cause of a review that never converges -- a reviewer told "this is the binding surface" will fault a chapter for not being the whole book, round after round.
 - `{{CONTEXT_FILES}}` -- non-normative files the reviewer may consult for context (paths); mark them non-normative.
 - `{{SETTLED_DISPOSITIONS}}` -- decisions already made and closed: things the maintainer or project owner deliberately chose, and deferrals that are already scheduled. Give the *decisions only*, never the findings log itself -- the log is refiner-facing and showing it would stop the review being cold. Omitting this is the second most common cause of a review that never converges: the findings log is deliberately withheld from the reviewer, so without this slot nothing prevents a fresh reader re-raising settled ground every round.
@@ -126,7 +126,7 @@ Look for: rules duplicated across sections (a drift hazard); rules stated in con
 ### 2. Greenfield operator simulation (primary)
 Mentally run a fresh agent through the workflow from scratch, with no reliance on prior runs, relying on memory of other sections only where the doc would naturally have sent you there. Walk at least:
 {{SIMULATION_STEPS}}
-At each stop ask: do I find everything I need right here? Do I know exactly when to stop and what gate line to emit? Do I know exactly what to show the human at each gate? If the workflow only works because you mentally stitch together scattered sections, that is a finding.
+At each stop ask: do I find everything I need right here? Do I know exactly when to stop and what gate line to emit? Do I know exactly what to show the supervisor at each gate? If the workflow only works because you mentally stitch together scattered sections, that is a finding.
 
 ### 3. Legacy-encounter simulation (only if legacy artifacts exist)
 Simulate a fresh operator hitting a legacy artifact. Do the current docs make its status (active / optional / historical / obsolete) clear? Could it be mistaken for a current template or compliance target? The finding is confusion caused by the current docs, not the existence of old files.
@@ -147,12 +147,12 @@ A review report only. Structure it:
    - **Reachability** -- how the operator gets there. Test in order, first match wins: `past-a-rule` (reaching it requires going against a clear rule the document states, with no competing instruction or worked example sending the operator there) · `normal` (the main path — a step taken on every round counts, even when it usually resolves to nothing) · `off-normal` (a branch reached only when a triggering event occurs: recovery, restart, abandonment, an optional branch).
    - **Recommended fix** -- the smallest change that resolves it coherently with the rest of the document, per the editing discipline above: name the section it belongs in, and whether it sharpens / relocates / deletes existing text or adds something new. If it requires touching text elsewhere to stay consistent, say where.
    - **Churn guard** -- the adjacent behavior or rule that must NOT change as a result.
-   - **Triage** -- your call on how the maintainer should treat it: `accept` (real defect, fix is proportionate) · `log-only` (valid observation, but the fix costs more than the problem) · `human-decision` (the fix adds process weight -- a new gate, rule, checklist, or proof burden -- not a reviewer's call).
+   - **Triage** -- your call on how the maintainer should treat it: `accept` (real defect, fix is proportionate) · `log-only` (valid observation, but the fix costs more than the problem) · `supervisor-decision` (the fix adds process weight -- a new gate, rule, checklist, or proof burden -- not a reviewer's call).
    - **Bloat flag** -- set it if the smallest sensible fix adds a new rule, gate, or required field.
    Consequence and reachability are facts about the document, not a ranking -- state each plainly and do not weigh findings against one another.
    If you cannot name a proportionate fix, that is itself a signal: mark it `log-only` and say why.
 2. Simulation results -- where the process felt smooth vs brittle (normal path, any blocked case, legacy-encounter path).
-3. Open questions / tensions -- unresolved tensions that do not yet support a document-defect claim; separate current-workflow ambiguity from historical-artifact noise. An under-specification or conflict that puts the operator at risk stays a finding, even when you are unsure how to resolve it or would triage it `human-decision`.
+3. Open questions / tensions -- unresolved tensions that do not yet support a document-defect claim; separate current-workflow ambiguity from historical-artifact noise. An under-specification or conflict that puts the operator at risk stays a finding, even when you are unsure how to resolve it or would triage it `supervisor-decision`.
 4. Verdict -- is the guide usable by a fresh LLM from scratch today? Biggest remaining risks?
 
 ## Style

@@ -8,22 +8,23 @@ This adapter is **stack-aware** (Xcode/Swift, Android/Kotlin, etc.). It detects 
 
 Assume the following, unless the host repo already establishes a different working convention:
 
-- Codex instructions live at `AGENTS.md` in the repo root. Codex discovers `AGENTS.md` in each directory from the project root down to the working directory; `.agents/` is where it looks for skills, not instructions. The file is project-owned and holds one skai-managed `instructions` block; the adapter writes only inside that block (`Install/agent-instructions-install-update.md`). Root `AGENTS.md` is also read by Cursor, GitHub Copilot, and Gemini CLI, so the block is agent-neutral.
+- Codex instructions live at root `AGENTS.md`; `.agents/` holds skills. The instruction file is project-owned, with a dated SKAI block.
 - Agent-facing skills live at `.agents/skills/skai-*/` (managed skill wrappers pointing to submodule sources).
 - Mixed-agent repos may also contain `.cursor/**` or `.claude/**`; those belong to their own adapters and are out of scope for Codex install/update.
 
-If any assumption is false in the host repo's setup, STOP and ask the human what file/path/convention to use.
+If any assumption is false in the host repo's setup, STOP and ask the supervisor what file/path/convention to use.
 
 ## Inputs (required reading)
 
 - `assets.manifest.json`
 - `Install/managed-header.md`
 - `Install/conflict-precedence-policy.md`
+- `Install/agent-instructions-install-update.md`
+- `Templates/agents/instructions-block.md`
 - `Policies/safe-operations.md`
 - `Policies/universal-stop-conditions.md`
 - `Templates/docs/skai/integration.md`
-- `Install/agent-instructions-install-update.md`
-- `Templates/agents/instructions.md`, `Templates/agents/instructions-block.md`
+- `Templates/agents/codex/AGENTS.md`
 
 ## Migration-capable algorithm (required)
 
@@ -43,8 +44,7 @@ Follow the discover -> classify -> plan -> confirm -> execute workflow.
   - Note whether `.claude/` exists (for optional `.claudeignore` setup).
   - Do **not** inventory or classify other agents' contents -- those belong to other adapters and are out of scope.
 - Inventory existing install artifacts:
-  - Codex instruction file (root `AGENTS.md`). Classify it per `Install/conflict-precedence-policy.md`: an `instructions` block → managed block file; a line-1 managed header and no block → the pre-block whole-file form, to be regenerated; neither → project-owned, the block is appended
-  - `.agents/AGENTS.md`, if present: a legacy candidate from earlier releases that Codex never read. Propose its cleanup (permission-gated) after the root file is in place
+  - Root `AGENTS.md` and old `.agents/AGENTS.md`; follow the shared instruction migration procedure to preserve custom content and plan permission-gated cleanup of the old path
   - Codex skill files (`.agents/skills/**`)
   - `docs/**`
   - the known legacy and canonical SKAI project-artifact paths in `Install/conflict-precedence-policy.md`
@@ -53,30 +53,28 @@ Follow the discover -> classify -> plan -> confirm -> execute workflow.
 ### 2) Classify
 
 Classify each discovered artifact:
-- **Managed**: has the managed header (`Managed-By: skai`) -> safe to overwrite.
-- **Managed skill file**: has the managed marker comment described in `Install/managed-header.md` -> safe to overwrite.
-- **Managed symlink**: a symlink that points into `Submodules/skai/...` at the expected target path -> safe to replace/update.
-- **Legacy candidate**: looks like a managed asset but lacks the header -> do not overwrite.
-- **Project-owned**: custom -> do not overwrite.
+- **Managed file**: carries the managed header, or the marker comment after frontmatter (`Install/managed-header.md`) -> overwrite.
+- **Managed block**: contains `BEGIN`/`END` managed-block markers -> replace only the block.
+- **Not managed**: neither -> do not overwrite (a managed block may be inserted, permission-gated). If it looks like an old install artifact (a stale copy of a managed asset, a symlink into `Submodules/skai/...`), propose cleanup; never act without approval.
 
 ### 3) Plan (no changes yet)
 
 Prepare a concrete plan:
 - Files to create
-- Files to update (managed only, including managed symlinks)
+- Files to update (managed only)
 - Legacy candidates to supersede (create new canonical outputs)
 - Integration doc migration items
 - Canonical SKAI project-artifact path migrations and any destination conflicts
 - Legacy cleanup proposals (permission-gated)
 
-### 4) Confirm (human gate)
+### 4) Confirm (supervisor gate)
 
-Present the plan and wait for human approval before writing.
+Present the plan and wait for supervisor approval before writing.
 
 If updating the submodule, include an "update review" section:
 - Summarize changes between the old SHA and new SHA for relevant paths:
   - `Guides/`, `Policies/`, `Templates/`, `Install/`, `assets.manifest.json`, `README.md`
-- If you cannot compute the diff yourself, STOP and ask the human to provide the diff output.
+- If you cannot compute the diff yourself, STOP and ask the supervisor to provide the diff output.
 
 ### 5) Execute (safe order)
 
@@ -87,13 +85,13 @@ If updating the submodule, include an "update review" section:
      - Create/seed the Integration doc from `Templates/docs/skai/integration.md`.
      - Fill only what you can source with high confidence.
      - Add explicit 🟡 placeholders for missing items.
-     - STOP and ask the human for the missing items before proceeding.
+     - STOP and ask the supervisor for the missing items before proceeding.
    - Prefer non-interactive command-line commands over GUI instructions. If you can't produce command-line commands with high confidence, leave 🟡 placeholders and ask.
    - **Stack-specific integration doc guidance**: if a stack was detected, read the corresponding addendum for additional rules:
      - Xcode/Swift -> `Install/Codex/stack-xcode.md`
      - Android/Kotlin -> `Install/Codex/stack-android.md`
-   - Follow `Install/integration-doc-install-update.md` for how to update the Integration doc safely (managed blocks + human overrides).
-4. Create/update root `AGENTS.md` by following `Install/agent-instructions-install-update.md`: create from `Templates/agents/instructions.md` when absent, otherwise insert or replace only the `instructions` block, composed from `Templates/agents/instructions-block.md` plus the applicable policies. No managed header on the file; no skills list in the block.
+   - Follow `Install/integration-doc-install-update.md` for how to update the Integration doc safely (managed blocks + supervisor overrides).
+4. Create/update root `AGENTS.md` by following `Install/agent-instructions-install-update.md`; use the existing Codex template for the dated block markers and the shared block interior plus applicable policies.
 5. Install Codex skills into `.agents/skills/` (see "Installing Codex skills" below).
 6. Create/update ignore files (permission-gated if they already exist and are project-owned):
    - Update `.gitignore` by inserting/updating a managed block:
@@ -107,7 +105,7 @@ If updating the submodule, include an "update review" section:
 Required Integration doc fields to request (minimum set):
 - Build/compile command(s)
 - Unit test command(s): run all + run a single test/subset
-- How to capture full output (paths/artifacts the human should paste back)
+- How to capture full output (paths/artifacts the supervisor should paste back)
 - Device/simulator/emulator conventions (if applicable)
 - Known evidence-capture limitations (if any)
 
@@ -121,9 +119,9 @@ Rules:
 - Each destination `SKILL.md` is considered managed only if it contains the managed marker comment described in `Install/managed-header.md`.
 - Overwrite only if destination is missing or already contains the managed marker.
 
-Which skills to install is decided by `assets.manifest.json`, not by a list in this runbook: install every asset of type `skill` whose `tags` include `adapter:codex`. For each such asset the skill name is its `id` without the `skill.` prefix; copy `Submodules/skai/Templates/skills/<name>/SKILL.md` to `.agents/skills/<name>/SKILL.md` and stamp the marker as above. Skip nothing the manifest lists, add nothing it doesn't.
+Which skills to install is decided by `assets.manifest.json`, not by a list in this runbook: install every asset of type `skill` whose `tags` include `adapter:codex`. For each such asset the skill name is its `id` without the `skill.` prefix; copy the asset's `sourcePath` from the actual SKAI checkout to `.agents/skills/<name>/SKILL.md` and stamp the marker as above. Skip nothing the manifest lists, add nothing it doesn't.
 
-On update, also compare the installed managed skills under `.agents/skills/` with that set: a managed skill the manifest no longer tags for this adapter is a legacy candidate — propose its removal in the plan and do not delete it without approval.
+During discovery, also compare the installed managed skills under `.agents/skills/` with that set: a managed SKAI skill (identified by its managed id/source) the manifest no longer tags for this adapter is a legacy candidate — propose its removal in the plan and do not delete it without approval.
 
 ## Install state file
 
@@ -158,5 +156,5 @@ Rules:
 
 During discovery, if you find artifacts that appear to be from older installations (symlinks pointing into the submodule, guide copies without managed headers, skills that have been renamed or replaced), propose a cleanup plan:
 
-- **Managed symlinks** (symlinks into `Submodules/skai/...`): safe to delete (installer-created artifacts, no approval needed). Remove the containing directory if empty after cleanup.
-- **Non-symlink or project-authored content**: treat as project-owned and STOP to ask the human what to do.
+- **Symlinks** into `Submodules/skai/...`: an abandoned install mechanism; propose deleting them (only with explicit approval). Remove the containing directory if empty after cleanup.
+- **Non-symlink or project-authored content**: treat as project-owned and STOP to ask the supervisor what to do.

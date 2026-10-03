@@ -19,14 +19,14 @@ For each iteration:
 3. **Pick a tactic** from the guide and justify why it's the best next step.
 4. **Design the smallest discriminating experiment** (what it will prove/disprove).
 5. **Stop conditions**:
-   - If you need output you cannot access, STOP and ask the human to run the command and paste results.
-   - If multiple plausible behaviors depend on product intent, STOP and ask the human which is correct.
+   - If you need output you cannot access, STOP and ask the supervisor to run the command and paste results.
+   - If multiple plausible behaviors depend on product intent, STOP and ask the supervisor which is correct.
 6. Apply **one** change, re-run the smallest verification, and update the possibility space.
 
 ## Root cause and fix gates (hard)
 
 - Do not declare a root cause without discriminating evidence that rules out plausible alternatives.
-- Before applying a fix, present the root cause and proposed fix and get explicit human approval.
+- Before applying a fix, present the root cause and proposed fix and get explicit supervisor approval.
 
 ## Evidence requirements
 

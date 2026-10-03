@@ -100,16 +100,28 @@
       "tags": ["core"]
     },
     {
-      "id": "template.agent-instructions",
+      "id": "template.codex-agents",
       "type": "template",
-      "sourcePath": "Templates/agents/instructions.md",
-      "tags": ["adapter:claude-code", "adapter:codex"]
+      "sourcePath": "Templates/agents/codex/AGENTS.md",
+      "tags": ["adapter:codex"]
+    },
+    {
+      "id": "template.claude-instructions",
+      "type": "template",
+      "sourcePath": "Templates/agents/claudecode/CLAUDE.md",
+      "tags": ["adapter:claude-code"]
     },
     {
       "id": "template.agent-instructions-block",
       "type": "template",
       "sourcePath": "Templates/agents/instructions-block.md",
       "tags": ["adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "install-policy.agent-instructions-install-update",
+      "type": "install-policy",
+      "sourcePath": "Install/agent-instructions-install-update.md",
+      "tags": ["core"]
     },
     {
       "id": "guide.work-spec-creation",
@@ -172,7 +184,7 @@
     {
       "id": "guide.ticket-implementation",
       "type": "guide",
-      "sourcePath": "maintain-tickets.md",
+      "sourcePath": "internal/maintain-tickets.md",
       "tags": ["core"]
     },
     {
@@ -198,6 +210,12 @@
       "type": "guide",
       "sourcePath": "Guides/Test/unit-test-writing-guide.md",
       "tags": ["adapter:xcode", "swift"]
+    },
+    {
+      "id": "runbook.install-update",
+      "type": "runbook",
+      "sourcePath": "Install/install-update.md",
+      "tags": ["core"]
     },
     {
       "id": "runbook.cursor-install-update",
@@ -260,12 +278,6 @@
       "tags": ["core"]
     },
     {
-      "id": "install-policy.agent-instructions-install-update",
-      "type": "install-policy",
-      "sourcePath": "Install/agent-instructions-install-update.md",
-      "tags": ["core"]
-    },
-    {
       "id": "skill.skai-debugging",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-debugging/SKILL.md",
@@ -322,7 +334,7 @@
     {
       "id": "guide.maintain-retro",
       "type": "guide",
-      "sourcePath": "maintain-retro.md",
+      "sourcePath": "internal/maintain-retro.md",
       "tags": ["core"]
     },
     {
@@ -425,6 +437,12 @@
       "id": "guide.requirements-authoring",
       "type": "guide",
       "sourcePath": "Guides/Requirements/requirements-authoring.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.requirements-baseline",
+      "type": "guide",
+      "sourcePath": "Guides/Requirements/requirements-baseline.md",
       "tags": ["core"]
     },
     {

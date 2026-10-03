@@ -1,12 +1,12 @@
 Managed-By: skai
 Managed-Id: guide.ticket-implementation
-Managed-Source: maintain-tickets.md
+Managed-Source: internal/maintain-tickets.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-14
+Managed-Updated-At: 2026-10-03
 
 # Ticket implementation session
 
-Purpose: work through process improvement tickets filed against this repo. The human initiates a session, the agent summarizes ready tickets, they discuss approach, and the agent implements with approval.
+Purpose: work through process improvement tickets filed against this repo. The supervisor initiates a session, the agent summarizes ready tickets, they discuss approach, and the agent implements with approval.
 
 This is an internal maintenance workflow for the `skai` repo, not a guide for host projects.
 
@@ -18,7 +18,9 @@ This is an internal maintenance workflow for the `skai` repo, not a guide for ho
 
 ## Gates
 
-Core rule: every time the agent is waiting on the human, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+Core rule: every time the agent is waiting on the supervisor, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+
+The supervisor is the human or authorized agent outside this workflow that resolves its discussion items and reviews its gates; the executing agent does not resolve or approve its own.
 
 **Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
@@ -31,11 +33,11 @@ Use these standard gate lines:
 Planned gates are the expected review points of this workflow. At each planned gate:
 1. Summarize what you did and what should happen next.
 2. End with the planned gate line.
-3. STOP and wait for the human.
+3. STOP and wait for the supervisor.
 
-In the planned gate line, `<what happens after your response>` should describe what the agent will do after the human gives advance intent. If the gate is non-standard, make it describe the exact human response or handoff needed to resume the workflow.
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the supervisor gives advance intent. If the gate is non-standard, make it describe the exact supervisor response or handoff needed to resume the workflow.
 
-If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the human resolves it.
+If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
 Workflow-specific gate notes:
 - The phase-start gate uses the canonical Discussion-phase gate behavior (see `Guides/Core/process-flow.md`, "Structured discussion items"): while any `- [ ]` discussion items remain inside the active phase, the workflow emits a blocked gate citing the remaining count; the moment every item is resolved, the agent emits the planned gate that moves the phase to its file-change plan.
@@ -68,7 +70,7 @@ For each ticket, include:
   - suggestion (what it proposes changing)
   - anything else of note (e.g., affected files, constraints, overlaps)
 - Keep paraphrases concise (1-3 bullets per ticket). Do not paste the full ticket body.
-- Whether it is still open: read the guide or runbook the ticket targets as it is *today*. A ticket can be overtaken by a later release before it is picked up. If the current text already resolves the ticket's failure mode, say so in the entry ("already addressed by …") and propose closing it at the planning gate instead of giving it a phase.
+- Check the current guide or runbook targeted by each ticket. If a later release already resolves its failure mode, record "already addressed by …" and propose closing it at the planning gate rather than implementing it again.
 
 Reconcile before proceeding: ensure every open issue labeled `agent ready` is represented in the planning document. If any are missing, add them before moving on.
 
@@ -82,7 +84,7 @@ Rules:
 - Treat the buckets as **execution phases** (Phase A, Phase B, etc.). Implement one phase fully before moving to the next.
 - Capture overlaps explicitly so changes that touch the same area are coordinated.
 - Track phase completion via a `## Phases` checklist at the top of the planning document (`- [ ] Phase A: <theme>`). Phase sections themselves use plain `###` headings without markers — markdown task lists are scoped to list items, not headings.
-- Seed each phase with `- [ ]` discussion items per the canonical Structured discussion items schema (`Guides/Core/process-flow.md`) — `- [ ] PA<n> [Kind] <summary>` for Phase A items, `- [ ] PB<n>` for Phase B, etc. Check the box and append `- **Decision** <resolution>.` as the human approves each item.
+- Seed each phase with `- [ ]` discussion items per the canonical Structured discussion items schema (`Guides/Core/process-flow.md`) — `- [ ] PA<n> [Kind] <summary>` for Phase A items, `- [ ] PB<n>` for Phase B, etc. Check the box and append `- **Decision** <resolution>.` as the supervisor approves each item.
 
 Format example:
 
@@ -119,12 +121,12 @@ Rules:
 - "we should...", "let's..." = discussion/context-setting, NOT authorization.
 - Outside a gate, interpret "begin"/"next"/"continue" using the workflow's active-phase rules below. Do not use them to skip planning, phase discussion, or implementation approval.
 
-`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit human resolution.
+`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit supervisor resolution.
 `auto to <milestone>` = auto-advance but STOP before the named planned gate. Use stable, workflow-specific milestone names.
 
 Progress tracking:
 - Default marker convention: `- [ ]` / `- [x]` in the planning document (process artifact). See `Guides/Core/process-flow.md`, "Progress markers".
-- Default rule: a `- [ ]` item means TODO or pending approval. Do not check it without human approval.
+- Default rule: a `- [ ]` item means TODO or pending approval. Do not check it without supervisor approval.
 - The workflow-owned artifact is `skai/working-docs/<branch-path>/<session-name>/ticket-planning.md`.
 - The top-of-document `## Phases` checklist tracks per-phase completion: `- [ ] Phase A: <theme>`, `- [ ] Phase B: <theme>`, etc. These are the durable phase markers.
 - Inside each phase, `- [ ]` discussion items (`PA1`, `PA2`, `PB1`, …) track open planning questions, proposal choices, or unresolved scope details — per the canonical Structured discussion items schema.
@@ -153,14 +155,14 @@ Present a summary of all ready tickets, grouped if natural categories emerge. Fo
 
 ### 5. Discuss and prioritize
 
-Ask the human which tickets to tackle in this session and in what order. The human may:
+Ask the supervisor which tickets to tackle in this session and in what order. The supervisor may:
 
 - Select specific tickets by number.
 - Reorder priorities.
 - Defer tickets to a future session.
 - Ask questions or discuss implementation approach for specific tickets.
 
-Do not proceed until the human confirms the selection.
+Do not proceed until the supervisor confirms the selection.
 
 Gate: STOP after the planning document is updated, summarized, and the session's selected phases/tickets are confirmed. End with `⏳ GATE: Next: Initialize the first selected phase for discussion. Say "next" or what to change.`
 
@@ -168,7 +170,7 @@ Gate: STOP after the planning document is updated, summarized, and the session's
 
 For each selected ticket, in the agreed order:
 
-1. **Read the maintainer runbook.** Before making changes, read `maintain-skai.md` and follow its rules (safety defaults, bookkeeping, content rules).
+1. **Read the maintainer runbook.** Before making changes, read `internal/maintain-skai.md` and follow its rules (safety defaults, bookkeeping, content rules).
 2. **Propose a plan.** State what files you will change and how. Wait for approval.
 3. **Make the changes.** Follow the repo's conventions:
    - Guides under `Guides/`, policies under `Policies/`, templates under `Templates/`.
@@ -184,7 +186,7 @@ After implementing a phase, report what changed and STOP at the phase-completion
 
 ### 7. Close tickets
 
-Close is triggered by human approval.
+Close is triggered by supervisor approval.
 
 Default approval signal (phase-based sessions):
 - Advance intent after a phase implementation report is approval. Close all tickets implemented in that phase.
@@ -197,5 +199,5 @@ Mechanics:
 
 After all selected tickets are implemented:
 
-- Run the `maintain-retro.md` checklist and report any misses.
-- Remind the human to commit if they haven't already.
+- Run the `internal/maintain-retro.md` checklist and report any misses.
+- Remind the supervisor to commit if they haven't already.
