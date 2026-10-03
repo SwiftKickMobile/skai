@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-creation
 Managed-Source: Guides/Spec/work-spec-creation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-03
 
 # Work Spec Design
 
@@ -260,7 +260,7 @@ finish the design without another approval.
 
 Invoke sibling workflows only when their owned artifact is needed:
 
-- When `skai/ui-map/ui-map.yaml` exists, invoke
+- When `skai/ui-map/ui-map.yaml` exists in the map repo identified by the project, invoke
   [`../UIMap/ui-map-architecture.md`](../UIMap/ui-map-architecture.md) for a new or changed scene,
   route, or domain. If no official map exists, invoke the sibling only when the supervisor approves a
   material `D#` adopting one; otherwise describe the UI design in this document. Its completed package

@@ -8,7 +8,7 @@ This adapter is **stack-aware** (Xcode/Swift, Android/Kotlin, etc.). It detects 
 
 Assume the following, unless the host repo already establishes a different working convention:
 
-- Codex instructions live at `.agents/AGENTS.md`.
+- Codex instructions live at root `AGENTS.md`; `.agents/` holds skills. The instruction file is project-owned, with a dated SKAI block.
 - Agent-facing skills live at `.agents/skills/skai-*/` (managed skill wrappers pointing to submodule sources).
 - Mixed-agent repos may also contain `.cursor/**` or `.claude/**`; those belong to their own adapters and are out of scope for Codex install/update.
 
@@ -19,6 +19,8 @@ If any assumption is false in the host repo's setup, STOP and ask the supervisor
 - `assets.manifest.json`
 - `Install/managed-header.md`
 - `Install/conflict-precedence-policy.md`
+- `Install/agent-instructions-install-update.md`
+- `Templates/agents/instructions-block.md`
 - `Policies/safe-operations.md`
 - `Policies/universal-stop-conditions.md`
 - `Templates/docs/skai/integration.md`
@@ -42,7 +44,7 @@ Follow the discover -> classify -> plan -> confirm -> execute workflow.
   - Note whether `.claude/` exists (for optional `.claudeignore` setup).
   - Do **not** inventory or classify other agents' contents -- those belong to other adapters and are out of scope.
 - Inventory existing install artifacts:
-  - Codex instruction files (`.agents/AGENTS.md`, `AGENTS.md`)
+  - Root `AGENTS.md` and old `.agents/AGENTS.md`; follow the shared instruction migration procedure to preserve custom content and plan permission-gated cleanup of the old path
   - Codex skill files (`.agents/skills/**`)
   - `docs/**`
   - the known legacy and canonical SKAI project-artifact paths in `Install/conflict-precedence-policy.md`
@@ -89,7 +91,7 @@ If updating the submodule, include an "update review" section:
      - Xcode/Swift -> `Install/Codex/stack-xcode.md`
      - Android/Kotlin -> `Install/Codex/stack-android.md`
    - Follow `Install/integration-doc-install-update.md` for how to update the Integration doc safely (managed blocks + supervisor overrides).
-4. Create/update `.agents/AGENTS.md` from `Templates/agents/codex/AGENTS.md`; managed per `Install/managed-header.md`.
+4. Create/update root `AGENTS.md` by following `Install/agent-instructions-install-update.md`; use the existing Codex template for the dated block markers and the shared block interior plus applicable policies.
 5. Install Codex skills into `.agents/skills/` (see "Installing Codex skills" below).
 6. Create/update ignore files (permission-gated if they already exist and are project-owned):
    - Update `.gitignore` by inserting/updating a managed block:
@@ -117,35 +119,9 @@ Rules:
 - Each destination `SKILL.md` is considered managed only if it contains the managed marker comment described in `Install/managed-header.md`.
 - Overwrite only if destination is missing or already contains the managed marker.
 
-Install these skills:
-- `.agents/skills/skai-debugging/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-debugging/SKILL.md`
-- `.agents/skills/skai-work-spec-creation/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-work-spec-creation/SKILL.md`
-- `.agents/skills/skai-work-spec-implementation/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-work-spec-implementation/SKILL.md`
-- `.agents/skills/skai-ui-map-architecture/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-ui-map-architecture/SKILL.md`
-- `.agents/skills/skai-ui-map-planning/SKILL.md` (deprecated compatibility entry point)
-  - source: `Submodules/skai/Templates/skills/skai-ui-map-planning/SKILL.md`
-- `.agents/skills/skai-ui-map-implementation/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-ui-map-implementation/SKILL.md`
-- `.agents/skills/skai-process-refinement/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-process-refinement/SKILL.md`
-- `.agents/skills/skai-suggestion/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-suggestion/SKILL.md`
-- `.agents/skills/skai-dev-retro/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-dev-retro/SKILL.md`
-- `.agents/skills/skai-unit-testing/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-unit-testing/SKILL.md`
-- `.agents/skills/skai-unit-test-planning/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-unit-test-planning/SKILL.md`
-- `.agents/skills/skai-unit-test-infrastructure/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-unit-test-infrastructure/SKILL.md`
-- `.agents/skills/skai-unit-test-writing/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-unit-test-writing/SKILL.md`
-- `.agents/skills/skai-update-installation/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-update-installation/SKILL.md`
+Which skills to install is decided by `assets.manifest.json`, not by a list in this runbook: install every asset of type `skill` whose `tags` include `adapter:codex`. For each such asset the skill name is its `id` without the `skill.` prefix; copy the asset's `sourcePath` from the actual SKAI checkout to `.agents/skills/<name>/SKILL.md` and stamp the marker as above. Skip nothing the manifest lists, add nothing it doesn't.
+
+During discovery, also compare the installed managed skills under `.agents/skills/` with that set: a managed SKAI skill (identified by its managed id/source) the manifest no longer tags for this adapter is a legacy candidate — propose its removal in the plan and do not delete it without approval.
 
 ## Install state file
 

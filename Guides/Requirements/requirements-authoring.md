@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-authoring
 Managed-Source: Guides/Requirements/requirements-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-03
 
 # Requirements Authoring
 
@@ -41,7 +41,8 @@ example, `work/billing-ui` proposes `billing-ui`. Once the change ID is resolved
 at its final path, then write `## Goal` and `## Inputs` into it before drafting anything.
 
 A package may sit alongside a UI Map change package under the same `<change-id>` when one change
-produces both.
+produces both and both canonical artifacts live in the same repo. Otherwise each package stays with
+its own canonical artifact; link the packages by their resolved paths.
 
 ### What `proposed-requirements/` holds
 
@@ -199,9 +200,9 @@ On the signal:
 1. Read `skai/integration.md`'s `Section: requirements` block to learn this project's repository
    shape and where the catalog lives. If it cannot answer that — or, under `shared`, the root it
    names does not resolve — stop at the blocked gate below. **Never fall back to a literal path**,
-   and never read an unresolved root as an empty catalog.
+   and never read an unresolved root as an empty catalog. Resolve the repository that holds the catalog before scanning or creating packages: `skai/changes/` is relative to that repository, including under `shared`. Keep `skai/integration.md` relative to the app repo. If the catalog repository is unknown, STOP at a blocked gate.
 2. Read [`requirements-catalog.md`](requirements-catalog.md) and the existing catalog.
-3. Scan `skai/changes/*/requirements-authoring.md`. If an unpromoted package for this work already
+3. Scan `skai/changes/*/requirements-authoring.md` in that repo. If an unpromoted package for this work already
    exists — including one seeded by another workflow — reopen it rather than creating a second; see
    below.
 4. Otherwise resolve the change id and create the artifact — see *The change package* — then record

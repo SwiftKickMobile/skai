@@ -20,6 +20,8 @@ If any assumption is false in the host repo's setup, STOP and ask the supervisor
 - `assets.manifest.json`
 - `Install/managed-header.md`
 - `Install/conflict-precedence-policy.md`
+- `Install/agent-instructions-install-update.md`
+- `Templates/agents/instructions-block.md`
 - `Policies/safe-operations.md`
 - `Policies/universal-stop-conditions.md`
 - `Templates/docs/skai/integration.md`
@@ -90,7 +92,7 @@ If updating the submodule, include an "update review" section:
      - Xcode/Swift → `Install/ClaudeCode/stack-xcode.md`
      - Android/Kotlin → `Install/ClaudeCode/stack-android.md`
    - Follow `Install/integration-doc-install-update.md` for how to update the Integration doc safely (managed blocks + supervisor overrides).
-4. Create/update the Claude instruction file (`claude.md` vs `CLAUDE.md`) from `Templates/agents/claudecode/CLAUDE.md`; managed per `Install/managed-header.md`.
+4. Create/update the Claude instruction file (`claude.md` vs `CLAUDE.md`) by following `Install/agent-instructions-install-update.md`; use the existing adapter template for the dated block markers and the shared block interior plus applicable policies.
 5. Install Claude Code skills into `.claude/skills/` (see "Installing Claude Code skills" below).
 6. Create/update ignore files (permission-gated if they already exist and are project-owned):
    - Update `.gitignore` by inserting/updating a managed block:
@@ -119,35 +121,9 @@ Rules:
 - Each destination `SKILL.md` is considered managed only if it contains the managed marker comment described in `Install/managed-header.md`.
 - Overwrite only if destination is missing or already contains the managed marker.
 
-Install these skills:
-- `.claude/skills/skai-debugging/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-debugging/SKILL.md`
-- `.claude/skills/skai-work-spec-creation/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-work-spec-creation/SKILL.md`
-- `.claude/skills/skai-work-spec-implementation/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-work-spec-implementation/SKILL.md`
-- `.claude/skills/skai-ui-map-architecture/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-ui-map-architecture/SKILL.md`
-- `.claude/skills/skai-ui-map-planning/SKILL.md` (deprecated compatibility entry point)
-  - source: `Submodules/skai/Templates/skills/skai-ui-map-planning/SKILL.md`
-- `.claude/skills/skai-ui-map-implementation/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-ui-map-implementation/SKILL.md`
-- `.claude/skills/skai-process-refinement/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-process-refinement/SKILL.md`
-- `.claude/skills/skai-suggestion/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-suggestion/SKILL.md`
-- `.claude/skills/skai-dev-retro/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-dev-retro/SKILL.md`
-- `.claude/skills/skai-unit-testing/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-unit-testing/SKILL.md`
-- `.claude/skills/skai-unit-test-planning/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-unit-test-planning/SKILL.md`
-- `.claude/skills/skai-unit-test-infrastructure/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-unit-test-infrastructure/SKILL.md`
-- `.claude/skills/skai-unit-test-writing/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-unit-test-writing/SKILL.md`
-- `.claude/skills/skai-update-installation/SKILL.md`
-  - source: `Submodules/skai/Templates/skills/skai-update-installation/SKILL.md`
+Which skills to install is decided by `assets.manifest.json`, not by a list in this runbook: install every asset of type `skill` whose `tags` include `adapter:claude-code`. For each such asset the skill name is its `id` without the `skill.` prefix; copy the asset's `sourcePath` from the actual SKAI checkout to `.claude/skills/<name>/SKILL.md` and stamp the marker as above. Skip nothing the manifest lists, add nothing it doesn't.
+
+During discovery, also compare the installed managed skills under `.claude/skills/` with that set: a managed SKAI skill (identified by its managed id/source) the manifest no longer tags for this adapter is a legacy candidate — propose its removal in the plan and do not delete it without approval.
 
 ## Install state file
 

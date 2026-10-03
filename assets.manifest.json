@@ -112,6 +112,18 @@
       "tags": ["adapter:claude-code"]
     },
     {
+      "id": "template.agent-instructions-block",
+      "type": "template",
+      "sourcePath": "Templates/agents/instructions-block.md",
+      "tags": ["adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "install-policy.agent-instructions-install-update",
+      "type": "install-policy",
+      "sourcePath": "Install/agent-instructions-install-update.md",
+      "tags": ["core"]
+    },
+    {
       "id": "guide.work-spec-creation",
       "type": "guide",
       "sourcePath": "Guides/Spec/work-spec-creation.md",

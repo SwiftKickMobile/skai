@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ticket-implementation
 Managed-Source: internal/maintain-tickets.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-03
 
 # Ticket implementation session
 
@@ -70,6 +70,7 @@ For each ticket, include:
   - suggestion (what it proposes changing)
   - anything else of note (e.g., affected files, constraints, overlaps)
 - Keep paraphrases concise (1-3 bullets per ticket). Do not paste the full ticket body.
+- Check the current guide or runbook targeted by each ticket. If a later release already resolves its failure mode, record "already addressed by …" and propose closing it at the planning gate rather than implementing it again.
 
 Reconcile before proceeding: ensure every open issue labeled `agent ready` is represented in the planning document. If any are missing, add them before moving on.
 

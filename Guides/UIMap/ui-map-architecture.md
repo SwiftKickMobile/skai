@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture
 Managed-Source: Guides/UIMap/ui-map-architecture.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-03
 
 # UI Map Architecture
 
@@ -72,6 +72,7 @@ At a planned gate: summarize what you did, include the current map-preview statu
 **Blocked gates** — emitted when the agent cannot advance. Common reasons:
 
 - Discussion in progress: one or more `- [ ]` items remain unresolved.
+- Which repo holds the official map is unknown or ambiguous.
 - Inputs are too contradictory or incomplete to draft a stage.
 - A Discussion decision proves unworkable when realized in Map Changes; for example, the proposed map cannot be made valid without revisiting a decision.
 - Required tooling is unavailable; for example, the SKAI renderer, its runtime, the SVG dependency, or a project-specific render override cannot produce a valid render.
@@ -88,7 +89,7 @@ The supervisor resolves the cause (resolves items, fixes inputs, revises decisio
 
 The workflow starts on an explicit signal — "write the UI Map architecture document", "create the baseline map", "update the UI Map", or equivalent. Whatever came before (designs, requirements, a discussion, a story, a change request, or a bug request) is context the agent digests; there is no declared mode.
 
-On the signal: digest all available inputs, infer the mode — **baseline map** or **scoped map change** — and draft Discussion.
+On the signal: digest all available inputs, infer the mode — **baseline map** or **scoped map change** — and draft Discussion. Resolve the map repository from the project's README or established map location before drafting. `skai/ui-map/` and `skai/changes/` are relative to that repository. Keep app inputs and `skai/integration.md` relative to the app repo. If the map repository is unknown or ambiguous, STOP at a blocked gate. For a baseline, resolve where the new official map will live.
 
 If new map-relevant input arrives after the architecture package has completed — including a **change request** raised by downstream implementation — reopen the same architecture artifact in Discussion. Treat the new input as additional context and continue the normal Discussion loop, keeping the package's existing kind. Do not create a separate response artifact or replace the existing architecture artifact with a narrow response artifact. Proceed to Map Changes only after the discussion-complete gate advances.
 

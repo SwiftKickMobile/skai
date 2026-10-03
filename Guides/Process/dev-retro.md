@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.dev-retro
 Managed-Source: Guides/Process/dev-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-03
 
 # Dev-session retro (agent + supervisor)
 
@@ -89,7 +89,7 @@ Read the documents and artifacts that were produced or used during this session,
   - the requirements catalog, at the root named in `skai/integration.md`'s `Section: requirements`
     block — not a literal path, which is wrong under the `shared` shape
 - Open requirements change packages:
-  - `skai/changes/*/requirements-authoring.md` — behavior already captured but not yet promoted. Read these before step 5 so it does not re-raise what is already pending.
+  - `skai/changes/*/requirements-authoring.md` in the catalog repo named by the app Integration doc — behavior already captured but not yet promoted. Read these before step 5 so it does not re-raise what is already pending.
 
 If any of these inputs are missing but required to perform the retro, STOP and ask the supervisor where they are.
 
@@ -139,7 +139,7 @@ Detection is this step's work, and it is unchanged:
   project keeps no catalog, so step 5 seeds nothing.
 - Identify what is missing, and what is recorded but now incorrect or outdated.
 
-**Retro does not write the catalog.** Findings are seeded into a change package at `skai/changes/<change-id>/`, per `Guides/Requirements/requirements-authoring.md` — draft requirement files plus a `## Discussion` holding what this session could not settle as `- [ ] D<n>` items. Write the requirement under the recommended reading and cite its item rather than leaving a hole; content rules are in `Guides/Requirements/requirements-catalog.md`.
+**Retro does not write the catalog.** Resolve the catalog repository from the app Integration doc before seeding; an unknown or unresolved root blocks rather than falling back to the app repo. Findings are seeded into that repository's `skai/changes/<change-id>/`, per `Guides/Requirements/requirements-authoring.md` — draft requirement files plus a `## Discussion` holding what this session could not settle as `- [ ] D<n>` items. Write the requirement under the recommended reading and cite its item rather than leaving a hole; content rules are in `Guides/Requirements/requirements-catalog.md`.
 
 If a package for this work is already open, add to it rather than creating a second. If the session found nothing, create no package and skip the requirements handoff gate.
 

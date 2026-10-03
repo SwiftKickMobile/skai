@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.maintain-retro
 Managed-Source: internal/maintain-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-03
 
 # Maintenance retro checklist (agent + supervisor)
 
@@ -70,6 +70,7 @@ This retro is a **backstop for completeness**, not a git/diff report.
   - Verify `- [ ]` items have stable letter-led IDs on the same line (`D1`, `T1`, `F1`, `S1`, etc.), tight lists under shared headings (no blank lines between sibling checkbox items), and that markers are never on heading lines.
   - Verify discussion-based phases use the Structured discussion items schema (`[Question]`/`[Proposal]`/`[Tradeoff]`, inline-with-topic, no aggregator sections like `## Questions` / `## Decisions`). See `Guides/Core/process-flow.md` "Structured discussion items".
   - If the guide creates working docs or artifacts, verify its paths use `skai/working-docs/<branch-path>/<session-name>/...` rather than placing files directly under `skai/working-docs/<branch-path>/...`.
+- Every manifest `skill` asset has at least one `adapter:` tag and an existing `sourcePath`; runbooks install from those fields. Untagged skills install nowhere.
 - If a new skill was added or changed: verify the skill template is a **thin wrapper** (just references to Guides), not a self-contained document with inline logic. All substantive instructions must live in a Guide under `Guides/`.
 
 ## 6) Process reflection

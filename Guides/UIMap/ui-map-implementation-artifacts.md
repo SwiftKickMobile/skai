@@ -2,13 +2,13 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation-artifacts
 Managed-Source: Guides/UIMap/ui-map-implementation-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-06
+Managed-Updated-At: 2026-10-03
 
 # UI Map Implementation Artifact Formats
 
 The typed formats the implementation skill produces. Read an artifact with [`ui-map-implementation.md`](ui-map-implementation.md) for Mode and control flow, the platform guide named in its `## Inputs`, and [`ui-map-guide.md`](ui-map-guide.md) for the YAML map. The architecture-side formats the implementation skill *consumes* (map change items) and *raises* (change requests) live in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md).
 
-The implementation artifact (`ui-map-implementation.md`) sits in the change package at `skai/changes/<change-id>/`, parallel to the architecture artifact. Its `## Code Changes` section lists **code change items**; its `## Evidence` section holds **verification evidence**.
+The implementation artifact (`ui-map-implementation.md`) sits in the change package at `skai/changes/<change-id>/` in the repo that holds the official map, parallel to the architecture artifact. Its `## Code Changes` section lists **code change items**; its `## Evidence` section holds **verification evidence**.
 
 ## Code change items
 

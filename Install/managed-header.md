@@ -33,6 +33,10 @@ description: ...
 <!-- Managed-By: skai | Managed-Id: skill.skai-debugging | Managed-Source: Submodules/skai/Templates/skills/skai-debugging/SKILL.md | Managed-Adapter: cursor | Managed-Updated-At: <yyyy-mm-dd> -->
 ```
 
+Cursor `.mdc` rules use the same form: YAML frontmatter (`description`, `globs`, `alwaysApply`)
+comes first, then the marker comment immediately after the closing `---`. An older managed rule
+with a whole-file header before its frontmatter is regenerated in this order on update.
+
 Same rule as a whole-file header: the installer owns the file and overwrites it only when the marker
 is present or the file does not exist. Shared templates do not contain the marker; each installer
 stamps it at copy time with its own `Managed-Adapter`. Older markers may carry adapter-prefixed ids

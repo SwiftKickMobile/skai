@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-promotion
 Managed-Source: Guides/Requirements/requirements-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-03
 
 # Requirements Promotion
 
@@ -162,15 +162,17 @@ The workflow starts on an explicit signal — "promote the requirements", "promo
 equivalent. That signal often comes right after authoring completes, but it is still a signal:
 promotion is never a continuation authoring runs into on its own.
 
-On the signal, identify the package. Open packages are the directories under `skai/changes/` that
-hold a `requirements-authoring.md` and are not yet promoted (see *Completion*) — `skai/changes/` also
-holds other workflows' packages. If more than one is open and the signal does not name which, that is
-a blocked gate rather than a guess.
+Read the app repo's `skai/integration.md` `Section: requirements` block first: it names the
+repository shape and catalog root. Resolve the repository that holds the catalog before looking for
+packages. `skai/changes/` is relative to that repository, including under `shared`; an unknown or
+unresolved repository is a blocked gate, never an empty catalog or a host-repo fallback.
 
-Read `skai/integration.md`'s `Section: requirements` block before writing anything: it names the
-repository shape and the catalog root this package promotes into.
+Then identify the package. Open packages are directories under that repo's `skai/changes/` holding
+an unpromoted `requirements-authoring.md` (see *Completion*); the directory also holds other
+workflows' packages. More than one open package with no named target is a blocked gate rather than
+a guess.
 
-Under the `shared` shape that root is **outside this repo** — a submodule's working tree. Say so
+Under the `shared` shape that root — and the package, which lives beside it — is **outside this repo**, in a submodule's working tree. Say so
 before writing, naming the path, so it is never a surprise that a promotion touched files elsewhere.
 Writing them is all this workflow does; what happens to those changes afterwards is the supervisor's.
 

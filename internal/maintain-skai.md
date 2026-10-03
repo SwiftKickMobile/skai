@@ -43,6 +43,8 @@ When you change assets, keep these in sync:
    - Claude Code installer installs them into host repos at `.claude/skills/`
    - Codex installer installs them into host repos at `.agents/skills/`
    - **Wrapper pattern (invariant)**: skill templates must be thin wrappers -- a few lines that point the LLM at the corresponding Guide(s) in `Guides/`. All substantive logic lives in the Guide, not in the skill template. This keeps the files copied into host projects small and ensures the Guide is the single source of truth.
+   - Adapter runbooks derive their skill set from manifest `adapter:` tags and `sourcePath`s. Keep those tags complete; do not duplicate a skill inventory in a runbook.
+   - Agent instruction composition is shared in `Install/agent-instructions-install-update.md` and `Templates/agents/instructions-block.md`; preserve adapter template ids and dated block markers.
    - When adding a new skill: start by writing the Guide under `Guides/`, then create the skill wrapper that references it. This order prevents accidentally inlining logic into the skill template.
  - Install state file:
    - All adapter runbooks write `skai/install-state.json` on successful completion.

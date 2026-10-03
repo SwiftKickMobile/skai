@@ -18,10 +18,10 @@ This guide defines the platform-agnostic YAML format. Platform implementation pa
 
 SKAI owns the default UI Map renderer. Use `Bin/ui-map-render.py` from the current SKAI checkout unless the project provides an explicit override.
 
-For an installed project, look first for the SKAI checkout at `Submodules/skai`. If SKAI is installed elsewhere, use that root instead. The renderer takes the map to render and the SVG to write; for the official map:
+For an installed project, look first for the SKAI checkout at `Submodules/skai`. If SKAI is installed elsewhere, use that root instead. The renderer takes the map to render and the SVG to write — map and SVG paths resolved against the repo that holds the map, which may be separate from the app and SKAI repos. For the official map:
 
 ```
-uv run <skai-root>/Bin/ui-map-render.py skai/ui-map/ui-map.yaml --svg skai/ui-map/ui-map.svg
+uv run <skai-root>/Bin/ui-map-render.py <map-repo-root>/skai/ui-map/ui-map.yaml --svg <map-repo-root>/skai/ui-map/ui-map.svg
 ```
 
 `skai/integration.md` may override this command or add project-specific evidence-capture requirements. It does not need to repeat the SKAI default. If no override exists, use the default renderer and block only when the SKAI root, renderer, runtime dependency, SVG dependency, or validation result prevents a valid render.

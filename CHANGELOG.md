@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- 2026-10-03 **Installer skills are manifest-driven.** All three adapters install every `skill` asset tagged for them, using its `sourcePath`; this adds previously omitted requirements skills. Re-run every installed adapter. Obsolete managed SKAI skills are proposed for cleanup during discovery, never removed without approval.
+- 2026-10-03 **Shared instruction composition and root Codex file.** Claude Code and Codex retain Release 7's dated managed blocks and existing template ids, but compose the block from new `Templates/agents/instructions-block.md` (`template.agent-instructions-block`) and applicable policies via new `Install/agent-instructions-install-update.md` (`install-policy.agent-instructions-install-update`). Codex installs root `AGENTS.md` instead of `.agents/AGENTS.md`; re-run both adapters. Migrate custom content from the old Codex file before separately approving cleanup. The single install entry prompt and Release 7 ownership rules remain unchanged.
+- 2026-10-03 **Cursor rule frontmatter comes first.** Re-run Cursor to regenerate older header-first managed `.mdc` rules with frontmatter followed by their marker comment.
+- 2026-10-03 **Change packages stay with their canonical artifacts.** Requirements and UI Map guides, their artifact references, and retro package seeding resolve `skai/changes/` in the catalog or map repo, including shared submodules. App Integration docs and app-code paths remain in the app repo. Name the catalog and map locations in project documentation; update the SKAI checkout to pick up these guide changes.
+
 - 2026-10-03 **UI Map renderer draws a reused scene in the container that defines it.** When a scene's `primary_parent` reaches it by more than one route kind, the canonical instance now renders in the route container the map defines the scene under, instead of the first kind in the renderer's fixed order. A scene defined under `child` and referenced from `modal` on the same parent previously drew its canonical box in the modal wrapper. `Guides/UIMap/ui-map-guide.md` documents the rule and gains a worked example; re-run installed adapters to refresh it.
 
 ## Release 7 — 2026-09-30

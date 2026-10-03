@@ -93,6 +93,8 @@ Add a GitHub MCP server to your IDE's MCP configuration with a personal access t
 - **Integration doc (project-owned)**: [`skai/integration.md`](skai/integration.md) is the single source of truth for project-specific commands/paths (build/test/lint/etc). Templates live in [`Templates/`](Templates/).
 - **Managed files**: host-project files written by the installer have a required header (see [`Install/managed-header.md`](Install/managed-header.md)). The installer overwrites only files that already contain this header.
 - **Managed blocks**: project-owned files (ignore files, agent instruction files) are updated only inside a delimited block, so a project's own content around it survives updates.
+- **Instruction files**: Claude Code uses [`CLAUDE.md`](CLAUDE.md); Codex uses root [`AGENTS.md`](AGENTS.md). Their dated managed blocks share [composition guidance](Install/agent-instructions-install-update.md) and inline applicable policies; your own instructions stay outside the block.
+- **Shared artifacts**: requirements and UI Map change packages live in the repo holding their canonical catalog or map, including a shared submodule. Point the project README at those artifacts so their repo can be resolved.
 - **Legacy installs**: lookalike files without the header are treated as **legacy candidates** and are not overwritten by default (see [`Install/conflict-precedence-policy.md`](Install/conflict-precedence-policy.md)).
 
 ## Integration document (how to use it)
