@@ -79,6 +79,9 @@ todos:
 ```mermaid
 ---
 config:
+  layout: elk
+  elk:
+    nodePlacementStrategy: SIMPLE
   flowchart:
     diagramPadding: 20
     padding: 12
@@ -226,5 +229,5 @@ flowchart LR
 - **Modal-style callouts.** The project declares a `modal_styles` vocabulary; each scene reached by a modal route tags itself with a `modal_style`. For every modal wrapper, the render emits a callout — a parallelogram styled like the mutex wrapper (white fill, dashed gray border) — listing each destination and its bolded style on a single comma-separated line. The callout annotates the wrapper, not any one scene.
 - **TODO scenes and notes.** `Welcome` is flagged `todo: true` in YAML. A TODO scene keeps its domain identity but signals the unimplemented state: full-opacity domain color as a 2px stroke, with the domain color at 0.3 alpha as the fill. `Welcome` also has a `note:` rendering as a pale-yellow sticky-note callout (a `tag-rect` shape). The two are independent — a scene can have either, both, or neither.
 - **Container-attached notes.** A `notes:` entry on a scene can use `at: <route-kind>` to attach to a route container (wrapper) rather than the scene itself.
-- **Left-to-right layout.** The render is `flowchart LR`: depth runs left to right and siblings stack top to bottom, so a deep map grows taller rather than very wide.
-- **Auto-layout caveat.** Mermaid lays out the graph automatically; positions won't match the FigJam exactly. Topology, grouping, and edge labels match; relative positions within a domain are the renderer's choice.
+- **Left-to-right layout.** The render is `flowchart LR`, laid out by Mermaid's ELK engine with simple node placement: depth runs left to right and siblings stack top to bottom, so a deep map stays compact rather than very wide.
+- **Auto-layout caveat.** Mermaid lays out the graph automatically; positions won't match the FigJam exactly. Topology, grouping, and edge labels match; relative positions within a domain are the renderer's choice. In particular, the order of screens within a group follows the layout's effort to minimise crossing lines, not the order written in the YAML.

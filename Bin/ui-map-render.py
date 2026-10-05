@@ -44,8 +44,11 @@ These rules are what the script applies. They are the canonical render spec;
 the demo doc and the guide describe the same conventions in prose.
 
 1. OVERALL STRUCTURE
-   - A `---`-delimited front matter sets Mermaid config: padding 12,
-     nodeSpacing 30, rankSpacing 40, subGraphTitleMargin top/bottom 0.
+   - A `---`-delimited front matter sets Mermaid config: the ELK layout
+     engine with SIMPLE node placement (more compact than Mermaid's default
+     layout for deep maps), padding 12, nodeSpacing 30, rankSpacing 40,
+     subGraphTitleMargin top/bottom 0. ELK ships inside Mermaid; no extra
+     install is needed beyond the Mermaid CLI.
    - The diagram is `flowchart LR`: depth runs left to right and siblings
      stack top to bottom, which keeps deep maps far less wide than a
      top-down layout.
@@ -453,6 +456,9 @@ def render(model: Model) -> str:
     out.extend([
         "---",
         "config:",
+        "  layout: elk",
+        "  elk:",
+        "    nodePlacementStrategy: SIMPLE",
         "  flowchart:",
         "    diagramPadding: 20",
         "    padding: 12",

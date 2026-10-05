@@ -3,6 +3,7 @@
 ## Unreleased
 
 - 2026-10-05 **UI Map renderer: left-to-right layout.** `Bin/ui-map-render.py` now emits `flowchart LR` (was `flowchart TD`) and lays the domain legend out as a single column. Deep maps come out far less wide. `Guides/UIMap/ui-map-demo.md`'s Mermaid render is regenerated to match. No YAML or schema change.
+- 2026-10-05 **UI Map renderer: ELK layout.** The render's Mermaid config now selects the ELK layout engine with simple node placement, which lays deep maps out more compactly than Mermaid's default. ELK is bundled with Mermaid; the Mermaid CLI needs nothing extra. The demo render is regenerated again.
 - 2026-10-05 **UI Map renderer: a scene referenced twice by one parent now draws twice.** Pointer node ids include the route kind (`<target>_at_<source>_<kind>`), so a parent listing the same scene under two route kinds (e.g. `nav` and `modal`) shows the pointer in both wrappers instead of leaving one empty.
 
 **Migration:** none required. Re-render any UI Map (`skai/ui-map/ui-map.svg`, open change packages' `proposed-ui-map.svg`) to pick up both changes.
