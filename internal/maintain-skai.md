@@ -37,6 +37,9 @@ When you change assets, keep these in sync:
   - released sections are frozen: below a `## Release <N>` heading (or the legacy `## Released` bucket), entries are append-only history — fix an outright error, but never rewrite shipped scope.
   - always determine the date by running `date +%Y-%m-%d` in the terminal (see `Install/managed-header.md`, "Determining today's date")
   - format entries for fast scanning: prefer multiple short bullets over one giant "mega-entry"; short bold headline + 1-2 sentences max; group by theme when many files change (core mechanics, policies, spec guides, test guides, templates, etc.)
+- `Bin/ui-map-render.py`
+  - its docstring ("RENDER CONVENTIONS") is the canonical render spec: update it in the same edit as the code
+  - when the render output changes, regenerate the Mermaid block in `Guides/UIMap/ui-map-demo.md` from that guide's own YAML (`uv run Bin/ui-map-render.py <demo yaml> -o <file>`) and update the guide's notes; never hand-edit the block
  - Skills (if you add/change them):
    - shared templates live at `Templates/skills/skai-*/SKILL.md`
    - Cursor installer installs them into host repos at `.cursor/skills/`

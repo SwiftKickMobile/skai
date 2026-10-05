@@ -10,7 +10,7 @@
 ui-map-render.py — render a UI Map YAML document as a Mermaid flowchart.
 
 The input is a UI Map YAML document conforming to ui-map.schema.json.
-The output is a Mermaid `flowchart TD` block (bare, no ``` fences).
+The output is a Mermaid `flowchart LR` block (bare, no ``` fences).
 
 Usage:
     uv run ui-map-render.py <input.yaml>                     # write Mermaid to stdout
@@ -46,9 +46,12 @@ the demo doc and the guide describe the same conventions in prose.
 1. OVERALL STRUCTURE
    - A `---`-delimited front matter sets Mermaid config: padding 12,
      nodeSpacing 30, rankSpacing 40, subGraphTitleMargin top/bottom 0.
-   - The diagram is `flowchart TD`.
+   - The diagram is `flowchart LR`: depth runs left to right and siblings
+     stack top to bottom, which keeps deep maps far less wide than a
+     top-down layout.
    - The first block is a Domain Legend subgraph (one labeled node per
-     domain, colored to match the scenes in that domain).
+     domain, colored to match the scenes in that domain), laid out as a
+     single column so it does not stretch the diagram's width.
    - All canonical scenes are declared next at top level (stadium shape).
    - Outgoing routes are emitted per source scene, in YAML declaration order.
    - Callouts (implements, notes) are emitted after routes.
@@ -75,7 +78,7 @@ the demo doc and the guide describe the same conventions in prose.
      the next palette slot after the real domains. Common scenes still render
      at their canonical position (their consumer's wrapper) — only the fill
      color and the legend entry mark them as common.
-   - The Domain Legend subgraph at the top of the diagram contains one node
+   - The Domain Legend subgraph at the start of the diagram contains one node
      per domain, named `leg_<domain_id>`, classed with that domain's color.
 
 4. CANONICAL POSITION (which wrapper holds the rounded-rect instance)
@@ -103,8 +106,10 @@ the demo doc and the guide describe the same conventions in prose.
 6. POINTERS (non-canonical references)
    - When a scene `T` appears in a route container whose source `S` is NOT T's
      visual parent, the script renders a separate pointer node inside S's
-     wrapper: `<T>_at_<S>` with the same label as the canonical `T`, classed
-     `pointer` (gray fill — overrides T's domain color).
+     wrapper: `<T>_at_<S>_<kind>` with the same label as the canonical `T`,
+     classed `pointer` (gray fill — overrides T's domain color). The route
+     kind is part of the id so that S referencing T under two route kinds
+     (e.g. `nav` and `modal`) renders a pointer in each wrapper.
    - The canonical `T` is unaffected; it renders inside its visual parent's
      wrapper with its domain fill.
 
@@ -458,18 +463,18 @@ def render(model: Model) -> str:
         "    nodeSpacing: 30",
         "    rankSpacing: 40",
         "---",
-        "flowchart TD",
+        "flowchart LR",
     ])
 
     # Domain legend (one node per domain, colored to match its scenes)
     if model.domain_order:
         out.append("    %% Domains")
         out.append('    subgraph domain_legend[" "]')
-        out.append("        direction LR")
+        out.append("        direction TB")
         for domain_id in model.domain_order:
             out.append(f'        leg_{domain_id}(["{humanize(domain_id)}"])')
-        # The legend nodes have no edges, so `direction LR` has nothing to flow.
-        # Chain them with invisible edges to force a horizontal row.
+        # The legend nodes have no edges, so `direction TB` has nothing to flow.
+        # Chain them with invisible edges to force a single column.
         if len(model.domain_order) > 1:
             chain = " ~~~ ".join(f"leg_{d}" for d in model.domain_order)
             out.append(f"        {chain}")
@@ -485,7 +490,7 @@ def render(model: Model) -> str:
     # Anchor the legend to a root scene with an invisible edge. Without this,
     # the legend subgraph is unconnected and Mermaid's layout drops it in an
     # arbitrary spot, where it can overlap real edges and route labels. The
-    # invisible edge forces it onto the top rank, above the root scene.
+    # invisible edge forces it onto the first rank, beside the root scene.
     if model.domain_order:
         roots = [sid for sid, vp in model.visual_parent.items() if vp == (None, None)]
         if roots:
@@ -518,7 +523,7 @@ def render(model: Model) -> str:
                 if model.visual_parent[target_id] == (sid, kind):
                     out.append(f"        {target_id}")
                 else:
-                    pid = f"{target_id}_at_{sid}"
+                    pid = f"{target_id}_at_{sid}_{kind}"
                     out.append(f'        {pid}(["{humanize(target_id)}"])')
                     pointer_ids.append(pid)
             out.append("    end")
