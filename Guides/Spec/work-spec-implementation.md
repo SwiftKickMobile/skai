@@ -2,16 +2,16 @@ Managed-By: skai
 Managed-Id: guide.work-spec-implementation
 Managed-Source: Guides/Spec/work-spec-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-05
 
 # Work Spec Implementation
 
 ## Purpose
 
 Turn a ready design into a task list, obtain one approval, then implement continuously. This skill
-writes only the work spec, code, and evidence; the approved design, canonical requirements,
-`skai/integration.md`, and sibling artifacts are read-only except for sibling task-state updates
-required by *Audit and plan*.
+writes the work spec, code, and evidence. The approved design, requirement contracts,
+`skai/integration.md`, and sibling artifacts remain read-only except for sibling task-state updates
+under *Audit and plan* and verified known-difference cleanup under *Completion*.
 
 ## Inputs and initiation
 
@@ -301,6 +301,12 @@ For Plan, complete after supervisor approval with all implementation tasks still
 
 Before Build completion, compare task evidence with later mutations and rerun only checks those
 mutations may have invalidated. Do not add a blanket rerun when all relevant evidence remains current.
+
+After verifying implemented behavior, update or remove known-difference notes for requirements
+addressed by this work. Preserve differences that remain, including on other platforms. Resolve the
+catalog from the project's Integration requirements block, including shared roots; an unresolved
+root blocks cleanup. Change only those notes and their now-unused link definitions, never requirement
+text or IDs. Issue closure alone is not verification.
 
 For Build, complete when every task is checked, required evidence is current, and no handoff remains:
 

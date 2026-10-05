@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-authoring
 Managed-Source: Guides/Requirements/requirements-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-03
+Managed-Updated-At: 2026-10-05
 
 # Requirements Authoring
 
@@ -11,12 +11,10 @@ Managed-Updated-At: 2026-10-03
 Draft behavioral requirements into a **change package**, resolve the open questions they raise with
 the supervisor, and leave the package ready to promote.
 
-The catalog is canonical and is never written by this workflow. Drafts and
-discussion live in the package; [`requirements-promotion.md`](requirements-promotion.md) is the only
-writer of the catalog. That separation is what keeps the catalog free of workflow state and lets
-this workflow draft a whole subject at once, flagging what it is unsure of rather than stopping at
-every uncertainty.
-
+Authoring edits the package and its drafts; the canonical catalog stays unchanged. Record adjacent
+findings in Discussion when they affect a requirement decision, in Assumptions and TODOs for
+nonblocking gaps, or in Out of scope for excluded work. Editing adjacent artifacts requires
+existing or new authorization covering that work.
 Content rules — scopes, layout, requirement format, IDs, writing style — live in
 [`requirements-catalog.md`](requirements-catalog.md). Read it before drafting. Typed formats for
 change items and change requests live in
@@ -182,7 +180,7 @@ already clear.
 `## Requirement Changes` items carry **no checkbox**. The change is realized by the draft files under
 `proposed-requirements/`, not by ticking items. Nothing in `proposed-requirements/**` carries a
 progress marker of any kind — those files are drafts of canonical content and must already read as
-canon. The `(D#)` citations are scaffolding promotion strips, not markers.
+canon. Discussion links to drafts; requirements carry no Discussion citations.
 
 **Workflow-specific `auto` behavior.** `auto` is useful for a baseline package where the inputs fully
 specify the requirements, batching Requirement Changes after drafting. It never bypasses the
@@ -222,9 +220,7 @@ drafted, so re-derive the mode and recompute the diff rather than trusting what 
 both are facts about the catalog, not properties the package owns.
 
 **Resolved decisions are never disturbed.** A resolved `- [x] D<n>` is not removed, rewritten, or
-renumbered on reopen, and new items continue the existing numbering. The drafts cite those numbers
-and so does every `Resolved decision: D#` justification; renumbering orphans both, and the package is
-the durable record of why these requirements say what they say.
+renumbered on reopen; new items continue the numbering. Keep their requirement links current without changing decisions. Resolved-decision justifications continue to target those items.
 
 When the new input is a **change request** raised by promotion, either incorporate the requested
 adjustment, reject it — including when it is valid but belongs to a new scoped-change package, whose
@@ -244,9 +240,9 @@ record it and keep drafting. Never interrupt drafting to seek a decision: that i
 backfill run end to end instead of trickling out one subject per turn. The gate comes once, after
 the last subject this package covers.
 
-Two sources that disagree is a Discussion item, never a silent choice. An implementation that does
-something which looks like a defect rather than intent is a Discussion item too — proposing which,
-with a recommendation, is the agent's job; deciding is the supervisor's.
+When sources disagree or observed behavior may be a defect, first identify the intended contract
+and its existing coverage. Bring the unresolved intent to Discussion with a recommendation; the
+supervisor decides. Do not multiply requirements to enumerate instances of an already-covered bug.
 
 ### Working a scoped change
 
@@ -290,16 +286,13 @@ are finalized in Requirement Changes." Omit that sentence whenever the section h
 ### Draft the requirement anyway
 
 An open Discussion item never leaves a hole in the drafts. Write the requirement under the
-recommended reading and cite the item inline:
+recommended reading. In the item's Concern or Proposal, link every affected draft requirement by ID;
+the item explains uncertainty and decisions, while the draft reads as a complete catalog.
 
-```markdown
-## LEAD-04
-A lead not acted on before its appointment time is shown as missed and can no longer be booked. (D2)
-```
-
-The draft files therefore always read as a complete, coherent catalog. `## Discussion` says which
-statements the agent is not confident in and what it would change them to. The `(D2)` citation is
-scaffolding: promotion strips it.
+When citing Discussion items, use an explicit stable anchor supported by the host, or the containing
+topic anchor with the item ID as context; checkbox IDs do not create anchors. Stored links use
+reference-style definitions at the bottom. In conversation use inline links to the item, or a verified
+file/line link when the host supports it.
 
 **Example** (LumenNotes — a Proposal and a Tradeoff):
 
@@ -307,7 +300,7 @@ scaffolding: promotion strips it.
 ### Missed reminders
 
 - [ ] D2 [Proposal] A reminder that fires while the app is closed stays pending indefinitely
-  - **Concern** Nothing expires an unacknowledged reminder, so the pending list grows without bound.
+  - **Concern** [REMIND-04] leaves unacknowledged reminders pending indefinitely, so the list grows without bound.
   - **Proposal** Preserve the current behavior and state it as the requirement.
   - **Why** It is consistent across every entry point and no design contradicts it, which reads as
     intent. It is also exactly the shape an oversight takes, so it is worth your eye rather than
@@ -316,7 +309,7 @@ scaffolding: promotion strips it.
 ### Where sync boundaries fall
 
 - [ ] D5 [Tradeoff] Does the selected theme sync across devices?
-  - **Concern** The designs show one theme control with no per-device affordance; the implementation
+  - **Concern** [THEME-01] is drafted as device-local. Designs show no per-device affordance; the implementation
     stores it locally, so two devices can disagree. One of the two is wrong.
   - **Options**
     - A — Theme syncs, matching the single control in the designs.
@@ -325,6 +318,9 @@ scaffolding: promotion strips it.
   - **Why** Theme tracks the device's own appearance settings, and a phone in dark mode should not
     drag a desktop with it. The designs are silent rather than contradictory — one control does not
     imply one value.
+
+[REMIND-04]: proposed-requirements/features/reminders.md#remind-04
+[THEME-01]: proposed-requirements/features/theme.md#theme-01
 ```
 
 ### Resolution
@@ -333,15 +329,15 @@ On the supervisor's explicit approval of an item: check the box and append `- **
 as the last sub-bullet. The original question stays visible — the decision is appended, never
 substituted.
 
-When a decision differs from the recommendation the draft was written under, update the draft
-requirement to match before continuing. When it matches, the draft already stands. Either way the
-`(D#)` citation stays until promotion.
+When a decision differs from the recommendation, update the draft before continuing. If the
+approved contract differs from confirmed implementation behavior, add the known-difference note
+below the affected draft requirement. When it matches, the draft already stands. Keep the Discussion links aligned with the affected drafts.
 
 ## Requirement Changes
 
-Written after the Discussion gate advances. This section states exactly the difference between the
-catalog and the drafts under `proposed-requirements/`, one typed item per difference, in the
-format defined in [`requirements-artifacts.md`](requirements-artifacts.md).
+Written after the Discussion gate advances. Compare catalog and drafts by prose and resolved link targets: ignore relative-path changes needed
+only for their locations, but account for added/removed citations or changed targets. Record one typed
+item per change using [`requirements-artifacts.md`](requirements-artifacts.md).
 
 Granularity keys on whether the file is new. The rule and its worked examples are in
 [`requirements-artifacts.md`](requirements-artifacts.md).
@@ -357,12 +353,9 @@ are the package's record of what the drafts take for granted — and the package
 End with
 `🏁 Complete. Let me know if anything needs adjustment.`
 
-Do not promote as a continuation of this workflow. A package recording behavior that **already
-ships** promotes on the supervisor's approval, which the `🏁` invites but does not assume; one recording
-behavior **still to come** promotes when the work ships, which may be much later and in another
-session. The test is the behavior, not the mode. Either way promotion is invoked separately —
-say which of the two applies so the supervisor knows whether the next move is theirs now or later.
-
+Promotion is invoked separately. A package recording shipping behavior, or approved intended
+behavior with confirmed known-difference notes, may promote on supervisor approval. Other future
+behavior waits until it ships. Say which applies at completion.
 ## Artifact maintenance
 
 Through drafting and Discussion, and on each response in that stretch, update the artifact before speaking: revise

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-baseline
 Managed-Source: Guides/Requirements/requirements-baseline.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-28
+Managed-Updated-At: 2026-10-05
 
 # Requirements Baseline
 
@@ -21,11 +21,11 @@ the product's outside is on the page.
 
 ## Draft cited files first
 
-A citation is written only against an ID that already exists in a draft, never predicted: a guessed
-ID that happens to exist is a wrong citation that reads as correct, and nothing downstream catches
-it. So the file whose IDs are cited is drafted before the files that cite it. Where two files cite
-each other, draft one, then the other, then return to the first for the citations it could not yet
-make. That return pass is part of drafting, not a stop.
+A citation uses an ID already present in a draft or an untouched canonical file, never a predicted
+ID: a guessed ID that happens to exist is a wrong citation that reads as correct, and nothing
+downstream catches it. Create new cited IDs before drafting their citations. Where two new files
+cite each other, draft one, then the other, then return to the first for the citations it could not
+yet make. That return pass is part of drafting, not a stop.
 
 ## Delegation
 

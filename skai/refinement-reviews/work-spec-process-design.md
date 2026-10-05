@@ -126,7 +126,7 @@ explicitly linked inputs. Chat history is useful context, never a hidden depende
 
 Work Spec Design owns the technical design. Work Spec Implementation owns the codebase audit, task
 list, code changes, and verification. Requirements Authoring owns requirements change packages, and
-Requirements Promotion alone writes the catalog. Each workflow references other artifacts instead
+Requirements Promotion writes requirement contracts. As approved in issue #53 (2026-10-05), Work Spec Implementation may update/remove known-difference notes only after verifying the affected implementation; requirement text and IDs remain read-only. Each workflow references other artifacts instead
 of duplicating their content or progress state.
 
 ### P10. Review attention follows leverage

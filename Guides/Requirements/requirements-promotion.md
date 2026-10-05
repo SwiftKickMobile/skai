@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-promotion
 Managed-Source: Guides/Requirements/requirements-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-03
+Managed-Updated-At: 2026-10-05
 
 # Requirements Promotion
 
@@ -10,32 +10,23 @@ Managed-Updated-At: 2026-10-03
 
 Write an approved change package into the canonical catalog.
 
-Promotion is the **only** writer of the catalog. It is not a file copy: the drafts carry scaffolding
-that must not become canon, the IDs must be checked against what the catalog already holds, and the
-writing-style rules get their last enforcement here — on the exact text
-about to become permanent, which is the point at which enforcement is worth most and costs least.
+Promotion writes requirement contracts into the catalog; work-spec implementation's verified
+known-difference cleanup is the narrow exception. Promotion validates the text and adjusts link
+definitions for the destination, without changing prose, IDs, or notes. A wording change belongs to
+authoring: a package defect returns there, while a catalog defect follows *Raising a change request*.
 
-Promotion **never rewrites a requirement's prose.** Rewriting is authoring. If a requirement fails a
-check, promotion blocks and the package goes back to authoring with the finding. The boundary is
-what keeps both workflows honest: authoring writes, promotion verifies and writes through.
-
-The boundary is about *wording*. Removing the drafting scaffolding authoring deliberately left
-behind — the `(D#)` citations — is mechanical, and doing it is promotion's job, not a rewrite.
+In conversation, link requirement and Discussion IDs to the exact draft or canonical target using
+inline links. Prefer real anchors; Discussion checkbox IDs require a supported explicit anchor or
+a topic anchor with item context, or a verified file/line link supported by the host.
 
 Content rules live in [`requirements-catalog.md`](requirements-catalog.md); the package's typed
 formats live in [`requirements-artifacts.md`](requirements-artifacts.md).
 
 ## When promotion happens
 
-Promotion waits only when the requirements describe behavior the system **does not exhibit yet** —
-promoting early would make the catalog claim something untrue. That test, not the package's mode,
-decides:
-
-- **Behavior that already ships** — promote on the supervisor's approval. A backfill of shipping behavior is here,
-  and so is a scoped change recording behavior that already shipped, which is what a retro-seeded
-  package usually is.
-- **Behavior still to come** — promote when the change ships, which may be much later and in another
-  session.
+Promote shipping behavior on supervisor approval. Approved intended behavior may also promote with
+confirmed known-difference notes identifying the affected implementations. Other future behavior waits
+until shipment. This depends on the behavior, not Baseline versus Scoped change mode.
 
 ## The promotion artifact
 
@@ -139,9 +130,8 @@ Progress tracking:
 marker. After advance intent, each is executed in order and checked as it passes, with its evidence
 recorded. A **verifying** check (`C1`–`C5`) that fails on the package is left
 unchecked and the items after it are not executed, so the artifact shows exactly how far promotion
-got. A fault found *after* a write — `C7`'s confirmation catching scaffolding that survived `C6` —
-is repaired in place and the check then checked: re-strip and rewrite, never reword. The artifact
-must never claim a write did not happen.
+got. A mechanical fault found after C7's write is repaired in place and then checked: correct
+prepared links and rewrite, never reword. Record the write honestly; a prose defect returns to authoring.
 
 **On re-run, every check is unchecked again.** When a failure sends the package back to authoring and
 the drafts change, the checks that passed were verified against text that no longer exists. Reset the
@@ -181,9 +171,10 @@ Writing them is all this workflow does; what happens to those changes afterwards
 Before writing `## Promotion Checks`, verify the package is promotable at all:
 
 1. Every `- [ ]` item in the authoring artifact's `## Discussion` is resolved.
-2. Recompute the catalog-to-drafts diff **against the catalog as it stands now**: every difference
-   still has an item, and no item describes a difference that is gone. The diff is a fact about the
-   current catalog, never one the artifact can vouch for; if it has moved, the resolution is authoring.
+2. Recompute the catalog-to-drafts comparison against the current catalog using prose and resolved
+   link targets. Ignore only location-required relative-path changes; added/removed citations and
+   changed targets still count. Every change has an item and every item still matches; otherwise
+   return to authoring.
 3. No change request in the package remains `Proposed`.
 
 Any of the three failing is a blocked gate, and the resolution is authoring, not promotion. Do not
@@ -194,49 +185,37 @@ write a checks section for a package that cannot be promoted; record the failing
 
 Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution order.
 
-The list is not uniform: **`C1`–`C5` verify, `C6` transforms, `C7` writes.** Only the last two change
-anything. Every check covers **the requirements, index lines and glossary entries this package adds
-or changes** — not the unchanged text a whole-file rewrite carries forward, and not a pre-existing
-defect elsewhere in the catalog, which is not this package's to fix and does not block it. Two
-checks verify wider and say so, and `C7` confirms the whole text it wrote: `C1` sweeps every ID in a rewritten file, and the whole
-catalog for retired-ID reuse; `C2` sweeps the whole catalog for prefix collisions.
+**C1–C5 verify, C6 prepares destination links, C7 writes.** Verify new/changed content in its
+projected canonical location, retaining link target identities; leave drafts unchanged. Unchanged
+carried-forward content and unrelated catalog defects do not block. C1 also sweeps all IDs in each
+rewritten file and retired-ID reuse catalog-wide; C2 checks prefixes catalog-wide; C7 confirms all
+written text. Known-difference notes are observations, not new obligations or progress markers.
 
-The verifying checks read the drafts **as they will be written** — the drafts with the `(D#)`
-citations removed, which is what `C6` produces and `C7` writes, the drafts themselves never edited.
-Those citations are out of scope for all five.
-
-- `C1 IDs are append-only` — a rewrite must not lose IDs: every ID the catalog holds in a file this
-  package rewrites still appears in the draft, no retired ID is reused, and none is renumbered. IDs
-  get a check of their own because work specs cite them, so a renumber breaks references outside the
-  catalog that nothing here can see. The rest of a rewritten file — glossary entries, index lines,
-  header prose — is carried forward when the draft is written whole, per
-  [`requirements-authoring.md`](requirements-authoring.md), deliberately not by a check here.
+- `C1 IDs are append-only` — every ID in a rewritten catalog file remains in its draft, with no
+  renumbering or retired-ID reuse. Non-ID content is carried forward by whole-file drafting, not an
+  additional check here.
 - `C2 Prefixes do not collide` — no prefix introduced here is already claimed by another file in the catalog or this package, and
   every prefix is recorded on its file's line in the scope index.
-- `C3 Cross-references resolve` — every ID cited from a requirement, an index, or a glossary entry
-  exists after this write.
-- `C4 Writing style` — check the requirement and glossary **prose** this package adds or changes, as
-  it will be written, against `## Writing style` in
-  [`requirements-catalog.md`](requirements-catalog.md): its *Required*, *Forbidden*, and *Nothing
-  that decays* lists, in full. An index line is structural — it carries a path and a prefix by
-  construction, and what it must *say* is `C5`'s business; its style is not separately checked. A
-  file header is orientation rather than specification and carries no requirement to style-check;
-  `C5`'s "no behavioral claim in unnumbered prose" is what guards it. Not that section's four-question
-  `### Self-check`, which is a during-drafting screen. Do not work from a summary — the categories are easy to half-remember, and the one most often dropped is the
-  one most often violated.
+- `C3 Cross-references resolve` — citations in changed requirements, indexes, glossary entries and
+  known-difference notes use reference-style links with defined targets. Verify relative paths and
+  actual anchors against the projected catalog, including untouched dependencies; requirement links
+  must reach the intended ID, not merely an existing file. Confirm tracking links identify their issue.
+- `C4 Writing style` — inspect changed requirement/glossary prose against the catalog guide's full
+  Required, Forbidden, and Nothing that decays rules, not its drafting Self-check. Distinguish labeled
+  known-difference observations from the contract. Structural index lines and orientation headers
+  belong to C5, not this style check.
 - `C5 Traversal` — catalog lines name the questions their files answer; every cross-cutting term
   introduced here has a glossary entry pointing at the requirements that govern it; no behavioral
   claim sits in unnumbered prose.
-- `C6 Strip the scaffolding` — remove the `(D#)` citations **from the text being written to the
-  catalog, leaving the package's drafts as they are**, recording what was stripped. It changes only
-  scaffolding, never a requirement's wording.
-- `C7 Write the catalog` — write that text into the catalog root the Integration block
-  names — realizing
-  `## Requirement Changes`: every file the package holds, and the indexes and glossary it carries. Where the catalog root does not exist yet this creates the tree; otherwise it overwrites
-  the files the package holds and leaves every other file untouched. Then confirm the written text
-  carries no `(D#)`, no checkboxes, no `🟡`, and no status marker other than a retired requirement's
-  `(retired)` — the files now exist, so this is the first point the transform can be verified rather
-  than asserted. Terminal item.
+- `C6 Prepare destination links` — prepare each file's reference definitions for its canonical
+  location. Draft targets in this package map to their canonical destinations; untouched dependencies
+  retain their catalog targets. Preserve prose, IDs, known-difference notes and target identities;
+  leave package drafts unchanged. Record adjusted definitions, or that none needed adjustment.
+- `C7 Write the catalog` — write the prepared whole files to the resolved catalog root, creating it
+  when absent and leaving files outside the package untouched. Confirm destination links reach their
+  intended targets and no Discussion citations, checkboxes, or `🟡` remain. Only retirement marks and
+  labeled known-difference observations are allowed alongside the contract. Repair mechanical output
+  faults in place; never reword. C7 remains the terminal completion item.
 
 `C4` is the check most worth taking seriously and the easiest to wave through.
 
@@ -250,7 +229,7 @@ Those citations are out of scope for all five.
 - [x] C3 Cross-references resolve
 - [ ] C4 Writing style
 - [ ] C5 Traversal
-- [ ] C6 Strip the scaffolding
+- [ ] C6 Prepare destination links
 - [ ] C7 Write the catalog
 
 ## Evidence
@@ -274,14 +253,13 @@ showed, or what an inspection observed. The ID says which check a bracket belong
 — every run emits a `C1` — so a re-run appends its brackets below the
 previous run's under a `### Run <n>` heading rather than interleaving them.
 
-The checks most often left vague have brackets too — the two that change something, and the two
-whose evidence is an inspection rather than a command:
+Inspection and preparation results name what was checked or changed:
 
 ```
 [evidence: C4; writing-style check over the changed prose — REMIND-04, REMIND-06, REMIND-09 and the `Expiry window` glossary entry — against Required, Forbidden and Nothing that decays in full; no mechanism named, no temporal reference, all four phrased as behavior]
 [evidence: C5; inspection — features/_features.md's line for reminders names expiry and dismissal, not just "reminders"; `Pending reminder` and `Expiry window` both have glossary entries pointing at REMIND-04 and REMIND-09; no behavioral claim outside a numbered requirement in the three written files]
-[evidence: C6; (D2), (D5) removed from REMIND-04 and REMIND-09; no other scaffolding present]
-[evidence: C7; wrote features/reminders.md, features/_features.md, glossary.md; 9 requirements landed; grep -E '\(D[0-9]+\)|- \[[ x]\]|🟡' requirements/features/reminders.md requirements/features/_features.md requirements/glossary.md returned nothing; inspection — no status field on any written requirement other than REMIND-07's (retired)]
+[evidence: C6; NOTE-04 definition rebased from the draft location to ../domains/note.md#note-04; canonical target identity unchanged; known-difference notes retained]
+[evidence: C7; wrote features/reminders.md, features/_features.md, glossary.md; 9 requirements landed; grep -E '\(D[0-9]+\)|- \[[ x]\]|🟡' requirements/features/reminders.md requirements/features/_features.md requirements/glossary.md returned nothing; inspection — destination links resolve; REMIND-07 retirement and labeled known-difference notes retained]
 ```
 
 On failure, persist and link the full output, so `output` is required. Key its path to the run as
@@ -290,19 +268,10 @@ earlier run's retained bracket still cites. On success, `output` is
 optional when nothing was persisted. Where a check is an inspection rather than a command, name what
 was inspected precisely enough to repeat it.
 
-**A passing command prints nothing on stdout — but is only a pass if it read something.** A path
-that does not resolve prints nothing either, so the outcome names what was compared. Where a check's
-subject is legitimately empty — a baseline package rewrites no file, so `C1` has nothing to compare —
-it passes by naming the fact that makes it empty, as `C2`'s bracket in the *Promotion Checks*
-example above does with "no new prefix introduced". That statement can be false; "no output" cannot. That is what makes a bracket proof rather
-than a transcript: a search that prints its expected matches every run cannot be read as a result,
-and a check that cannot fail is not a check. Where the check spans the catalog and the drafts, the
-command must too — `C1` asks whether the catalog's IDs survived the rewrite, which a search
-of the drafts alone cannot see — run that comparison once per rewritten file.
-
-Strip path prefixes before comparing (`grep -rhoE`); with them every match is unique and the
-comparison finds nothing. Prefer tools present in a plain shell — `rg` is often a shell alias rather
-than a binary and is not reliably callable from a script.
+**Silence is not a pass.** Name the compared inputs and observed result; an unresolved path cannot
+pass by returning no matches. A legitimately empty subject passes only with the reason recorded.
+Compare catalog and draft IDs per rewritten file and retired IDs catalog-wide. Strip path prefixes
+before ID comparisons (`grep -rhoE`); otherwise paths make equivalent IDs appear different.
 
 ## Raising a change request
 

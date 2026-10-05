@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-catalog
 Managed-Source: Guides/Requirements/requirements-catalog.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-03
+Managed-Updated-At: 2026-10-05
 
 # Requirements Catalog
 
@@ -20,17 +20,16 @@ a relevant requirement can be found without reading everything.
 This guide owns **content rules only** — what a good catalog looks like. It has no gates and is not
 a workflow.
 
-**An existing catalog is not retroactively conformed.** A project whose requirements predate these
-rules keeps working; the rules apply to what a package writes, not to what it carries forward. There is no migration pass,
-and a package is never blocked by a defect it did not introduce.
+**Ordinary authoring/promotion does not retroactively conform a catalog.** Rules apply to new or
+changed content; pre-existing defects do not block a package. Explicit release migrations are separate.
 
 The workflows that write the catalog are:
 
 - [`requirements-authoring.md`](requirements-authoring.md) — drafts requirements into a change package
 - [`requirements-promotion.md`](requirements-promotion.md) — promotes an approved package into the catalog
 
-The catalog is **read-only** from work-spec implementation. It consumes requirements and never
-mutates them.
+Work-spec implementation may update/remove known-difference notes after verified fixes, including
+link definitions no longer used after that cleanup. Requirement text and IDs remain read-only.
 
 ### What belongs here vs. the work spec
 
@@ -95,8 +94,7 @@ Where the catalog lives varies by project. From any given repo there are three p
   catalog: in that repo's `skai/changes/`, never in this one.
 - **`none`** — this project keeps no catalog, and requirements workflows skip.
 
-Every shape has exactly **one** catalog, so a requirement ID is unambiguous everywhere and IDs are
-always written bare.
+Every shape has exactly **one** catalog. IDs need no catalog namespace; linked citations keep the visible ID unchanged.
 
 **The shape and the catalog root are recorded in the project's Integration doc**, under the managed
 `Section: requirements` block. Read that section before reading or writing the catalog: it is what
@@ -153,8 +151,12 @@ restatement of which scopes this repo uses, and a pointer to the glossary.
 Each index carries a one-line reminder of what the scope is, then a **catalog** of its files:
 
 ```markdown
-- [<filename>](<filename>.md) -- `<PREFIX>-` -- <what questions this file answers> (uses: NOTE-04)
-- [<folder>](<folder>/_<folder>.md) -- <what questions the files inside answer>
+- [<filename>][topic] -- `<PREFIX>-` -- <what questions this file answers> (uses: [NOTE-04])
+- [<folder>][folder-index] -- <what questions the files inside answer>
+
+[topic]: <filename>.md
+[folder-index]: <folder>/_<folder>.md
+[NOTE-04]: ../domains/note.md#note-04
 ```
 
 A folder line carries no prefix and links to the folder's own index. Either line may take the
@@ -167,8 +169,10 @@ collision before introducing one.
 an index that routes and one that merely lists:
 
 ```markdown
-- [modes](modes.md) -- `MODE-` -- Desktop vs. Menu Bar, including panel sizing, on-screen
+- [modes] -- `MODE-` -- Desktop vs. Menu Bar, including panel sizing, on-screen
   constraints, and which commands appear in which surface
+
+[modes]: modes.md
 ```
 
 Cutting the tail at *Desktop vs. Menu Bar* would name the topic without telling an agent whether to
@@ -176,7 +180,7 @@ open the file.
 
 When a reader who needs a rule would not recognize it from the catalog line, the line is wrong.
 
-One further optional field, when relevant: cross-references (`(uses: NOTE-04)`). No status field —
+One further optional field, when relevant: cross-references (`(uses: [NOTE-04])`). No status field —
 `(retired)` marks a retired requirement, never a file.
 
 ### Glossary
@@ -191,7 +195,10 @@ that govern the term**:
 
 ```markdown
 **Solar phase** — whether a location's local time falls in day or night. Clock faces adapt their
-appearance to it (see CLOCK-FACE-04); the day/night boundary itself is defined by PLATFORM-07.
+appearance to it (see [CLOCK-FACE-04]); the day/night boundary itself is defined by [PLATFORM-07].
+
+[CLOCK-FACE-04]: features/clock-face.md#clock-face-04
+[PLATFORM-07]: platform/solar-phase.md#platform-07
 ```
 
 An entry without a pointer is a definition, not an index. Both are useful, but only the pointer
@@ -225,27 +232,51 @@ constraint. A bullet list cannot hold that without becoming unreadable.
 
 Most requirements are one sentence. Let them be longer only when the rule is actually that complex.
 
-No status fields, no implementation notes, no progress markers, no `🟡`. The catalog is a stable
-contract; transient state lives in the change package that produced it. The one exception is a
-retired requirement, which keeps its ID and carries `(retired)` — nothing else in the catalog carries
-a status of any kind.
+No progress markers, checkboxes, or `🟡`. A retired requirement carries `(retired)`; other status
+fields and implementation notes are excluded except for the observations below.
+
+### Known differences
+
+Immediately below the affected requirement, document each confirmed implementation difference in a
+blockquote labeled **Known difference — <app/platform>**. State the current behavior and how it differs
+from the requirement; link a tracking issue when one exists. The note records a gap, not an exception
+to the requirement. Suspected differences remain Discussion items until the supervisor resolves them.
+Use this format in drafts and the catalog:
+
+```markdown
+## REMIND-04
+An unacknowledged reminder expires after thirty days.
+
+> **Known difference — Android:** Unacknowledged reminders remain pending indefinitely. Tracked in [expiry-fix].
+
+[expiry-fix]: https://github.com/example/project/issues/123
+```
+
+These observations do not create requirements or change their IDs. A tracking issue should reference
+the affected requirement.
 
 ### Cross-references are mandatory
 
-**A requirement that depends on another must cite it, inline, by ID.** Not in a footer section — at
-the point in the prose where the dependency exists:
+Cite dependencies inline where they apply. In stored requirements documents, use Markdown
+reference-style links with definitions grouped at the bottom, relative file paths, and actual heading
+anchors. Keep visible IDs unchanged; headings and recorded command output are definitions/evidence,
+not citations. Apply the same link format to indexes, glossary entries, Discussion citations, and
+tracking issues. For example:
 
-> Location details must abbreviate rather than shrink without limit. When the space available would
-> render them substantially smaller than the clock they accompany, they must advance one stage
-> through the abbreviation sequence of `ENTRY-06` — repeating until they fit or the sequence is
-> exhausted.
+```markdown
+When space is insufficient, advance through the abbreviation sequence of [ENTRY-06].
 
-This is what makes the catalog traversable from any entry point. An agent that lands on the wrong
-file still reaches the right requirement, and indexing errors stop being dead ends.
+[ENTRY-06]: entries.md#entry-06
+```
+
+Resolve each target before linking. Within a package, use the target's draft when present, otherwise
+its canonical file. When copying files into drafts, rebase their definitions to retain target identity.
+For retired headings, use the actual anchor (for example `#note-07-retired`). In conversation use
+inline links to the exact draft or canonical item under discussion, explicitly distinguishing them.
 
 ### Every behavioral claim has an ID
 
-Prose in an index or a file header is orientation, not specification. If a sentence states something
+Known-difference notes describe observations, not new obligations. Prose in an index or a file header is orientation, not specification. If a sentence states something
 the system must do, it is a requirement and needs an ID — otherwise nothing can cite it, no change
 can modify it, and no test can be traced to it.
 
@@ -297,7 +328,9 @@ the rule no longer holds, naming the superseding ID when there is one:
 
 ```markdown
 ## NOTE-07 (retired)
-Superseded by NOTE-19.
+Superseded by [NOTE-19].
+
+[NOTE-19]: #note-19
 ```
 
 ❌ Deleting the heading, or leaving the old text under a `(retired)` marker — the first breaks every
@@ -310,7 +343,13 @@ Write as a **product manager with no knowledge of the codebase**.
 ### Required
 
 - Focus on user-visible behavior, domain invariants, and system contracts.
-- Describe what must be true, not how it is achieved.
+- Describe product guarantees, not screen arrangement or implementation mechanics. For example:
+  - ✅ “Canceling an edit preserves the saved note and returns users to their previous context.”
+  - ❌ “The editor opens as a sheet from Profile.”
+  Meaningful navigation and presentation guarantees still belong here.
+- When a source bug motivates a requirement, identify the underlying product contract and check
+  existing coverage first. Add only a missing contract or essential boundary, rather than one rule
+  per past failure. Negative wording remains appropriate for real prohibitions.
 - Every requirement is verifiable from outside — by a user, QA, or another system — without reading
   code.
 - Use `must` / `should` / `will` voice, not `implement` / `add` / `refactor`.
@@ -327,6 +366,9 @@ Write as a **product manager with no knowledge of the codebase**.
 If a detail is important but inherently technical, it belongs in the work spec, not here.
 
 ### Nothing that decays
+
+The labeled known-difference observation is the only exception to this section; requirement prose
+must remain a stable contract.
 
 A requirement is read years after it is written, by someone with no memory of the change that
 produced it. Two failure modes:
@@ -348,21 +390,19 @@ Before writing a requirement:
 
 ### Examples
 
+- Good: *“Each confirmed reminder produces one notification.”*
+- Bad: *“Reopening the screen must not trigger that notification again.”* — describes one failure
+  of the same contract; reuse the existing requirement when it already covers the behavior.
+
 - Good: *"The system must detect and report circular references in templated documents."*
 - Bad: *"The `AssetCatalog` should DFS templates and throw `CircularReferenceError`."*
 
 - Good: *"Users must be able to view all validation issues for an asset in a single report."*
 - Bad: *"Accumulate errors during parsing and return an aggregated error array."*
 
-- Good: *"The menu bar icon must survive the system reclaiming disk space from background
-  applications, and the app must report any unclean exit from a previous run without surfacing it to
-  the user."*
-- Bad: *"The app must keep its cache storage empty so these sweeps pass it by, and on next launch
-  detect and report (as telemetry, never a user-facing error) any previous run that did not exit
-  cleanly."*
-
-The third pair is the subtle one: it states a real, externally-observable requirement, but names the
-mechanism (cache storage, sweeps, telemetry) rather than the guarantee.
+- Good: *“The app must detect an unclean exit without interrupting the user on next launch.”*
+- Bad: *“Inspect the launch flag and send telemetry instead of displaying an error.”* — names the
+  mechanism rather than the guarantee.
 
 ## Cross-references
 

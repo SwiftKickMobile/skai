@@ -190,7 +190,7 @@ Audit an approved work-spec design against the codebase, create its concrete tas
 **Phases:**
 
 1. **Audit and plan.** Agent inspects the design, code, tests, and required sibling artifacts, then writes the whole implementation task list with observable completion and verification. Gate: supervisor approves the completed design and implementation plan.
-2. **Implement continuously.** Agent executes all runnable owned tasks without per-task gates, records fresh evidence, invokes the Unit Testing and UI Map Implementation workflows when applicable, and blocks only on unresolved design, missing tooling, handoffs, or required manual testing.
+2. **Implement continuously.** Agent executes owned tasks, records fresh evidence, and updates known-difference notes for verified fixes. It invokes Unit Testing and UI Map Implementation when applicable and blocks on unresolved design, missing tooling, handoffs, or required manual testing.
 
 ### UI Map architecture (skill `skai-ui-map-architecture`)
 
@@ -234,12 +234,16 @@ Draft behavioral requirements into a change package under `skai/changes/<change-
 
 **Phases:**
 
-1. **Discussion.** Agent digests the inputs, infers the mode, drafts the requirement files, and seeds topic-organized `- [ ]` items for the decisions it cannot settle -- two sources disagreeing, behavior that looks like a defect rather than intent, an undefined boundary. Requirements are drafted under the agent's recommended reading and cite their open item, so the drafts always read as a complete catalog. Gate: supervisor resolves each item.
+1. **Discussion.** Agent digests the inputs, infers the mode, drafts the requirement files, and seeds topic-organized `- [ ]` items for the decisions it cannot settle -- two sources disagreeing, behavior that looks like a defect rather than intent, an undefined boundary. Requirements are drafted under the agent's recommended reading; Discussion items link to affected drafts, keeping the catalog complete and decisions discoverable. Gate: supervisor resolves each item.
 2. **Requirement changes.** Agent writes typed change items describing exactly the difference between the frozen catalog and the drafts, each naming its source. Ends with `🏁 Complete.` once the package is ready to promote.
 
 ### Requirements promotion (skill `skai-requirements-promotion`)
 
-Write an approved change package into the canonical catalog. Promotion is the only writer of `requirements/**`, and it is a transformation rather than a copy: drafting scaffolding is stripped, IDs are checked against what the catalog already holds, and the writing-style rules get their last enforcement on the exact text about to become permanent. A package recording behavior that already ships promotes on approval; one recording behavior still to come promotes when the change ships.
+Write an approved change package into the canonical catalog, checking IDs and content and preparing
+links for their canonical destinations. Shipping behavior and approved contracts with confirmed
+known-difference notes may promote on approval; other future behavior waits until shipment.
+Work-spec implementation may later update or remove those notes after verifying a fix, while
+requirement text and IDs remain unchanged.
 
 - Guide [`Guides/Requirements/requirements-promotion.md`](Guides/Requirements/requirements-promotion.md)
 
@@ -247,7 +251,7 @@ Write an approved change package into the canonical catalog. Promotion is the on
 
 **Phases:**
 
-1. **Promotion checks.** Agent screens the package for readiness, then writes an unchecked checklist covering ID stability, prefix collisions, cross-reference resolution, writing style, catalog traversability, and scaffolding removal, ending with the terminal write. Gate: supervisor reviews what will become canon.
+1. **Promotion checks.** Agent screens the package for readiness, then writes an unchecked checklist covering ID stability, prefix collisions, cross-reference resolution, writing style, catalog traversability, and destination link preparation, ending with the terminal write. Gate: supervisor reviews what will become canon.
 2. **Execute.** Agent runs each check in order, records evidence, and writes the catalog. A failing check blocks and returns the package to authoring -- promotion never rewrites a requirement's prose. When the catalog itself is the problem, the agent raises a change request instead.
 
 ### Unit testing (skill `skai-unit-testing`)

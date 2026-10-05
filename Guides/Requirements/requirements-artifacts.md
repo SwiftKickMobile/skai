@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-artifacts
 Managed-Source: Guides/Requirements/requirements-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-03
+Managed-Updated-At: 2026-10-05
 
 # Requirements Artifact Formats
 
@@ -21,8 +21,10 @@ A change package lives at `skai/changes/<change-id>/` in the repo that holds the
 
 `## Requirement Changes` lists exactly the differences between the catalog and the drafts
 under `proposed-requirements/`, one typed entry per difference. The comparison covers **only the
-files the package holds** — a file absent from `proposed-requirements/` is untouched, and never
-reported as removed. Each entry:
+files the package holds**. Compare prose and resolved target identities, ignoring only relative-path
+changes caused by draft/canonical location. For example, a draft's longer path to untouched NOTE-04
+is not a requirement change; adding/removing its citation or targeting NOTE-05 is. Absent files are
+untouched. Each entry:
 
 ```
 - R<n> <Type>: <identity>
@@ -47,6 +49,11 @@ reported as removed. Each entry:
   source is a design, a spec, or a change request, the Justification is just the citation.
   `Resolved decision: D#` cites a resolved Discussion item. `Agent inference` is a requirement the
   agent derived rather than read directly from a source, and carries a real rationale.
+
+Link requirement and Discussion citations using reference-style definitions at the document's bottom.
+Use draft requirement anchors and supported item anchors, or topic anchors with the Discussion ID.
+An annotation-only change uses `modify requirement`, describing just the note change and preserving
+the contract and ID; it does not retire the requirement.
 
 Entries are written top-down in catalog order — scope, then file, then requirement — mirroring the
 layout. Items carry **no checkbox**: the change is realized by the draft files that accompany the
@@ -76,8 +83,7 @@ restates the draft and says nothing a reader could not get from opening it. Insi
 catalog already has, each
 requirement or glossary entry added, changed, or retired is its own item, carrying its diff.
 
-**Baseline example** (LumenNotes — the whole catalog is new, so the items are file-granular and there
-are no diffs to show):
+**Baseline example** (excerpt from an authoring artifact with a `### Note states` Discussion topic):
 
 ```markdown
 - R1 add folder: requirements/
@@ -90,7 +96,7 @@ are no diffs to show):
 - R2 add file: domains/note.md
   - **Description** The Note entity: eleven requirements covering its states, the legal transitions
     between them, and what a discarded note retains. Prefix `NOTE-`.
-  - **Justification** Resolved decision: D1, D4 — the two state-boundary rules the designs left
+  - **Justification** Resolved decision: [D1], [D4] — the two state-boundary rules the designs left
     open.
   - **Touches** domains/note.md, domains/_domains.md
 
@@ -99,6 +105,9 @@ are no diffs to show):
     per-device, plus conflict resolution. Prefix `SYNC-`.
   - **Justification** Design: the settings screens distinguish synced from per-device settings.
   - **Touches** platform/sync.md, platform/_platform.md
+
+[D1]: #note-states
+[D4]: #note-states
 ```
 
 ### Showing the diff
@@ -115,27 +124,32 @@ Context is the file path in `Touches` plus the requirement's ID. Unlike a code s
 requirement is identified by an ID that survives the change, so neighbouring requirements never need
 restating to locate it.
 
-**Example** (LumenNotes):
+**Example** (excerpt from an authoring artifact with a `### Missed reminders` Discussion topic):
 
 ```markdown
-- R3 modify requirement: REMIND-04
+- R3 modify requirement: [REMIND-04]
   - **Description**
     ~~A reminder that fires while the app is closed remains pending until acknowledged.~~
     A reminder that fires while the app is closed remains pending until acknowledged or until
     thirty days elapse, whichever comes first.
-  - **Justification** Resolved decision: D2
+  - **Justification** Resolved decision: [D2]
   - **Touches** features/reminders.md
 
-- R4 retire requirement: REMIND-07
+- R4 retire requirement: [REMIND-07]
   - **Description** ~~A pending reminder may be re-issued from the reminder list.~~
-  - **Justification** Resolved decision: D2 — re-issuing a reminder that now expires has no
+  - **Justification** Resolved decision: [D2] — re-issuing a reminder that now expires has no
     defined meaning past expiry, and the behavior was never designed.
   - **Touches** features/reminders.md
 
 - R5 add glossary entry: Pending reminder
-  - **Description** Defines the pending state and points at REMIND-04 and REMIND-06.
+  - **Description** Defines the pending state and points at [REMIND-04] and [REMIND-06].
   - **Justification** Catalog: expiry is now a cross-cutting rule, so the term needs an index entry.
   - **Touches** glossary.md
+
+[D2]: #missed-reminders
+[REMIND-04]: proposed-requirements/features/reminders.md#remind-04
+[REMIND-06]: proposed-requirements/features/reminders.md#remind-06
+[REMIND-07]: proposed-requirements/features/reminders.md#remind-07-retired
 ```
 
 ## Change requests

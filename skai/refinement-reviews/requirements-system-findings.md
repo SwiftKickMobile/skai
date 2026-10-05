@@ -274,3 +274,28 @@ budget appears in one triage rationale, worth 1 point.
 | 2026-09-28 r3-baseline | F5: Rationale paragraph is outside the budget and not wrong | logged | Rationale paragraph is outside the budget and not wrong |
 | 2026-09-28 r3-baseline | OQ spec P6 vs step 2: Spec internally split on the Baseline trigger; recorded in the spec's ledger | logged | Spec internally split on the Baseline trigger; recorded in the spec's ledger |
 | 2026-09-28 r3-baseline | Series terminal by ruling after three rounds (22.9 → 8.6 → 7.3); every r2/r3 finding was on the previous round's repair | closed (ruling) | Human approved stopping with F4 logged. Structured tier next time |
+
+## 2026-10-05 release tickets — round 1
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-10-05 r1-release | F1: stale ownership/timing/citation directions conflict with approved notes and links | closed | Replaced catalog ban, authoring scope/timing/citations, promotion preparation and README summaries; narrow verified note cleanup only. |
+| 2026-10-05 r1-release | F2: location rebasing creates false requirement diffs | closed | Authoring, formats, readiness compare prose and resolved targets; preserve actual added/removed citations and changed targets. Shared partial-package rehearsal passed. |
+
+## 2026-10-05 release tickets — round 2
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-10-05 r2-release | F1: Baseline requires drafting existing canonical dependencies | closed | Replaced all-draft prerequisite with existing-ID prerequisite; dependency-first ordering applies to creating new IDs. Mixed partial baseline and mutual-new-file paths inspected. |
+
+## 2026-10-05 release tickets — round 3 terminal confirmation
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-10-05 r3-release | No new live findings; full binding review | closed — clean fresh round | Reviewer independently read all nine surfaces and the standard; confirmed Baseline dependency fix, note ownership/timing, location-only diff and migration history. No live-host migration claimed. |
+
+Release series: r1 score 5 (2 divergent defects), r2 score 1.875 (1 divergent defect),
+r3 score 0 (0 defects); no irreversible, cosmetic, or noise findings. All three defects repaired.
+Four-guide total 10,962/11,000 words, net -237 from 11,199; Baseline separately -3 words.
+Synthetic migration/link/cleanup rehearsals and bookkeeping checks passed. Convergence is by a
+fresh clean round, not merely the score. No binding-target edit followed that review.

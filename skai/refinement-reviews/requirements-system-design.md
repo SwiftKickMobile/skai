@@ -53,13 +53,15 @@ home for a rule are worse than the defect.
 
 ## Design invariants
 
-### P1. One catalog, one writer
+### P1. One catalog, controlled writers
 
 Every project has at most one catalog, at the root its Integration block names, in one of three
 repository shapes: `local`, `shared` (another repo's catalog, typically a submodule), or `none` (a
-deliberate opt-out; requirements workflows skip). IDs are therefore always bare. **Promotion is the
-only writer.** Authoring never touches the catalog; work-spec implementation, retro, and every other
-workflow read it and never mutate it. A literal path is never a fallback for an unfilled Integration
+deliberate opt-out; requirements workflows skip). IDs need no catalog namespace; citations are linked.
+**Promotion writes requirement contracts.** Authoring and retro never touch the catalog. Work-spec
+implementation may update/remove confirmed known-difference notes for verified fixes only; contracts
+and IDs remain read-only. Approved release migrations may change link presentation without changing
+contracts. A literal path is never a fallback for an unfilled Integration
 block: the workflow stops instead.
 
 ### P2. The catalog is a stable contract
@@ -71,8 +73,8 @@ superseded it; nothing else in the catalog carries a status, a checkbox, a `🟡
 Modifying keeps the ID; changing the contract retires and adds. Prefixes are unique across the
 catalog and recorded on the file's line in its scope index.
 
-An existing catalog is not retroactively conformed. The rules bind what a package **writes**, not
-what it carries forward; a package is never blocked by a defect it did not introduce.
+An existing catalog is not retroactively conformed during ordinary authoring/promotion. Explicit
+release migrations are separate; a package is never blocked by a defect it did not introduce.
 
 ### P3. Written from outside
 
@@ -99,8 +101,8 @@ whatever promotion later adds. The package holds **only the files it touches**, 
 drafted fresh. A package cannot express deleting or splitting a file; either stops at a blocked gate.
 
 The drafts always read as a complete catalog. An open question never leaves a hole: the requirement
-is drafted under the recommended reading and cites its `(D#)` inline. That citation is scaffolding,
-stripped at promotion, never a marker.
+is drafted under the recommended reading. Discussion links to affected draft requirements; draft
+requirements do not cite Discussion. Requirement dependencies remain inline reference-style links.
 
 ### P6. Mode is inferred, per scope, from the catalog
 
@@ -126,8 +128,8 @@ blocked one: unresolved items are supervisor decisions.
 ### P8. Verification precedes the only write
 
 Promotion runs `C1`–`C5` (IDs append-only, prefixes collide nowhere, cross-references resolve,
-writing style, traversal), then `C6` strips the scaffolding from the text to be written — leaving the
-drafts as they are — then `C7` writes the catalog and confirms the written text. The five verifying
+writing style, traversal), then `C6` prepares destination-relative link definitions without changing
+prose or the drafts, then `C7` writes the catalog and confirms the written text. The five verifying
 checks are enumerated once, in promotion; authoring runs the same five before its gate so nothing is
 discovered late. Each check covers what the package **adds or changes**; two verify wider and say so.
 
@@ -214,7 +216,7 @@ run-keyed path; re-runs append below history). `## Completion` defines the promo
 
 A cold reviewer should verify:
 
-1. Promotion is the only writer of the catalog, and no guide names a literal catalog path.
+1. Contract writes belong to promotion; verified known-difference cleanup is the narrow implementation exception. Catalog roots are resolved, never guessed.
 2. IDs are append-only from drafting; retire never deletes; every prefix is registered.
 3. Every requirement is verifiable from outside; no code identifier, path, or storage mechanism.
 4. Cross-references are inline by ID; index lines route; glossary entries point.
@@ -227,7 +229,39 @@ A cold reviewer should verify:
 11. Each round reports the four guides' word counts against the 11,000 budget.
 12. A fresh agent can author and promote from the artifacts without chat history.
 
-## Open decisions (unimplemented ledger)
+## Approved release decisions — 2026-10-05
+
+These supervisor-approved decisions (#49, #52, #53, #55, #64) qualify the earlier invariants and
+are the standard for this scoped refinement. No new runtime guide or peer-guide reference is needed.
+
+- Content: clarify product guarantees versus screen arrangement with examples in the existing
+  catalog guide. Preserve meaningful navigation/presentation guarantees. Before turning a source
+  bug into a requirement, identify its underlying contract and reuse coverage; negative boundaries
+  remain valid when they express an essential product constraint.
+- Known differences: immediately below a requirement, a blockquote labeled **Known difference —
+  <app/platform>** states confirmed current behavior and the gap, with a tracking link when available.
+  This observation is not a new normative claim or exception. Same format in drafts and canon;
+  suspected differences await a Discussion decision. This is the narrow exception to P2/P3's ban on
+  implementation notes and transient state. Verified cleanup belongs in work-spec implementation.
+- Promotion timing: approval may publish an intended contract alongside a confirmed known-difference
+  note while its fix is pending; this qualifies P6's ship-before-promotion rule. Unnoted future behavior
+  still waits for shipment. Notes persist until the affected implementation is verified.
+- Adjacent findings: sharpen authoring's existing scope only if needed. Use Discussion, Assumptions
+  and TODOs, or Out of scope; existing authorization governs editing adjacent artifacts. No new section
+  or live-design keyboard policy.
+- Links: requirement and Discussion citations in chat use inline links to the exact draft/canonical
+  target; stored requirements documents use reference-style links with definitions at the bottom,
+  relative paths, and real anchors. Definition headings/IDs and recorded tool output are not citations.
+  Discussion item links use supported explicit anchors or topic anchors with item context, and verified
+  file/line links when appropriate. Promotion rebases destinations, including dependencies outside a
+  partial package; keep C7 as the completion identity so history remains interpretable.
+- Migration: changelog instructs upgrading agents to sweep existing catalogs/open packages, convert
+  links, transfer draft-to-Discussion associations before removing `(D#)`, and verify destinations.
+  Preserve prose, IDs, decisions, approval/completion state and verification history; surface ambiguity.
+  Honor shared roots and existing upgrade approval. No historical promoted-package rewrite for style.
+  Do not infer known differences or rewrite contracts from old bug reports during migration.
+
+## Earlier open decisions (unimplemented ledger)
 
 Recorded so a cold review does not re-raise them as findings:
 
