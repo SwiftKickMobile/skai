@@ -281,7 +281,7 @@
       ...s.notes.map(n => el("div", { class: "note" }, n.at ? el("span", { class: "k" }, KIND[n.at]) : null, n.text))));
     if (s.implements.length) body.append(el("div", { class: "pg" }, labIcon("implements", "Implements"),
       el("div", { class: "chips" }, ...s.implements.map(i => el("span", { class: "chip mono" }, i)))));
-    if (s.modalStyle) body.append(el("div", { class: "pg" }, labIcon("modal", "Modal style"), el("span", { class: "chip mono" }, s.modalStyle)));
+    if (s.modalStyle) body.append(el("div", { class: "pg" }, labIcon("modal", "Modal style"), el("div", { class: "chips" }, el("span", { class: "chip mono" }, s.modalStyle))));
     body.append(el("div", { class: "pg" }, el("span", { class: "lab" }, "Specs"), el("span", { class: "empty" }, "No sidecar yet.")));
     panel.append(body);
     return panel;
