@@ -55,7 +55,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 .theme:hover, .clear:hover, .info:hover { color: var(--ink); }
 .info { font-weight: 700; padding: 4px 9px; }
 .main { position: relative; min-height: 0; min-width: 0; display: flex; }
-.canvasw { position: relative; flex: 1; min-width: 0; overflow: auto; padding: 22px 28px 40px; }
+.canvasw { position: relative; flex: 1; min-width: 0; overflow: auto; padding: 24px 28px 40px; }   /* 4px grid: see the layout constants in the script */
 .app.with-panel .canvasw { scroll-padding-right: 416px; padding-right: 416px; }
 .mhead { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; color: var(--dim); font-size: 11px; }
 

@@ -106,7 +106,9 @@
 
   // ---- layout ----
   const IW = 156;   // cells never shrink; rows wrap instead
-  const IH = 64, IGAP = 8, BPAD = 8, BGAP = 18, ROWGAP = 44, BH = IH + 2 * BPAD;
+  // Every layout length is a multiple of 4 CSS px, so 1px borders land on whole device pixels at the
+  // common device pixel ratios (1, 1.25, 1.5, 2) and stay crisp.
+  const IH = 64, IGAP = 8, BPAD = 8, BGAP = 20, ROWGAP = 44, BH = IH + 2 * BPAD;
   const boxW = box => box.items.length * IW + (box.items.length - 1) * IGAP + 2 * BPAD;
   function layout(width) {
     const R = rows();
@@ -149,11 +151,12 @@
     const n = dag.querySelector(`[data-key="${CSS.escape(a.key)}"]`); if (!n) return;
     const r = n.getBoundingClientRect();
     // Whole pixels only: a fractional scroll or margin blurs every 1px border.
-    let st = Math.round(wrap.scrollTop + (r.top - a.top)), sl = Math.round(wrap.scrollLeft + (r.left - a.left));
+    const snap = v => Math.round(v / 4) * 4;   // keep the graph on the 4px grid (see the layout constants)
+    let st = snap(wrap.scrollTop + (r.top - a.top)), sl = snap(wrap.scrollLeft + (r.left - a.left));
     if (st < 0) { state.pad.top = -st; st = 0; }
     if (sl < 0) { state.pad.left = -sl; sl = 0; }
     dag.style.marginTop = `${state.pad.top}px`; dag.style.marginLeft = `${state.pad.left}px`;
-    const needH = Math.ceil(st - (wrap.scrollHeight - wrap.clientHeight)), needW = Math.ceil(sl - (wrap.scrollWidth - wrap.clientWidth));
+    const needH = snap(st - (wrap.scrollHeight - wrap.clientHeight) + 3), needW = snap(sl - (wrap.scrollWidth - wrap.clientWidth) + 3);
     if (needH > 0) { state.pad.bottom = needH; dag.style.marginBottom = `${needH}px`; }
     if (needW > 0) { state.pad.right = needW; dag.style.marginRight = `${needW}px`; }
     wrap.scrollTop = st; wrap.scrollLeft = sl;
