@@ -138,6 +138,46 @@
     return { pos, boxes, w: width, h: y - ROWGAP + 8, rows: R.length };
   }
 
+  // ---- animation ----
+  // A state change redraws the graph. To animate it: the old graph stays in place while it fades
+  // out, elements present in both graphs slide from their old screen position to their new one
+  // (the old copies are hidden at once), and elements new to the graph fade in.
+  const ANIMATE = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const MOVE_MS = 320;
+  function leaving(wrap) {
+    const old = wrap.querySelector(".dag");
+    if (!old || !ANIMATE) return null;
+    const rects = new Map();
+    for (const n of old.querySelectorAll("[data-key]")) rects.set(n.dataset.key, n.getBoundingClientRect());
+    return { dag: old, rects, top: old.offsetTop, left: old.offsetLeft, scrollTop: wrap.scrollTop, scrollLeft: wrap.scrollLeft };
+  }
+  function arrive(wrap, dag, prev) {
+    if (!prev) return;
+    // The old graph goes back in, absolutely positioned where it was, and fades.
+    const old = prev.dag;
+    old.classList.add("exit");
+    // Same place on screen as before: its old content offset, shifted by how far the canvas scroll moved.
+    old.style.top = `${prev.top + (wrap.scrollTop - prev.scrollTop)}px`; old.style.left = `${prev.left + (wrap.scrollLeft - prev.scrollLeft)}px`;
+    wrap.append(old);
+    old.addEventListener("transitionend", () => old.remove(), { once: true });
+    setTimeout(() => old.remove(), MOVE_MS + 100);
+    // Match the new graph's elements against the old positions.
+    const movers = [];
+    for (const n of dag.querySelectorAll("[data-key]")) {
+      const r0 = prev.rects.get(n.dataset.key);
+      if (!r0) { n.classList.add("enter"); continue; }
+      const r1 = n.getBoundingClientRect();
+      const dx = r0.left - r1.left, dy = r0.top - r1.top;
+      if (dx || dy) { n.style.transform = `translate(${dx}px, ${dy}px)`; movers.push(n); }
+      const twin = old.querySelector(`[data-key="${CSS.escape(n.dataset.key)}"]`);
+      if (twin) twin.style.visibility = "hidden";
+    }
+    dag.querySelector(".edges").classList.add("enter");
+    void dag.offsetWidth;   // commit the start positions before transitioning
+    old.classList.add("gone");
+    for (const n of movers) { n.classList.add("moving"); n.style.transform = ""; n.addEventListener("transitionend", () => n.classList.remove("moving"), { once: true }); }
+  }
+
   // ---- selection ----
   function select(id, scrollTo) {
     state.selected = id; state.domains.clear(); state.pad = { top: 0, left: 0, bottom: 0, right: 0 };
@@ -152,12 +192,13 @@
     const n = dag.querySelector(`[data-key="${CSS.escape(a.key)}"]`); if (!n) return;
     const r = n.getBoundingClientRect();
     // Whole pixels only: a fractional scroll or margin blurs every 1px border.
-    const snap = v => Math.round(v / 4) * 4;   // keep the graph on the 4px grid (see the layout constants)
+    // Whole pixels: the browser snaps scroll offsets to device pixels itself, so the layout grid keeps borders crisp.
+    const snap = Math.round;
     let st = snap(wrap.scrollTop + (r.top - a.top)), sl = snap(wrap.scrollLeft + (r.left - a.left));
     if (st < 0) { state.pad.top = -st; st = 0; }
     if (sl < 0) { state.pad.left = -sl; sl = 0; }
     dag.style.marginTop = `${state.pad.top}px`; dag.style.marginLeft = `${state.pad.left}px`;
-    const needH = snap(st - (wrap.scrollHeight - wrap.clientHeight) + 3), needW = snap(sl - (wrap.scrollWidth - wrap.clientWidth) + 3);
+    const needH = Math.ceil(st - (wrap.scrollHeight - wrap.clientHeight)), needW = Math.ceil(sl - (wrap.scrollWidth - wrap.clientWidth));
     if (needH > 0) { state.pad.bottom = needH; dag.style.marginBottom = `${needH}px`; }
     if (needW > 0) { state.pad.right = needW; dag.style.marginRight = `${needW}px`; }
     wrap.scrollTop = st; wrap.scrollLeft = sl;
@@ -180,7 +221,9 @@
 
   // ---- render ----
   function render() {
-    const app = $("#app"); app.innerHTML = "";
+    const app = $("#app");
+    const prevGraph = app.querySelector(".canvasw") ? leaving(app.querySelector(".canvasw")) : null;   // the outgoing graph, for the animation
+    app.innerHTML = "";
     app.className = "app" + (state.selected ? " with-panel" : "");
     app.append(renderTop());
     const main = el("div", { class: "main" });
@@ -188,7 +231,7 @@
     main.append(wrap, renderPanel());
     app.append(main);
     if (state.help) app.append(renderHelp());
-    const draw = () => {
+    const draw = prev => {
       const keepTop = wrap.scrollTop, keepLeft = wrap.scrollLeft;
       wrap.innerHTML = "";
       const { pos, boxes, w, h } = layout(wrap.clientWidth - 56);
@@ -207,11 +250,11 @@
         const matched = matches && box.items.some(it => matches.has(it.id));
         // A route box is "on" when its connector is: it belongs to the selected scene, or holds it.
         const on = !!(L && edge && L.edges.has(edge) && (box.source === state.selected || box.items.some(it => it.id === state.selected)));
-        dag.append(el("div", { class: `box ${box.bare ? "bare" : box.kind || "root"}` + (litBox || inDomain || matched ? " near" : "") + (on ? " on" : ""), style: `left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px` }));
+        dag.append(el("div", { class: `box ${box.bare ? "bare" : box.kind || "root"}` + (litBox || inDomain || matched ? " near" : "") + (on ? " on" : ""), "data-key": box.bare ? `bare:${box.items[0].id}` : edge || "root", style: `left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px` }));
         if (box.source) {
           const s = pos[box.source]; const sx = s.x + IW / 2, sy = s.y + IH, ex = b.x + b.w / 2, ey = b.y, mid = (sy + ey) / 2;
           paths.push(`<path class="e ${box.kind}${on ? " on" : ""}" d="M${sx} ${sy} C${sx} ${mid} ${ex} ${mid} ${ex} ${ey}"/>`);
-          labels.push(el("span", { class: "st" + (on ? " on" : ""), style: `left:${ex}px;top:${ey - 12}px` }, KIND[box.kind], noteAt(S[box.source], box.kind).length ? icon("note", "note on this route") : null));
+          labels.push(el("span", { class: "st" + (on ? " on" : ""), "data-key": `label:${edge}`, style: `left:${ex}px;top:${ey - 12}px` }, KIND[box.kind], noteAt(S[box.source], box.kind).length ? icon("note", "note on this route") : null));
         }
         for (const it of box.items) {
           const k = itemKey(it, box); const sc = S[it.id]; const p = pos[k];
@@ -234,10 +277,11 @@
       wrap.append(dag);
       wrap.scrollTop = keepTop; wrap.scrollLeft = keepLeft;
       holdAnchor(wrap, dag);
+      arrive(wrap, dag, prev);
     };
-    draw();
+    draw(prevGraph);
     let lastW = wrap.clientWidth;
-    new ResizeObserver(() => { if (wrap.clientWidth !== lastW) { lastW = wrap.clientWidth; draw(); } }).observe(wrap);
+    new ResizeObserver(() => { if (wrap.clientWidth !== lastW) { lastW = wrap.clientWidth; draw(null); } }).observe(wrap);   // a resize reflows without animating
   }
 
   function renderTop() {
