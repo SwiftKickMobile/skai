@@ -234,7 +234,9 @@
     const draw = prev => {
       const keepTop = wrap.scrollTop, keepLeft = wrap.scrollLeft;
       wrap.innerHTML = "";
-      const { pos, boxes, w, h } = layout(wrap.clientWidth - 56);
+      // Lay out in the canvas's content width: inside its padding, which widens into a safe area under the side panel.
+      const cs = getComputedStyle(wrap);
+      const { pos, boxes, w, h } = layout(wrap.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight));
       const L = lit();
       const q = state.query.trim().toLowerCase();
       const matches = q ? new Set(M.order.filter(s => S[s].label.toLowerCase().includes(q) || s.includes(q))) : null;
