@@ -64,7 +64,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 /* state-change animation: the old graph fades out in place; survivors slide; newcomers fade in */
 .dag.exit { position: absolute; pointer-events: none; margin: 0; transition: opacity .2s ease; z-index: 0; }
 .dag.exit.gone { opacity: 0; }
-.dag .moving { transition: transform .32s cubic-bezier(.2, .7, .2, 1); z-index: 1; }
+.dag .moving { transition: transform .32s cubic-bezier(.2, .7, .2, 1), width .32s cubic-bezier(.2, .7, .2, 1), height .32s cubic-bezier(.2, .7, .2, 1); z-index: 1; }
 .dag .enter { animation: fade-in .32s ease both; }
 .dag .edges.enter { animation: fade-in .4s ease both; }
 @keyframes fade-in { from { opacity: 0; } }

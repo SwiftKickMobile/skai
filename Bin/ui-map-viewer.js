@@ -168,14 +168,24 @@
       if (!r0) { n.classList.add("enter"); continue; }
       const r1 = n.getBoundingClientRect();
       const dx = r0.left - r1.left, dy = r0.top - r1.top;
-      if (dx || dy) { n.style.transform = `translate(${dx}px, ${dy}px)`; movers.push(n); }
+      const resized = Math.round(r0.width) !== Math.round(r1.width) || Math.round(r0.height) !== Math.round(r1.height);
+      if (dx || dy || resized) {
+        // Start at the old position and size; the transition carries it to the new ones.
+        n.style.transform = `translate(${dx}px, ${dy}px)`;
+        if (resized) { n.dataset.toW = n.style.width; n.dataset.toH = n.style.height; n.style.width = `${r0.width}px`; n.style.height = `${r0.height}px`; }
+        movers.push(n);
+      }
       const twin = old.querySelector(`[data-key="${CSS.escape(n.dataset.key)}"]`);
       if (twin) twin.style.visibility = "hidden";
     }
     dag.querySelector(".edges").classList.add("enter");
     void dag.offsetWidth;   // commit the start positions before transitioning
     old.classList.add("gone");
-    for (const n of movers) { n.classList.add("moving"); n.style.transform = ""; n.addEventListener("transitionend", () => n.classList.remove("moving"), { once: true }); }
+    for (const n of movers) {
+      n.classList.add("moving"); n.style.transform = "";
+      if (n.dataset.toW !== undefined) { n.style.width = n.dataset.toW; n.style.height = n.dataset.toH; delete n.dataset.toW; delete n.dataset.toH; }
+      n.addEventListener("transitionend", () => n.classList.remove("moving"), { once: true });
+    }
   }
 
   // ---- selection ----
