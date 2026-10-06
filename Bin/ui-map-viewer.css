@@ -55,7 +55,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 .theme:hover, .clear:hover, .info:hover { color: var(--ink); }
 .info { font-weight: 700; padding: 4px 9px; }
 .main { position: relative; min-height: 0; min-width: 0; display: flex; }
-.canvasw { position: relative; flex: 1; min-width: 0; overflow: auto; padding: 24px 28px 40px; }   /* 4px grid: see the layout constants in the script */
+.canvasw { position: relative; flex: 1; min-width: 0; overflow: auto; padding: 24px 28px 40px; }   /* 4px grid: see the layout constants in the script; the side padding is symmetric, the script relies on that */
 .app.with-panel .canvasw { scroll-padding-right: 416px; padding-right: 416px; }
 .mhead { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; color: var(--dim); font-size: 11px; }
 
@@ -112,6 +112,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 .panel { position: absolute; top: 0; right: 0; bottom: 0; width: 400px; border-left: 1px solid var(--line); background: var(--surface);
   display: none; flex-direction: column; overflow: hidden; min-width: 0; z-index: 4; box-shadow: -12px 0 32px rgba(0,0,0,.18); }
 .app.with-panel .panel { display: flex; animation: panel-in .2s cubic-bezier(.2, .7, .2, 1); }
+.app.with-panel .panel.steady { animation: none; }
 @keyframes panel-in { from { transform: translateX(100%); opacity: .6; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .app.with-panel .panel { animation: none; } }
 .ph { padding: 14px 18px 12px; border-bottom: 1px solid var(--line); }

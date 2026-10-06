@@ -41,9 +41,7 @@
   ].filter(Boolean);
 
   // hops: 1 | 2 | "all" — how far from the selection (or the chosen domains) the filter reaches.
-  // anchor: the clicked cell's key and screen position; after a reflow the canvas scrolls or pads so it stays put.
-  // pad: extra space kept around the graph so the anchor can hold even when the graph is smaller than the viewport.
-  const state = { selected: null, domains: new Set(), query: "", hops: 1, anchor: null, pad: { top: 0, left: 0, bottom: 0, right: 0 }, help: false };
+  const state = { selected: null, domains: new Set(), query: "", hops: 1, help: false };
 
   // ---- theme ----
   try { const t = localStorage.getItem("um-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
@@ -92,8 +90,10 @@
   }
   // The rows after filtering: boxes keep only visible items; a visible scene whose box went away
   // stands alone ("bare") at its depth; empty rows collapse.
+  let fullRowsCache = null;
+  function fullRowsCached() { return fullRowsCache || (fullRowsCache = fullRows()); }
   function rows() {
-    const full = fullRows(); const V = visibleScenes();
+    const full = fullRowsCached(); const V = visibleScenes();
     if (!V) return full;
     const out = full.map(row => row.flatMap(box => {
       if (box.source && !V.has(box.source)) return [];
@@ -111,8 +111,7 @@
   // common device pixel ratios (1, 1.25, 1.5, 2) and stay crisp.
   const IH = 64, IGAP = 8, BPAD = 8, BGAP = 20, ROWGAP = 44, BH = IH + 2 * BPAD;
   const boxW = box => box.items.length * IW + (box.items.length - 1) * IGAP + 2 * BPAD;
-  function layout(width) {
-    const R = rows();
+  function layout(width, R) {
     const pos = {}, boxes = [];
     let y = 0;
     for (const row of R) {
@@ -190,29 +189,9 @@
 
   // ---- selection ----
   function select(id, scrollTo) {
-    state.selected = id; state.domains.clear(); state.pad = { top: 0, left: 0, bottom: 0, right: 0 };
+    state.selected = id; state.domains.clear();
     render();
-    if (scrollTo && id) flash(id, !state.anchorApplied);
-  }
-  // Keep the cell the user clicked at the same screen position after a reflow: scroll when the canvas
-  // allows it, otherwise pad the graph so it can.
-  function holdAnchor(wrap, dag) {
-    const a = state.anchor; state.anchor = null; state.anchorApplied = false;
-    if (!a) return;
-    const n = dag.querySelector(`[data-key="${CSS.escape(a.key)}"]`); if (!n) return;
-    const r = n.getBoundingClientRect();
-    // Whole pixels only: a fractional scroll or margin blurs every 1px border.
-    // Whole pixels: the browser snaps scroll offsets to device pixels itself, so the layout grid keeps borders crisp.
-    const snap = Math.round;
-    let st = snap(wrap.scrollTop + (r.top - a.top)), sl = snap(wrap.scrollLeft + (r.left - a.left));
-    if (st < 0) { state.pad.top = -st; st = 0; }
-    if (sl < 0) { state.pad.left = -sl; sl = 0; }
-    dag.style.marginTop = `${state.pad.top}px`; dag.style.marginLeft = `${state.pad.left}px`;
-    const needH = Math.ceil(st - (wrap.scrollHeight - wrap.clientHeight)), needW = Math.ceil(sl - (wrap.scrollWidth - wrap.clientWidth));
-    if (needH > 0) { state.pad.bottom = needH; dag.style.marginBottom = `${needH}px`; }
-    if (needW > 0) { state.pad.right = needW; dag.style.marginRight = `${needW}px`; }
-    wrap.scrollTop = st; wrap.scrollLeft = sl;
-    state.anchorApplied = true;
+    if (scrollTo && id) flash(id, false);
   }
   function flash(k, scroll = true) {
     const n = document.querySelector(`[data-key="${CSS.escape(k)}"]`);
@@ -232,21 +211,60 @@
   // ---- render ----
   function render() {
     const app = $("#app");
-    const prevGraph = app.querySelector(".canvasw") ? leaving(app.querySelector(".canvasw")) : null;   // the outgoing graph, for the animation
+    const prevWrap = app.querySelector(".canvasw");
+    const panelWasOpen = app.classList.contains("with-panel");   // an open panel changes content in place; only a closed one slides in
+    const prevGraph = prevWrap ? leaving(prevWrap) : null;   // the outgoing graph, for the animation
+    const keepScroll = prevWrap ? [prevWrap.scrollTop, prevWrap.scrollLeft] : [0, 0];   // the scroll position never changes on its own
     app.innerHTML = "";
     app.className = "app" + (state.selected ? " with-panel" : "");
     app.append(renderTop());
     const main = el("div", { class: "main" });
     const wrap = el("div", { class: "canvasw" });
-    main.append(wrap, renderPanel());
+    const panel = renderPanel();
+    if (panelWasOpen) panel.classList.add("steady");
+    main.append(wrap, panel);
     app.append(main);
     if (state.help) app.append(renderHelp());
     const draw = prev => {
-      const keepTop = wrap.scrollTop, keepLeft = wrap.scrollLeft;
+      const [keepTop, keepLeft] = prev ? keepScroll : [wrap.scrollTop, wrap.scrollLeft];
       wrap.innerHTML = "";
-      // Lay out in the canvas's content width: inside its padding, which widens into a safe area under the side panel.
+      // The layout width is the canvas minus its base side padding, whether or not the side panel is
+      // open: the panel's footprint is a safe area the canvas scrolls under, as on the port dashboard.
       const cs = getComputedStyle(wrap);
-      const { pos, boxes, w, h } = layout(wrap.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight));
+      const width = wrap.clientWidth - 2 * parseFloat(cs.paddingLeft);   // the base padding is symmetric; the panel only widens the right side
+      const full = fullRowsCached();
+      const shown = rows();
+      const { pos, boxes, w, h } = layout(width, shown);
+      // Where the filtered graph sits relative to the window (t = the graph origin's position inside the
+      // canvas's viewport) is chosen by three objectives, in priority order:
+      //   1. the selected cell is fully visible, not under the side panel (a safe area on the right);
+      //   2. as many cells as possible are fully visible;
+      //   3. the selected cell is as close as possible to its home: its place in the full map.
+      // Visible-cell counts only change when a cell edge crosses a window edge, so those positions are
+      // the candidates. The chosen t is then realised as a graph offset (margin) and a scroll position.
+      const padL = parseFloat(cs.paddingLeft), padR = parseFloat(cs.paddingRight), padT = parseFloat(cs.paddingTop), padB = parseFloat(cs.paddingBottom);
+      let t = { x: padL - keepLeft, y: padT - keepTop };   // unchanged: cells stay where they are
+      const here = state.selected && shown !== full ? pos[state.selected] : null;
+      if (here) {
+        const vis = { x0: padL, x1: wrap.clientWidth - padR, y0: padT, y1: wrap.clientHeight - padB };
+        const home = layout(width, full).pos[state.selected];
+        const ideal = { x: t.x + home.x - here.x, y: t.y + home.y - here.y };
+        const cells = Object.values(pos);
+        const candX = new Set([ideal.x]), candY = new Set([ideal.y]);
+        // Candidates snap inward to the 4px layout grid (see the layout constants), so borders stay crisp.
+        const up4 = v => Math.ceil(v / 4) * 4, down4 = v => Math.floor(v / 4) * 4;
+        for (const c of cells) { candX.add(up4(vis.x0 - c.x)); candX.add(down4(vis.x1 - c.x - IW)); candY.add(up4(vis.y0 - c.y)); candY.add(down4(vis.y1 - c.y - IH)); }
+        const inside = (c, tx, ty) => c.x + tx >= vis.x0 && c.x + tx + IW <= vis.x1 && c.y + ty >= vis.y0 && c.y + ty + IH <= vis.y1;
+        let best = null;
+        for (const tx of candX) for (const ty of candY) {
+          if (!inside(here, tx, ty)) continue;                                   // 1
+          const count = cells.reduce((a, c) => a + inside(c, tx, ty), 0);        // 2
+          const dist = Math.abs(tx - ideal.x) + Math.abs(ty - ideal.y);          // 3
+          if (!best || count > best.count || (count === best.count && dist < best.dist)) best = { tx, ty, count, dist };
+        }
+        if (best) t = { x: best.tx, y: best.ty };
+      }
+      const offX = Math.max(0, t.x - padL), offY = Math.max(0, t.y - padT), scrollX = Math.max(0, padL - t.x), scrollY = Math.max(0, padT - t.y);
       const L = lit();
       const q = state.query.trim().toLowerCase();
       const matches = q ? new Set(M.order.filter(s => S[s].label.toLowerCase().includes(q) || s.includes(q))) : null;
@@ -276,8 +294,7 @@
           if (matches && matches.has(it.id)) cls += " match";
           dag.append(el("button", { class: cls, "data-key": k, style: `left:${p.x}px;top:${p.y}px`,
             title: it.canonical ? sc.id : `${sc.id} · reused here; canonical under ${sc.parent}`,
-            onclick: e => { const r = e.currentTarget.getBoundingClientRect(); state.anchor = { key: k, top: r.top, left: r.left };
-              select(it.canonical && it.id === state.selected ? null : it.id, !it.canonical); } },   // clicking the selected cell again clears
+            onclick: () => select(it.canonical && it.id === state.selected ? null : it.id, !it.canonical) },   // clicking the selected cell again clears
             el("div", { class: "nbtop" }, el("i", { class: "dm", style: `--c:${domainColor[sc.domain]}`, title: domainLabel[sc.domain] }),
               el("span", { class: "icons" }, ...(it.canonical ? calloutIcons(sc) : [icon("reuse", "reused scene; click to go to its home")]))),
             el("div", { class: "nmw" }, el("div", { class: "nm" }, sc.label))));
@@ -285,10 +302,12 @@
       }
       dag.prepend(svgEl(`<svg class="edges" width="${w}" height="${h}" aria-hidden="true">${paths.join("")}</svg>`));
       labels.forEach(l => dag.append(l));
-      dag.style.margin = `${state.pad.top}px ${state.pad.right}px ${state.pad.bottom}px ${state.pad.left}px`;
+      dag.style.marginTop = `${offY}px`; dag.style.marginLeft = `${offX}px`;
       wrap.append(dag);
-      wrap.scrollTop = keepTop; wrap.scrollLeft = keepLeft;
-      holdAnchor(wrap, dag);
+      // Pad below and to the right when the graph is too small for the scroll position it needs.
+      dag.style.marginBottom = `${Math.max(0, scrollY + wrap.clientHeight - wrap.scrollHeight)}px`;
+      dag.style.marginRight = `${Math.max(0, scrollX + wrap.clientWidth - wrap.scrollWidth)}px`;
+      wrap.scrollTop = scrollY; wrap.scrollLeft = scrollX;
       arrive(wrap, dag, prev);
     };
     draw(prevGraph);
