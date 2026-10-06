@@ -148,11 +148,12 @@
     if (!a) return;
     const n = dag.querySelector(`[data-key="${CSS.escape(a.key)}"]`); if (!n) return;
     const r = n.getBoundingClientRect();
-    let st = wrap.scrollTop + (r.top - a.top), sl = wrap.scrollLeft + (r.left - a.left);
+    // Whole pixels only: a fractional scroll or margin blurs every 1px border.
+    let st = Math.round(wrap.scrollTop + (r.top - a.top)), sl = Math.round(wrap.scrollLeft + (r.left - a.left));
     if (st < 0) { state.pad.top = -st; st = 0; }
     if (sl < 0) { state.pad.left = -sl; sl = 0; }
     dag.style.marginTop = `${state.pad.top}px`; dag.style.marginLeft = `${state.pad.left}px`;
-    const needH = st - (wrap.scrollHeight - wrap.clientHeight), needW = sl - (wrap.scrollWidth - wrap.clientWidth);
+    const needH = Math.ceil(st - (wrap.scrollHeight - wrap.clientHeight)), needW = Math.ceil(sl - (wrap.scrollWidth - wrap.clientWidth));
     if (needH > 0) { state.pad.bottom = needH; dag.style.marginBottom = `${needH}px`; }
     if (needW > 0) { state.pad.right = needW; dag.style.marginRight = `${needW}px`; }
     wrap.scrollTop = st; wrap.scrollLeft = sl;
