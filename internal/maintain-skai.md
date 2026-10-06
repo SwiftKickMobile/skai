@@ -40,6 +40,7 @@ When you change assets, keep these in sync:
 - `Bin/ui-map-render.py`
   - its docstring ("RENDER CONVENTIONS") is the canonical render spec: update it in the same edit as the code
   - when the render output changes, regenerate the Mermaid block in `Guides/UIMap/ui-map-demo.md` from that guide's own YAML (`uv run Bin/ui-map-render.py <demo yaml> -o <file>`) and update the guide's notes; never hand-edit the block
+  - `Bin/ui-map-viewer.js` and `Bin/ui-map-viewer.css` are the `--html` output's viewer, loaded by every rendered page from the SKAI checkout: a behaviour change there is a render change (docstring rule 12, changelog), and the two files must stay beside the renderer under their current names, since rendered pages link them by relative path
  - Skills (if you add/change them):
    - shared templates live at `Templates/skills/skai-*/SKILL.md`
    - Cursor installer installs them into host repos at `.cursor/skills/`

@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+**UI Map renderer**
+
+- 2026-10-06 **Interactive HTML render.** `Bin/ui-map-render.py --html <page>` is the primary render: a static page holding the map model that loads the new viewer `Bin/ui-map-viewer.js` / `Bin/ui-map-viewer.css` from the SKAI checkout by a relative path. No server, no Mermaid CLI, no browser automation. The page lays the map out in levels at a fixed width; selecting a scene filters the page to its connections (1 hop, 2 hops, or All) and a side panel shows where the scene is reached from, what it opens, and its notes, implements and modal style; an info button opens a legend. The docstring's "RENDER CONVENTIONS" rule 12 describes it. Mermaid text (`-o`, `--markdown`) and `--svg` are unchanged.
+- 2026-10-06 **The render artifact is `.html`.** `ui-map-guide.md`'s canonical command targets `skai/ui-map/ui-map.html`; the architecture guide, its artifact formats and the implementation guide's promote item name `proposed-ui-map.html` / `ui-map.html` where they named `.svg`.
+
+**Upgrade instructions**
+
+1. **No adapter re-run is required.** No installed skill, policy or template changed; the edited guides are read from the SKAI checkout.
+2. **Re-render UI Maps to HTML.** For the official map, run the `ui-map-guide.md` command to produce `skai/ui-map/ui-map.html`; for each open change package, produce `proposed-ui-map.html` beside its YAML. Keep each page's path relative to the SKAI checkout stable (the page links the viewer by that path). Existing `.svg` renders are derived output and may be deleted once the page exists; delete them only with supervisor approval.
+3. **Repoint references.** Where the host README or `skai/integration.md` links `ui-map.svg` or `proposed-ui-map.svg`, link the `.html` page instead. An `integration.md` override of the render command should switch `--svg <file>.svg` to `--html <file>.html`.
+
 ## Release 9 — 2026-10-05
 
 **UI Map renderer**

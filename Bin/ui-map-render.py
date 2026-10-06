@@ -7,20 +7,26 @@
 # ]
 # ///
 """
-ui-map-render.py — render a UI Map YAML document as a Mermaid flowchart.
+ui-map-render.py — render a UI Map YAML document as an interactive HTML page
+or a Mermaid flowchart.
 
 The input is a UI Map YAML document conforming to ui-map.schema.json.
-The output is a Mermaid `flowchart LR` block (bare, no ``` fences).
+The primary output is a static HTML page (`--html`) that loads the viewer
+beside this script (ui-map-viewer.js, ui-map-viewer.css); no server is needed.
+The Mermaid `flowchart LR` text (bare, no ``` fences) remains available for
+documents that embed a diagram, and `--svg` still renders it through the
+Mermaid CLI.
 
 Usage:
+    uv run ui-map-render.py <input.yaml> --html <output.html>    # the interactive map
+    uv run ui-map-render.py <input.yaml> --html <o.html> --open  # render, then open it
     uv run ui-map-render.py <input.yaml>                     # write Mermaid to stdout
     uv run ui-map-render.py <input.yaml> -o <output.mmd>     # write Mermaid to a file
     uv run ui-map-render.py <input.yaml> --markdown          # wrap in ```mermaid fences
     uv run ui-map-render.py <input.yaml> --svg <output.svg>  # also render an SVG
-    uv run ui-map-render.py <input.yaml> --svg <o.svg> --open   # render SVG, then open it
     uv run ui-map-render.py <input.yaml> --no-validate       # skip JSON Schema validation
 
-The Mermaid-text outputs (-o / --markdown / stdout) and the --svg output are
+The HTML, Mermaid-text (-o / --markdown / stdout) and --svg outputs are
 independent and may be combined in a single invocation.
 
 SVG rendering shells out to the Mermaid CLI (`mmdc`) — an optional external
@@ -159,7 +165,49 @@ the demo doc and the guide describe the same conventions in prose.
       report mode (TODO: not yet implemented in this script).
     - Cross-platform `platform:` field: not rendered; informational only.
 
-12. ERRORS
+12. HTML OUTPUT (--html)
+    - A static page: the map model inline as `window.UI_MAP` JSON, plus a
+      stylesheet link and script tag for ui-map-viewer.css / ui-map-viewer.js
+      beside this script, referenced by a path relative to the output file.
+      The page works from file:// and from any static server; it needs the
+      SKAI checkout at that relative location and nothing else. `--open`
+      opens it.
+    - The model carries, per scene: id, humanized label, domain, canonical
+      home (visual parent and route kind, rule 4), route containers in YAML
+      order with their destinations, `implements`, `modal_style`, notes
+      (with `at:` when attached to a route container, rule 9), `todo`, and
+      every inbound route. Plus the domain list in palette order (rule 3),
+      the modal-style vocabulary, scene order, and the root scenes.
+    - Layout: levels as rows — depth in the canonical-home tree — at a fixed
+      cell width that never shrinks, the page growing vertically. Each scene's
+      route containers sit in the row below it as dashed boxes (composite:
+      filled, no border) holding the destination cells, with the route kind as
+      a label on the connector. A box is never shared between scenes, so every
+      connector runs one row down. A row too wide for the window wraps, keeping
+      one scene's boxes together.
+    - Cells: neutral boxes with the title centred (two lines, then clipped), a
+      domain colour swatch top-left and icons top-right marking only the
+      existence of callouts — notes, implements, modal style — whose content the
+      side panel shows. A pointer (rule 6) is a lighter cell with a reuse
+      arrow; clicking it selects the canonical scene.
+    - Selection: clicking a scene filters the page to its connected
+      neighbourhood (1 hop by default; 2 hops or All from the control in the
+      top bar), removes everything else, collapses empty rows, and keeps the
+      clicked cell at the same screen position while the rest reflows.
+      The selected cell, its route boxes, every box holding it, and their
+      connectors and labels are highlighted; All shows the whole map and dims
+      the unconnected parts instead. Clicking the selected cell again, Escape,
+      or Clear restores the full map. The domain legend filters the same way
+      (multi-select). A search box highlights matches; Enter selects the first.
+    - Side panel for the selected scene: domain, id, Reached from (every
+      inbound route with its kind, tagged home/reused when the scene appears
+      more than once), Opens (per route kind, with route notes inline),
+      Notes, Implements, Modal style (each headed by the cell's icon), and a
+      Specs section reserved for a future sidecar.
+    - Theme: follows the system, with a Theme toggle. The "?" button opens a
+      legend: the cell and box vocabulary, the route kinds, and the controls.
+
+13. ERRORS
     - Schema validation runs first (unless --no-validate); failures abort.
     - Semantic validation runs next; failures abort with a specific message.
       Categories: duplicate canonical home, undefined scene reference,
@@ -173,6 +221,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from html import escape as html_escape
 import os
 import shutil
 import subprocess
@@ -760,8 +809,9 @@ def render_svg(mermaid: str, svg_path: Path) -> None:
 def open_in_browser(path: Path) -> None:
     """Open a file in a browser.
 
-    macOS forces a browser explicitly: Preview cannot display SVG, and Launch
-    Services may map .svg to a non-browser app. Defaults to Safari; override
+    macOS forces a browser explicitly: Preview cannot display SVG, Launch
+    Services may map .svg to a non-browser app, and .html may be mapped to an
+    editor. Defaults to Safari; override
     with the UI_MAP_BROWSER env var. Other platforms use the OS default opener.
     """
     if sys.platform == "darwin":
@@ -776,13 +826,90 @@ def open_in_browser(path: Path) -> None:
 
 
 # ---------------------------------------------------------------------------
+# HTML output — the interactive viewer (docstring rule 12)
+# ---------------------------------------------------------------------------
+
+VIEWER_ASSETS: tuple[str, ...] = ("ui-map-viewer.css", "ui-map-viewer.js")
+
+
+def build_viewer_model(model: Model) -> dict[str, Any]:
+    """The JSON model the viewer renders, derived from the resolved Model."""
+    domains = [
+        {"id": d, "label": humanize(d), "color": DOMAIN_PALETTE[i]}
+        for i, d in enumerate(model.domain_order)
+    ]
+    scenes: dict[str, dict[str, Any]] = {}
+    for sid, body in model.scenes.items():
+        parent, kind = model.visual_parent[sid]
+        routes = [
+            {"kind": k, "targets": [_scene_id_and_body(item)[0] for item in body[k]]}
+            for k in body
+            if k in ROUTE_KINDS and body[k]
+        ]
+        notes: list[dict[str, Any]] = []
+        if body.get("note"):
+            notes.append({"at": None, "text": body["note"]})
+        for n in body.get("notes", []) or []:
+            if isinstance(n, str):
+                notes.append({"at": None, "text": n})
+            else:
+                notes.append({"at": n.get("at"), "text": n.get("text", "")})
+        scenes[sid] = {
+            "id": sid,
+            "label": humanize(sid),
+            "domain": model.scene_domain[sid],
+            "parent": parent,
+            "parentKind": kind,
+            "routes": routes,
+            "implements": body.get("implements", []) or [],
+            "modalStyle": body.get("modal_style"),
+            "notes": notes,
+            "todo": bool(body.get("todo")),
+            "reachedFrom": [{"source": p, "kind": k} for p, k in model.inbound[sid]],
+        }
+    return {
+        "app": model.app,
+        "version": model.version,
+        "modalStyles": model.modal_styles,
+        "domains": domains,
+        "scenes": scenes,
+        "order": list(model.scenes.keys()),
+        "roots": [sid for sid, (p, _) in model.visual_parent.items() if p is None],
+    }
+
+
+def render_html(model: Model, html_path: Path) -> str:
+    """The viewer page: model inline, viewer assets linked relative to html_path."""
+    asset_dir = Path(__file__).resolve().parent
+    rel = os.path.relpath(asset_dir, html_path.resolve().parent).replace(os.sep, "/")
+    css, js = (f"{rel}/{name}" for name in VIEWER_ASSETS)
+    payload = json.dumps(build_viewer_model(model)).replace("</", "<\\/")
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{html_escape(model.app)} UI Map</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="{css}">
+</head>
+<body>
+<div id="app"></div>
+<script>window.UI_MAP = {payload};</script>
+<script src="{js}"></script>
+</body>
+</html>
+"""
+
+
+# ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Render a UI Map YAML document as a Mermaid flowchart."
+        description="Render a UI Map YAML document as an interactive HTML page or a Mermaid flowchart."
     )
     parser.add_argument("input", type=Path, help="Path to a UI Map YAML file.")
     parser.add_argument(
@@ -797,6 +924,11 @@ def main(argv: list[str] | None = None) -> int:
         help="Wrap the Mermaid text in ```mermaid fences.",
     )
     parser.add_argument(
+        "--html",
+        type=Path,
+        help="Render the interactive HTML page to this path (loads the viewer beside this script).",
+    )
+    parser.add_argument(
         "--svg",
         type=Path,
         help="Also render an SVG to this path (requires the mmdc CLI).",
@@ -804,7 +936,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--open",
         action="store_true",
-        help="Open the rendered SVG in a browser (requires --svg).",
+        help="Open the rendered page in a browser (requires --html or --svg; HTML wins).",
     )
     parser.add_argument(
         "--schema",
@@ -819,8 +951,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    if args.open and not args.svg:
-        parser.error("--open requires --svg")
+    if args.open and not (args.html or args.svg):
+        parser.error("--open requires --html or --svg")
 
     data = load_yaml(args.input)
 
@@ -842,6 +974,10 @@ def main(argv: list[str] | None = None) -> int:
     text_output = f"```mermaid\n{mermaid}\n```\n" if args.markdown else mermaid
 
     generated: list[Path] = []
+    if args.html:
+        args.html.write_text(render_html(model, args.html), encoding="utf-8")
+        generated.append(args.html)
+
     if args.output:
         args.output.write_text(text_output + "\n")
         generated.append(args.output)
@@ -854,14 +990,14 @@ def main(argv: list[str] | None = None) -> int:
             return 4
         generated.append(args.svg)
 
-    if not args.output and not args.svg:
+    if not args.output and not args.svg and not args.html:
         print(text_output)
 
     if generated:
         print(f"Generated: {', '.join(p.name for p in generated)}", file=sys.stderr)
 
     if args.open:
-        open_in_browser(args.svg)
+        open_in_browser(args.html or args.svg)
 
     return 0
 

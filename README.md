@@ -194,7 +194,7 @@ Audit an approved work-spec design against the codebase, create its concrete tas
 
 ### UI Map architecture (skill `skai-ui-map-architecture`)
 
-Create or change the app's UI Map as an architecture artifact. Produces a change package under `skai/changes/<change-id>/` containing the architecture artifact, `proposed-ui-map.yaml`, and `proposed-ui-map.svg`; the official map stays frozen during architecture.
+Create or change the app's UI Map as an architecture artifact. Produces a change package under `skai/changes/<change-id>/` containing the architecture artifact, `proposed-ui-map.yaml`, and `proposed-ui-map.html`; the official map stays frozen during architecture.
 
 - Guide [`Guides/UIMap/ui-map-architecture.md`](Guides/UIMap/ui-map-architecture.md)
 - Example [`Guides/UIMap/ui-map-demo.md`](Guides/UIMap/ui-map-demo.md) -- a complete UI Map in YAML with its rendered diagram

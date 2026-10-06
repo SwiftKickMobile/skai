@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation
 Managed-Source: Guides/UIMap/ui-map-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-03
+Managed-Updated-At: 2026-10-06
 
 # UI Map Implementation
 
@@ -211,7 +211,7 @@ A change not in the table still gets its disposition from the same principle —
 
 **Routes aren't special.** The skill wires route *structure*, not new feature data. In Build, a **new route** is `placeholder`: a new destination receives no feature inputs, while an existing destination keeps its inspectable input contract when the project already defines the required value sources; if a required source is undefined, stop in Discussion under the platform placeholder guide's missing-input rule. A **mechanical kind change** on an already-wired route (e.g. nav → modal) is `implement`. In Plan, the same UI-map-owned route work is `planned`. A **real route refactor** is `handoff`.
 
-**The terminal promote item.** The last `T#` is the promotion: copy the proposed YAML to `skai/ui-map/ui-map.yaml`, then run the project render override or the SKAI default renderer against that **official YAML**, targeting `skai/ui-map/ui-map.svg`. Do not copy the proposed SVG; it is derived preview output. Require renderer exit 0 and a nonempty official SVG, and record the render command and result in `## Evidence`. Only then check the promote item. Its Disposition is always `implement`, never `planned` or `handoff`, and it runs last: in Build after the scaffolds build green, in Plan right at the Code Changes gate (the spec review is the sign-off). It isn't literally a code change; modeling it as a `T#` folds promotion into the normal execution flow, with no separate promotion step. Author it with **Realizes** = the approved change as a whole (not a single `M#`) and **Touches** = the official map and its render.
+**The terminal promote item.** The last `T#` is the promotion: copy the proposed YAML to `skai/ui-map/ui-map.yaml`, then run the project render override or the SKAI default renderer against that **official YAML**, targeting `skai/ui-map/ui-map.html`. Do not copy the proposed page; it is derived preview output. Require renderer exit 0 and a nonempty official page, and record the render command and result in `## Evidence`. Only then check the promote item. Its Disposition is always `implement`, never `planned` or `handoff`, and it runs last: in Build after the scaffolds build green, in Plan right at the Code Changes gate (the spec review is the sign-off). It isn't literally a code change; modeling it as a `T#` folds promotion into the normal execution flow, with no separate promotion step. Author it with **Realizes** = the approved change as a whole (not a single `M#`) and **Touches** = the official map and its render.
 
 This item exists only when there is a proposed map to promote. In a conformance run with **no change package** — code conformed to the official map, which does not change — there is nothing to promote: omit the promote item, leave the official map and its render untouched, and end at green build (Build) or the approved spec (Plan).
 

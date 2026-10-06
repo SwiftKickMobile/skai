@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-guide
 Managed-Source: Guides/UIMap/ui-map-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-03
+Managed-Updated-At: 2026-10-06
 
 # UI Map Guide
 
@@ -18,13 +18,15 @@ This guide defines the platform-agnostic YAML format. Platform implementation pa
 
 SKAI owns the default UI Map renderer. Use `Bin/ui-map-render.py` from the current SKAI checkout unless the project provides an explicit override.
 
-For an installed project, look first for the SKAI checkout at `Submodules/skai`. If SKAI is installed elsewhere, use that root instead. The renderer takes the map to render and the SVG to write — map and SVG paths resolved against the repo that holds the map, which may be separate from the app and SKAI repos. For the official map:
+For an installed project, look first for the SKAI checkout at `Submodules/skai`. If SKAI is installed elsewhere, use that root instead. The renderer takes the map to render and the HTML page to write — map and page paths resolved against the repo that holds the map, which may be separate from the app and SKAI repos. For the official map:
 
 ```
-uv run <skai-root>/Bin/ui-map-render.py <map-repo-root>/skai/ui-map/ui-map.yaml --svg <map-repo-root>/skai/ui-map/ui-map.svg
+uv run <skai-root>/Bin/ui-map-render.py <map-repo-root>/skai/ui-map/ui-map.yaml --html <map-repo-root>/skai/ui-map/ui-map.html
 ```
 
-`skai/integration.md` may override this command or add project-specific evidence-capture requirements. It does not need to repeat the SKAI default. If no override exists, use the default renderer and block only when the SKAI root, renderer, runtime dependency, SVG dependency, or validation result prevents a valid render.
+The page is static: it holds the map model and loads the viewer (`Bin/ui-map-viewer.js`, `Bin/ui-map-viewer.css`) from the SKAI checkout by a relative path, so it opens from the file system or any static server with no build step. It lays the map out in levels at a fixed width, and selecting a scene filters the page to that scene's connections; the renderer's docstring ("RENDER CONVENTIONS", rule 12) is the authoritative description. The renderer also still emits Mermaid text (`-o`, `--markdown`) for documents that embed a diagram, and an SVG (`--svg`, needs the Mermaid CLI).
+
+`skai/integration.md` may override this command or add project-specific evidence-capture requirements. It does not need to repeat the SKAI default. If no override exists, use the default renderer and block only when the SKAI root, renderer, runtime dependency, or validation result prevents a valid render.
 
 ## YAML format
 

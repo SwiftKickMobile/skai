@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture
 Managed-Source: Guides/UIMap/ui-map-architecture.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-03
+Managed-Updated-At: 2026-10-06
 
 # UI Map Architecture
 
@@ -10,7 +10,7 @@ The architecture method for the UI Map system. Use [`ui-map-guide.md`](ui-map-gu
 
 ## Purpose
 
-The **official map** (`skai/ui-map/ui-map.yaml`) is the frozen architecture authority a change is proposed against, and this guide does not change it. Code should conform to it; any approved gap is tracked by the implementation artifact's unchecked Code Changes items. This guide produces a **change package** at `skai/changes/<change-id>/`: the **proposed map** (`proposed-ui-map.yaml`), its render (`proposed-ui-map.svg`), and the change artifact (decisions + change list).
+The **official map** (`skai/ui-map/ui-map.yaml`) is the frozen architecture authority a change is proposed against, and this guide does not change it. Code should conform to it; any approved gap is tracked by the implementation artifact's unchecked Code Changes items. This guide produces a **change package** at `skai/changes/<change-id>/`: the **proposed map** (`proposed-ui-map.yaml`), its render (`proposed-ui-map.html`), and the change artifact (decisions + change list).
 
 Two things are the source of truth for the change. The **proposed map** is the architecture the change moves toward. The **change list** (`## Map Changes`) describes exactly the differences between the official map and the proposed map — downstream implementation scopes its work and its audit from it, so a missing, stale, or wrong map change item is a failure, not polish.
 
@@ -142,7 +142,7 @@ During Discussion, once there is enough concrete structure to propose a map, mai
 
 ```text
 skai/changes/<change-id>/proposed-ui-map.yaml
-skai/changes/<change-id>/proposed-ui-map.svg
+skai/changes/<change-id>/proposed-ui-map.html
 ```
 
 Seed the proposed map from the current official map (`skai/ui-map/ui-map.yaml`); for a baseline, where no official map exists yet, start from empty. Edit the proposed map here — the official map stays frozen.
@@ -166,7 +166,7 @@ Writing this forces the single-root check into the open — a bucket whose root 
 Before every gate line, include a short map-preview status:
 
 ```text
-🗺️ Updated provisional map render: skai/changes/<change-id>/proposed-ui-map.svg
+🗺️ Updated provisional map render: skai/changes/<change-id>/proposed-ui-map.html
 ```
 
 or, when unavailable:
@@ -260,7 +260,7 @@ Produce these together before completing:
 1. The typed map change items in `skai/changes/<change-id>/ui-map-architecture.md`.
 2. The Deferrals section in `skai/changes/<change-id>/ui-map-architecture.md` — one entry per approved map deferral, with TODO pointer and brief rationale. Omit the section if no deferrals were approved.
 3. The proposed map — `skai/changes/<change-id>/proposed-ui-map.yaml`. The official map stays frozen. Consult [`ui-map-guide.md`](ui-map-guide.md) for the YAML format and its *Authoring a UI Map* conventions.
-4. The render — run the project-specific render override when one exists; otherwise use the default SKAI renderer from [`ui-map-guide.md`](ui-map-guide.md) to produce `skai/changes/<change-id>/proposed-ui-map.svg`. The render also validates schema and semantic checks: dangling refs, duplicate canonical homes, `primary_parent`, required modal styles and their vocabulary, and related map constraints. Fix until valid; never present an invalid map. The SVG is the review surface.
+4. The render — run the project-specific render override when one exists; otherwise use the default SKAI renderer from [`ui-map-guide.md`](ui-map-guide.md) to produce `skai/changes/<change-id>/proposed-ui-map.html`. The render also validates schema and semantic checks: dangling refs, duplicate canonical homes, `primary_parent`, required modal styles and their vocabulary, and related map constraints. Fix until valid; never present an invalid map. The HTML page is the review surface.
 5. The Assumptions and TODOs section — map assumptions, unresolved design gaps that do not block the map, and any map TODOs added or updated.
 
 Before completion, update `## Provisional preview` so it no longer reads as an active Discussion status: the proposed map and render in the package are now the finished change package, pending review.
