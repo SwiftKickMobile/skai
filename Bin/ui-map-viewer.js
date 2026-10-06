@@ -25,6 +25,7 @@
   const domainColor = Object.fromEntries(M.domains.map(d => [d.id, d.color]));
   const domainLabel = Object.fromEntries(M.domains.map(d => [d.id, d.label]));
   const KIND = { nav: "Nav", modal: "Modal", composite: "Composite", tab: "Tab", child: "Child" };
+  const humanize = id => id.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");   // matches the renderer
   // Scene-box icons: existence only; the panel spells the content out.
   const ICONS = {
     note: '<path d="M3 2.5h7l3 3V13.5H3z"/><path d="M10 2.5v3h3M5.5 8h5M5.5 10.5h5"/>',
@@ -263,7 +264,7 @@
     const apps = appearances(s.id);
     panel.append(el("div", { class: "ph" },
       el("div", { class: "row1" }, el("h2", {}, s.label), el("button", { class: "close", onclick: () => select(null), "aria-label": "Close" }, "×")),
-      el("p", { class: "sub" }, el("span", { class: "dom" }, el("i", { class: "dm", style: `--c:${domainColor[s.domain]}` }), `${domainLabel[s.domain]} domain`), "·", el("span", {}, "id ", el("span", { class: "mono" }, s.id)), s.todo ? ["·", "TODO"] : null)));
+      el("p", { class: "sub" }, el("span", { class: "dom" }, el("i", { class: "dm", style: `--c:${domainColor[s.domain]}` }), `${domainLabel[s.domain]} domain`), s.todo ? ["·", "TODO"] : null)));
     const body = el("div", { class: "pbody" });
     const link = (id, kind, where) => el("button", { class: "lk", onclick: () => select(id, true) },
       el("span", { class: "k" }, kind ? KIND[kind] : ""), el("i", { class: "dm", style: `--c:${domainColor[S[id].domain]}` }), el("span", {}, S[id].label), el("span", { class: "where" }, where || ""));
@@ -280,8 +281,8 @@
     if (s.notes.length) body.append(el("div", { class: "pg" }, labIcon("note", s.notes.length === 1 ? "Note" : "Notes"),
       ...s.notes.map(n => el("div", { class: "note" }, n.at ? el("span", { class: "k" }, KIND[n.at]) : null, n.text))));
     if (s.implements.length) body.append(el("div", { class: "pg" }, labIcon("implements", "Implements"),
-      el("div", { class: "chips" }, ...s.implements.map(i => el("span", { class: "chip mono" }, i)))));
-    if (s.modalStyle) body.append(el("div", { class: "pg" }, labIcon("modal", "Modal style"), el("div", { class: "chips" }, el("span", { class: "chip mono" }, s.modalStyle))));
+      el("div", { class: "chips" }, ...s.implements.map(i => el("span", { class: "chip" }, humanize(i))))));
+    if (s.modalStyle) body.append(el("div", { class: "pg" }, labIcon("modal", "Modal style"), el("div", { class: "chips" }, el("span", { class: "chip" }, humanize(s.modalStyle)))));
     body.append(el("div", { class: "pg" }, el("span", { class: "lab" }, "Specs"), el("span", { class: "empty" }, "No sidecar yet.")));
     panel.append(body);
     return panel;
