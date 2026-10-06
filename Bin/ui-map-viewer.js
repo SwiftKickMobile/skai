@@ -106,7 +106,7 @@
 
   // ---- layout ----
   const IW = 156;   // cells never shrink; rows wrap instead
-  const IH = 64, IGAP = 8, BPAD = 8, BGAP = 18, ROWGAP = 29, BH = IH + 2 * BPAD;
+  const IH = 64, IGAP = 8, BPAD = 8, BGAP = 18, ROWGAP = 44, BH = IH + 2 * BPAD;
   const boxW = box => box.items.length * IW + (box.items.length - 1) * IGAP + 2 * BPAD;
   function layout(width) {
     const R = rows();
