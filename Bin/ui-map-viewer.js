@@ -381,7 +381,7 @@
             row(cell("Scene", "ph", [icon("reuse", "")]), "A reused scene: it is reached from here too, but drawn in full elsewhere. Click it to go to the scene."),
             row(cell("Scene", "todo"), "A TODO scene: part of the map, not yet built."),
             row(el("span", { class: "licons" }, icon("note", "")), "The scene has a note. Select it to read the note in the side panel."),
-            row(el("span", { class: "licons" }, icon("implements", "")), "The scene implements several variants (for example one setup scene for every game type); the panel lists them."),
+            row(el("span", { class: "licons" }, icon("implements", "")), "The scene implements several variants, for example a reusable Web scene that displays the Privacy Policy and the Terms of Service; the panel lists them."),
             row(el("span", { class: "licons" }, icon("modal", "")), "The scene opens as a modal and declares its modal style; the panel names it.")),
           el("div", { class: "pg" }, el("span", { class: "lab" }, "Route boxes"),
             row(el("span", { class: "box sample nav" }), "A set of mutually exclusive routes of one kind from one scene: the parent reaches exactly one of the scenes inside at a time."),

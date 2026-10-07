@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+**Design**
+
+- 2026-10-06 **New designer guide.** `Guides/Design/designer-guide.md` sets the conventions for a project's Figma design file: the three main pages (`Production`, `Components`, `Design System`), a `Conventions` frame on `Design System` for per-app values (device frame sizes, dark mode, button label case, UI kit), canvas layout, frame naming, color variables, custom fonts an agent cannot load (a designer sets the font on the style; agents write text under a library-font style, then switch styles), components (component sets use grid auto layout), and copy. It is read from the SKAI checkout; nothing is installed.
+
 **UI Map renderer**
 
 - 2026-10-06 **Interactive HTML render.** `Bin/ui-map-render.py --html <page>` is the primary render: a static page holding the map model that loads the new viewer `Bin/ui-map-viewer.js` / `Bin/ui-map-viewer.css` from the SKAI checkout by a relative path. No server, no Mermaid CLI, no browser automation. The page lays the map out in levels at a fixed width; selecting a scene filters the page to its connections (1 hop, 2 hops, or All) and a side panel shows where the scene is reached from, what it opens, and its notes, implements and modal style; an info button opens a legend. The docstring's "RENDER CONVENTIONS" rule 12 describes it. Mermaid text (`-o`, `--markdown`) and `--svg` are unchanged.
@@ -10,8 +14,16 @@
 **Upgrade instructions**
 
 1. **No adapter re-run is required.** No installed skill, policy or template changed; the edited guides are read from the SKAI checkout.
-2. **Re-render UI Maps to HTML.** For the official map, run the `ui-map-guide.md` command to produce `skai/ui-map/ui-map.html`; for each open change package, produce `proposed-ui-map.html` beside its YAML. Keep each page's path relative to the SKAI checkout stable (the page links the viewer by that path). Existing `.svg` renders are derived output and may be deleted once the page exists; delete them only with supervisor approval.
-3. **Repoint references.** Where the host README or `skai/integration.md` links `ui-map.svg` or `proposed-ui-map.svg`, link the `.html` page instead. An `integration.md` override of the render command should switch `--svg <file>.svg` to `--html <file>.html`.
+2. **Re-render UI Maps to HTML.**
+   - **Discover.** In the map repository (the one project documentation names; it may be a shared root), find the official map `skai/ui-map/ui-map.yaml` and every `skai/changes/*/` package holding a `proposed-ui-map.yaml`. A package whose implementation artifact (`ui-map-implementation.md`) has its terminal promote `T#` checked is historical; every other package is open.
+   - **Render.** Run the `ui-map-guide.md` command for the official map, producing `skai/ui-map/ui-map.html`, and for each open package, producing `proposed-ui-map.html` beside its YAML. Leave historical packages unchanged. Each page links the viewer by its path relative to the SKAI checkout, so re-render if SKAI later moves.
+   - **Preserve.** Map YAML is untouched. Existing `.svg` renders are derived output; delete them only with supervisor approval.
+   - **Verify.** The renderer exits 0 for every map, and each page is nonempty and opens showing the map.
+3. **Repoint references.**
+   - **Discover.** Search the host and map repositories for `ui-map.svg` and `proposed-ui-map.svg`.
+   - **Repoint.** Link the `.html` page wherever current documentation links the SVG render: the README, `skai/integration.md`, and each open package's `ui-map-architecture.md` (its `## Provisional preview`). An `integration.md` override of the render command switches `--svg <file>.svg` to `--html <file>.html`.
+   - **Preserve.** Do not edit historical packages, recorded Evidence, or changelog-style history.
+   - **Verify.** A repeat search finds only historical hits.
 
 ## Release 9 — 2026-10-05
 

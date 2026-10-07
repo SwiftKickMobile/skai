@@ -410,6 +410,12 @@
       "tags": ["core"]
     },
     {
+      "id": "guide.designer-guide",
+      "type": "guide",
+      "sourcePath": "Guides/Design/designer-guide.md",
+      "tags": ["core"]
+    },
+    {
       "id": "skill.skai-ui-map-architecture",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-ui-map-architecture/SKILL.md",

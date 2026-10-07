@@ -192,18 +192,30 @@ the demo doc and the guide describe the same conventions in prose.
       arrow; clicking it selects the canonical scene.
     - Selection: clicking a scene filters the page to its connected
       neighbourhood (1 hop by default; 2 hops or All from the control in the
-      top bar), removes everything else, collapses empty rows, and keeps the
-      clicked cell at the same screen position while the rest reflows.
-      The selected cell, its route boxes, every box holding it, and their
+      top bar), removes everything else and collapses empty rows. The
+      selected cell, its route boxes, every box holding it, and their
       connectors and labels are highlighted; All shows the whole map and dims
       the unconnected parts instead. Clicking the selected cell again, Escape,
       or Clear restores the full map. The domain legend filters the same way
       (multi-select). A search box highlights matches; Enter selects the first.
-    - Side panel for the selected scene: domain, id, Reached from (every
+    - Placement after a selection, in priority order: the selected cell is
+      fully visible and clear of the side panel; as many cells as possible are
+      visible; the selected cell is as close as possible to its home, its
+      place in the full map. A cell already at home does not move. Placement
+      is a graph offset plus a scroll position, kept on the 4px layout grid so
+      1px borders stay crisp at fractional device pixel ratios.
+    - Animation: on every state change, cells, route boxes and labels present
+      before and after slide (and boxes resize) to their new place, departing
+      elements fade out, arriving ones fade in. The side panel slides in when
+      it opens and changes content in place while open. A window resize
+      reflows without animating. Off under prefers-reduced-motion.
+    - Side panel for the selected scene: its domain, Reached from (every
       inbound route with its kind, tagged home/reused when the scene appears
       more than once), Opens (per route kind, with route notes inline),
-      Notes, Implements, Modal style (each headed by the cell's icon), and a
-      Specs section reserved for a future sidecar.
+      Notes, Implements, Modal style (each headed by the cell's icon; ids
+      shown humanized), and a Specs section reserved for a future sidecar.
+      The panel's footprint is a safe area: the layout width does not change
+      when it opens, and the canvas scrolls under it.
     - Theme: follows the system, with a Theme toggle. The "?" button opens a
       legend: the cell and box vocabulary, the route kinds, and the controls.
 

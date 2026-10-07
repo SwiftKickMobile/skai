@@ -35,6 +35,7 @@ Recommended host locations for agent-facing docs:
   - [Suggestion](#suggestion-skill-skai-suggestion)
   - [Update installation](#update-installation-skill-skai-update-installation)
   - [Working documents](#working-documents)
+  - [Figma designs](#figma-designs)
 - [Development guide](#development-guide-for-contributors)
 
 ## Quick start (recommended)
@@ -347,6 +348,11 @@ Update `skai` to the latest release (or a target you name), review what changed,
 - `<branch-path>` is the current branch name, with `/` decomposed into nested folders (so `feature/foo` becomes `feature/foo/`).
 - Working docs are ephemeral and typically git-ignored.
 - One exception: the refinement **findings log** at [`skai/refinement-reviews/`](skai/refinement-reviews/) is committed, one file per refined target. It carries what earlier refinement passes decided, so a later pass does not re-argue settled ground.
+
+### Figma designs
+
+- A project's Figma design file follows [`Guides/Design/designer-guide.md`](Guides/Design/designer-guide.md): page roles, canvas layout, frames, color variables, components, and copy.
+- The project README links each main page of the file (`Production`, `Components`, `Design System`).
 
 ## Development guide (for contributors)
 

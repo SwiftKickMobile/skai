@@ -2,11 +2,13 @@ Managed-By: skai
 Managed-Id: guide.ui-map-demo
 Managed-Source: Guides/UIMap/ui-map-demo.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-05
+Managed-Updated-At: 2026-10-07
 
 # UI Map Demo
 
 A complete UI Map shown in both representations: YAML source (the source of truth) and the Mermaid render derived from it. For feedback on the format and the render.
+
+The standard render is the interactive HTML page (`--html`, see [`ui-map-guide.md`](ui-map-guide.md)), which a Markdown document cannot embed; this demo shows the Mermaid render instead. To view the demo as the HTML page, save the YAML below to a file and render it with `--html`.
 
 Examples use **LumenNotes**, skai's shared fictional theme. The schema and conventions are project-agnostic.
 
