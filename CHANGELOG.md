@@ -6,7 +6,7 @@
 
 - 2026-10-07 **Screen states and reference frames.** The designer guide's screen pages choose states for the screen, not screens for states (control states stay in component sets), and the Components page adds `<Component> Reference` frames for components whose behavior the variants alone don't show.
 - 2026-10-07 **Custom fonts: upload first.** Fonts uploaded to the designer's own Figma account are available to the agent; the guide now leads with uploading (license permitting), then a Figma-hosted equivalent, with the style-switching procedure as the fallback (a designer re-applies the style afterwards so the desktop app redraws the text).
-- 2026-10-07 **Agent tooling for Figma work.** The designer guide gains an Agent tooling section listing SKAI's Figma tools and the working practices for agents using the Figma MCP. New `Bin/pdf-render.swift` renders PDF pages with Apple's renderer, the reference for checking converted PDF artwork.
+- 2026-10-07 **Agent tooling for Figma work.** The designer guide gains an Agent tooling section listing SKAI's Figma tools and the working practices for agents using the Figma MCP.
 
 ## Release 10 — 2026-10-07
 

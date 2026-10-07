@@ -268,15 +268,8 @@ styles that use the font are handled this way.
 
 ## Agent tooling
 
-Tools and practices for an agent working on the file through the Figma MCP. Every plugin or script
-an agent relies on lives in SKAI's `Bin/` and is listed here; project-specific scratch scripts do
-not count as tooling.
-
-### SKAI tools
-
-| Tool | What it does | How to run |
-| --- | --- | --- |
-| `Bin/pdf-render.swift` | Renders PDF pages to PNG with Apple's renderer, the one iOS uses for PDF assets. The reference for checking converted artwork. | `swift Submodules/skai/Bin/pdf-render.swift <file.pdf> <out-dir> [pages] [scale] [white]` |
+Practices for an agent working on the file through the Figma MCP. Reusable tooling the workflow
+depends on lives in SKAI's `Bin/` and is listed here; project-specific tools stay in the project.
 
 ### Practices
 
@@ -289,8 +282,9 @@ not count as tooling.
 
 3. **Convert app PDFs, then check them against Apple's render.** Convert with Inkscape
    (`inkscape --pages=<n> <file.pdf> --export-plain-svg -o <out>.svg`), then compare with
-   `pdf-render.swift`. Inkscape misreads soft masks: fix the mask in the SVG, or rebuild the part
-   from shapes and colors sampled from Apple's render. Raster parts inside a PDF are rebuilt as
+   Apple's rendering of the same pages (a short PDFKit script renders them to PNG). Inkscape
+   misreads soft masks: fix the mask in the SVG, or rebuild the part from shapes and colors
+   sampled from Apple's render. Raster parts inside a PDF are rebuilt as
    Figma effects, not imported.
 
 4. **Upload files with `upload_assets`.** SVGs become editable vectors and PNGs become image
