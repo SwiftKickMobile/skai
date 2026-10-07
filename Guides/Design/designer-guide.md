@@ -223,9 +223,8 @@ styles that use the font are handled this way.
 3. **A designer refreshes the text afterwards.** Text an agent creates or edits is laid out on
    Figma's servers without the custom font, and the file keeps showing a fallback until the
    designer's Figma lays it out again. After an agent session that touched custom-font text, the
-   designer runs SKAI's Refresh Fonts plugin in the desktop app (see [Agent tooling](#agent-tooling)).
-   It re-applies the style on every text layer it can edit, so the whole file redraws with the
-   real fonts. For a single layer, switching its text style away and back does the same.
+   designer switches each affected text layer's style away and back in the desktop app, which
+   redraws it with the real font.
 
 ## Spacing
 
@@ -277,7 +276,6 @@ not count as tooling.
 
 | Tool | What it does | How to run |
 | --- | --- | --- |
-| `Bin/figma-refresh-fonts/` | Local Figma plugin. Re-applies text styles across the file so text an agent laid out without a custom font redraws with it (see [Custom fonts](#custom-fonts)). | Desktop app: Plugins → Development → Import plugin from manifest (once), then run it. |
 | `Bin/pdf-render.swift` | Renders PDF pages to PNG with Apple's renderer, the one iOS uses for PDF assets. The reference for checking converted artwork. | `swift Submodules/skai/Bin/pdf-render.swift <file.pdf> <out-dir> [pages] [scale] [white]` |
 
 ### Practices

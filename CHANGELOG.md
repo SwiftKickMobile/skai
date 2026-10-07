@@ -4,9 +4,8 @@
 
 **Design**
 
-- 2026-10-07 **Refresh Fonts Figma plugin.** `Bin/figma-refresh-fonts/` is a local Figma plugin (run from the desktop app) that re-applies text styles across a file so text an agent laid out without a custom font redraws with it. The designer guide's Custom fonts section adds this as step 3. Nothing is installed; import it from the SKAI checkout.
 - 2026-10-07 **Screen states and reference frames.** The designer guide's screen pages choose states for the screen, not screens for states (control states stay in component sets), and the Components page adds `<Component> Reference` frames for components whose behavior the variants alone don't show.
-- 2026-10-07 **Custom fonts: upload first.** Fonts uploaded to the designer's own Figma account are available to the agent; the guide now leads with uploading (license permitting), then a Figma-hosted equivalent, with the style-switching procedure and Refresh Fonts as the fallback.
+- 2026-10-07 **Custom fonts: upload first.** Fonts uploaded to the designer's own Figma account are available to the agent; the guide now leads with uploading (license permitting), then a Figma-hosted equivalent, with the style-switching procedure as the fallback (a designer re-applies the style afterwards so the desktop app redraws the text).
 - 2026-10-07 **Agent tooling for Figma work.** The designer guide gains an Agent tooling section listing SKAI's Figma tools and the working practices for agents using the Figma MCP. New `Bin/pdf-render.swift` renders PDF pages with Apple's renderer, the reference for checking converted PDF artwork.
 
 ## Release 10 — 2026-10-07

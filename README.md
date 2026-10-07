@@ -353,7 +353,7 @@ Update `skai` to the latest release (or a target you name), review what changed,
 
 - A project's Figma design file follows [`Guides/Design/designer-guide.md`](Guides/Design/designer-guide.md): page roles, canvas layout, frames, color variables, components, and copy.
 - The project README links each main page of the file (`Production`, `Components`, `Design System`).
-- Agent tools for Figma work live in `Bin/`: [`Bin/figma-refresh-fonts/`](Bin/figma-refresh-fonts/) (local plugin that redraws custom-font text) and [`Bin/pdf-render.swift`](Bin/pdf-render.swift) (Apple-renderer PDF check). The guide's Agent tooling section documents them.
+- Agent tools for Figma work live in `Bin/`: [`Bin/pdf-render.swift`](Bin/pdf-render.swift) (Apple-renderer PDF check). The guide's Agent tooling section documents them.
 
 ## Development guide (for contributors)
 
