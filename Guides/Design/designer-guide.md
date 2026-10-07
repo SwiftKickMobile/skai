@@ -60,14 +60,39 @@ page, gets a row too.
 
 ## Canvas layout
 
-1. **Groups of screens are Sections.** Each group is a Figma Section named for the group; the
-   designer chooses the groups. Sections are filled #FAFAFA, lighter than the canvas, so white
-   screens stand out. A Section fits its content with 50pt padding; Sections sit 100pt apart with
+### All pages
+
+1. **Every top-level node is a Section.** Nothing sits loose on the canvas: no stray frames, slices,
+   or elements. Each Section is named for what it holds; the designer chooses the groups.
+
+2. **Sections share one look.** Sections are filled #FAFAFA, lighter than the canvas, so white
+   content stands out. A Section fits its content with 50pt padding; Sections sit 100pt apart with
    their tops aligned.
 
-2. **Screens go right, states go down.** Within a Section each distinct screen is its own column, in
+3. **Each page type fills its Sections differently**, as below.
+
+| Page | Sections are | Inside a Section |
+| --- | --- | --- |
+| `Production`, `<Feature> Concepts`, `Archive` | Groups of screens | Screen frames |
+| `Components` | Component families (`Controls`, `Icons`, `Images`) | Component sets, components, and reference frames |
+| `Design System` | Foundation topics (`Conventions`, `Colors`, `Text Styles`) | Documentation frames |
+| Asset pages (an app icon page) | Asset groups | Frames set up for export |
+
+### Screen pages
+
+`Production`, `<Feature> Concepts`, and `Archive`.
+
+1. **Screens go right, states go down.** Within a Section each distinct screen is its own column, in
    the order a user meets them (notebooks → notes → note editor). A screen's states, and crops of
    its components, stack below it. Columns are 50pt apart; states are 100pt apart.
+
+2. **Choose states for the screen, not screens for states.** A state is drawn when the screen is
+   naturally in that situation: its main use, a mode, a lifecycle point, empty, error, loading. A
+   control's own states (pressed, selected, disabled) live in its component set, and interactions
+   that reveal more UI live in the component's reference frame (see
+   [Components page](#components-page)); neither gets a screen of its own. Pick sample data that
+   shows several things at once (an X01 checkout at 40 shows the out, the busts, and the bull
+   bust in one state).
 
 3. **States are in rough order of importance.** The main case comes first; edge cases and empty
    states come last. There is no stricter rule.
@@ -88,8 +113,36 @@ page, gets a row too.
    (`note editor — legacy attachments section, expanded`). Designs that will not return move to
    `Archive`. Everything else on `Production` is what the app does today.
 
-8. **Nothing else on the canvas.** Every top-level node is a Section, and everything in a Section is
-   a screen frame. No stray frames, slices, or loose elements.
+8. **Only screen frames inside a Section.** Every node in a Section is a screen frame or a crop of
+   one.
+
+### Components page
+
+1. **One Section per component family.** Related components share a Section (`Controls` for buttons,
+   fields, and rows; `Icons`; `Images`).
+
+2. **Complex components get a reference frame.** When a component's behavior cannot be read from
+   its variants alone, a documentation frame named `<Component> Reference` sits in its Section,
+   built from instances: the interactions, the visual rules, and a legend, each with a short
+   caption (`Dart Keyboard Reference`). Behavioral rules stay in the requirements; the frame shows
+   what each looks like.
+
+3. **Component sets stack down.** Within a Section, component sets and standalone components stack
+   vertically, 100pt apart, in rough order of how basic they are (buttons before the rows that use
+   them). Each set lays out its own variants (see [Components](#components)).
+
+### Design System page
+
+1. **One Section per foundation topic.** `Conventions`, `Colors`, and `Text Styles` at least.
+
+2. **Documentation is built from the foundations it documents.** Swatches bind the color variables
+   they show and type specimens use the text styles they name, so the page updates when a
+   foundation changes.
+
+### Asset pages
+
+1. **Frames are set up for export.** Each exported asset is a frame at its export size, with its
+   export settings, named for the file it produces.
 
 ## Frames
 
@@ -142,12 +195,17 @@ page, gets a row too.
 ## Custom fonts
 
 An agent that edits the file through Figma's servers (the Figma MCP) can load only fonts Figma
-holds: its own library, plus any fonts the account has uploaded. Fonts installed on someone's
-machine are not available to it.
+holds: its own library, plus fonts uploaded to Figma. Fonts installed on someone's machine are not
+available to it.
 
-If the Figma plan allows uploading fonts and the font's license permits it, upload the font and
-confirm the agent can load it (`figma.listAvailableFontsAsync()`). Otherwise, text styles that use
-the font are handled this way.
+**Upload the font first.** A font uploaded to the designer's own Figma account (Settings → Account
+→ Your uploaded fonts; .ttf or .otf) is available to the agent, provided the font's license permits
+storing it on Figma. Confirm the agent can load it (`figma.listAvailableFontsAsync()`); after that
+it is an ordinary font and nothing below applies.
+
+When a font cannot be uploaded (the license doesn't allow it, or only a system copy exists), prefer
+a Figma-hosted equivalent the app can also adopt, and log the change for the app. Otherwise, text
+styles that use the font are handled this way.
 
 1. **A designer sets the custom font on the style.** The agent creates the style with the closest
    library font as a stand-in and names the real font in the style's description
@@ -161,6 +219,13 @@ the font are handled this way.
    - To change existing text, switch it to a library-font style, edit the characters, then switch
      it back.
    - Moving, placing, and instancing the text need no font.
+
+3. **A designer refreshes the text afterwards.** Text an agent creates or edits is laid out on
+   Figma's servers without the custom font, and the file keeps showing a fallback until the
+   designer's Figma lays it out again. After an agent session that touched custom-font text, the
+   designer runs SKAI's Refresh Fonts plugin in the desktop app (see [Agent tooling](#agent-tooling)).
+   It re-applies the style on every text layer it can edit, so the whole file redraws with the
+   real fonts. For a single layer, switching its text style away and back does the same.
 
 ## Spacing
 
@@ -201,3 +266,49 @@ the font are handled this way.
 
 3. **Text grows, screens scroll.** Text containers expand to fit their content and the whole screen
    scrolls. Never depict text clipped inside a fixed-height box.
+
+## Agent tooling
+
+Tools and practices for an agent working on the file through the Figma MCP. Every plugin or script
+an agent relies on lives in SKAI's `Bin/` and is listed here; project-specific scratch scripts do
+not count as tooling.
+
+### SKAI tools
+
+| Tool | What it does | How to run |
+| --- | --- | --- |
+| `Bin/figma-refresh-fonts/` | Local Figma plugin. Re-applies text styles across the file so text an agent laid out without a custom font redraws with it (see [Custom fonts](#custom-fonts)). | Desktop app: Plugins → Development → Import plugin from manifest (once), then run it. |
+| `Bin/pdf-render.swift` | Renders PDF pages to PNG with Apple's renderer, the one iOS uses for PDF assets. The reference for checking converted artwork. | `swift Submodules/skai/Bin/pdf-render.swift <file.pdf> <out-dir> [pages] [scale] [white]` |
+
+### Practices
+
+1. **Keep a state file.** Record page, Section, component, variable, and image IDs in a JSON file in
+   the working-doc folder, and update it after every write. Scripts share nothing between calls.
+
+2. **Import library components by key in every call.** Components from a subscribed library (the
+   platform UI kit) are imported with `importComponentByKeyAsync` / `importComponentSetByKeyAsync`
+   each time; their node IDs do not persist between calls.
+
+3. **Convert app PDFs, then check them against Apple's render.** Convert with Inkscape
+   (`inkscape --pages=<n> <file.pdf> --export-plain-svg -o <out>.svg`), then compare with
+   `pdf-render.swift`. Inkscape misreads soft masks: fix the mask in the SVG, or rebuild the part
+   from shapes and colors sampled from Apple's render. Raster parts inside a PDF are rebuilt as
+   Figma effects, not imported.
+
+4. **Upload files with `upload_assets`.** SVGs become editable vectors and PNGs become image
+   frames on the target page. Clip paths in an SVG import as masks: for a single-color glyph,
+   intersect each mask with what it clips and flatten, keeping the original fill rule.
+
+5. **Lay out component sets as grids explicitly.** Set the grid's column and row counts, place each
+   variant with `setGridChildPosition(row, column)` from its variant properties, and size tracks to
+   hug. Appending variants does not place them.
+
+6. **Masks drawn by Figma's servers do not clip frames or instances.** A shape can mask plain shapes
+   but not a component instance; fill irregular textured shapes with the texture's image instead.
+
+7. **Scaling unlinks text styles.** `rescale()` (the Scale tool) scales text with everything else
+   but detaches it from its style; the component keeps the linked style at its base size.
+
+8. **Set text layout before applying a custom-font style.** Alignment, auto-resize, and box size
+   need the font loaded; set them while the text uses a library-font style, then apply the
+   custom-font style (see [Custom fonts](#custom-fonts)).

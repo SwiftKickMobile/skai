@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+**Design**
+
+- 2026-10-07 **Refresh Fonts Figma plugin.** `Bin/figma-refresh-fonts/` is a local Figma plugin (run from the desktop app) that re-applies text styles across a file so text an agent laid out without a custom font redraws with it. The designer guide's Custom fonts section adds this as step 3. Nothing is installed; import it from the SKAI checkout.
+- 2026-10-07 **Screen states and reference frames.** The designer guide's screen pages choose states for the screen, not screens for states (control states stay in component sets), and the Components page adds `<Component> Reference` frames for components whose behavior the variants alone don't show.
+- 2026-10-07 **Custom fonts: upload first.** Fonts uploaded to the designer's own Figma account are available to the agent; the guide now leads with uploading (license permitting), then a Figma-hosted equivalent, with the style-switching procedure and Refresh Fonts as the fallback.
+- 2026-10-07 **Agent tooling for Figma work.** The designer guide gains an Agent tooling section listing SKAI's Figma tools and the working practices for agents using the Figma MCP. New `Bin/pdf-render.swift` renders PDF pages with Apple's renderer, the reference for checking converted PDF artwork.
+
 ## Release 10 — 2026-10-07
 
 **UI Map renderer**
@@ -11,7 +18,7 @@
 
 **Design**
 
-- **New designer guide.** `Guides/Design/designer-guide.md` sets the conventions for a project's Figma design file: the three main pages (`Production`, `Components`, `Design System`), a `Conventions` frame on `Design System` for per-app values (device frame sizes, dark mode, button label case, UI kit), canvas layout, frame naming, color variables, custom fonts an agent cannot load (a designer sets the font on the style; agents write text under a library-font style, then switch styles), components (component sets use grid auto layout), and copy. It is read from the SKAI checkout; nothing is installed and no existing artifact changes.
+- **New designer guide.** `Guides/Design/designer-guide.md` sets the conventions for a project's Figma design file: the three main pages (`Production`, `Components`, `Design System`), a `Conventions` frame on `Design System` for per-app values (device frame sizes, dark mode, button label case, UI kit), canvas layout (Sections on every page, with per-page-type rules for screen, component, design-system, and asset pages), frame naming, color variables, custom fonts an agent cannot load (a designer sets the font on the style; agents write text under a library-font style, then switch styles), components (component sets use grid auto layout), and copy. It is read from the SKAI checkout; nothing is installed and no existing artifact changes.
 
 **Upgrade instructions**
 
