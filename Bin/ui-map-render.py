@@ -101,6 +101,10 @@ the demo doc and the guide describe the same conventions in prose.
      c. Zero inbound references → root scene: declared at top level, no
         enclosing wrapper.
      d. Multiple inbound references with no `primary_parent` → semantic error.
+     e. Visual homes must form a tree. If following visual parents from a scene
+        leads back to it (e.g. `primary_parent` names a scene that this scene
+        itself routes to), no scene in that cycle is reachable from a root →
+        semantic error naming the cycle.
 
 5. WRAPPERS (one per route container)
    - Each route kind on a scene becomes a `subgraph <sid>_<kind>[" "]` (empty
@@ -225,6 +229,7 @@ the demo doc and the guide describe the same conventions in prose.
       Categories: duplicate canonical home, undefined scene reference,
       ambiguous visual home (multiple inbound, no primary_parent),
       `primary_parent` that doesn't actually route to the scene,
+      visual homes that form a cycle,
       too many domains for the palette, missing modal_style or vocabulary,
       modal_style outside the vocabulary.
 """
@@ -439,6 +444,27 @@ def build_model(data: dict[str, Any]) -> Model:
                 f"Scene '{sid}' has {len(inbound[sid])} inbound refs ({listing}) "
                 f"but no primary_parent"
             )
+
+    # Visual homes must form a tree: each scene renders inside its visual
+    # parent's container, so a cycle would nest scenes inside each other and
+    # leave every scene in it unreachable from a root (rule 4e).
+    placed: set[str] = set()
+    for sid in scenes:
+        chain: list[str] = []
+        cur: str | None = sid
+        while cur is not None and cur not in placed:
+            if cur in chain:
+                cycle = chain[chain.index(cur):] + [cur]
+                raise SemanticError(
+                    "Visual homes form a cycle: "
+                    + " -> ".join(cycle)
+                    + " (each scene renders inside the next one's route container). "
+                    "Give one of these scenes a primary_parent outside the cycle, "
+                    "or remove the route that closes it"
+                )
+            chain.append(cur)
+            cur = visual_parent[cur][0]
+        placed.update(chain)
 
     if len(domain_order) > len(DOMAIN_PALETTE):
         raise SemanticError(
