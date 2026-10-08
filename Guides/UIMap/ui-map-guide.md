@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-guide
 Managed-Source: Guides/UIMap/ui-map-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-06
+Managed-Updated-At: 2026-10-08
 
 # UI Map Guide
 
@@ -195,6 +195,8 @@ thumbnail_slider:
 ```
 
 With a single inbound reference, `primary_parent` is unnecessary — the only parent is implicitly primary.
+
+Visual homes must form a tree. A `primary_parent` that names a scene this scene itself leads to (directly or through its descendants), or a lone inbound route that closes such a loop, would draw each scene inside another and leave the whole cycle unreachable from a root; the renderer rejects it and names the cycle. Choose a parent outside the cycle.
 
 When the primary parent reaches the scene by more than one route kind and defines it in one of those containers, the canonical instance renders in that container; the other kinds get pointers. If the scene is defined elsewhere, the renderer falls back to the first matching kind in its fixed order (`nav`, `modal`, `composite`, `tab`, `child`). Define the scene under the route you want it drawn in:
 

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+**UI Map renderer**
+
+- 2026-10-08 **Reject visual-home cycles.** `Bin/ui-map-render.py` now aborts with a `UI Map error` naming the cycle when scenes' visual homes loop back on themselves (for example a `primary_parent` that the scene itself routes to). Such maps used to render without error, but the HTML page dropped every scene in the cycle and the Mermaid output nested the subgraphs inside each other. No YAML or schema change; a map that rendered correctly before renders identically. Docstring rule 4e and `ui-map-guide.md` describe the rule.
+
 ## Release 10 — 2026-10-07
 
 **UI Map renderer**
