@@ -2,13 +2,16 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture-artifacts
 Managed-Source: Guides/UIMap/ui-map-architecture-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-06
+Managed-Updated-At: 2026-10-09
 
 # UI Map Architecture Artifact Formats
 
 The typed formats the architecture skill produces and consumes. This is the consumer-facing layer: a downstream reader resolves any field or value here without reading the authoring method ([`ui-map-architecture.md`](ui-map-architecture.md)). For the YAML map format itself, see [`ui-map-guide.md`](ui-map-guide.md).
 
-A change package lives at `skai/changes/<change-id>/` in the repo that holds the official map. It holds the proposed map (`proposed-ui-map.yaml`), its render (`proposed-ui-map.html`), and the architecture artifact (`ui-map-architecture.md`) — whose `## Map Changes` section lists **map change items**. The architecture skill also consumes **change requests** raised by downstream implementation. Both formats are defined below.
+A change package lives at `skai/changes/<change-id>/ui-map/` in the repo that holds the official map. It holds the proposed map (`proposed-ui-map.yaml`), its render (`proposed-ui-map.html`), and the architecture artifact (`ui-map-architecture.md`) — whose `## Map Changes` section lists **map change items**. The architecture skill also consumes **change requests** raised by downstream implementation. Both formats are defined below. The type folder owns all map artifacts, requests and evidence;
+related requirements work stays in its independent sibling folder. After successful map promotion,
+this complete package lives at `skai/promoted/<change-id>/ui-map/`, including any unchecked Plan
+implementation work. Historical citations and downstream plan execution use that promoted path.
 
 Implementation-side artifact formats (code change items, build evidence) live in `ui-map-implementation-artifacts.md`; the architecture skill does not need them. Implementation reads both references — it consumes map change items and raises change requests defined here, and authors its own formats defined there.
 
@@ -37,7 +40,7 @@ Entries are written top-down in structural order — domain-level changes first,
 
 A change request is the artifact downstream implementation raises when code reality shows the approved map is wrong, incomplete, infeasible, or underspecified at the map-architecture level; architecture consumes it on reopen. Missing implementation guidance or an undefined map-to-code convention is not map underspecification and blocks in implementation Discussion instead. One markdown file per request:
 
-`skai/changes/<change-id>/change-requests/ui-map-<nnn>.md`
+`skai/changes/<change-id>/ui-map/change-requests/ui-map-<nnn>.md`
 
 It carries two fields as inline `Label: value` lines — a `Change Request Status` (exactly one of `Proposed | Incorporated | Rejected | Superseded`) and a `Reviewer Response` — above the free-form body that states the concern and the requested change:
 

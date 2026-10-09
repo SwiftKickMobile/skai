@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-implementation
 Managed-Source: Guides/Spec/work-spec-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-05
+Managed-Updated-At: 2026-10-09
 
 # Work Spec Implementation
 
@@ -182,7 +182,11 @@ design into the work spec; reference it.
 When the design links a UI Map change package, invoke
 [`../UIMap/ui-map-implementation.md`](../UIMap/ui-map-implementation.md) during the audit in the
 larger-feature context so it owns map conformance planning and its gates. After it completes, carry
-each of its `planned` and `handoff` items as an outer task; Realizes names
+each of its `planned` and `handoff` items as an outer task, using the sibling's returned artifact
+path under `skai/promoted/<change-id>/ui-map/` after promotion. If the design already links a promoted
+Plan, consume its pending items at that path instead of promoting it again; check the current
+official map for any later changes before relying on the plan. For a no-proposal conformance run,
+use its working-doc session path. In both cases, Realizes names
 the sibling artifact path and item ID. Give the outer task `Disposition handoff` only when this
 workflow does not own the work either. The sibling owns map promotion. When an outer task realizes a
 sibling item, update its checkbox and clear its in-code scaffold markers as its guide requires without

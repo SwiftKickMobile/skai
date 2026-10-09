@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.requirements-artifacts
 Managed-Source: Guides/Requirements/requirements-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-05
+Managed-Updated-At: 2026-10-09
 
 # Requirements Artifact Formats
 
@@ -12,10 +12,20 @@ a downstream reader resolves any field or value here without reading the authori
 scopes, layout, requirement format, IDs, writing style — see
 [`requirements-catalog.md`](requirements-catalog.md).
 
-A change package lives at `skai/changes/<change-id>/` in the repo that holds the catalog. It holds the draft catalog files
+A change package lives at `skai/changes/<change-id>/requirements/` in the repo that holds the catalog. It holds the draft catalog files
 (`proposed-requirements/**`) and the authoring artifact (`requirements-authoring.md`), whose
 `## Requirement Changes` section lists **requirement change items**. The package may also hold
-**change requests** raised by promotion. Both formats are defined below.
+**change requests** raised by promotion. Both formats are defined below. All requirements-owned
+artifacts and evidence stay inside this type folder; a related `ui-map/` package is independent.
+After promotion, the complete folder lives at `skai/promoted/<change-id>/requirements/`. Resolve
+historical citations there; new proposals use a new ID/type pair.
+
+In `requirements-promotion.md`, checked `C7` means the catalog write is verified; checked `C8` means
+the package move and reference repair are complete. C7 Evidence may record a write before output
+confirmation succeeds; that mechanical repair resumes promotion without resetting earlier checks.
+C7 alone closes the proposal to authoring but
+may leave archival recovery pending at the active or promoted path. Older promoted artifacts may
+have only C7; upgrade records their relocation separately rather than inventing C8 execution.
 
 ## Requirement change items
 
@@ -167,7 +177,7 @@ not file a request against a package it has nothing to do with.
 
 One markdown file per request:
 
-`skai/changes/<change-id>/change-requests/requirements-<nnn>.md`
+`skai/changes/<change-id>/requirements/change-requests/requirements-<nnn>.md`
 
 It carries two fields as inline `Label: value` lines — a `Change Request Status` (exactly one of
 `Proposed | Incorporated | Rejected | Superseded`) and a `Reviewer Response` — above a free-form body

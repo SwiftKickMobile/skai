@@ -2,11 +2,19 @@ Managed-By: skai
 Managed-Id: guide.process-flow
 Managed-Source: Guides/Core/process-flow.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-09
 
 # Process flow (house style reference)
 
-Purpose: canonical definitions for process-flow mechanics (gates, advance intent, `auto`, and progress markers). This file is a **maintainer reference** used to ensure consistency across workflow guides. It is NOT a runtime dependency -- agents should not need to read this file during workflow execution. The operational core is inlined in each guide using the standard template defined in `internal/maintain-skai.md`.
+Purpose: canonical definitions for process-flow mechanics (gates, advance intent, `auto`, and progress markers). This file is a **maintainer reference** used to ensure consistency across workflow guides. It is NOT a runtime dependency -- agents should not need to read this file during workflow execution. The operational core is inlined in each guide using the standard template defined in `internal/maintenance/gated-workflows.md`.
+
+## Declared workflow variants
+
+These are the shared operational invariants. A workflow may explicitly declare a different control
+model, such as no auto mode or Discussion-only markers resolved before its planned gate. Maintain
+that declared model rather than adding default auto instructions or duplicate pending markers.
+Variants still require supervisor approval boundaries, persistent gate lines, blocked stops and an
+explicit marker lifecycle; an unexplained omission is not a variant.
 
 ## Supervisors
 
@@ -107,7 +115,7 @@ Blocked gates always require explicit supervisor resolution. `auto` does not byp
 
 ### `auto to <target>`
 
-Bounded auto is a universal capability: the supervisor may specify an upper bound, e.g. `auto to <target>`.
+For workflows supporting auto, bounded auto is available: the supervisor may specify an upper bound, e.g. `auto to <target>`.
 
 Meaning:
 - Auto-advance as in `auto`, but STOP before the named workflow target.

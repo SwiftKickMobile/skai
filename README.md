@@ -96,6 +96,7 @@ Add a GitHub MCP server to your IDE's MCP configuration with a personal access t
 - **Managed blocks**: project-owned files (ignore files, agent instruction files) are updated only inside a delimited block, so a project's own content around it survives updates.
 - **Instruction files**: Claude Code uses [`CLAUDE.md`](CLAUDE.md); Codex uses root [`AGENTS.md`](AGENTS.md). Their dated managed blocks share [composition guidance](Install/agent-instructions-install-update.md) and inline applicable policies; your own instructions stay outside the block.
 - **Shared artifacts**: requirements and UI Map change packages live in the repo holding their canonical catalog or map, including a shared submodule. Point the project README at those artifacts so their repo can be resolved.
+- **Change packages**: related work shares a change ID, with independent active folders `skai/changes/<change-id>/requirements/` and `skai/changes/<change-id>/ui-map/`. Promotion moves only the selected type to `skai/promoted/<change-id>/<type>/` and repairs affected links; sibling types can promote in either order. The promoted UI Map artifact may retain unchecked Plan work for downstream implementation.
 - **Legacy installs**: lookalike files without the header are treated as **legacy candidates** and are not overwritten by default (see [`Install/conflict-precedence-policy.md`](Install/conflict-precedence-policy.md)).
 
 ## Integration document (how to use it)
@@ -195,12 +196,12 @@ Audit an approved work-spec design against the codebase, create its concrete tas
 
 ### UI Map architecture (skill `skai-ui-map-architecture`)
 
-Create or change the app's UI Map as an architecture artifact. Produces a change package under `skai/changes/<change-id>/` containing the architecture artifact, `proposed-ui-map.yaml`, and `proposed-ui-map.html`; the official map stays frozen during architecture.
+Create or change the app's UI Map as an architecture artifact. Produces a change package under `skai/changes/<change-id>/ui-map/` containing the architecture artifact, `proposed-ui-map.yaml`, and `proposed-ui-map.html`; the official map stays frozen during architecture.
 
 - Guide [`Guides/UIMap/ui-map-architecture.md`](Guides/UIMap/ui-map-architecture.md)
 - Example [`Guides/UIMap/ui-map-demo.md`](Guides/UIMap/ui-map-demo.md) -- a complete UI Map in YAML with its rendered diagram
 
-**Prerequisites:** Product/design/story inputs for a baseline map or scoped map change. Existing maps live at `skai/ui-map/ui-map.yaml`; architecture change artifacts live under `skai/changes/<change-id>/`.
+**Prerequisites:** Product/design/story inputs for a baseline map or scoped map change. Existing maps live at `skai/ui-map/ui-map.yaml`; architecture change artifacts live under `skai/changes/<change-id>/ui-map/`.
 
 **Phases:**
 
@@ -213,18 +214,18 @@ Execute or specify the structural code work needed to conform to the target UI M
 
 - Guide [`Guides/UIMap/ui-map-implementation.md`](Guides/UIMap/ui-map-implementation.md)
 
-**Prerequisites:** The app codebase and an identifiable target map: either a ready change package at `skai/changes/<change-id>/` (proposed map + render + architecture artifact) or the official `skai/ui-map/ui-map.yaml` for conformance work. Run mode (Plan vs Build) is inferred from context.
+**Prerequisites:** The app codebase and an identifiable target map: either a ready change package at `skai/changes/<change-id>/ui-map/` (proposed map + render + architecture artifact) or the official `skai/ui-map/ui-map.yaml` for conformance work. Run mode (Plan vs Build) is inferred from context.
 
 **Stages:**
 
 1. **Audit.** Agent compares the codebase to the target map within the change's scope and separates UI-map-owned work, concrete handoffs, and map-level change requests.
 2. **Discussion.** Agent resolves the non-mechanical decisions the audit raises. Gate: discussion complete.
 3. **Code Changes.** Agent writes typed, unchecked items with stable IDs and a Disposition (`implement` / `placeholder` / `planned` / `handoff`), ending with a terminal promote item when a proposed map exists. The checkbox records completion; Disposition records ownership. Gate: Code Changes ready.
-4. **Implement.** In Build, the agent executes owned items, verifies a fresh green build, and blocks before completion or promotion while any handoff remains unchecked. In Plan, owned code work remains unchecked as `planned`; the reviewed specification is the deliverable. When a proposed map exists, Plan promotes it after specification approval, while Build promotes it only after code conformance is green. Click-through QA is downstream, not a gate.
+4. **Implement.** In Build, the agent executes owned items, verifies a fresh green build, and blocks before completion or promotion while any handoff remains unchecked. In Plan, owned code work remains unchecked as `planned`; the reviewed specification is the deliverable. When a proposed map exists, Plan promotes it after specification approval, while Build promotes it only after code conformance is green. After successful map promotion, the agent archives the UI Map type folder and repairs links and its preview. Pending Plan work continues at the promoted path. A conformance run without a proposed map uses a working-doc session. Click-through QA is downstream, not a gate.
 
 ### Requirements authoring (skill `skai-requirements-authoring`)
 
-Draft behavioral requirements into a change package under `skai/changes/<change-id>/`, resolve the questions they raise, and leave the package ready to promote. The canonical catalog at `requirements/**` stays frozen during authoring. Sources are open-ended -- designs, an existing implementation, a product brief, a planning document, or a change request -- and the mode (baseline vs. scoped change) is inferred from the catalog rather than declared.
+Draft behavioral requirements into a change package under `skai/changes/<change-id>/requirements/`, resolve the questions they raise, and leave the package ready to promote. The canonical catalog at `requirements/**` stays frozen during authoring. Sources are open-ended -- designs, an existing implementation, a product brief, a planning document, or a change request -- and the mode (baseline vs. scoped change) is inferred from the catalog rather than declared.
 
 - Guide [`Guides/Requirements/requirements-authoring.md`](Guides/Requirements/requirements-authoring.md)
 - Baseline [`Guides/Requirements/requirements-baseline.md`](Guides/Requirements/requirements-baseline.md) — read when authoring infers Baseline mode
@@ -248,12 +249,12 @@ requirement text and IDs remain unchanged.
 
 - Guide [`Guides/Requirements/requirements-promotion.md`](Guides/Requirements/requirements-promotion.md)
 
-**Prerequisites:** A change package at `skai/changes/<change-id>/` whose discussion is fully resolved and whose requirement change items match its drafts.
+**Prerequisites:** A change package at `skai/changes/<change-id>/requirements/` whose discussion is fully resolved and whose requirement change items match its drafts.
 
 **Phases:**
 
-1. **Promotion checks.** Agent screens the package for readiness, then writes an unchecked checklist covering ID stability, prefix collisions, cross-reference resolution, writing style, catalog traversability, and destination link preparation, ending with the terminal write. Gate: supervisor reviews what will become canon.
-2. **Execute.** Agent runs each check in order, records evidence, and writes the catalog. A failing check blocks and returns the package to authoring -- promotion never rewrites a requirement's prose. When the catalog itself is the problem, the agent raises a change request instead.
+1. **Promotion checks.** Agent screens the package for readiness, then writes an unchecked checklist covering ID stability, prefix collisions, cross-reference resolution, writing style, catalog traversability, and destination link preparation, followed by the canonical write (C7) and package archival (C8). Gate: supervisor reviews what will become canon.
+2. **Execute.** Agent runs each check in order, records evidence, writes the catalog, then moves the requirements package to its promoted path and repairs references. An archival failure resumes only that step; the canonical write is not repeated. A failing verifying check blocks and returns the package to authoring -- promotion never rewrites a requirement's prose. When the catalog itself is the problem, the agent raises a change request instead.
 
 ### Unit testing (skill `skai-unit-testing`)
 
@@ -297,7 +298,7 @@ Completeness backstop that can be used at any point during any workflow. Reviews
 
 1. **Retro.** Agent performs the full checklist, reports findings, and completes immediately if neither a requirements finding nor a process suggestion was generated.
 2. **Requirements follow-up (optional).** If the session revealed behavior the catalog does not reflect, the agent seeds a change package -- draft requirements plus `- [ ] D<n>` items for what it could not settle -- and stops at a handoff gate. It never writes the catalog itself. On `next`, the agent enters [`Guides/Requirements/requirements-authoring.md`](Guides/Requirements/requirements-authoring.md), which owns resolving the items and, in turn, promotion.
-3. **Process improvement follow-up (optional).** If the retro identifies process improvements, agent lists them in the retro output as `- [ ] S<n>` items and stops at a handoff gate. On `next`, the agent enters [`Guides/Process/ticket-filing.md`](Guides/Process/ticket-filing.md), which drafts `process-tickets.md`, lets the supervisor review/edit the resulting `- [ ] T<n> Ticket: ...` entries, and files the remaining ones on `next`.
+3. **Process improvement follow-up (optional).** After all six retro steps, process suggestions remain as unchecked `S<n>` items. The ticket-drafting gate is used only when there is no requirements handoff. When both exist, requirements goes first and exits retro; the supervisor later invokes [`Guides/Process/ticket-filing.md`](Guides/Process/ticket-filing.md) from the retained suggestions. Ticket filing owns draft review and filing approval.
 
 ### Process refinement (skill `skai-process-refinement`)
 
@@ -358,7 +359,7 @@ Update `skai` to the latest release (or a target you name), review what changed,
 
 This repo is typically maintained with an LLM. When you ask an LLM to make changes, point it at:
 - [`README.md`](README.md) (this file)
-- [`internal/maintain-skai.md`](internal/maintain-skai.md) (LLM maintainer runbook)
+- [`internal/maintain-skai.md`](internal/maintain-skai.md) (LLM maintainer entry point: common rules and a descriptive routing table for specialized references under [`internal/maintenance/`](internal/maintenance/))
 - [`internal/maintain-retro.md`](internal/maintain-retro.md) (post-change checklist to ensure nothing was forgotten)
 - [`internal/maintain-tickets.md`](internal/maintain-tickets.md) (work through process improvement tickets labeled `agent ready`)
 

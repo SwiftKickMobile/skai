@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation
 Managed-Source: Guides/UIMap/ui-map-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-06
+Managed-Updated-At: 2026-10-09
 
 # UI Map Implementation
 
@@ -15,9 +15,9 @@ For platform-specific code conventions, load [`ui-map-swiftui.md`](ui-map-swiftu
 Implementation makes app code conform to an approved UI Map architecture or records the conformance work for a larger effort, then advances the official map when a proposed map exists. The system keeps two map files:
 
 - **Official map** — `skai/ui-map/ui-map.yaml`, the approved architecture authority; frozen while a proposed change is under review.
-- **Proposed map** — `skai/changes/<change-id>/proposed-ui-map.yaml`, the architecture the change moves toward.
+- **Proposed map** — `skai/changes/<change-id>/ui-map/proposed-ui-map.yaml`, the architecture the change moves toward.
 
-When a proposed map exists, implementation works against it, then **promotes** it after the Code Changes spec is approved: copy the proposed YAML to the official YAML, then regenerate the official SVG from that official YAML, so the approved architecture advances. The proposed SVG is a preview, not a promotion source. In Build this follows a green conforming build. In Plan the approved map intentionally leads the unchecked implementation work recorded in the artifact. Promotion is the final UI Map implementation step of every run that changes the map; a no-package conformance run works against and leaves the official map unchanged.
+When a proposed map exists, implementation works against it, then **promotes** it after the Code Changes spec is approved: copy the proposed YAML to the official YAML, then regenerate the official HTML page from that official YAML, so the approved architecture advances. The proposed HTML page is a preview, not a promotion source. In Build this follows a green conforming build. In Plan the approved map intentionally leads the unchecked implementation work recorded in the artifact. Promotion and archival are the final UI Map implementation step of every run that changes the map; a no-package conformance run works against and leaves the official map unchanged.
 
 **Invariant — the map leads, code follows.** The target map is the architecture authority. Implementation may scaffold, align, move, rename, hand off, block, or raise a **change request** back to architecture — but it never edits map content to justify code. When the map itself is wrong or infeasible, raise a change request; when the skill simply can't do a change mechanically, hand it off or stop at a blocked gate (see *Code Changes*).
 
@@ -34,7 +34,7 @@ Implementation runs in four stages:
 
 ## Run mode
 
-The skill **infers** its run mode from context at initiation and records it in the artifact's `Mode` field, which **travels with the artifact** — so any session that picks up the work knows the intent. The mode is the scope of the job:
+For a new artifact the skill **infers** its run mode from context at initiation; a resumed run reads and preserves its recorded Mode and records it in the artifact's `Mode` field, which **travels with the artifact** — so any session that picks up the work knows the intent. The mode is the scope of the job:
 
 - **Plan** — inferred when a larger feature, bug-fix, or refactor workflow will own the **same structural conformance work**. This skill produces the conformance spec only: UI-map-owned code items are unchecked `planned`; directly relevant work owned elsewhere is unchecked `handoff`; when a proposed map exists, it performs and checks the terminal promote, then completes.
 - **Build** — inferred when UI Map implementation owns the structural conformance work. The skill implements and checks UI-map-owned `implement` and `placeholder` work — scaffold placeholders, wire routes, move/rename to conform, build green, then promote when a proposed map exists — delivering a reachable, navigable skeleton. Unchecked `handoff` items block Build completion/promotion until the owning workflow resolves them and the run can resume. Build does not imply scaffolding, and unrelated tasks elsewhere in the same session do not turn a Build into Plan.
@@ -45,7 +45,11 @@ Required:
 
 Resolve the map repository from the project's README or established map location. `skai/ui-map/` and `skai/changes/`, including this workflow's artifact, are relative to that repository. App-code paths, build/test commands, and `skai/integration.md` remain relative to the app repo. If the map repository is unknown or ambiguous, STOP at a blocked gate before auditing or writing.
 
-- The target map: when an architecture change package exists at `skai/changes/<change-id>/`, its proposed map (`proposed-ui-map.yaml`), render, and architecture artifact (`ui-map-architecture.md`) with `## Map Changes`; otherwise the official map for a no-package conformance run. A package is ready for implementation when its Discussion has no unchecked items, no change request remains `Proposed`, and its current `## Map Changes`, proposed YAML, and nonempty render are present.
+- The target map: when an architecture change package exists at `skai/changes/<change-id>/ui-map/`, its proposed map (`proposed-ui-map.yaml`), render, and architecture artifact (`ui-map-architecture.md`) with `## Map Changes`; otherwise the official map for a no-package conformance run. For an unexecuted proposal, a package is ready when Discussion is resolved, no request remains `Proposed`, and the proposed
+YAML, nonempty render and Map Changes are present. Recompute the difference against the **current**
+official map: every difference must have a matching Map Changes item and every item must still
+match. A mismatch returns to architecture's reopen procedure; implementation never merges or edits
+the proposal itself.
 - The official map `skai/ui-map/ui-map.yaml`, the frozen baseline the change is measured against. (For a baseline there is none yet.)
 - The app codebase.
 - The platform convention guide: [`ui-map-swiftui.md`](ui-map-swiftui.md) for iOS/SwiftUI or [`ui-map-compose.md`](ui-map-compose.md) for Android/Compose.
@@ -57,11 +61,31 @@ Expected when available:
 - The project's `README.md` or equivalent project-conventions doc for overrides such as modal styles, route wrappers, folder layout, or view-model conventions. Standard guide-covered patterns do not require one.
 - Scoped architecture/change collateral for the active story, and the active upstream requirement/story/bug scope.
 
-If no change package is present, conform code to the official `skai/ui-map/ui-map.yaml` as the frozen source of truth (the map is unchanged); a missing architecture artifact is not a blocker when the map and codebase are present. If the map (proposed or official) is missing, invalid, or not identifiable, STOP with a blocked gate (see *Gates and control flow*). Multiple plausible change packages with no named target make the map not identifiable; do not choose one. If the app codebase is not present, STOP with a blocked gate.
+If no change package is present, conform code to the official `skai/ui-map/ui-map.yaml` as the frozen source of truth (the map is unchanged); a missing architecture artifact is not a blocker when the map and codebase are present. If the map (proposed or official) is missing, invalid, or not identifiable, STOP with a blocked gate (see *Gates*). Discover proposed maps only under `skai/changes/*/ui-map/`; sibling types and promoted packages
+are not active targets. A checked terminal promote item is closed. A recorded successful official
+write/render with incomplete archival resumes *Archive the package* only. A recorded YAML write
+with an incomplete official render instead follows *Promotion progress and restart* below; do not
+apply the unexecuted-proposal diff screen to its own partial write. Fully archived packages are not
+promoted again. Multiple plausible change packages
+with no named target make the map not identifiable; do not choose one. If the app codebase is not present, STOP with a blocked gate.
 
 ## Implementation artifact
 
-Create the implementation artifact in the change package, parallel to the architecture artifact: `skai/changes/<change-id>/ui-map-implementation.md`. When a change package is present, use its `<change-id>`. When there is none — a conformance run against the official map — resolve the id the way the architecture skill does: if it is clear from the user's input, use it; if not, do not create the artifact yet — ask inline for the change ID, propose a short kebab-case default when possible (deriving from the current branch, use only its final path component, e.g. `work/billing-ui` → `billing-ui`), and wait.
+For a new change-package run, create the implementation artifact parallel to the architecture
+artifact: `skai/changes/<change-id>/ui-map/ui-map-implementation.md`. Use the package's ID. The
+`ui-map/` folder owns this artifact, its requests and evidence; related requirements work is separate.
+On resume reuse the existing artifact and its Mode, IDs, decisions, Evidence and valid completion states. After promotion the same artifact is at `skai/promoted/<change-id>/ui-map/ui-map-implementation.md`.
+Receiving workflows execute and check any pending Plan work there without reopening or re-promoting
+the map proposal. When this skill is invoked on an already-promoted Plan, retain the recorded Mode,
+items and evidence and hand off that plan at its archived path; do not create another package or
+terminal promote item. If resuming such work, verify current code against the current official map rather
+than assuming the archived preview remains current canon.
+
+Without a proposed map, create no change package. Put the conformance artifact in the map repository
+at `skai/working-docs/<branch-path>/<session-name>/ui-map-implementation.md`, using
+[`working-doc-conventions.md`](../Core/working-doc-conventions.md). Determine the branch in that
+repository and resolve a short session name from the request; if unclear, propose one and wait at a
+blocked gate before creating the artifact. Requests and evidence belong beside that artifact.
 
 Skeleton:
 
@@ -82,14 +106,28 @@ The stage sections are filled in as the workflow runs. Replace `<Plan | Build>` 
 
 `## Inputs` makes the artifact usable by a later workflow without embedding the UI Map documentation. Record exact paths to the target map, the architecture artifact when one exists, [`ui-map-implementation.md`](ui-map-implementation.md), the selected platform guide, the placeholder guide whenever placeholder work is in scope during Audit, Plan, or Build, and any project-conventions document actually used. A consumer loads those references before acting on the artifact.
 
-## Gates and control flow
+## Gates
+
+Core rule: every time the agent is waiting on the supervisor, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
 
 The supervisor is the human or authorized agent outside this workflow that resolves its discussion items and reviews its gates; the executing agent does not resolve or approve its own.
 
-Gate lines:
+**Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
+**No fabricated gates.** `⏳ GATE:` lines only appear at gates this `## Gates` section defines or at a properly emitted blocked gate. Do not invent new gate categories or labels to describe discussion state, partial completion, or intermediate review. If a `⏳ GATE:` line is needed that this guide doesn't define, that's a signal the guide is missing a gate — file it as a process improvement.
+
+Use these standard gate lines:
 - Planned gate: `⏳ GATE: Next: <what happens after your response>. Say "next" or what to change.`
 - Blocked gate: `⏳ GATE: Blocked: <reason>. Resolve and say "next" to continue.`
+
+Planned gates are the expected review points of this workflow. At each planned gate:
+1. Summarize what you did and what should happen next.
+2. End with the planned gate line.
+3. STOP and wait for the supervisor.
+
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the supervisor gives advance intent. If the gate is non-standard, make it describe the exact supervisor response or handoff needed to resume the workflow.
+
+If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
 At a planned gate, first reread the implementation artifact and remove any reference to separate-session work from Goal, Audit, Discussion, Code Changes, Change Requests, and Evidence; those sections record only UI Map conformance. Then summarize what you did and what happens next, end with the gate line, STOP and wait.
 
@@ -105,6 +143,9 @@ At a planned gate, first reread the implementation artifact and remove any refer
 - Discussion in progress: one or more `- [ ]` items remain unresolved.
 - The map (proposed or official) is missing, invalid, or not identifiable; or the codebase is missing.
 - A change request is open — the proposed map must change before Code Changes can be written: `⏳ GATE: Blocked: change request <id> is open. Update the map, then say "next" to re-audit.`
+- The archive destination collides, a required reference cannot be accessed/repaired, or archival
+  fails after successful official-map write/render. Resume archival only; never repeat that successful
+  canonical promotion solely to finish a move.
 - Build/render commands or overrides are missing or broken (for rendering, only when an override is broken or the SKAI default cannot run).
 - A build failure points at a map flaw, requirement conflict, or project constraint rather than a clear local fix.
 - UI Map conformance cannot proceed without feature content beyond placeholder/navigation work.
@@ -112,11 +153,51 @@ At a planned gate, first reread the implementation artifact and remove any refer
 
 The supervisor resolves the cause (resolves items, fixes inputs, updates the package); the agent re-evaluates and emits the appropriate gate on the next response.
 
-**Advance intent** moves past a planned gate. Signals: "next", "continue", "go ahead", "do it"; recognized only after a `⏳ GATE:` line. Deliverables named in the initiating request (e.g. "implement the UI map") are not advance intent and never skip Discussion. "we should..." / "let's..." is discussion, not authorization. `auto` bypasses planned gates only — never a blocked gate. `auto to <milestone>` stops before a named gate (`discussion complete`, `code changes ready`).
+## Advance intent
+
+Advance intent moves past the current gate. Common signals: "next", "continue", "go ahead", "do it".
+
+Rules:
+- Recognized as approval to move past a gate only after you output a `⏳ GATE:` line.
+- "we should...", "let's..." = discussion/context-setting, NOT authorization.
+- Outside a gate, interpret "begin"/"next"/"continue" using the workflow's active-phase rules below. Do not use them to skip phases or clear unrelated progress markers.
+
+`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit supervisor resolution.
+`auto to <milestone>` = auto-advance but STOP before the named planned gate. Use stable, workflow-specific milestone names.
+
+Progress tracking:
+
+- **Two conventions, by artifact type:**
+  - **`- [ ]` / `- [x]` in process artifacts** (markdown workflow docs: work specs, planning docs, working docs, retro outputs, ticket drafts, etc.). Completion is checking the box — the artifact preserves the audit trail of resolved items.
+  - **`🟡` in source files** (test code, application code) seeded or planned by a skai workflow. Completion is **removal** of the marker — the file's remaining work is read by which `🟡`s remain. Canonical in-code case: `Guides/Test/unit-test-planning-guide.md`.
+- Default rule: a progress marker means TODO or pending approval. Do not clear it without supervisor approval.
+- At a planned gate, advance intent is the approval signal for clearing the guide-owned progress markers completed by the phase that just finished.
+- Ordering rule: the agent first stops and waits at the gate, then clears the approved markers (`- [ ]` → `- [x]` in a process artifact; remove `🟡` in code) only after the supervisor gives advance intent.
+- If a workflow needs a custom marker lifecycle (for example, inline discussion items resolved during a supervisor-led discussion loop), define that exception explicitly and narrowly below.
+- If a workflow uses both gate/phase markers and local working markers, keep them distinct: local approvals clear local working markers; advance intent clears the gate/phase marker.
+- For any custom marker lifecycle, specify both:
+  - the artifact where the markers live
+  - the exact supervisor intent that authorizes clearing them
+
+**Not workflow progress:** the `🟡` convention in `Templates/docs/skai/integration.md` and `Install/integration-doc-install-update.md` (project-specific missing constants needing supervisor input during host install) is a separate concept, scoped to that section's rules. Don't conflate the two.
+
+Workflow-specific advance behavior: the initiating request does not skip Discussion. Bounded-auto
+milestones are `discussion complete` and `code changes ready`.
+
+Workflow-specific marker lifecycle: Discussion `D#` items are local working markers, checked with
+Decisions only on supervisor approval. Their resolved record remains at the Discussion complete
+gate; advance intent approves writing Code Changes. The unchecked `T#` items persist through the
+Code Changes ready gate. Advance intent approves execution; check each item only after its owned
+operations and evidence succeed. Plan leaves `planned` and `handoff` items unchecked. The terminal
+promote item includes archival and is checked only at the promoted location after archival succeeds.
 
 ## Audit
 
-On initiation, load the required inputs, infer the Mode from context (see *Run mode*), and create the implementation artifact. Then run the scoped audit: compare the codebase to the **target map** — the proposed map when a change package exists, otherwise the official map. The audit is exhaustive within its reach: inspect every applicable scene and route in scope, deriving and checking its expected identity and canonical home before declaring conformance.
+On initiation load required inputs. Create an artifact and infer Mode only for new work; otherwise
+read its recorded Mode and progress. Recorded terminal-write progress dispatches directly to
+*Promotion progress and restart*, without recreating Audit/Code Changes. Otherwise re-audit the
+existing artifact, preserving its IDs, decisions, Evidence and still-valid verified completions.
+Run the scoped audit: compare the codebase to the **target map** — the proposed map when a change package exists, otherwise the official map. The audit is exhaustive within its reach: inspect every applicable scene and route in scope, deriving and checking its expected identity and canonical home before declaring conformance.
 
 The request and change package set the audit's reach. When a package exists, its `## Map Changes` is the spine: a baseline audits the whole codebase against the whole proposed map; a scoped change audits only the affected subset. Architecture `## Deferrals` are context about intentionally postponed map work, not implementation findings or `T#` sources; include work only when the current target-map/code audit independently yields a conformance finding. A no-package conformance request audits the scope named by the request against the official map. Do not expand into a general cleanup audit unless the supervisor explicitly requests it. If you discover a deviation outside that reach, surface it to session orchestration rather than adding it to this artifact; include it only after the supervisor explicitly expands the run's scope.
 
@@ -176,7 +257,12 @@ Use topic sections that reflect the code or map area, not aggregator sections. A
 
 ### Raising a change request
 
-When the supervisor explicitly approves a Discussion decision to request a map change, check that `D#`, append its Decision, then immediately write one markdown file at `skai/changes/<change-id>/change-requests/ui-map-<nnn>.md` and link it under the implementation artifact's `## Change Requests`. Use the format in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md): `Change Request Status: Proposed`, a `Reviewer Response`, and the concern and requested map change. Number from `ui-map-001.md`.
+When the supervisor explicitly approves a Discussion decision to request a map change, check that
+`D#` and append its Decision. In a no-package conformance run, resolve a new change ID using the
+architecture guide's rules and check its active/promoted UI Map paths. Seed that type folder and
+move the conformance artifact, requests and evidence into it, repairing links and preserving the
+review history; a collision blocks rather than overwrites. The run now awaits architecture's proposed
+map. Then immediately write one markdown file at `skai/changes/<change-id>/ui-map/change-requests/ui-map-<nnn>.md` and link it under the implementation artifact's `## Change Requests`. Use the format in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md): `Change Request Status: Proposed`, a `Reviewer Response`, and the concern and requested map change. Number from `ui-map-001.md`.
 
 Do not create the request while its `D#` is unresolved, and do not enter or populate `## Code Changes` after creating it. Emit the change-request blocked gate immediately; the run resumes and re-audits only after architecture updates the map and no change request remains open.
 
@@ -191,7 +277,14 @@ Only after the discussion-complete gate advances with no open change request, tr
 
 ### Code change items
 
-Write `T#` items in the format defined in [`ui-map-implementation-artifacts.md`](ui-map-implementation-artifacts.md): an unchecked checkbox, a stable `T#` ID, an identity, **Description**, **Disposition** (`implement` / `placeholder` / `planned` / `handoff`), **Realizes** (what this item carries out), and **Touches**. Build the list from the audit's already-separated sources: create one item for each applicable `M#` or `D#`, then one for each independent audit finding without an ID. Implementation overlap does not merge sources. Keep all operations from one source under the same checkbox; terminal promotion is the whole-change exception. Before the gate, read the sources back against the drafted items: each source has exactly one item, and that item's Description carries every operation from the source. There is no `Status` or `Type` field — the checkbox carries completion and the identity and Description convey the kind. Write items top-down in structural order.
+Write new `T#` items unchecked in the format defined in [`ui-map-implementation-artifacts.md`](ui-map-implementation-artifacts.md): an unchecked checkbox, a stable `T#` ID, an identity, **Description**, **Disposition** (`implement` / `placeholder` / `planned` / `handoff`), **Realizes** (what this item carries out), and **Touches**. Build the list from the audit's already-separated sources: create one item for each applicable `M#` or `D#`, then one for each independent audit finding without an ID. Implementation overlap does not merge sources. Keep all operations from one source under the same checkbox; terminal promotion is the whole-change exception. Before the gate, when a proposed map exists, check that `skai/promoted/<change-id>/ui-map/` is
+available and identify live references in the map/app repositories and resolved repositories of
+linked related packages or callers. A collision or inaccessible
+required reference blocks before writing the official map; never merge or overwrite a destination.
+On re-audit reconcile existing items instead of resetting them: retain matching IDs, Dispositions,
+evidence and completions still verified against the updated target. Changed/new work remains
+unchecked until verified under the existing gate approvals.
+Before the gate, read the sources back against the drafted items: each source has exactly one item, and that item's Description carries every operation from the source. There is no `Status` or `Type` field — the checkbox carries completion and the identity and Description convey the kind. Write items top-down in structural order.
 
 After separating the sources, assign each item's Disposition independently from ownership and mode; it never changes when an item is checked. In **Plan** mode, UI-map-owned code items are `planned` (the larger effort implements them) and directly relevant work owned elsewhere is `handoff`; the terminal promote item is `implement`. In **Build** mode, UI-map-owned mechanical work is `implement`, placeholder scaffolding is `placeholder`, and directly relevant work owned elsewhere is `handoff`. A `planned` or `handoff` item Description must explain what remains, why this run is not doing it, and the relevant UI Map/platform guidance the receiving workflow should preserve. Common change kinds and the disposition the principle yields — a coverage checklist, not a field on each item:
 
@@ -211,7 +304,37 @@ A change not in the table still gets its disposition from the same principle —
 
 **Routes aren't special.** The skill wires route *structure*, not new feature data. In Build, a **new route** is `placeholder`: a new destination receives no feature inputs, while an existing destination keeps its inspectable input contract when the project already defines the required value sources; if a required source is undefined, stop in Discussion under the platform placeholder guide's missing-input rule. A **mechanical kind change** on an already-wired route (e.g. nav → modal) is `implement`. In Plan, the same UI-map-owned route work is `planned`. A **real route refactor** is `handoff`.
 
-**The terminal promote item.** The last `T#` is the promotion: copy the proposed YAML to `skai/ui-map/ui-map.yaml`, then run the project render override or the SKAI default renderer against that **official YAML**, targeting `skai/ui-map/ui-map.html`. Do not copy the proposed page; it is derived preview output. Require renderer exit 0 and a nonempty official page, and record the render command and result in `## Evidence`. Only then check the promote item. Its Disposition is always `implement`, never `planned` or `handoff`, and it runs last: in Build after the scaffolds build green, in Plan right at the Code Changes gate (the spec review is the sign-off). It isn't literally a code change; modeling it as a `T#` folds promotion into the normal execution flow, with no separate promotion step. Author it with **Realizes** = the approved change as a whole (not a single `M#`) and **Touches** = the official map and its render.
+**The terminal promote item.** The last `T#` owns official promotion and archival. Its Disposition
+is `implement`, Realizes names the approved change as a whole, and Touches includes official
+YAML/HTML, the type folder and repaired references. Build executes it after green conformance and
+resolved handoffs; Plan after Code Changes approval. Check it only after all operations below
+succeed at the promoted location.
+
+### Promotion progress and restart
+
+Execute the terminal item in order, recording actual progress in existing `## Evidence`:
+
+1. **Before the first write**, repeat Inputs' comparison against current official YAML. A stale
+   change list blocks and returns to architecture; retain completed code items and re-audit the
+   updated proposal. Implementation never merges map content itself.
+2. Copy proposed YAML to `skai/ui-map/ui-map.yaml`. Record the actual write outcome, identifying this
+   package's proposed source and official destination, **before rendering**.
+3. Run the project override or default SKAI renderer on that official YAML, targeting
+   `skai/ui-map/ui-map.html`. Require exit 0 and a nonempty page; record command/result separately.
+   Do not copy the proposed page. A failed render leaves the terminal item unchecked and blocks.
+4. Perform *Archive the package*, then check the terminal item in the archived artifact.
+
+On restart, locate the package at its active/promoted path and inspect its recorded progress:
+
+- No successful write recorded: use ordinary proposal readiness and the first-write comparison.
+- Write recorded, official render incomplete: compare current official YAML with this package's
+  recorded proposed source. If they match, resume the official render, **without copying YAML again**,
+  then archive. If another package has changed official YAML, block for reconciliation; never
+  overwrite that intervening change or redraft merely because this package's own write erased its
+  original diff. Preserve original Map Changes, approval and execution records.
+- Official write and render verified: resume archival only; do not repeat canonical promotion.
+
+An uncertain unrecorded outcome uses the standing blocked route, not a fabricated success record.
 
 This item exists only when there is a proposed map to promote. In a conformance run with **no change package** — code conformed to the official map, which does not change — there is nothing to promote: omit the promote item, leave the official map and its render untouched, and end at green build (Build) or the approved spec (Plan).
 
@@ -251,7 +374,9 @@ On resume, re-audit every unchecked `handoff` item. If external work has made th
 [evidence: <command>; exit <code>; output: <path if persisted>]
 ```
 
-On success, linked output is optional; still record command + exit code. On failure, persist full output to `skai/changes/<change-id>/evidence/<file>` and link it. If the failure is a fixable local glitch, fix and rebuild; if it points at a needed change request, requirement conflict, or map flaw, STOP at a blocked gate.
+On success, linked output is optional; still record command + exit code. On failure, persist full
+output under `evidence/` beside the implementation artifact and link it — inside the active or
+promoted UI Map type folder, or the working-doc session for a no-package run. If the failure is a fixable local glitch, fix and rebuild; if it points at a needed change request, requirement conflict, or map flaw, STOP at a blocked gate.
 
 ### Auto-fixes allowed
 
@@ -274,13 +399,45 @@ Verification is the agent's automated build — a green build conforming to the 
 
 - **Every successful Build run performs a fresh completion build during the current run**, even when the audit finds no changes to make. Append a new evidence bracket for that invocation; do not infer build health from an empty change list or satisfy current-run evidence by relying on, replacing, or overwriting a prior run's evidence.
 - **Agent runs additional automated verification** at chunk boundaries as needed: build/compile, platform-specific checks, and any project-specific automated checks from `skai/integration.md`.
-- **Agent may render the proposed map** when validating it helps. Promotion **must** render the official YAML directly to the official SVG and record successful evidence. Use a project-specific override when one exists; otherwise use the SKAI default renderer from [`ui-map-guide.md`](ui-map-guide.md). Rendering validates the map target; it does not authorize editing it.
+- **Agent may render the proposed map** when validating it helps. Promotion **must** render the official YAML directly to the official HTML page and record successful evidence. Use a project-specific override when one exists; otherwise use the SKAI default renderer from [`ui-map-guide.md`](ui-map-guide.md). Rendering validates the map target; it does not authorize editing it.
 
 Click-through QA — running the app to confirm navigation behaves as specified — is downstream of this skill, not a gate it waits on; the placeholder boundary keeps each scaffolded scene visibly identifiable so QA can confirm routes later. If a navigation issue surfaces, handle it like any finding: propose the smallest guide-faithful fix, raising a change request if it requires changing the target map.
 
+## Archive the package
+
+After recording successful official-map write/render evidence in the terminal promote item:
+
+1. Move the entire `skai/changes/<change-id>/ui-map/` folder to
+   `skai/promoted/<change-id>/ui-map/` in the map repository. Keep architecture, implementation,
+   proposed YAML, render, requests and evidence together, including unchecked Plan work. Leave
+   `requirements/` and all other siblings untouched; remove the active grouping directory only if empty.
+2. Repair live incoming links across those resolved repositories, including work specs and related
+   packages. Check relative links inside the moved files and preserve their intended targets. Keep
+   decisions, item IDs, YAML and recorded commands/results intact; annotate historical paths with
+   their current locations. An inaccessible required reference blocks completion.
+3. Re-render the proposed YAML at its promoted location using the project override or default SKAI
+   renderer, producing `proposed-ui-map.html` there. Moving a page can invalidate its relative links
+   to the viewer. Require exit 0 and a nonempty page whose viewer links resolve; record this command
+   and result separately from the official render evidence.
+4. Verify the archived artifacts and links, absence of the active type path, and preservation of
+   siblings. Record move/link evidence, then check the terminal promote item in the archived artifact.
+
+If the move, link repair or preview render fails after the official write, report the map as promoted
+and archival as incomplete, then STOP at the standard blocked gate. Locate the package at its active
+or promoted path on retry and verify identity and recorded progress; resume only unfinished archival
+operations, without repeating the official write/render. Never overwrite a destination.
+
+**Example** — promote `skai/changes/reminder-expiry/ui-map/` to
+`skai/promoted/reminder-expiry/ui-map/` while a related
+`skai/changes/reminder-expiry/requirements/` remains active. Repair its incoming links and regenerate
+the moved preview before checking the terminal item. In Plan, unchecked code work stays in the
+promoted artifact; the receiving workflow continues there.
+
 ## Completion
 
-When the run has a proposed map, completing means performing and checking the terminal promote item — copy the proposed YAML to the official YAML, successfully regenerate the official SVG from that official YAML, and record the render evidence, so the change is now the official architecture — then emit `🏁`.
+When the run has a proposed map, completion requires a verified official-map write/render and
+successful archival. The terminal promote item stays unchecked until both succeed. Then emit `🏁`
+and link the artifact at `skai/promoted/<change-id>/ui-map/`.
 
 **Plan** completes right after the Code Changes gate (the spec review was the sign-off): when a proposed map exists, perform and check the promote; otherwise leave the official map unchanged. Leave `planned` and `handoff` items unchecked and finish — the spec is the deliverable.
 

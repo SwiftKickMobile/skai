@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.dev-retro
 Managed-Source: Guides/Process/dev-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-05
+Managed-Updated-At: 2026-10-09
 
 # Dev-session retro (agent + supervisor)
 
@@ -71,7 +71,7 @@ Progress tracking:
 - Do not draft `process-tickets.md` in this guide. `Guides/Process/ticket-filing.md` owns ticket drafting, review, and filing.
 
 Workflow-specific advance behavior:
-- `auto` may complete the retro itself and may develop suggestions, but if any SKAI process suggestions were identified it must still STOP at the ticket-filing handoff gate.
+- `auto` may complete the retro itself and may develop suggestions, but when ticket filing is the active handoff it must still STOP at that gate. Requirements retains first-handoff precedence; pending ticket suggestions do not create a return-to-retro cycle.
 - Use `draft process tickets` as the stable bounded-auto target for this guide's planned handoff gate.
 
 ## Inputs (read what exists)
@@ -89,7 +89,7 @@ Read the documents and artifacts that were produced or used during this session,
   - the requirements catalog, at the root named in `skai/integration.md`'s `Section: requirements`
     block — not a literal path, which is wrong under the `shared` shape
 - Open requirements change packages:
-  - `skai/changes/*/requirements-authoring.md` in the catalog repo named by the app Integration doc — behavior already captured but not yet promoted. Read these before step 5 so it does not re-raise what is already pending.
+  - `skai/changes/*/requirements/requirements-authoring.md` in the catalog repo named by the app Integration doc — behavior already captured but not yet promoted. Read these before step 5 so it does not re-raise what is already pending.
 
 If any of these inputs are missing but required to perform the retro, STOP and ask the supervisor where they are.
 
@@ -139,9 +139,9 @@ Detection is this step's work, and it is unchanged:
   project keeps no catalog, so step 5 seeds nothing.
 - Identify what is missing, and what is recorded but now incorrect or outdated.
 
-**Retro does not write the catalog.** Resolve the catalog repository from the app Integration doc before seeding; an unknown or unresolved root blocks rather than falling back to the app repo. Findings are seeded into that repository's `skai/changes/<change-id>/`, per `Guides/Requirements/requirements-authoring.md` — draft requirement files plus a `## Discussion` holding what this session could not settle as `- [ ] D<n>` items. Write complete requirements under the recommended reading and link each Discussion item to its affected drafts; content rules are in `Guides/Requirements/requirements-catalog.md`.
+**Retro does not write the catalog.** Resolve the catalog repository from the app Integration doc before seeding; an unknown or unresolved root blocks rather than falling back to the app repo. Findings are seeded into that repository's `skai/changes/<change-id>/requirements/`, per `Guides/Requirements/requirements-authoring.md` — draft requirement files plus a `## Discussion` holding what this session could not settle as `- [ ] D<n>` items. Write complete requirements under the recommended reading and link each Discussion item to its affected drafts; content rules are in `Guides/Requirements/requirements-catalog.md`.
 
-If a package for this work is already open, add to it rather than creating a second. If the session found nothing, create no package and skip the requirements handoff gate.
+If a requirements package for this work is already open, add to it rather than creating a second. Check the promoted requirements path before seeding: a closed ID/type pair requires a new change ID. Leave related UI Map packages untouched. If the session found nothing, create no package and skip the requirements handoff gate.
 
 Retro seeds and hands off. It does not resolve discussion items and it does not promote; both belong to the requirements workflow.
 
@@ -211,5 +211,8 @@ Then output only:
 - or: "Dev retro complete; no misses found."
 - **Session observations** section from step 6 (brief bullets, no markers).
 - **SKAI process suggestions** section from step 6 (with `- [ ]` items and `S<n>` IDs if any).
-- If the "SKAI process suggestions" section has entries: end with `⏳ GATE: Next: Draft process tickets from these retro suggestions. Say "next" or what to change.`
-- On advance intent from that gate, follow `Guides/Process/ticket-filing.md` starting at Phase 1, step 2.
+After all six steps, emit one gate using the precedence defined under Gates:
+
+- If step 5 seeded a requirements package, end with `⏳ GATE: Next: Hand the seeded package to Requirements Authoring. Say "next" or what to change.` Advance intent transfers control to `Guides/Requirements/requirements-authoring.md`. If process suggestions also exist, report that pending ticket handoff; retain its unchecked S items for the supervisor to invoke ticket filing later. Retro does not resume afterwards.
+- Otherwise, if SKAI process suggestions exist, end with `⏳ GATE: Next: Draft process tickets from these retro suggestions. Say "next" or what to change.` Advance intent enters `Guides/Process/ticket-filing.md` at Phase 1, step 2.
+- With neither handoff, emit `🏁 Complete. Let me know if anything needs adjustment.`
