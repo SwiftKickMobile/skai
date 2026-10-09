@@ -7,8 +7,4 @@ description: Refines a process guide against a cold review using skai (commissio
 
 ## Instructions
 
-- Read:
-  - `Submodules/skai/Guides/Process/process-refinement-guide.md`
-  - `Submodules/skai/Guides/Process/cold-review-prompt-template.md`
-- The cold reviewer must NOT read either of the above — both are refiner-facing and would bias the review. Give it only the filled prompt and the files it names.
-- Record the pass in a working doc under `skai/working-docs/<branch-path>/<session-name>/` per `Submodules/skai/Guides/Core/working-doc-conventions.md`, and append dispositions to the target's findings log at `skai/refinement-reviews/<target-name>-findings.md`.
+- Read `Submodules/skai/Guides/Process/process-refinement-guide.md` in full, including its Project addendum instructions, and follow it.

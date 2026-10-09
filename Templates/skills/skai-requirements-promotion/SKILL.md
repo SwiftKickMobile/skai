@@ -7,6 +7,4 @@ description: Promotes an approved requirements change package into the canonical
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Requirements/requirements-promotion.md` and follow it.
-- Read `Submodules/skai/Guides/Requirements/requirements-catalog.md` — the writing-style rules run against it.
-- Preserve its hard boundaries: never rewrite a requirement's prose — a failing check blocks and returns the package to authoring; write nothing to the catalog before the Promotion Checks gate advances; reset every check on re-run rather than resuming mid-list.
+- Read `Submodules/skai/Guides/Requirements/requirements-promotion.md` in full, including its Project addendum instructions, and follow it.

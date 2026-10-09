@@ -6,6 +6,8 @@ Managed-Updated-At: 2026-10-09
 
 # UI Map Implementation Artifact Formats
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 The typed formats the implementation skill produces. Read an artifact with [`ui-map-implementation.md`](ui-map-implementation.md) for Mode and control flow, the platform guide named in its `## Inputs`, and [`ui-map-guide.md`](ui-map-guide.md) for the YAML map. The architecture-side formats the implementation skill *consumes* (map change items) and *raises* (change requests) live in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md).
 
 The implementation artifact (`ui-map-implementation.md`) sits in the change package at `skai/changes/<change-id>/ui-map/` in the repo that holds the official map, parallel to the architecture artifact. After promotion it lives at `skai/promoted/<change-id>/ui-map/`; pending Plan work is recorded there.
@@ -60,3 +62,13 @@ artifact. Older checked items retain their meaning; migration fabricates no new 
 ```
 
 On failure, persist and link the full output, so `output` is required. On success, `output` is optional when no output was persisted. The evidence brackets are the durable record that conformance and promotion were verified, not asserted.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-implementation-artifacts-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

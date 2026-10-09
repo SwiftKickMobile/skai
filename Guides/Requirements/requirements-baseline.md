@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.requirements-baseline
 Managed-Source: Guides/Requirements/requirements-baseline.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-05
+Managed-Updated-At: 2026-10-09
 
 # Requirements Baseline
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 Read this when [`requirements-authoring.md`](requirements-authoring.md) infers Baseline mode. Three
 things go wrong wherever every file being drafted is new, and nowhere else.
@@ -36,3 +38,13 @@ into a draft as returned. Every failure delegated authoring invites is a coheren
 citations, one term meaning two things, `D<n>` numbered per author and renumbered on merge, the
 product rebuilt differently from each author's fragment — and one author holding the whole package
 avoids all of them.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/requirements-baseline-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

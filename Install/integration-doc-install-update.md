@@ -7,6 +7,7 @@ This is a shared guide for installers that create/update the host project's Inte
 - The Integration doc is **project-owned operational glue**.
 - It must be **agent-usable** and **deterministic** (prefer CLI commands; avoid GUI instructions).
 - It must be safe to update on existing repos (don't delete/overwrite project-owned content).
+- It supplies project-wide operational settings. Guide-specific additions/overrides belong in project-owned `skai/addenda/` files; the base guide loads Integration when needed, without requiring addendum authors to repeat that dependency.
 - It records project-specific overrides and evidence conventions; canonical SKAI-native defaults stay in SKAI guides and do not need to be copied here just to make them discoverable.
 
 ## Rules

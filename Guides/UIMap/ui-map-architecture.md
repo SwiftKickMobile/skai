@@ -6,6 +6,8 @@ Managed-Updated-At: 2026-10-09
 
 # UI Map Architecture
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 The architecture method for the UI Map system. Use [`ui-map-guide.md`](ui-map-guide.md) for the YAML map format and [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md) for the change-package artifact formats (map change items, change requests).
 
 ## Purpose
@@ -343,3 +345,13 @@ One bullet per approved map deferral: bold title, TODO pointer, brief rationale.
 ```
 
 The TODO identifier may be a top-level `todos:` scope (e.g. `todos[scope=login]`) or a scene-level marker (e.g. `verify: { todo: true }`). For deferrals that require adding a new TODO in this pass, cite the new identifier the same way — the new TODO is part of the proposed map in Map Changes.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-architecture-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

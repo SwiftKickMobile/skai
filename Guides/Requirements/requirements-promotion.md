@@ -6,6 +6,8 @@ Managed-Updated-At: 2026-10-09
 
 # Requirements Promotion
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 ## Purpose
 
 Write an approved change package into the canonical catalog.
@@ -18,8 +20,8 @@ In conversation, link requirement and Discussion IDs to the exact draft or canon
 inline links. Prefer real anchors; Discussion checkbox IDs require a supported explicit anchor or
 a topic anchor with item context, or a verified file/line link supported by the host.
 
-Content rules live in [`requirements-catalog.md`](requirements-catalog.md); the package's typed
-formats live in [`requirements-artifacts.md`](requirements-artifacts.md).
+Use [`requirements-catalog.md`](requirements-catalog.md) for content rules and
+[`requirements-artifacts.md`](requirements-artifacts.md) for typed formats.
 
 ## When promotion happens
 
@@ -158,10 +160,8 @@ On failure, record the condition in `## Evidence`, not a checks section, and ret
 
 Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution order.
 
-**C1–C5 verify, C6 prepares links, C7 writes, C8 archives.** Verify new/changed content at its
-projected canonical location; unchanged carried-forward content and unrelated catalog defects do
-not block. Wider ID/prefix checks and whole-output confirmation are specified below. Known-difference
-notes are observations, not obligations or progress markers.
+Verify changed content at its projected canonical location; unchanged content and unrelated catalog
+defects do not block. Known-difference notes are observations, not obligations or markers.
 
 - `C1 IDs are append-only` — every ID in a rewritten catalog file remains in its draft, with no
   renumbering or retired-ID reuse. Non-ID content is carried forward by whole-file drafting, not an
@@ -188,8 +188,8 @@ notes are observations, not obligations or progress markers.
   intended targets and no Discussion citations, checkboxes, or `🟡` remain. Only retirement marks and
   labeled known-difference observations are allowed alongside the contract. Repair mechanical output
   faults in place; never reword. Record the actual write outcome before output confirmation; extend that C7 evidence with confirmation/repair results, retaining failures. Check C7 only after confirmation succeeds, then archive.
-- `C8 Archive the package` — move and verify this requirements type folder as described below.
-  This is the terminal completion item; a successful canonical write alone does not finish archival.
+- `C8 Archive the package` — execute *Archive the package* below. This terminal item completes
+  promotion only after verified write and archival.
 
 **Example** (LumenNotes, mid-execution — `C4` failed, so `C5` onward were not run):
 
@@ -221,8 +221,7 @@ notes are observations, not obligations or progress markers.
 [evidence: C<n>; <command or inspection>; <outcome>; output: <path when persisted>]
 ```
 
-Name the check and observed outcome. Re-runs append under `### Run <n>` headings, retaining
-previous evidence rather than interleaving it.
+Name check/outcome; append re-runs under `### Run <n>`, preserving prior evidence.
 
 Inspection and preparation results name what was checked or changed:
 
@@ -288,3 +287,13 @@ with its archived link; resolve that catalog defect through a new scoped-change 
 - [`requirements-catalog.md`](requirements-catalog.md) — catalog content rules
 - [`requirements-authoring.md`](requirements-authoring.md) — the authoring workflow
 - [`requirements-artifacts.md`](requirements-artifacts.md) — change item and change request formats
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/requirements-promotion-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

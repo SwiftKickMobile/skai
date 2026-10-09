@@ -6,6 +6,8 @@ Managed-Updated-At: 2026-10-09
 
 # Process flow (house style reference)
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 Purpose: canonical definitions for process-flow mechanics (gates, advance intent, `auto`, and progress markers). This file is a **maintainer reference** used to ensure consistency across workflow guides. It is NOT a runtime dependency -- agents should not need to read this file during workflow execution. The operational core is inlined in each guide using the standard template defined in `internal/maintenance/gated-workflows.md`.
 
 ## Declared workflow variants
@@ -310,3 +312,13 @@ After resolution:
   - **Why** A sheet dismisses back to where you were; a push implies a place in the navigation.
   - **Decision** A — modal sheet. Aligns with the agent's recommended pick.
 ```
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/process-flow-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

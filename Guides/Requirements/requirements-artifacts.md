@@ -6,6 +6,8 @@ Managed-Updated-At: 2026-10-09
 
 # Requirements Artifact Formats
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 The typed formats the requirements workflows produce and consume. This is the consumer-facing layer:
 a downstream reader resolves any field or value here without reading the authoring method
 ([`requirements-authoring.md`](requirements-authoring.md)). For the catalog's own content rules —
@@ -197,3 +199,13 @@ Changes), `Rejected`, or `Superseded`.
 - [`requirements-catalog.md`](requirements-catalog.md) — catalog content rules
 - [`requirements-authoring.md`](requirements-authoring.md) — the authoring workflow
 - [`requirements-promotion.md`](requirements-promotion.md) — the promotion workflow
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/requirements-artifacts-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

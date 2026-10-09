@@ -6,6 +6,8 @@ Managed-Updated-At: 2026-10-09
 
 # UI Map Implementation
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 The implementation method for the UI Map system. It executes or specifies the code work needed to conform to an approved map and promotes an approved proposed map when one exists. Use [`ui-map-implementation-artifacts.md`](ui-map-implementation-artifacts.md) for the code-change and evidence formats this skill produces, [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md) for the map-change items it consumes and the change requests it raises, and [`ui-map-guide.md`](ui-map-guide.md) for the YAML map.
 
 For platform-specific code conventions, load [`ui-map-swiftui.md`](ui-map-swiftui.md) for iOS/SwiftUI or [`ui-map-compose.md`](ui-map-compose.md) for Android/Compose. For placeholder scaffolding, load [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md) or [`ui-map-compose-placeholders.md`](ui-map-compose-placeholders.md) for the matching stack.
@@ -454,3 +456,13 @@ and link the artifact at `skai/promoted/<change-id>/ui-map/`.
 `⏳ GATE: Blocked: <N> item(s) handoff — <reason>. Resolve and say "next" to continue.`
 
 **Conformance (no change package)** has no map to promote; it finishes through the applicable Plan or Build branch above, with the official map left untouched.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-implementation-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

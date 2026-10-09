@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.designer-guide
 Managed-Source: Guides/Design/designer-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-07
+Managed-Updated-At: 2026-10-09
 
 # Designer Guide
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 Conventions for a project's Figma design file, the design source of truth for the app. They apply to
 anyone editing the file, designer or agent. Examples use **LumenNotes**, skai's shared fictional
@@ -201,3 +203,13 @@ the font are handled this way.
 
 3. **Text grows, screens scroll.** Text containers expand to fit their content and the whole screen
    scrolls. Never depict text clipped inside a fixed-height box.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/designer-guide-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

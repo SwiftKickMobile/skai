@@ -6,6 +6,8 @@ Managed-Updated-At: 2026-10-09
 
 # Work Spec Implementation
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 ## Purpose
 
 Turn a ready design into a task list, obtain one approval, then implement continuously. This skill
@@ -318,3 +320,13 @@ For Build, complete when every task is checked, required evidence is current, an
 
 If any task remains unchecked, use the appropriate blocked or requested-boundary gate instead of a
 completion line.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/work-spec-implementation-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

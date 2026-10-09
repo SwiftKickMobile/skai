@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.ui-map-figjam
 Managed-Source: Guides/UIMap/ui-map-figjam.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-09
 
 # UI Map — FigJam Format & Migration (deprecated)
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 The FigJam diagram is the **deprecated** predecessor to the YAML UI Map format. This document is needed only when **migrating** an existing FigJam-based project onto the YAML system — it is not loaded for ordinary planning or implementation work. Companion to [`ui-map-guide.md`](ui-map-guide.md).
 
@@ -116,3 +118,13 @@ FigJam captures less than the schema allows — but the codebase is right there.
 - **Anything else the diagram can't express** — derive it from the code where the code is authoritative. If neither the diagram nor the code settles it, **STOP at a blocked gate** and ask the supervisor — never fabricate, and never silently drop it.
 
 Structure comes from the FigJam (and the domains the design defines); the code supplies the details the diagram can't hold. Reconciling any remaining code↔map drift is a later pass (`ui-map-implementation.md`), not migration. After approval the project is on the YAML system; subsequent map changes use `ui-map-architecture.md`; code alignment uses `ui-map-implementation.md`.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-figjam-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

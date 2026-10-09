@@ -25,6 +25,10 @@ Agents copy the worked **example**, not the surrounding prose — an example out
 - **Each distinct *path* a guide teaches needs its own faithful example.** With only one (e.g. only the audit case, or only the root case), it becomes the gravitational center and agents misapply it to the other paths.
 - **Never enumerate *compositions*.** Route kinds, options, and states combine combinatorially — an example per combination bloats the guide and still leaves gaps. State the governing rule as a **decision procedure the agent applies** ("before X, ask Y; do Z only if…"), frame per-case recipes as *derivations* of it, and let the agent derive the combinations you didn't draw. Illustrate the bounded base set; derive the rest.
 
+## Project guide addenda
+
+All registered guides inline the entry/footer from [Guide addenda](guide-addenda.md). Read that reference when adding/editing a guide or its wrapper; keep its published lookup name stable and preserve user-owned addenda.
+
 ## Sanity scan (after every guide edit)
 
 Run this scan after *each* guide edit, not just at the end of a batch. Deferring the scan to the end of a batch is the proven failure mode -- violations introduced early in the batch survive unchecked.

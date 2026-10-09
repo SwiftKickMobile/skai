@@ -6,6 +6,8 @@ Managed-Updated-At: 2026-10-09
 
 # Maintenance retro checklist (agent + supervisor)
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 Use this after making changes to `skai` to ensure nothing was forgotten.
 
 ## Retro intent (read this first)
@@ -72,6 +74,7 @@ This retro is a **backstop for completeness**, not a git/diff report.
   - If the guide creates ephemeral working docs, verify its paths use `skai/working-docs/<branch-path>/<session-name>/...` rather than placing files directly under `skai/working-docs/<branch-path>/...`.
 - Every manifest `skill` asset has at least one `adapter:` tag and an existing `sourcePath`; runbooks install from those fields. Untagged skills install nowhere.
 - If change-package workflows, artifact formats, or callers changed: run and record the [change package verification](maintenance/change-packages.md#verification), including coexistence, independent promotion, archival recovery, link repair and migration coverage.
+- If guides or wrappers changed: verify the [guide addendum contract](maintenance/guide-addenda.md#verification), including coverage, host-root paths, receipts, thin routing, name compatibility and preserving user files.
 - If maintenance references moved: verify the main routing table, cross-references and retro point to their current homes.
 - If a new skill was added or changed: verify the skill template is a **thin wrapper** (just references to Guides), not a self-contained document with inline logic. All substantive instructions must live in a Guide under `Guides/`.
 
@@ -98,3 +101,12 @@ If nothing stands out, say **"No process suggestions."**
 - If you found none: say **"Maintenance retro complete; no misses found."**
 - Include process suggestions from step 6 (if any) as a separate **"Process suggestions"** section at the end.
 
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/maintain-retro-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

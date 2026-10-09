@@ -6,6 +6,8 @@ Managed-Updated-At: 2026-10-09
 
 # Requirements Authoring
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 ## Purpose
 
 Draft behavioral requirements into a **change package**, resolve the open questions they raise with
@@ -356,3 +358,13 @@ not on every response, and under `auto` too, which bypasses the gate and not the
 - [`requirements-catalog.md`](requirements-catalog.md) — catalog content rules
 - [`requirements-promotion.md`](requirements-promotion.md) — promoting an approved package
 - [`requirements-artifacts.md`](requirements-artifacts.md) — change item and change request formats
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/requirements-authoring-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

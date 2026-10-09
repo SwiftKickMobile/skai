@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.cold-review-prompt-template
 Managed-Source: Guides/Process/cold-review-prompt-template.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-09
 
 # Cold-Review Prompt Template
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 A fill-in template for launching a **cold review** of a refinement target's guide(s) -- see `process-refinement-guide.md`. The maintainer fills the slots below and hands the result to a **fresh, no-context session** (a different session from the one that will do the refinement). The cold reviewer produces findings; the refining session consumes them.
 
@@ -158,3 +160,13 @@ A review report only. Structure it:
 ## Style
 Be direct and critical; prefer findings over summary; cite exact file paths and line numbers; distinguish verified findings from speculation; do not soften real problems; do not assume prior conversation context beyond the files; recommend fixes in prose, but do not edit files.
 ```
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/cold-review-prompt-template-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.process-refinement
 Managed-Source: Guides/Process/process-refinement-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-09
 
 # Process Refinement Guide
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 A process for refining a **refinement target** — the guide document(s) that tell an agent how to carry out some process — based on a cold review. Applies to any such document under development, whether or not it backs a skill.
 
@@ -198,3 +200,13 @@ The disciplines below apply when a target receives more than one refinement pass
 **Recurrence threshold.** Do not codify from a single observation. First sighting = `log only` (recorded in the findings log). Second sighting in a different case = consider codification. Third = codify. The findings log provides the cross-pass memory this rule depends on. As in the codification check above, this thresholds *codification* — it never blocks fixing a deterministic document defect on first sight, or sharpening an existing rule against the chartered empirical failure of a scoped review.
 
 **Periodic restructure.** Every several passes, refactor the guide for accumulated cruft — consolidate overlapping rules, remove dead text, reorganize sections by what is actually load-bearing. Bloat is fought retrospectively as well as at the entry point. This is a deliberate pass of its own; do not fold it into a normal refinement pass.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/process-refinement-guide-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

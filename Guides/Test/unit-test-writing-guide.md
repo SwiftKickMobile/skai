@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.unit-test-writing
 Managed-Source: Guides/Test/unit-test-writing-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-09
 
 # Unit Test Writing & Execution Guide
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 ## Purpose
 
@@ -895,3 +897,13 @@ See `skai/integration.md` for project-specific test execution commands.
 2. Document expected vs actual values
 3. Investigation → Fix → Verify (repeat until passing)
 - See "When Tests Fail" section above for complete process
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/unit-test-writing-guide-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

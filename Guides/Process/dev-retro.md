@@ -6,6 +6,8 @@ Managed-Updated-At: 2026-10-09
 
 # Dev-session retro (agent + supervisor)
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 Purpose: a completeness backstop for an LLM-driven development session in a host repo. This retro covers **everything since the previous dev retro** (if any); if none, it covers the current session.
 
 Do not do a git/diff report unless asked. Prefer evidence-backed review and consistency checks.
@@ -216,3 +218,13 @@ After all six steps, emit one gate using the precedence defined under Gates:
 - If step 5 seeded a requirements package, end with `⏳ GATE: Next: Hand the seeded package to Requirements Authoring. Say "next" or what to change.` Advance intent transfers control to `Guides/Requirements/requirements-authoring.md`. If process suggestions also exist, report that pending ticket handoff; retain its unchecked S items for the supervisor to invoke ticket filing later. Retro does not resume afterwards.
 - Otherwise, if SKAI process suggestions exist, end with `⏳ GATE: Next: Draft process tickets from these retro suggestions. Say "next" or what to change.` Advance intent enters `Guides/Process/ticket-filing.md` at Phase 1, step 2.
 - With neither handoff, emit `🏁 Complete. Let me know if anything needs adjustment.`
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/dev-retro-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

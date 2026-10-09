@@ -20,6 +20,8 @@ Recommended host locations for agent-facing docs:
 - [Quick start](#quick-start-recommended)
 - [How installs stay safe](#how-installs-stay-safe)
 - [Integration document](#integration-document-how-to-use-it)
+- [Project guide addenda](#project-guide-addenda)
+  - [Shared context and platform overrides](#shared-context-and-platform-overrides)
 - [IDE clutter / autocomplete](#ide-clutter--autocomplete-recommended)
 - [Usage](#usage)
   - [How all workflows work](#how-all-workflows-work)
@@ -117,6 +119,66 @@ How the project owner fills it:
 
 > **Note on `🟡`:** The Integration doc's `🟡` (missing project-specific value) is a separate concept from the workflow-progress `🟡` used in source files by skai workflows (see [Agent note-taking and progress tracking](#how-all-workflows-work) below). Both share the emoji; their lifecycles differ.
 
+## Project guide addenda
+
+Customize a guide with a project-owned, freeform Markdown file at
+`skai/addenda/<guide-name>-addendum.md`. Each guide's final **Project addendum** section gives its
+exact filename. The agent reads the full guide and any present addendum before using the guide,
+then reports the applicable status:
+
+```text
+📎 ADDENDUM: <resolved path> — loaded
+📎 ADDENDUM: <resolved path> — none present
+```
+
+The receipt is not an approval gate. Reference guides and nested skills check their own addenda
+when needed.
+
+Addenda may add rules or override guide defaults. Current task instructions and project-wide policies
+retain authority. No required template, headings, frontmatter, schema or managed header applies;
+SKAI updates preserve these files. Integration remains global operational settings, loaded by the
+base guide when needed. Addendum authors need not repeat that dependency.
+
+For example, `skai/addenda/requirements-promotion-addendum.md` could contain:
+
+```markdown
+Include a short evidence summary naming the requirement files checked.
+For this guide, replace the default completion sentence with:
+“Requirements are promoted and archived.”
+```
+
+### Shared context and platform overrides
+
+For iOS and Android projects sharing requirements, a UI Map or common conventions, keep the common
+addendum in the shared repository. Each platform's conventional addendum points to it and can add
+local rules. The conventional project file is the discovery entry point; the referenced content
+may live elsewhere. A task performed directly in the shared repository uses that repository as its
+active project.
+
+Copy this optional boilerplate into the platform project's
+`skai/addenda/requirements-promotion-addendum.md`, adjusting the shared path:
+
+```markdown
+First read and apply the [shared addendum](../../Submodules/shared-context/skai/addenda/requirements-promotion-addendum.md).
+
+Then apply these project-specific additions and overrides:
+- Include the iOS verification results in the evidence summary.
+```
+
+This example assumes the shared repository is checked out at `Submodules/shared-context/` under the
+platform project. Relative links resolve from the file containing them, so `../../` leads from
+`skai/addenda/` back to the project root. Use the actual checkout path for a sibling repository or
+another layout.
+
+- **Shared only:** the project addendum just instructs reading the shared file.
+- **Local only:** it contains the project's rules directly.
+- **Both:** read shared rules first, then apply local additions or overrides. Put explicit local
+  replacements in the project file so the intended precedence is clear.
+
+Required shared references must be read before proceeding; missing or unreadable references stop
+rather than count as an absent project addendum. The agent reports the files actually loaded using
+the receipt lines shown above. Neither Integration nor README needs an inventory of addendum files.
+
 ## IDE clutter / autocomplete (recommended)
 
 To reduce duplicate autocomplete/search results (submodule sources + installed assets), hide the submodule in your editor UI while keeping the submodule [`README.md`](README.md) visible.
@@ -165,6 +227,8 @@ After installation, workflows are available as **skills** that your agent activa
 - Markers are cleared only when items are resolved and you give approval at the relevant gate.
 
 > **Note on `🟡`:** This is the workflow-progress `🟡`, distinct from the [Integration document](#integration-document-how-to-use-it) `🟡` (which marks missing project-specific values needing supervisor input). Both share the emoji; their lifecycles differ.
+
+**Project customization.** [Project guide addenda](#project-guide-addenda) add or override a guide's rules, including shared instructions and platform-local overrides.
 
 **Retros on demand.** At any point you can ask the agent to **"retro"** to check for gaps, update documents, backfill requirements, and reflect on process.
 

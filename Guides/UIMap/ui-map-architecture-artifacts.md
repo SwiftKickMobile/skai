@@ -6,6 +6,8 @@ Managed-Updated-At: 2026-10-09
 
 # UI Map Architecture Artifact Formats
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 The typed formats the architecture skill produces and consumes. This is the consumer-facing layer: a downstream reader resolves any field or value here without reading the authoring method ([`ui-map-architecture.md`](ui-map-architecture.md)). For the YAML map format itself, see [`ui-map-guide.md`](ui-map-guide.md).
 
 A change package lives at `skai/changes/<change-id>/ui-map/` in the repo that holds the official map. It holds the proposed map (`proposed-ui-map.yaml`), its render (`proposed-ui-map.html`), and the architecture artifact (`ui-map-architecture.md`) — whose `## Map Changes` section lists **map change items**. The architecture skill also consumes **change requests** raised by downstream implementation. Both formats are defined below. The type folder owns all map artifacts, requests and evidence;
@@ -50,3 +52,13 @@ Reviewer Response: <filled by architecture on reopen>
 ```
 
 Lifecycle: the request opens `Proposed`; architecture's reviewer fills `Reviewer Response` and moves the status to `Incorporated` (only once the adjustment is applied in the proposed map in Map Changes), `Rejected`, or `Superseded`.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-architecture-artifacts-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

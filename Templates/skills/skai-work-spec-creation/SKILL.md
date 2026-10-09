@@ -7,5 +7,4 @@ description: Designs software changes using skai with open-ended inputs, proposa
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Spec/work-spec-creation.md` and follow it.
-- If the workflow needs project-specific commands/paths, read `skai/integration.md` and STOP to ask for missing required values.
+- Read `Submodules/skai/Guides/Spec/work-spec-creation.md` in full, including its Project addendum instructions, and follow it.

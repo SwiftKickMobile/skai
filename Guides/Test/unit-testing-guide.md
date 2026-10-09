@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.unit-testing
 Managed-Source: Guides/Test/unit-testing-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-09
 
 # Unit Testing Guide
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 ## Purpose
 
@@ -342,3 +344,13 @@ AI: [At the next planned gate, the supervisor decides to re-enter infrastructure
 
 **Parent progress artifact:**
 - `skai/working-docs/<branch-path>/<session-name>/testing/unit-testing.md`
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/unit-testing-guide-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
+for an absent host entry. Receipt is not a gate; keep GATE lines last.

@@ -7,8 +7,4 @@ description: Sets up unit test infrastructure using skai rules. Use when configu
 
 ## Instructions
 
-- Read:
-  - `Submodules/skai/Guides/Test/unit-test-infrastructure-guide.md`
-- If test failures require debugging, follow:
-  - `Submodules/skai/Policies/debugging-process-rule.md`
-  - `Submodules/skai/Guides/Core/debugging-guide.md`
+- Read `Submodules/skai/Guides/Test/unit-test-infrastructure-guide.md` in full, including its Project addendum instructions, and follow it.

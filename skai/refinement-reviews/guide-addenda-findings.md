@@ -1,0 +1,11 @@
+# Guide addenda — findings
+
+Refiner-facing cross-pass record; never supplied to the cold reviewer. Review standard: guide-addenda-design.md. Prototype precedes house-style extraction and rollout.
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-10-09 prototype r1 | Prototype loading/precedence/receipt review | closed — no live findings | Fresh read-only Codex reviewed the guide, wrapper and shared instruction block. No instruction teaches a wrong action; absent/additive/override/failure/policy-conflict/shared-root paths are coherent. Instruction-following reliability remains empirical, not guaranteed. |
+| 2026-10-09 rollout | Reviewed boilerplate extraction and guide coverage | closed | House style owns entry/footer; all 35 canonical guide copies match modulo lookup name. Coverage, unique paths, metadata, links, default-body preservation and existing control variants checked; 16 wrappers validate and preserve discovery frontmatter. No new cold-review score assigned to mechanical rollout. |
+| 2026-10-09 smoke | Real read-only host loading/receipt | closed | Codex read the host fixture addendum, recognized its override, emitted the correct loaded-path receipt and used the existing missing-Integration blocked gate without edits. This verifies that invocation only; no universal enforcement claim. |
+| 2026-10-09 shared-context follow-up | Categorical exclusion of shared repository content | corrected by supervisor design clarification | Conventional project file is the entry point and may reference shared addenda; shared rules precede local overrides, relative links use their containing file, and required-reference failures block. README provides optional boilerplate. All 35 copies and owner/design/changelog updated; fixture link, coverage, word cap and whitespace checks pass. Original prototype score is not reused as a review of this follow-up. |
+| 2026-10-09 naming follow-up | Plural directory and visible receipt example | updated by supervisor request | `skai/addenda/` now used by all 35 guides/current sources; `-addendum.md` and `ADDENDUM` remain singular. README receipt alternatives are a standalone code block; shared example, coverage, word cap and whitespace checks pass. Historical review/execution paths are retained. |
