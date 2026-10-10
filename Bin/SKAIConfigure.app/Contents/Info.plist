@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+    <key>Managed-By</key><string>skai</string>
+    <key>Managed-Id</key><string>application.skai-configure</string>
+    <key>Managed-Source</key><string>Bin/SKAIConfigure.app</string>
+    <key>Managed-Adapter</key><string>repo-source</string>
+    <key>Managed-Updated-At</key><string>2026-10-10</string>
+    <key>CFBundleExecutable</key><string>SKAIConfigure</string>
+    <key>CFBundleIdentifier</key><string>com.swiftkick.skai.configure</string>
+    <key>CFBundleName</key><string>Configure SKAI</string>
+    <key>CFBundleDisplayName</key><string>Configure SKAI</string>
+    <key>CFBundleIconFile</key><string>SKAIConfigure.icns</string>
+    <key>CFBundlePackageType</key><string>APPL</string>
+    <key>CFBundleShortVersionString</key><string>0.1</string>
+    <key>CFBundleVersion</key><string>21</string>
+    <key>LSMinimumSystemVersion</key><string>13.0</string>
+    <key>NSHighResolutionCapable</key><true/>
+</dict></plist>

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.update-installation
 Managed-Source: Guides/Core/update-installation-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-09
+Managed-Updated-At: 2026-10-10
 
 # Update Installation Guide
 
@@ -37,7 +37,7 @@ Planned gates for this workflow:
 - After reporting what changed (changelog summary or `git log` fallback), but before running the adapter install/update runbooks.
 
 Workflow-specific blocked gates:
-- Both `skai/install-state.json` and the legacy `docs/skai/install-state.json` are missing, so the update workflow does not know what was previously installed.
+- All of `skai/install-state.local.json`, `skai/install-state.json` and legacy `docs/skai/install-state.json` are missing, so the update workflow does not know what was previously installed.
 - The default (latest release) target is requested but the submodule has no `v<N>` release tag.
 
 ## Advance intent
@@ -54,7 +54,7 @@ Rules:
 
 Progress tracking:
 - This workflow currently uses inline discussion rather than a required work document.
-- The active state lives in the conversation plus the discovered install-state file; adapter migration writes the canonical `skai/install-state.json`.
+- The active state lives in the conversation plus the discovered install-state file; adapter migration writes its resolved project or local state path.
 - At the changelog-review gate, STOP after summarizing what changed and wait for approval before re-running adapter runbooks.
 
 Workflow-specific advance behavior:
@@ -64,14 +64,16 @@ Workflow-specific advance behavior:
 
 ## Prerequisites
 
-- `skai/install-state.json` or the legacy `docs/skai/install-state.json` must exist (created by the initial install).
-  - If both are missing, STOP and tell the supervisor to run the initial install/update runbook for each adapter first.
+- Local `skai/install-state.local.json`, project `skai/install-state.json` or legacy `docs/skai/install-state.json` must exist (created by the initial install).
+  - If all are missing, STOP and tell the supervisor to run the initial install/update runbook for each adapter first.
 
 ## Procedure
 
 ### 1. Read the install state file
 
-Read `skai/install-state.json`; if it is absent and `docs/skai/install-state.json` exists, read that legacy file and record the canonical path migration for each adapter's plan. Extract:
+Read `skai/install-state.local.json` when present; otherwise `skai/install-state.json`, otherwise
+legacy `docs/skai/install-state.json` and record its canonical path migration. Malformed/unreadable
+state blocks rather than implying absence. Preserve the chosen state path for later writes. Extract:
 - `submodulePath` (default: `Submodules/skai`)
 - `lastSHA`
 - `lastRelease` (the `v<N>` the host is currently on; may be absent on installs that predate release targeting)
@@ -104,7 +106,18 @@ If the default is requested but no `v<N>` tag exists, STOP with a blocked gate -
 
 ### 3. Check whether an update is needed
 
-Compare `lastSHA` (from step 1) to the resolved target SHA. If they match, report "skai is already at `<target>`" and stop. Otherwise record the old SHA and continue.
+Keep recorded `lastSHA` as the prior installation/migration baseline; it does not prove the
+checkout's current version. Read the actual checkout HEAD:
+
+```sh
+git -C "<submodulePath>" rev-parse HEAD
+```
+
+Compare that HEAD to the target SHA. Skip only step 4's checkout when they match. A failed update
+may have changed HEAD without advancing installation state, so use the recorded version separately
+for changelog/artifact migration checks. Continue actual component reconciliation regardless of
+SHA equality. Use `Install/component-history.md` on every reconciliation; component baselines may
+be older than the recorded adapter/global SHA. Never advance install state merely from a checkout.
 
 ### 4. Update the submodule
 
@@ -126,17 +139,20 @@ The host repo's submodule pointer now references the target; the supervisor comm
 ### 6. Run adapter install/update runbooks
 
 For each entry in `installedAdapters`:
-- Read the runbook at `<submodulePath>/<runbook>` and execute it.
+- Read `Install/component-selection.md` from that checkout, resolve the active host's current config, then read the adapter runbook at `<submodulePath>/<runbook>` and execute it, including actual inventory/reconciliation.
 - Run them sequentially (one adapter at a time).
 - Each runbook's migration-capable algorithm handles any necessary updates (new skills, changed policies, deprecated artifacts, etc.).
 
 ### 7. Update install state
 
-Update `skai/install-state.json` with:
+Update the resolver's active `historyStatePath` with:
 - The new submodule HEAD SHA
 - `lastRelease`: the `v<N>` tag updated to (leave null for a branch-head or commit target)
 - Today's date (run `date +%Y-%m-%d` -- see `Install/managed-header.md`)
-- Per-adapter `lastRunAt` timestamps
+- Per-adapter `lastRunAt` timestamps and `lastSHA` provenance
+- Verified config fingerprint and component history under `Install/component-history.md` when
+  tracking applies; retain disabled components' last applied versions. Keep local effective
+  history in gitignored local state, preserving shared state and other adapter entries.
 
 Then complete the workflow.
 
@@ -147,5 +163,5 @@ Host root means the active project. Read a present addendum and required shared 
 from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
 subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
 lookup/read errors or missing required references stop; never infer absence. Before work, report
-`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
-for an absent host entry. Receipt is not a gate; keep GATE lines last.
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-guide
 Managed-Source: Guides/UIMap/ui-map-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-09
+Managed-Updated-At: 2026-10-10
 
 # UI Map Guide
 
@@ -14,7 +14,6 @@ This guide defines the platform-agnostic YAML format. Platform implementation pa
 
 - [`ui-map-swiftui.md`](ui-map-swiftui.md) — implementing a UI Map in SwiftUI
 - [`ui-map-compose.md`](ui-map-compose.md) — implementing a UI Map in Jetpack Compose
-- [`ui-map-figjam.md`](ui-map-figjam.md) — the deprecated FigJam diagram format, for migrating existing projects
 
 ## Rendering and validation
 
@@ -336,5 +335,5 @@ Host root means the active project. Read a present addendum and required shared 
 from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
 subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
 lookup/read errors or missing required references stop; never infer absence. Before work, report
-`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
-for an absent host entry. Receipt is not a gate; keep GATE lines last.
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

@@ -26,8 +26,8 @@ Host root means the active project. Read a present addendum and required shared 
 from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
 subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
 lookup/read errors or missing required references stop; never infer absence. Before work, report
-`📎 ADDENDUM: <resolved path> — loaded` for each file, or `📎 ADDENDUM: <resolved path> — none present`
-for an absent host entry. Receipt is not a gate; keep GATE lines last.
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.
 ```
 
 Initially use the guide filename stem, e.g. `requirements-promotion`. Treat the published name as a compatibility interface: preserve it on a future guide rename, or document an explicit host-addendum path migration without overwriting user content. Names must be unique; lookup never depends on an unannounced rename.
@@ -37,7 +37,8 @@ Initially use the guide filename stem, e.g. `requirements-promotion`. Treat the 
 Keep one conventional entry point per guide. It may direct reading shared addenda from another
 repository and then apply local additions/overrides; no Integration or README inventory is needed.
 Resolve relative references from their containing file, load required shared content before use,
-and report each loaded file. Missing/unreadable required references stop; only an absent project
+and report only the conventional project entry’s status. Referenced documents need no separate
+receipt. Missing/unreadable required references stop; only an absent project
 entry is the normal absent case. The [README example](../../README.md#shared-context-and-platform-overrides)
 is optional copyable prose, not a required template or schema.
 
@@ -49,7 +50,8 @@ Use the installed instruction-block exception for supported guide overrides; do 
 
 ## Verification
 
-- Entry cue comes before use; footer path/name is correct and unique; both successful receipt cases exist and failures cannot count as absence.
+- Entry cue comes before use; footer path/name is correct and unique; absent status is a plain sentence; both statuses identify only the project-entry filename, and failures cannot count as absence.
+- Emit one status for the project entry, without separate receipts for referenced documents.
 - Footer copies differ only in lookup name; neither gate placement nor the guide's no-addendum behavior changes.
 - Wrappers remain thin and have no competing guide-default instructions; base dependencies still exist in the guide.
 - Reference/handoff cases load the relevant guide's own addendum; no addendum user schema or new global workflow is introduced.

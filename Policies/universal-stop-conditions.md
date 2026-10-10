@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: policy.universal-stop-conditions
 Managed-Source: Policies/universal-stop-conditions.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-10
 
 # Universal STOP Conditions (Agent Policy)
 
@@ -16,6 +16,6 @@ These conditions override `auto` and any other advance intent. When any conditio
 
 3. **About to deviate from an explicit plan/spec/instruction.** The spec/plan says X but you are about to do not-X (skip a step, change an approach, weaken a requirement). Do not proceed -- explain the deviation and wait.
 
-4. **About to run a destructive/irreversible operation.** Any operation that discards work, destroys data, or is difficult to reverse (see `Policies/safe-operations.md` for examples). Do not run it -- describe scope, what could be lost, and wait for explicit approval.
+4. **About to run a destructive/irreversible operation without explicit approval for its scope.** Any operation that discards work, destroys data, or is difficult to reverse (see `Policies/safe-operations.md` for examples and the approval definition). If that specific operation is not already approved, describe its scope and what could be lost, then wait for explicit approval.
 
 5. **Required evidence/artifacts are unavailable or new evidence contradicts the current hypothesis.** You need output, logs, or test results you cannot access, or new information invalidates your working theory. Do not continue on stale assumptions -- report what changed and wait.

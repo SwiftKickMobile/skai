@@ -7,7 +7,7 @@ This policy applies to agents executing the `skai` workflows, including install/
 - Do not change code without explicit authorization when in discussion/troubleshooting mode.
 - Do not commit unless explicitly asked.
 - Do not push unless explicitly asked.
-- Do not delete project files unless explicitly asked.
+- Do not delete project files without explicit approval for those specific removals.
 - Do not add dependencies unless explicitly asked.
 - Do not revert changes unless explicitly asked.
 - Hard prohibition: do not run destructive/irreversible operations unless the supervisor explicitly approves that specific operation. If unsure, STOP and ask.
@@ -19,7 +19,7 @@ This policy applies to agents executing the `skai` workflows, including install/
 
 ## Explicit approval requirement (destructive operations)
 
-"Explicit approval" means the supervisor clearly instructs you to run the specific destructive operation now (an imperative request), not merely to discuss options or describe what the command would do.
+"Explicit approval" means the supervisor clearly authorizes the specific scoped operation, not merely discussing options or describing a command. Approval may already be supplied by an explicit request or approved plan. A verified Configure SKAI Save and Apply, or an explicit request to apply saved configuration, approves only its identified SKAI-managed component removals; unmanaged files, custom resources, unrelated migrations and destructive Git operations retain their separate approvals.
 
 If the user intent is ambiguous, treat it as NOT approved and STOP to ask: "Do you want me to run <exact command>?"
 
@@ -39,7 +39,7 @@ Examples:
 
 Destructive operations are actions that discard work, destroy data, or are difficult to reverse.
 
-Before running a destructive operation:
+Before running a destructive operation that does not already have explicit approval for its scope:
 - Describe what will be affected (scope).
 - Describe what could be lost.
 - Ask for explicit approval, then STOP and wait.

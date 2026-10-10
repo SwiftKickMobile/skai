@@ -65,6 +65,12 @@ Read the matching references before editing; several rows may apply. Do not load
 | Preparing release notes, cutting a release, or creating its commit/tag | [Releases](maintenance/releases.md) | Consolidating Unreleased notes, frozen release history, release numbering, verification, commit/tag authorization, and push boundaries. |
 | Completing a significant multi-file, path, installer, or workflow change | [Maintenance retro](maintain-retro.md) | The final bookkeeping and consistency backstop, applicable house-style checks, and process reflection. |
 
+## Maintainer-only code and artwork
+
+Keep app source, tests and build scripts under `internal/apps/`; keep branding sources and
+exports under `internal/branding/`. Host runtime executables and their dependencies stay in `Bin/`.
+Document contributor tooling in the README Development guide, rather than skill Usage entries.
+
 ## Common house style
 
 These rules apply to Guides, internal runbooks and maintenance references, and skill entry points.

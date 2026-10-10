@@ -1,3 +1,8 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="internal/branding/skai-logo-dark.svg">
+  <img src="internal/branding/skai-logo.svg" alt="SKAI" width="420">
+</picture>
+
 # `skai`
 
 Reusable, mostly IDE-agnostic **agentic coding guides** and **policies** you can vendor into any repo.
@@ -35,6 +40,7 @@ Recommended host locations for agent-facing docs:
   - [Debugging](#debugging-skill-skai-debugging)
   - [Dev retro](#dev-retro-skill-skai-dev-retro)
   - [Suggestion](#suggestion-skill-skai-suggestion)
+  - [Configure SKAI](#configure-skai-skill-skai-configure)
   - [Update installation](#update-installation-skill-skai-update-installation)
   - [Working documents](#working-documents)
   - [Figma designs](#figma-designs)
@@ -127,11 +133,13 @@ exact filename. The agent reads the full guide and any present addendum before u
 then reports the applicable status:
 
 ```text
-📎 ADDENDUM: <resolved path> — loaded
-📎 ADDENDUM: <resolved path> — none present
+📎 ADDENDUM: <project-entry filename> — loaded
+No project addendum found: <project-entry filename>.
 ```
 
-The receipt is not an approval gate. Reference guides and nested skills check their own addenda
+Both messages show only the filename. The agent reports only the project entry’s status, without
+separate receipts for documents it
+references. The receipt is not an approval gate. Reference guides and nested skills check their own addenda
 when needed.
 
 Addenda may add rules or override guide defaults. Current task instructions and project-wide policies
@@ -176,8 +184,8 @@ another layout.
   replacements in the project file so the intended precedence is clear.
 
 Required shared references must be read before proceeding; missing or unreadable references stop
-rather than count as an absent project addendum. The agent reports the files actually loaded using
-the receipt lines shown above. Neither Integration nor README needs an inventory of addendum files.
+rather than count as an absent project addendum. These references do not produce additional
+receipt lines. Neither Integration nor README needs an inventory of addendum files.
 
 ## IDE clutter / autocomplete (recommended)
 
@@ -394,13 +402,76 @@ The suggestion box for skai itself. A developer has an idea, request, or complai
 1. **Understand and draft.** Agent asks clarifying questions to understand the suggestion (skipped if the developer provides enough detail up front). Once it has enough context, it stops at a ready-to-draft gate. On `next`, it chooses a session name, writes one or more `- [ ] T<n> Ticket: ...` drafts (with bold sub-bullet body fields) to `skai/working-docs/<branch-path>/<session-name>/process-tickets.md`, and presents them for review.
 2. **Review and file (optional).** The draft-review gate is the main filing gate: the supervisor can revise drafts or move them to a `## Skipped` subsection, or say `next` to file the remaining unchecked `- [ ] T<n> Ticket: ...` entries as GitHub issues on `skai`. On filing, the entry is checked (`- [x]`) and a `- **Filed** #<n>` sub-bullet is appended.
 
+### Configure SKAI (skill `skai-configure`)
+
+Say **“configure SKAI”** in your project chat. The agent launches the bundled Mac app with a
+categorized checklist with descriptions for both parent categories and individual skills/policies. Project settings define the
+shared selection in **Project**; the **User** tab overrides components just for your working copy.
+
+Agent launches use **Save and Apply**: saving closes the app immediately and the waiting agent
+updates the installation. When opened independently, the app uses **Save**, remains open and shows
+a dialog explaining how to ask an agent to apply the saved choices. OK returns to the checklist;
+Save becomes available again after another edit. Closing discards unsaved edits and preserves saves.
+A double-click launch finds the owning host repository when SKAI is installed as a submodule,
+including under nested folders such as `Submodules/skai`. Otherwise, it asks you to choose a host.
+
+- Guide [Configure SKAI](Guides/Core/configure-skai.md)
+- App [SKAIConfigure.app](Bin/SKAIConfigure.app)
+- Selection contract [Component configuration](Install/component-selection.md)
+
+**Prerequisites:** An Apple Silicon Mac running macOS 13 or later and a harness that can launch
+a local command and wait for its completion. The bundled app needs no browser automation, server or runtime Xcode installation.
+The compiled app ships inside the SKAI checkout; users do not build it or install it separately. It
+uses **Project** and **User** tabs. Bulk actions such as Select all, Clear and Use project
+settings are in the compact **⋯** menu beside the tabs.
+
+**Phases:**
+
+1. **Choose components.** Agent opens the app for the active host project. Edit Project or User; Configure SKAI is always available and cannot be deselected.
+2. **Save and Apply.** In agent mode the app writes changed config layers, closes without confirmation and returns the saved result. The agent runs each installed adapter's runbook against the current checkout. Standalone Save keeps the app open and gives the manual apply prompt instead.
+3. **Verify.** Installer checks actual managed collateral against current config before recording success, even when selections or SKAI SHA are unchanged. Unmanaged conflicts and unrelated migrations retain their own approval requirements.
+
+Project selections live in `skai/config.json`. Private overrides live in gitignored
+`skai/config.local.json`, containing only explicit overrides:
+
+```json
+{
+  "schemaVersion": 1,
+  "overrides": {
+    "skill.skai-debugging": true,
+    "skill.skai-ui-map-architecture": false
+  }
+}
+```
+
+In the User tab, a **dash** means Use project setting and omits the key; **checked** means Turn on
+and writes `true`; **unchecked** means Turn off and writes `false`. Click the checkbox to cycle states.
+The User tab shows the override count. Overridden rows show blue **User: On/Off** labels on Project
+and **Project: On/Off** labels on User, displaying the other setting’s value. On User, inherited component names are subtly dimmed; category names are dimmed when none
+of their components has an override.
+Local settings take precedence; local-only edits leave project config untouched. The installer
+also ignores `skai/install-state.local.json`, where local effective installation history is recorded.
+Turning on a component locally can require migration of shared collateral under normal installation
+rules; the user owns that choice.
+
+Without either config file, every applicable component is installed. Once saved, the config is an explicit
+selection: unchecked components and newly introduced optional components remain disabled until
+selected. An empty selection retains configuration support. Guides and the app remain in the SKAI
+checkout; the installer controls host-installed skills/policies and preserves project-owned content,
+Integration values and addenda. If installation is interrupted, the saved desired config remains
+available for the next install/update. Component history starts with customization or any managed
+component removal, retaining each component’s last applied SHA through disable/re-enable.
+Unchanged default installs need no component ledger; returning to defaults never discards history once recorded. On re-enablement, migrations are
+checked from that component's version, even when the overall SKAI SHA hasn't changed. See
+[Component history and migrations](Install/component-history.md).
+
 ### Update installation (skill `skai-update-installation`)
 
 Update `skai` to the latest release (or a target you name), review what changed, and re-run adapter runbooks.
 
 - Guide [`Guides/Core/update-installation-guide.md`](Guides/Core/update-installation-guide.md)
 
-**Prerequisites:** An existing installation ([`skai/install-state.json`](skai/install-state.json) must exist from the initial install).
+**Prerequisites:** An existing installation ([`skai/install-state.json`](skai/install-state.json), or the gitignored local state, must exist from the initial install).
 
 **Phases:**
 
@@ -438,6 +509,24 @@ This repo is typically maintained with an LLM. When you ask an LLM to make chang
   - no deletions
   - no dependency changes
 
+### App and branding development
+
+Maintainer-only app sources, tests and build tooling live under
+[internal/apps/ConfigureSKAI](internal/apps/ConfigureSKAI). Rebuild the bundled app with
+`bash internal/apps/ConfigureSKAI/build.sh` from the repository root; the
+[build script](internal/apps/ConfigureSKAI/build.sh) produces the Apple Silicon app bundle in
+[Bin/SKAIConfigure.app](Bin/SKAIConfigure.app). The repo-bundled app uses an ad hoc signature. Developer ID signing/notarization is a separate
+packaging choice, not a prerequisite for the Git-based SKAI release.
+
+Run the [configuration tests](internal/apps/ConfigureSKAI/test.sh) with
+`bash internal/apps/ConfigureSKAI/test.sh`. They cover native config editing/host discovery, migration
+history and agreement between the packaged Mac resolver and portable Python resolver. Rebuild the
+app before testing changes to its source. UI appearance and interactions are checked manually.
+
+Logo sources, exports and regeneration instructions live under
+[internal/branding](internal/branding/README.md). The main README references those exports directly.
+Host runtime tools stay in [Bin](Bin); app source and branding tooling are not installed into projects.
+
 ### Contributor rules
 
 - Keep sources in this repo **IDE-neutral** (`.md`). IDE-specific outputs are generated into host repos by install/update runbooks.
@@ -445,4 +534,4 @@ This repo is typically maintained with an LLM. When you ask an LLM to make chang
   - [`assets.manifest.json`](assets.manifest.json)
   - [`README.md`](README.md) Usage section (developer-facing guides should be documented at file level)
 - Update [`CHANGELOG.md`](CHANGELOG.md) for user-visible changes.
-- Do not introduce scripts that mutate host repos; installers are LLM-runbook-driven and must follow the safety policies in [`Policies/`](Policies/).
+- Installed collateral is changed by LLM-runbook-driven installers following [`Policies/`](Policies/). The configuration app writes only the project-owned desired config on explicit Save; it does not install or remove components. Other scripts must not mutate host repos.
