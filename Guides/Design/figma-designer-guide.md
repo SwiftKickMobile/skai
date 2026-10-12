@@ -6,6 +6,8 @@ Managed-Updated-At: 2026-10-12
 
 # Figma Designer Guide
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 Conventions for a project's Figma design file, the design source of truth for the app, for anyone
 editing it, designer or agent. They hold for any platform the app runs on. Examples use
 **LumenNotes**, skai's shared fictional theme.
@@ -265,3 +267,13 @@ project-specific ones stay in the project.
 
 6. **Scaling unlinks text styles.** `rescale()` (the Scale tool) detaches scaled text from its
    style; the component keeps the linked style at its base size.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/%s-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

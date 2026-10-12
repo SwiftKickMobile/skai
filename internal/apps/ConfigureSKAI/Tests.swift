@@ -173,6 +173,54 @@ import Foundation
         let afterTrackedSave = try Data(contentsOf: hostLocal)
         precondition(beforeTrackedSave == afterTrackedSave)
         print("PASS Git ignore enforcement preserves private config on rejected Save")
+        let fresh = temporary.appendingPathComponent("new components")
+        try FileManager.default.createDirectory(at: fresh.appendingPathComponent("skai"), withIntermediateDirectories: true)
+        let freshConfig = fresh.appendingPathComponent("skai/config.json")
+        let freshState = fresh.appendingPathComponent("skai/install-state.json")
+        let defaultHost = try Configuration(project: fresh, skaiRoot: skaiRoot)
+        let noneNew = try defaultHost.newComponents()
+        precondition(noneNew.isEmpty)
+        try reject("enable needs a project config", { _ = try defaultHost.enable(["skill.skai-debugging"]) })
+        try JSONSerialization.data(withJSONObject: ["schemaVersion": 1, "components": ["skill.skai-debugging"], "note": "keep"]).write(to: freshConfig)
+        try JSONSerialization.data(withJSONObject: ["managedBy": "skai", "installedAdapters": [
+            ["adapter": "codex", "componentHistory": ["skill.skai-dev-retro": ["installed": false, "lastAppliedSHA": "N"]]],
+            ["adapter": "claude-code"]]]).write(to: freshState)
+        let configured = try Configuration(project: fresh, skaiRoot: skaiRoot)
+        let hostNew = configured.newComponentIDs
+        precondition(hostNew.contains("skill.skai-suggestion") && !hostNew.contains("skill.skai-debugging") && !hostNew.contains("skill.skai-dev-retro") && !hostNew.contains("skill.skai-configure"))
+        let codexNew = Set((try configured.resolve(adapter: "codex", stack: "generic")["newComponents"] as! [[String: Any]]).map { $0["id"] as! String })
+        precondition(!codexNew.contains("skill.skai-dev-retro") && codexNew.contains("skill.skai-suggestion") && !codexNew.contains("policy.swift-code-organization"))
+        let claudeNew = Set((try configured.resolve(adapter: "claude-code", stack: "swift")["newComponents"] as! [[String: Any]]).map { $0["id"] as! String })
+        precondition(claudeNew.contains("skill.skai-dev-retro") && claudeNew.contains("policy.swift-code-organization"))
+        print("PASS new components: none on a default host; chosen, seen and required excluded; per-adapter history and stack eligibility")
+        _ = try configured.enable(["skill.skai-suggestion"])
+        let enabledObject = try JSONSerialization.jsonObject(with: Data(contentsOf: freshConfig)) as! [String: Any]
+        precondition(enabledObject["components"] as? [String] == ["skill.skai-debugging", "skill.skai-suggestion"] && enabledObject["note"] as? String == "keep")
+        try reject("enable rejects required/unknown IDs", { _ = try configured.enable(["skill.skai-configure"]) })
+        let declined = try Configuration(project: fresh, skaiRoot: skaiRoot)
+        _ = try declined.decline(["skill.skai-unit-testing"], sha: "N+1", date: "2026-10-12")
+        let stateObject = try JSONSerialization.jsonObject(with: Data(contentsOf: freshState)) as! [String: Any]
+        for record in stateObject["installedAdapters"] as! [[String: Any]] {
+            let entry = (record["componentHistory"] as! [String: Any])["skill.skai-unit-testing"] as! [String: Any]
+            precondition(entry["installed"] as? Bool == false && entry["declinedSHA"] as? String == "N+1" && entry["declinedAt"] as? String == "2026-10-12" && entry["lastAppliedSHA"] is NSNull)
+        }
+        precondition(stateObject["managedBy"] as? String == "skai")
+        let afterDecline = try Configuration(project: fresh, skaiRoot: skaiRoot)
+        precondition(!afterDecline.newComponentIDs.contains("skill.skai-unit-testing") && !afterDecline.newComponentIDs.contains("skill.skai-suggestion"))
+        try reject("declining a seen component is refused", { _ = try afterDecline.decline(["skill.skai-unit-testing"], sha: "N+1", date: "2026-10-12") })
+        print("PASS enable appends to the project config preserving keys; decline records every adapter and ends newness")
+        // Save declines whatever new components were left unselected, so they leave the New section next time.
+        let saving = try Configuration(project: fresh, skaiRoot: skaiRoot)
+        let stillNew = saving.newComponentIDs
+        precondition(stillNew.contains("skill.skai-process-refinement"))
+        precondition(!saving.hasChanges)  // the model keeps the saved selection; the window pre-checks new ones
+        saving.selected.insert("skill.skai-process-refinement")
+        let savedNew = try saving.save()
+        let declinedOnSave = Set(savedNew["declined"] as! [String])
+        precondition(declinedOnSave == stillNew.subtracting(["skill.skai-process-refinement"]))
+        let afterSave = try Configuration(project: fresh, skaiRoot: skaiRoot)
+        precondition(afterSave.newComponentIDs.isEmpty && afterSave.selected.contains("skill.skai-process-refinement"))
+        print("PASS Save keeps selected new components and declines the rest")
         print("All native configuration checks passed.")
     }
 }

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.update-installation
 Managed-Source: Guides/Core/update-installation-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-10
+Managed-Updated-At: 2026-10-12
 
 # Update Installation Guide
 
@@ -35,6 +35,12 @@ If an unexpected blocker prevents continued work, use the blocked gate line and 
 
 Planned gates for this workflow:
 - After reporting what changed (changelog summary or `git log` fallback), but before running the adapter install/update runbooks.
+- New components gate: when the host has a project config and the target adds optional components it
+  has never seen (`newComponents` from the resolver), after the changelog gate and before the
+  runbooks. `Next` opens the configure app; the supervisor may instead answer inline, naming which
+  to enable and which to skip, and the installer records that through the configuration tool
+  without opening the app.
+  - `⏳ GATE: Next: Open the configure app to choose among <N> new components (<labels>). Or say which to enable or skip.`
 
 Workflow-specific blocked gates:
 - All of `skai/install-state.local.json`, `skai/install-state.json` and legacy `docs/skai/install-state.json` are missing, so the update workflow does not know what was previously installed.
@@ -59,6 +65,9 @@ Progress tracking:
 
 Workflow-specific advance behavior:
 - `auto` may bypass the changelog-review gate and continue directly into the adapter runbooks.
+- `auto` bypasses the new-components gate by enabling every new component (through the
+  configuration tool) and naming them in the completion message. A default host (no project config)
+  has no such gate: additions install as defaults, and are named at completion the same way.
 - `auto` does not bypass the blocked missing-install-state or no-release-tag cases.
 - Use `runbooks` as the stable bounded-auto target for this guide.
 
@@ -136,6 +145,15 @@ The host repo's submodule pointer now references the target; the supervisor comm
 - For a branch-head or commit target: show `## Unreleased` plus any `## Release <N>` sections in the `<oldSHA>..<newSHA>` range; if none apply, show `git log --oneline <oldSHA>..<newSHA>`.
 - Gate: STOP after reporting what changed and end with `⏳ GATE: Next: Run the installed adapter update runbooks. Say "next" or what to change.`
 
+### 5b. Offer new components
+
+Resolve each installed adapter's effective selection with the current checkout
+(`Install/component-selection.md`) and collect `newComponents`. If the host has a project config and
+the list is not empty, STOP at the new-components gate above. On `next`, launch the configure app in
+agent mode as `Guides/Core/configure-skai.md` describes; on an inline answer, write the choices with
+the configuration tool's `--enable` / `--decline` flags. Under `auto`, enable them all. Then
+continue; the runbooks install whatever the config now selects.
+
 ### 6. Run adapter install/update runbooks
 
 For each entry in `installedAdapters`:
@@ -154,7 +172,9 @@ Update the resolver's active `historyStatePath` with:
   tracking applies; retain disabled components' last applied versions. Keep local effective
   history in gitignored local state, preserving shared state and other adapter entries.
 
-Then complete the workflow.
+Before the completion line, name every optional component this update installed that was not
+installed before (new to the catalog or newly enabled), and any the supervisor declined, so the
+change in what the agent can do is visible in the transcript. Then complete the workflow.
 
 ## Project addendum
 

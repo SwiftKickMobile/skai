@@ -332,7 +332,7 @@ requirement text and IDs remain unchanged.
 
 ### Design authoring (skill `skai-design-authoring`)
 
-Take a design change from an idea to approved mockups in a change package under `skai/changes/<change-id>/`, drafted on a change page named `<change-id>` in the project's design file. The production designs stay unchanged during authoring. Sources are open-ended -- an idea, sketches, a brief, a requirements package, an existing app to backfill from. The process guide is tool-agnostic and loads the conventions guide for the project's design tool (Figma today).
+Take a design change from an idea to approved mockups in a change package under `skai/changes/<change-id>/design/`, drafted on a change page named `<change-id>` in the project's design file. The production designs stay unchanged during authoring. Sources are open-ended -- an idea, sketches, a brief, a requirements package, an existing app to backfill from. The process guide is tool-agnostic and loads the conventions guide for the project's design tool (Figma today).
 
 - Guide [`Guides/Design/design-authoring.md`](Guides/Design/design-authoring.md)
 - Tool guide, loaded by the process guide: [`Guides/Design/figma-designer-guide.md`](Guides/Design/figma-designer-guide.md) for Figma (and [`figma-designer-guide-multiple-sizes.md`](Guides/Design/figma-designer-guide-multiple-sizes.md) for several target sizes)
@@ -346,7 +346,7 @@ Take a design change from an idea to approved mockups in a change package under 
 
 ### Design promotion (skill `skai-design-promotion`)
 
-Move an approved package's drafts from its change page into the production designs, have the supervisor confirm the result, and delete the page. Promotion refactors production to absorb the drafts; a draft that needs changing returns the package to authoring. Implementing designs in code is out of scope.
+Move an approved package's drafts from its change page into the production designs, have the supervisor confirm the result, delete the page, and archive the package to `skai/promoted/<change-id>/design/`. Promotion refactors production to absorb the drafts; a draft that needs changing returns the package to authoring. Implementing designs in code is out of scope.
 
 - Guide [`Guides/Design/design-promotion.md`](Guides/Design/design-promotion.md)
 
@@ -355,7 +355,7 @@ Move an approved package's drafts from its change page into the production desig
 **Phases:**
 
 1. **Promotion checks.** Agent screens the package for readiness, then writes an unchecked checklist: drafts meet the conventions, inventory matches the page, production absorbs the page, links repoint, page deleted. Gate: supervisor reviews what will land.
-2. **Execute.** Agent verifies and applies, then stops for the supervisor to review production in the design file. Gate: supervisor confirms, and the change page is deleted.
+2. **Execute.** Agent verifies and applies, then stops for the supervisor to review production in the design file. Gate: supervisor confirms; the change page is deleted and the package archived.
 
 ### Unit testing (skill `skai-unit-testing`)
 

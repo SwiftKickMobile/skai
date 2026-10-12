@@ -6,6 +6,7 @@ final class ConfigureApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
     var window: NSWindow!
     var buttons: [String: NSButton] = [:]
     var categories: [String: NSButton] = [:]
+    var newCategories: [String: NSButton] = [:]
     var overrideBadges: [String: NSTextField] = [:]
     let agentSession: Bool
     var scopeControl: NSSegmentedControl!
@@ -129,17 +130,46 @@ final class ConfigureApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         list.translatesAutoresizingMaskIntoConstraints = false
         scroll.documentView = list
         NSLayoutConstraint.activate([list.widthAnchor.constraint(equalTo: scroll.contentView.widthAnchor)])
-        let preferred = config.componentCategories.map(\.name)
-        let names = Set(config.components.map(\.group))
-        let order = preferred.filter { names.contains($0) } + names.subtracting(preferred).sorted()
-        for group in order {
-            let members = config.components.filter { $0.group == group }
-            let header = NSButton(checkboxWithTitle: group, target: self, action: #selector(categoryChanged(_:)))
-            header.identifier = NSUserInterfaceItemIdentifier(group)
+        let newIDs = config.newComponentIDs
+        // New components open checked, so a plain Save installs them; unchecking one declines it.
+        config.selected.formUnion(newIDs)
+        func componentRow(_ component: Component, badgeText: String? = nil) -> NSStackView {
+            let checkbox = NSButton(checkboxWithTitle: component.title + (component.required ? " · Always installed" : ""), target: self, action: #selector(componentChanged(_:)))
+            checkbox.identifier = NSUserInterfaceItemIdentifier(component.id)
+            checkbox.isEnabled = !component.required
+            checkbox.toolTip = component.id
+            buttons[component.id] = checkbox
+            let detail = text(component.description ?? "", size: 12, color: .secondaryLabelColor)
+            let badge = text("", size: 11, color: .controlAccentColor)
+            badge.font = .systemFont(ofSize: 11, weight: .semibold)
+            badge.setContentCompressionResistancePriority(.required, for: .horizontal)
+            overrideBadges[component.id] = badge
+            var controlViews: [NSView] = [checkbox, badge]
+            if let badgeText {
+                let category = text(badgeText, size: 11, color: .tertiaryLabelColor)
+                category.setContentCompressionResistancePriority(.required, for: .horizontal)
+                controlViews.append(category)
+            }
+            let controls = NSStackView(views: controlViews)
+            controls.spacing = 12
+            let row = NSStackView(views: [controls, detail])
+            row.orientation = .vertical
+            row.alignment = .leading
+            row.spacing = 3
+            row.edgeInsets = NSEdgeInsets(top: 3, left: 18, bottom: 7, right: 10)
+            list.addArrangedSubview(row)
+            row.widthAnchor.constraint(equalTo: list.widthAnchor, constant: -24).isActive = true
+            detail.widthAnchor.constraint(equalTo: row.widthAnchor, constant: -28).isActive = true
+            return row
+        }
+        // Category headers look identical in both lists; only the action and registry differ.
+        func categoryHeader(_ group: String, members: [Component], inNewSection: Bool) {
+            let header = NSButton(checkboxWithTitle: group, target: self, action: inNewSection ? #selector(newCategoryChanged(_:)) : #selector(categoryChanged(_:)))
+            header.identifier = NSUserInterfaceItemIdentifier((inNewSection ? "new:" : "") + group)
             header.allowsMixedState = true
             header.font = .boldSystemFont(ofSize: 15)
             header.isEnabled = members.contains { !$0.required }
-            categories[group] = header
+            if inNewSection { newCategories[group] = header } else { categories[group] = header }
             let headerRow = NSStackView(views: [header])
             headerRow.orientation = .vertical
             headerRow.alignment = .leading
@@ -155,28 +185,36 @@ final class ConfigureApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
                 descriptionRow.widthAnchor.constraint(equalTo: headerRow.widthAnchor).isActive = true
                 detail.widthAnchor.constraint(equalTo: descriptionRow.widthAnchor, constant: -18).isActive = true
             }
-            for component in members {
-                let checkbox = NSButton(checkboxWithTitle: component.title + (component.required ? " · Always installed" : ""), target: self, action: #selector(componentChanged(_:)))
-                checkbox.identifier = NSUserInterfaceItemIdentifier(component.id)
-                checkbox.isEnabled = !component.required
-                checkbox.toolTip = component.id
-                buttons[component.id] = checkbox
-                let detail = text(component.description ?? "", size: 12, color: .secondaryLabelColor)
-                let badge = text("", size: 11, color: .controlAccentColor)
-                badge.font = .systemFont(ofSize: 11, weight: .semibold)
-                badge.setContentCompressionResistancePriority(.required, for: .horizontal)
-                overrideBadges[component.id] = badge
-                let controls = NSStackView(views: [checkbox, badge])
-                controls.spacing = 12
-                let row = NSStackView(views: [controls, detail])
-                row.orientation = .vertical
-                row.alignment = .leading
-                row.spacing = 3
-                row.edgeInsets = NSEdgeInsets(top: 3, left: 18, bottom: 7, right: 10)
-                list.addArrangedSubview(row)
-                row.widthAnchor.constraint(equalTo: list.widthAnchor, constant: -24).isActive = true
-                detail.widthAnchor.constraint(equalTo: row.widthAnchor, constant: -28).isActive = true
+            for component in members { _ = componentRow(component) }
+        }
+        func groupOrder(_ names: Set<String>) -> [String] {
+            let preferred = config.componentCategories.map(\.name)
+            return preferred.filter { names.contains($0) } + names.subtracting(preferred).sorted()
+        }
+        if !newIDs.isEmpty {
+            // New in this SKAI version and never chosen: listed first until Save, then in their categories.
+            let title = text("New 🔥 — configure to use", size: 18)
+            title.font = .boldSystemFont(ofSize: 18)
+            let titleRow = NSStackView(views: [title])
+            titleRow.edgeInsets = NSEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
+            list.addArrangedSubview(titleRow)
+            titleRow.widthAnchor.constraint(equalTo: list.widthAnchor, constant: -24).isActive = true
+            let fresh = config.components.filter { newIDs.contains($0.id) }
+            for group in groupOrder(Set(fresh.map(\.group))) {
+                categoryHeader(group, members: fresh.filter { $0.group == group }, inNewSection: true)
             }
+            let divider = NSBox()
+            divider.boxType = .separator
+            divider.translatesAutoresizingMaskIntoConstraints = false
+            // Measured: 17 after the last row and 12 after the line give equal 22pt gaps around it.
+            if let above = list.arrangedSubviews.last { list.setCustomSpacing(17, after: above) }
+            list.addArrangedSubview(divider)
+            divider.widthAnchor.constraint(equalTo: list.widthAnchor, constant: -24).isActive = true
+            list.setCustomSpacing(12, after: divider)
+        }
+        let rest = config.components.filter { !newIDs.contains($0.id) }
+        for group in groupOrder(Set(rest.map(\.group))) {
+            categoryHeader(group, members: rest.filter { $0.group == group }, inNewSection: false)
         }
         countLabel.textColor = .secondaryLabelColor
         countLabel.font = .systemFont(ofSize: 12)
@@ -185,7 +223,9 @@ final class ConfigureApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         cancel.keyEquivalent = "\u{1b}"
         let save = NSButton(title: agentSession ? "Save and Apply" : "Save", target: self, action: #selector(save(_:)))
         saveButton = save
-        save.keyEquivalent = "\r"
+        // Looks like the default action but has no Return binding: saving takes a click, so a
+        // keystroke meant for another app cannot save.
+        save.bezelColor = .controlAccentColor
         let footer = NSStackView(views: [cancel, save])
         footer.spacing = 8
         footer.translatesAutoresizingMaskIntoConstraints = false
@@ -251,8 +291,9 @@ final class ConfigureApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         resetAction.isHidden = !editingLocal
         resetSeparator.isHidden = resetAction.isHidden
 
+        let newIDs = config.newComponentIDs
         for (group, button) in categories {
-            let ids = Set(config.components.filter { $0.group == group && !$0.required }.map(\.id))
+            let ids = Set(config.components.filter { $0.group == group && !$0.required && !newIDs.contains($0.id) }.map(\.id))
             let count = ids.intersection(config.selected).count
             let hasOverride = ids.contains { config.overrides[$0] != nil }
             let titleColor: NSColor = !button.isEnabled ? .disabledControlTextColor :
@@ -266,6 +307,16 @@ final class ConfigureApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
             } else {
                 button.state = ids.isEmpty || count == ids.count ? .on : (count == 0 ? .off : .mixed)
                 button.toolTip = nil
+            }
+        }
+        for (group, button) in newCategories {
+            let ids = Set(config.components.filter { $0.group == group && newIDs.contains($0.id) }.map(\.id))
+            if editingLocal {
+                let values = Set(ids.map { config.overrides[$0] })
+                button.state = values == Set([Optional(true)]) ? .on : (values == Set([Optional(false)]) ? .off : .mixed)
+            } else {
+                let count = ids.intersection(config.selected).count
+                button.state = count == ids.count ? .on : (count == 0 ? .off : .mixed)
             }
         }
         countLabel.stringValue = "\(config.effectiveSelection.count) of \(config.optionalIDs.count) effective · \(config.overrides.count) overrides"
@@ -288,7 +339,22 @@ final class ConfigureApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         refresh()
     }
     @objc func categoryChanged(_ sender: NSButton) {
-        let ids = Set(configuration!.components.filter { $0.group == sender.identifier?.rawValue && !$0.required }.map(\.id))
+        let newIDs = configuration!.newComponentIDs
+        let ids = Set(configuration!.components.filter { $0.group == sender.identifier?.rawValue && !$0.required && !newIDs.contains($0.id) }.map(\.id))
+        if editingLocal {
+            for id in ids {
+                if sender.state == .mixed { configuration!.overrides.removeValue(forKey: id) }
+                else { configuration!.overrides[id] = sender.state == .on }
+            }
+        } else {
+            if ids.isSubset(of: configuration!.selected) { configuration!.selected.subtract(ids) } else { configuration!.selected.formUnion(ids) }
+        }
+        refresh()
+    }
+    @objc func newCategoryChanged(_ sender: NSButton) {
+        let group = String((sender.identifier?.rawValue ?? "").dropFirst(4))
+        let newIDs = configuration!.newComponentIDs
+        let ids = Set(configuration!.components.filter { $0.group == group && newIDs.contains($0.id) }.map(\.id))
         if editingLocal {
             for id in ids {
                 if sender.state == .mixed { configuration!.overrides.removeValue(forKey: id) }
@@ -374,7 +440,7 @@ struct Main {
             return args[index + 1]
         }
         if args.contains("--help") {
-            print("SKAIConfigure [--project-root PATH] [--skai-root PATH] [--agent-session] [--resolve --adapter codex|cursor|claude-code --stack generic|swift|android]")
+            print("SKAIConfigure [--project-root PATH] [--skai-root PATH] [--agent-session] [--resolve --adapter codex|cursor|claude-code --stack generic|swift|android] [--enable ID[,ID] --decline ID[,ID] [--target-sha SHA] [--date YYYY-MM-DD]]")
             return
         }
         let root = argument("--skai-root").map { URL(fileURLWithPath: $0) } ?? Bundle.main.bundleURL.deletingLastPathComponent().deletingLastPathComponent()
@@ -384,6 +450,25 @@ struct Main {
                 guard let project else { throw ConfigurationFailure(message: "--project-root is required for --resolve.") }
                 let config = try Configuration(project: project, skaiRoot: root)
                 emit(try config.resolve(adapter: argument("--adapter") ?? "codex", stack: argument("--stack") ?? "generic"))
+            } catch {
+                emit(["status": "error", "error": error.localizedDescription], to: .standardError)
+                exit(2)
+            }
+            return
+        }
+        if args.contains("--enable") || args.contains("--decline") {
+            do {
+                guard let project else { throw ConfigurationFailure(message: "--project-root is required for --enable/--decline.") }
+                let config = try Configuration(project: project, skaiRoot: root)
+                func ids(_ flag: String) -> Set<String> { Set((argument(flag) ?? "").split(separator: ",").map(String.init).filter { !$0.isEmpty }) }
+                var result: [String: Any] = ["status": "saved"]
+                let enabled = ids("--enable"), declined = ids("--decline")
+                guard enabled.isDisjoint(with: declined) else { throw ConfigurationFailure(message: "A component cannot be both enabled and declined.") }
+                if !enabled.isEmpty { result.merge(try config.enable(enabled)) { _, new in new } }
+                if !declined.isEmpty {
+                    result.merge(try config.decline(declined, sha: argument("--target-sha") ?? Configuration.checkoutSHA(skaiRoot: root), date: argument("--date") ?? Configuration.today())) { _, new in new }
+                }
+                emit(result)
             } catch {
                 emit(["status": "error", "error": error.localizedDescription], to: .standardError)
                 exit(2)

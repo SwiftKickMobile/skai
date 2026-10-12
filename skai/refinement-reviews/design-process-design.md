@@ -51,10 +51,10 @@ Written 2026-10-12 from the planning discussion with the supervisor
 
 ## Settled decisions
 
-- **Package**: `skai/changes/<change-id>/` holding `design-authoring.md` and (after promotion)
-  `design-promotion.md`. The drafts live in the design file on a **change page** named
-  `<change-id>`. A design package may share its folder with a requirements package for the same
-  change.
+- **Package**: `skai/changes/<change-id>/design/` holding `design-authoring.md` and (after
+  promotion) `design-promotion.md`, beside any `requirements/` or `ui-map/` type for the same
+  change (SKAI Release 11's typed layout). The drafts live in the design file on a **change page**
+  named `<change-id>`. Promotion archives the type to `skai/promoted/<change-id>/design/`.
 - **Authoring artifact**: Goal · Inputs · Discussion · Design Changes · Assumptions and TODOs · Out
   of scope. Design Changes is a high-level inventory (which screens are new or changed, with links),
   written after approval; the designs speak for themselves.
@@ -80,7 +80,8 @@ Written 2026-10-12 from the planning discussion with the supervisor
   refactored to absorb the page; **the supervisor reviews production before the change page is
   deleted**; then the page is deleted and the package marked promoted. A requested design change at
   any point returns the package to authoring.
-- **No archiving**: superseded designs live in the tool's version history.
+- **No archiving of designs**: superseded designs live in the tool's version history. The package
+  itself is archived to `skai/promoted/` like every SKAI package.
 - **No Concept pages**; the change page is where iteration happens.
 - **Humans follow the same process**; no special case for hand edits.
 - **Requirements impact is not the guides' concern**; an agent that sees a conflict says so, and the
@@ -88,9 +89,11 @@ Written 2026-10-12 from the planning discussion with the supervisor
 
 ## Size budget
 
-`design-authoring.md` is capped at **16,000 bytes** and `design-promotion.md` at **12,000 bytes**
-(`wc -c`, managed headers included; the inlined gate and advance-intent blocks count). This keeps
-each well under its requirements counterpart (24,000 and 20,800). Every repair states its net size
+`design-authoring.md` is capped at **16,500 bytes** and `design-promotion.md` at **13,500 bytes**
+(`wc -c`, managed headers included; the inlined gate, advance-intent and Project addendum blocks
+count). Raised 2026-10-12 from 16,000 / 12,000 when SKAI Release 11's mandatory addendum footer
+(about 750 bytes) and the package-archive step were added. This keeps each well under its
+requirements counterpart (24,000 and 20,800). Every repair states its net size
 cost; additions over the cap are paired with trims, and a fix that cannot fit is a supervisor
 decision.
 

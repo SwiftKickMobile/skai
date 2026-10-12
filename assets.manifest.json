@@ -7,6 +7,7 @@
     {"name": "Setup", "description": "Configure SKAI and keep the project installation up to date."},
     {"name": "Requirements", "description": "Define, review and maintain the project’s behavioral requirements."},
     {"name": "UI Map", "description": "Describe screens and routes, then implement the approved map."},
+    {"name": "Design", "description": "Author design changes in the project’s design file and promote them to production."},
     {"name": "Work specs", "description": "Design changes and plan their implementation."},
     {"name": "Testing", "description": "Plan coverage, prepare test infrastructure and write unit tests."},
     {"name": "Debugging", "description": "Find the cause of defects and verify repairs."},
@@ -595,12 +596,18 @@
     },
     {
       "id": "skill.skai-design-authoring",
+      "label": "Design authoring",
+      "category": "Design",
+      "description": "Take a design change from idea to approved mockups on a change page, without touching production designs.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-design-authoring/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-design-promotion",
+      "label": "Design promotion",
+      "category": "Design",
+      "description": "Move an approved design package into the production designs after supervisor review.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-design-promotion/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]

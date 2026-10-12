@@ -6,6 +6,8 @@ Managed-Updated-At: 2026-10-12
 
 # Design Authoring
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 ## Purpose
 
 Take a design change from an idea to approved mockups in a **change package**: settle the decisions
@@ -22,7 +24,7 @@ package, screenshots of an existing app. Nothing else is required.
 
 ## The change package
 
-A package lives at `skai/changes/<change-id>/` and holds:
+A package lives at `skai/changes/<change-id>/design/` and holds:
 
 | Path | What it is |
 | --- | --- |
@@ -30,8 +32,9 @@ A package lives at `skai/changes/<change-id>/` and holds:
 | `design-promotion.md` | promotion's artifact; may be absent |
 
 The drafts themselves live in the design file, on a **change page** named `<change-id>`. Every
-design tool SKAI supports has named pages; the tool guide says what a page is in its tool. A package
-may share its folder with a requirements package for the same change.
+design tool SKAI supports has named pages; the tool guide says what a page is in its tool. Other
+types for the same change (`requirements/`, `ui-map/`) sit beside `design/` under the same
+`<change-id>`; promotion archives each type independently to `skai/promoted/<change-id>/<type>/`.
 
 If the change ID is clear from the input, use it. If not, do not create the artifact yet: propose a
 short kebab-case default and stop at the blocked gate rather than guessing. Once the ID is resolved,
@@ -148,8 +151,8 @@ equivalent. Whatever came before is context the agent digests.
 On the signal:
 
 1. Read the tool guide and find the design file through the project README.
-2. Scan `skai/changes/*/design-authoring.md`. If an unpromoted package for this work exists, reopen
-   it rather than creating a second.
+2. Scan `skai/changes/*/design/design-authoring.md`. If an unpromoted package for this work exists,
+   reopen it rather than creating a second; a package under `skai/promoted/` is closed.
 3. Otherwise resolve the change ID, create the artifact, and record `## Goal` and `## Inputs`.
 4. Open the first Discussion phase.
 
@@ -257,3 +260,13 @@ them.
 - The tool guide for the project's design tool ([`figma-designer-guide.md`](figma-designer-guide.md)
   for Figma) — the conventions the designs must meet
 - [`design-promotion.md`](design-promotion.md) — promoting an approved package
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/%s-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

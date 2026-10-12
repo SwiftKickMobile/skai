@@ -6,10 +6,12 @@ Managed-Updated-At: 2026-10-12
 
 # Design Promotion
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 ## Purpose
 
 Move an approved change package's designs from its change page into the production designs, have
-the supervisor confirm the result, and delete the change page.
+the supervisor confirm the result, delete the change page, and archive the package.
 
 Promotion refactors production to absorb the drafts; it does not redesign them. A design that needs
 changing returns the package to authoring. This guide is tool-agnostic. The conventions the designs
@@ -21,7 +23,7 @@ Implementing the designs in code is outside this workflow.
 
 ## The promotion artifact
 
-Promotion writes `skai/changes/<change-id>/design-promotion.md`, beside the authoring artifact:
+Promotion writes `skai/changes/<change-id>/design/design-promotion.md`, beside the authoring artifact:
 
 ```
 # Design Promotion — <name>
@@ -105,9 +107,9 @@ Progress tracking:
 **Workflow-specific marker lifecycle.** This workflow owns the `- [ ] C<n>` items in
 `## Promotion Checks`. All are written unchecked while the first gate is open. After advance intent,
 `C1`–`C4` run in order and are checked as each passes, with evidence recorded; a failing `C1` or
-`C2` is left unchecked and nothing after it runs. `C5` runs only after the Production review gate
-advances. An unfinished promotion (checks written, `C5` unchecked) is continued from its pending
-check or gate, not restarted. **A new run after an authoring return unchecks every check** and
+`C2` is left unchecked and nothing after it runs. `C5` and `C6` run only after the Production
+review gate advances. An unfinished promotion (checks written, `C6` unchecked) is continued from its
+pending check or gate, not restarted. **A new run after an authoring return unchecks every check** and
 starts from `C1`; prior evidence stays as history under a `### Run <n>` heading.
 
 **Workflow-specific `auto` behavior.** `auto` bypasses the Promotion Checks gate but never the
@@ -118,8 +120,8 @@ Production review gate: the supervisor looks at production before the drafts are
 The workflow starts on an explicit signal — "promote the designs", "promote this package", or
 equivalent. It is never a continuation authoring runs into on its own.
 
-Identify the package: open packages are directories under `skai/changes/` holding a
-`design-authoring.md` whose promotion has not completed. More than one with no named target is a
+Identify the package: open packages are `skai/changes/<change-id>/design/` folders whose promotion
+has not completed; `skai/promoted/` holds closed ones. More than one open with no named target is a
 blocked gate. Find the design file through the project README, and read the tool guide. If the
 package already holds an unfinished `design-promotion.md`, continue it (see the marker lifecycle);
 the readiness screen below is for a new run.
@@ -131,6 +133,7 @@ Before writing `## Promotion Checks`, verify the package is promotable:
 1. Every `- [ ]` item in the authoring artifact's `## Discussion` is resolved.
 2. `## Design Changes` is written, so the mockups were approved.
 3. The change page exists and every Design Changes entry links a draft on it.
+4. `skai/promoted/<change-id>/design/` does not exist.
 
 Any failing is a blocked gate, and the resolution is authoring. Record the failing condition in
 `## Evidence` instead of writing a checks section.
@@ -152,8 +155,11 @@ Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution or
   guide's rules need to absorb them are.
 - `C4 Links point at production` — each `## Design Changes` link is repointed from the draft to its
   production design.
-- `C5 Delete the change page` — after the Production review gate advances, delete the page and
-  record the package as promoted.
+- `C5 Delete the change page` — after the Production review gate advances, delete the page.
+- `C6 Archive the package` — move `skai/changes/<change-id>/design/` intact to
+  `skai/promoted/<change-id>/design/`, leaving sibling types in place and removing the `<change-id>`
+  folder only if empty; repair live links into the moved files and relative links inside them,
+  keeping their targets; verify the move, then check `C6` in the archived `design-promotion.md`.
 
 **Example** (mid-execution, waiting at the Production review gate):
 
@@ -165,6 +171,7 @@ Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution or
 - [x] C3 Production absorbs the change page
 - [x] C4 Links point at production
 - [ ] C5 Delete the change page
+- [ ] C6 Archive the package
 
 ## Evidence
 
@@ -188,15 +195,25 @@ found.
 
 ## Completion
 
-When `C5` is checked, production holds the package's designs and the change page is gone. End with
-`🏁 Complete. Let me know if anything needs adjustment.`
-
-The package stays where it is: it is the record of why the designs are what they are. A promoted
-package is one whose `design-promotion.md` has `C5` checked; it is not promoted again and is not an
-open package.
+When `C6` is checked, production holds the package's designs, the change page is gone, and the
+package is archived at `skai/promoted/<change-id>/design/`, where it stays as the record of why the
+designs are what they are. Link its artifact and end with
+`🏁 Complete. Let me know if anything needs adjustment.` An archived package is not promoted again.
+If archival fails after `C5`, report production promoted but archival incomplete, use the standard
+blocked gate, and later resume only the archival.
 
 ## Cross-references
 
 - The tool guide for the project's design tool ([`figma-designer-guide.md`](figma-designer-guide.md)
   for Figma)
 - [`design-authoring.md`](design-authoring.md) — the authoring workflow
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/%s-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

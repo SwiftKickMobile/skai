@@ -6,6 +6,8 @@ Managed-Updated-At: 2026-10-12
 
 # Figma Designer Guide: Multiple Target Sizes
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 For a file whose `Conventions` list more than one target size. It extends the
 [Figma Designer Guide](figma-designer-guide.md); a file with one target size never needs it. Examples
 call the sizes `Compact` and `Wide`.
@@ -33,3 +35,13 @@ call the sizes `Compact` and `Wide`.
    header) is a local component whose `Target` variant property is bound to the `target` variable,
    with variants that hug their content. Content goes in through component properties: overrides of
    nested layers are lost when the variable switches the variant.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/%s-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

@@ -3,19 +3,23 @@
 # Managed-Id: tool.component-selection
 # Managed-Source: Bin/skai-configuration.py
 # Managed-Adapter: repo-source
-# Managed-Updated-At: 2026-10-10
-"""Read-only selection resolver and component-history planner.
+# Managed-Updated-At: 2026-10-12
+"""Selection resolver, component-history planner, and new-component recorder.
 
-The Mac app owns config editing; this helper writes no host files and opens no server.
-Only use a proposed history after migrations and actual inventory verification succeed.
+`--resolve` and `--plan-history` read only. `--enable` appends new components to the project
+config and `--decline` records declined ones in the component history; these are the installer's
+only writes through this helper, and it opens no server. Only use a proposed history after
+migrations and actual inventory verification succeed.
 """
 from __future__ import annotations
 
 import argparse
 import copy
+import datetime
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -101,6 +105,46 @@ def read_local(project: Path, manifest: dict) -> tuple[dict | None, dict[str, bo
     return data, {k: v for k, v in values.items() if k in optional}
 
 
+def eligible(asset: dict, adapter: str, stack: str) -> bool:
+    tags = asset.get("tags", [])
+    if asset["type"] == "skill":
+        return "adapter:" + adapter in tags
+    return "core" in tags or (stack == "swift" and "swift" in tags)
+
+
+def history_state(project: Path, scope: str) -> tuple[dict | None, Path]:
+    """Discover installation state: local (when in scope), then shared, then legacy. Read-only."""
+    candidates = ["skai/install-state.json", "docs/skai/install-state.json"]
+    if scope == "local":
+        candidates.insert(0, "skai/install-state.local.json")
+    for relative in candidates:
+        path = project_path(project, relative)
+        state = read_json(path)
+        if state is not None:
+            return state, path
+    return None, project_path(project, candidates[0])
+
+
+def adapter_records(state: dict | None) -> list[dict]:
+    adapters = (state or {}).get("installedAdapters", [])
+    if not isinstance(adapters, list) or any(not isinstance(a, dict) for a in adapters):
+        raise ConfigurationError("Invalid installedAdapters in installation state.")
+    return adapters
+
+
+def seen_components(state: dict | None, adapter: str | None = None) -> set[str]:
+    """IDs an adapter's history (or any adapter's, when adapter is None) has installed, disabled or declined."""
+    seen: set[str] = set()
+    for record in adapter_records(state):
+        if adapter is not None and record.get("adapter") != adapter:
+            continue
+        history = record.get("componentHistory", {})
+        if not isinstance(history, dict):
+            raise ConfigurationError("componentHistory must be an object of component records.")
+        seen |= set(history)
+    return seen
+
+
 def resolve(project: Path, adapter: str, stack: str, manifest: dict) -> dict:
     if adapter not in ADAPTERS or stack not in {"generic", "swift", "android"}:
         raise ConfigurationError("Unknown adapter or stack.")
@@ -120,17 +164,72 @@ def resolve(project: Path, adapter: str, stack: str, manifest: dict) -> dict:
     for a in components(manifest):
         if a.get("installRole") != "required" and a["id"] not in effective:
             continue
-        tags = a.get("tags", [])
-        if a["type"] == "skill" and "adapter:" + adapter in tags:
-            skills.append(a)
-        elif a["type"] == "policy" and ("core" in tags or (stack == "swift" and "swift" in tags)):
-            policies.append(a)
+        if eligible(a, adapter, stack):
+            (skills if a["type"] == "skill" else policies).append(a)
     scope = "local" if local is not None or config_path(project, "install-state.local.json").exists() else "project"
+    # New to this host: eligible, optional, not chosen in the project config, never seen by this adapter's history.
+    # A default host chooses everything, so nothing is new in this sense.
+    new = []
+    if data is not None:
+        seen = seen_components(history_state(project, scope)[0], adapter)
+        new = [a for a in components(manifest) if a.get("installRole") != "required" and a["id"] not in selected
+               and a["id"] not in seen and eligible(a, adapter, stack)]
     return {"configPath": str(config_path(project)), "localConfigPath": str(config_path(project, "config.local.json")),
             "defaultAll": data is None, "configurationFingerprint": hashlib.sha256(representation.encode()).hexdigest(),
             "trackComponents": data is not None or bool(overrides), "historyScope": scope,
             "historyStatePath": str(config_path(project, "install-state.local.json" if scope == "local" else "install-state.json")),
-            "skills": skills, "policies": policies}
+            "skills": skills, "policies": policies, "newComponents": new}
+
+
+def write_json(path: Path, data: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+def enable_components(project: Path, ids: list[str], manifest: dict) -> dict:
+    """Append new components to the project config; never create one (a default host already selects everything)."""
+    data, selected = read_config(project, manifest)
+    if data is None:
+        raise ConfigurationError("No project config: defaults already select every eligible component.")
+    optional = {a["id"] for a in components(manifest) if a.get("installRole") != "required"}
+    unknown = set(ids) - optional
+    if unknown:
+        raise ConfigurationError("Unknown or non-selectable component IDs: " + ", ".join(sorted(unknown)))
+    data["components"] = sorted(selected | set(ids))
+    write_json(config_path(project), data)
+    return {"configPath": str(config_path(project)), "enabled": sorted(set(ids))}
+
+
+def checkout_sha() -> str | None:
+    try:
+        return subprocess.run(["git", "-C", str(ROOT), "rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip() or None
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+
+def decline_components(project: Path, ids: list[str], manifest: dict, scope: str, sha: str | None, date: str) -> dict:
+    """Record declined new components in every installed adapter's history so they stop counting as new."""
+    optional = {a["id"] for a in components(manifest) if a.get("installRole") != "required"}
+    unknown = set(ids) - optional
+    if unknown:
+        raise ConfigurationError("Unknown or non-selectable component IDs: " + ", ".join(sorted(unknown)))
+    state, found = history_state(project, scope)
+    if state is None:
+        raise ConfigurationError("No installation state: run the initial install before declining components.")
+    adapters = adapter_records(state)
+    if not adapters:
+        raise ConfigurationError("Installation state records no adapters.")
+    for record in adapters:
+        history = record.setdefault("componentHistory", {})
+        for key in ids:
+            if key in history:
+                raise ConfigurationError(f"{key} is already in the component history and is not new.")
+            history[key] = {"installed": False, "lastAppliedSHA": None, "lastAppliedAt": None, "declinedSHA": sha, "declinedAt": date}
+    destination = config_path(project, "install-state.local.json" if scope == "local" else "install-state.json")
+    if found != destination and destination.exists():
+        raise ConfigurationError(f"Both {found} and {destination} exist; resolve the state location first.")
+    write_json(destination, state)
+    return {"statePath": str(destination), "declined": sorted(set(ids)), "declinedSHA": sha, "declinedAt": date}
 
 
 def plan_history(previous: dict, actual: set[str], desired: set[str], *, fingerprint: str,
@@ -237,19 +336,33 @@ def history_proposal(project: Path, adapter: str, resolved: dict, inventory: Pat
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--project-root", type=Path, required=True)
-    mode = parser.add_mutually_exclusive_group(required=True)
+    mode = parser.add_mutually_exclusive_group(required=False)
     mode.add_argument("--resolve", action="store_true")
     mode.add_argument("--plan-history", action="store_true")
+    parser.add_argument("--enable", help="comma-separated new component IDs to append to the project config")
+    parser.add_argument("--decline", help="comma-separated new component IDs to record as declined")
     parser.add_argument("--adapter", choices=sorted(ADAPTERS), default="codex")
     parser.add_argument("--stack", choices=["generic", "swift", "android"], default="generic")
     parser.add_argument("--inventory", type=Path)
     parser.add_argument("--target-sha")
     parser.add_argument("--date")
     args = parser.parse_args(argv)
+    if not (args.resolve or args.plan_history or args.enable or args.decline):
+        parser.error("one of --resolve, --plan-history, --enable or --decline is required")
     try:
         manifest = read_manifest()
         result = resolve(args.project_root, args.adapter, args.stack, manifest)
-        if args.plan_history:
+        if args.enable or args.decline:
+            if args.resolve or args.plan_history:
+                raise ConfigurationError("--enable/--decline cannot be combined with --resolve or --plan-history.")
+            ids = lambda value: [v for v in (value or "").split(",") if v]
+            result = {"status": "saved"}
+            if args.enable:
+                result.update(enable_components(args.project_root, ids(args.enable), manifest))
+            if args.decline:
+                result.update(decline_components(args.project_root, ids(args.decline), manifest, result.get("historyScope") or resolve(args.project_root, args.adapter, args.stack, manifest)["historyScope"],
+                                                 args.target_sha or checkout_sha(), args.date or datetime.date.today().isoformat()))
+        elif args.plan_history:
             if not args.inventory or not args.target_sha or not args.date:
                 raise ConfigurationError("--plan-history requires --inventory, --target-sha and --date.")
             result = history_proposal(args.project_root, args.adapter, result, args.inventory, args.target_sha, args.date, manifest)

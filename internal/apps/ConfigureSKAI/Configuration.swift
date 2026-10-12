@@ -116,6 +116,54 @@ final class Configuration {
     var historyScope: String {
         originalLocalData != nil || !overrides.isEmpty || FileManager.default.fileExists(atPath: project.appendingPathComponent("skai/install-state.local.json").path) ? "local" : "project"
     }
+    /// Installation state discovered the installer's way: local when in scope, then shared, then legacy. Read-only.
+    func historyState() throws -> ([String: Any]?, URL) {
+        var candidates = ["skai/install-state.json", "docs/skai/install-state.json"]
+        if historyScope == "local" { candidates.insert("skai/install-state.local.json", at: 0) }
+        for relative in candidates {
+            let url = project.appendingPathComponent(relative)
+            if let bytes = try Self.readBytes(project: project, relative: relative) {
+                guard let object = try JSONSerialization.jsonObject(with: bytes) as? [String: Any] else {
+                    throw ConfigurationFailure(message: "\(relative) must be a JSON object.")
+                }
+                return (object, url)
+            }
+        }
+        return (nil, project.appendingPathComponent(candidates[0]))
+    }
+    static func adapterRecords(_ state: [String: Any]?) throws -> [[String: Any]] {
+        guard let state else { return [] }
+        guard let adapters = state["installedAdapters"] as? [[String: Any]] else {
+            if state["installedAdapters"] == nil { return [] }
+            throw ConfigurationFailure(message: "Invalid installedAdapters in installation state.")
+        }
+        return adapters
+    }
+    /// IDs an adapter's history (or any adapter's) has installed, disabled or declined.
+    func seenComponents(adapter: String? = nil) throws -> Set<String> {
+        var seen = Set<String>()
+        for record in try Self.adapterRecords(try historyState().0) where adapter == nil || record["adapter"] as? String == adapter {
+            guard let history = record["componentHistory"] as? [String: Any] else {
+                if record["componentHistory"] == nil { continue }
+                throw ConfigurationFailure(message: "componentHistory must be an object of component records.")
+            }
+            seen.formUnion(history.keys)
+        }
+        return seen
+    }
+    static func eligible(_ c: Component, adapter: String, stack: String) -> Bool {
+        c.type == "skill" ? c.tags.contains("adapter:" + adapter) : (c.tags.contains("core") || (stack == "swift" && c.tags.contains("swift")))
+    }
+    /// New to this host: optional, not chosen in the project config, never seen by the given adapter (or any). Nothing is new on a default host.
+    func newComponents(adapter: String? = nil, stack: String? = nil) throws -> [Component] {
+        guard originalData != nil else { return [] }
+        let seen = try seenComponents(adapter: adapter)
+        return components.filter { c in
+            !c.required && !originalSelection.contains(c.id) && !seen.contains(c.id)
+                && (adapter.map { Self.eligible(c, adapter: $0, stack: stack ?? "generic") } ?? true)
+        }
+    }
+    var newComponentIDs: Set<String> { Set((try? newComponents())?.map(\.id) ?? []) }
     var configurationFingerprint: String {
         // Same semantic representation as the portable installer resolver. Extra JSON keys don't affect selection.
         let base = originalData == nil && !projectChanged ? "all" : selected.sorted().joined(separator: ",")
@@ -178,20 +226,83 @@ final class Configuration {
     }
 
     static func readConfigBytes(project: URL, name: String = "config.json") throws -> Data? {
-        let path = project.appendingPathComponent("skai/" + name)
+        try readBytes(project: project, relative: "skai/" + name)
+    }
+    static func readBytes(project: URL, relative: String) throws -> Data? {
+        let path = project.appendingPathComponent(relative)
         let resolved = path.resolvingSymlinksInPath().standardizedFileURL.path
         guard resolved.hasPrefix(project.path + "/") else {
-            throw ConfigurationFailure(message: "skai/\(name) must stay inside the host project.")
+            throw ConfigurationFailure(message: "\(relative) must stay inside the host project.")
         }
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: path.path)
             guard attributes[.type] as? FileAttributeType == .typeRegular else {
-                throw ConfigurationFailure(message: "skai/\(name) must be a regular file, not a symlink or directory.")
+                throw ConfigurationFailure(message: "\(relative) must be a regular file, not a symlink or directory.")
             }
             return try Data(contentsOf: path)
         } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileReadNoSuchFileError {
             return nil
         }
+    }
+    static func checkoutSHA(skaiRoot: URL) -> String? {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.arguments = ["git", "-C", skaiRoot.path, "rev-parse", "HEAD"]
+        let output = Pipe()
+        process.standardOutput = output
+        process.standardError = FileHandle.nullDevice
+        guard (try? process.run()) != nil else { return nil }
+        let bytes = output.fileHandleForReading.readDataToEndOfFile()
+        process.waitUntilExit()
+        let sha = String(decoding: bytes, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
+        return process.terminationStatus == 0 && !sha.isEmpty ? sha : nil
+    }
+    static func today() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.timeZone = .current
+        return formatter.string(from: Date())
+    }
+    func encodeJSON(_ object: [String: Any]) throws -> Data {
+        var bytes = try JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
+        bytes.append(0x0a)
+        return bytes
+    }
+
+    /// Append new components to the project config; never create one (a default host already selects everything).
+    func enable(_ ids: Set<String>) throws -> [String: Any] {
+        guard let original else { throw ConfigurationFailure(message: "No project config: defaults already select every eligible component.") }
+        guard ids.isSubset(of: optionalIDs) else { throw ConfigurationFailure(message: "Unknown or non-selectable component IDs.") }
+        var object = original
+        object["schemaVersion"] = 1
+        object["components"] = originalSelection.union(ids).sorted()
+        try encodeJSON(object).write(to: configURL, options: .atomic)
+        return ["configPath": configURL.path, "enabled": ids.sorted()]
+    }
+
+    /// Record declined new components in every installed adapter's history so they stop counting as new.
+    func decline(_ ids: Set<String>, sha: String?, date: String) throws -> [String: Any] {
+        guard ids.isSubset(of: optionalIDs) else { throw ConfigurationFailure(message: "Unknown or non-selectable component IDs.") }
+        var (state, found) = try historyState()
+        guard var stateObject = state else { throw ConfigurationFailure(message: "No installation state: run the initial install before declining components.") }
+        var adapters = try Self.adapterRecords(stateObject)
+        guard !adapters.isEmpty else { throw ConfigurationFailure(message: "Installation state records no adapters.") }
+        for index in adapters.indices {
+            var history = adapters[index]["componentHistory"] as? [String: Any] ?? [:]
+            for id in ids {
+                guard history[id] == nil else { throw ConfigurationFailure(message: "\(id) is already in the component history and is not new.") }
+                history[id] = ["installed": false, "lastAppliedSHA": NSNull(), "lastAppliedAt": NSNull(), "declinedSHA": sha ?? NSNull() as Any, "declinedAt": date]
+            }
+            adapters[index]["componentHistory"] = history
+        }
+        stateObject["installedAdapters"] = adapters
+        let destination = project.appendingPathComponent(historyScope == "local" ? "skai/install-state.local.json" : "skai/install-state.json")
+        if found.standardizedFileURL.path != destination.standardizedFileURL.path, FileManager.default.fileExists(atPath: destination.path) {
+            throw ConfigurationFailure(message: "Both \(found.lastPathComponent) and \(destination.lastPathComponent) exist; resolve the state location first.")
+        }
+        state = nil
+        try encodeJSON(stateObject).write(to: destination, options: .atomic)
+        return ["statePath": destination.path, "declined": ids.sorted(), "declinedSHA": sha ?? NSNull() as Any, "declinedAt": date]
     }
 
     static func parseObject(_ bytes: Data) throws -> [String: Any] {
@@ -243,11 +354,8 @@ final class Configuration {
                 }
             }
         }
-        func encode(_ object: [String: Any]) throws -> Data {
-            var bytes = try JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
-            bytes.append(0x0a)
-            return bytes
-        }
+        let encode = encodeJSON
+        let newLeftUnselected = newComponentIDs.subtracting(selected)
         var writes: [(URL, Data, Data?)] = []
         if projectChanged {
             var object = original ?? [:]
@@ -275,10 +383,15 @@ final class Configuration {
             }
             throw error
         }
+        // New components the supervisor left unselected are declined: they move into their categories next time.
+        var declined: [String] = []
+        if !newLeftUnselected.isEmpty, (try? historyState().0) != nil {
+            declined = (try decline(newLeftUnselected, sha: Self.checkoutSHA(skaiRoot: skaiRoot), date: Self.today())["declined"] as? [String]) ?? []
+        }
         return ["status": "saved", "project": project.path, "configPath": configURL.path,
                 "localConfigPath": localConfigURL.path, "components": effectiveSelection.sorted(),
                 "projectChanged": projectChanged, "localChanged": localChanged,
-                "changed": hasChanges, "reconcile": true]
+                "changed": hasChanges, "reconcile": true, "declined": declined]
     }
 
     func resolve(adapter: String, stack: String) throws -> [String: Any] {
@@ -298,7 +411,8 @@ final class Configuration {
                 "historyScope": historyScope,
                 "historyStatePath": project.appendingPathComponent(historyScope == "local" ? "skai/install-state.local.json" : "skai/install-state.json").path,
                 "skills": enabled.filter { $0.type == "skill" && $0.tags.contains("adapter:" + adapter) }.map(asset),
-                "policies": enabled.filter { $0.type == "policy" && ($0.tags.contains("core") || (stack == "swift" && $0.tags.contains("swift"))) }.map(asset)]
+                "policies": enabled.filter { $0.type == "policy" && ($0.tags.contains("core") || (stack == "swift" && $0.tags.contains("swift"))) }.map(asset),
+                "newComponents": try newComponents(adapter: adapter, stack: stack).map(asset)]
     }
 }
 

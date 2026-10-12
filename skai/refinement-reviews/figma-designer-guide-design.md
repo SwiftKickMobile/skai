@@ -74,7 +74,9 @@ multiple-sizes guide).
 
 ## Size budget
 
-The two guides together are capped at **17,500 bytes** (`wc -c`, managed headers included). That is
+The two guides together are capped at **19,000 bytes** (`wc -c`, managed headers included; raised
+2026-10-12 from 17,500 when SKAI Release 11's mandatory Project addendum footer, about 750 bytes
+per guide, was added). That is
 in line with `Guides/Requirements/requirements-catalog.md`, which plays the same role (content rules)
 for requirements. Every repair states its net size cost; additions over the cap are paired with
 trims, and a fix that cannot fit is a supervisor decision.

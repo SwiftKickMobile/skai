@@ -9,6 +9,9 @@ before a managed removal. The planner also starts tracking whenever actual inven
 Keep existing installation metadata; record each adapter's `lastSHA` on successful installation so a later customization has a reliable
 version baseline. A top-level SHA alone is insufficient after independent adapter updates.
 
+Any declined record also starts the ledger, since the host has made a choice the next update must
+respect.
+
 ## State ownership
 
 Use the selection resolver's `historyStatePath`:
@@ -45,6 +48,11 @@ When tracking starts, extend that adapter's existing record:
   }
 }
 ```
+
+A component the supervisor declined when it was new (see *New components* in
+[`component-selection.md`](component-selection.md)) gets a record with `installed: false`,
+`declinedSHA` and `declinedAt`, and no applied fields; it is no longer new, and enabling it later
+is an ordinary first installation at the then-current checkout.
 
 The fingerprint covers project selection/default mode and explicit local overrides, excluding
 unrelated config keys. Store it only after that exact effective selection is successfully applied.

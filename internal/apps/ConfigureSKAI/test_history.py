@@ -293,6 +293,48 @@ class ComponentHistoryTests(unittest.TestCase):
             self.assertEqual(shared.read_bytes(), before)
             self.assertFalse((project / "skai/install-state.local.json").exists())  # planner is read-only
 
+    def test_new_components_enable_and_decline(self):
+        with tempfile.TemporaryDirectory() as directory:
+            project = Path(directory)
+            (project / "skai").mkdir()
+            manifest = selection.read_manifest()
+            # Default host: nothing is new.
+            self.assertEqual(selection.resolve(project, "codex", "generic", manifest)["newComponents"], [])
+            with self.assertRaisesRegex(selection.ConfigurationError, "No project config"):
+                selection.enable_components(project, ["skill.skai-debugging"], manifest)
+            (project / "skai/config.json").write_text(json.dumps({"schemaVersion": 1, "components": ["skill.skai-debugging"], "note": "keep"}))
+            state = project / "skai/install-state.json"
+            state.write_text(json.dumps({"managedBy": "skai", "installedAdapters": [
+                {"adapter": "codex", "componentHistory": {"skill.skai-dev-retro": {"installed": False, "lastAppliedSHA": "N"}}},
+                {"adapter": "claude-code"}]}))
+            new = {c["id"] for c in selection.resolve(project, "codex", "generic", manifest)["newComponents"]}
+            self.assertIn("skill.skai-suggestion", new)
+            self.assertNotIn("skill.skai-debugging", new)       # chosen
+            self.assertNotIn("skill.skai-dev-retro", new)       # seen by this adapter
+            self.assertNotIn("skill.skai-configure", new)       # required
+            self.assertIn("skill.skai-dev-retro", {c["id"] for c in selection.resolve(project, "claude-code", "generic", manifest)["newComponents"]})
+            result = selection.enable_components(project, ["skill.skai-suggestion"], manifest)
+            config = json.loads((project / "skai/config.json").read_text())
+            self.assertEqual(config["components"], ["skill.skai-debugging", "skill.skai-suggestion"])
+            self.assertEqual(config["note"], "keep")
+            self.assertEqual(result["enabled"], ["skill.skai-suggestion"])
+            with self.assertRaisesRegex(selection.ConfigurationError, "Unknown"):
+                selection.enable_components(project, ["skill.skai-configure"], manifest)
+            result = selection.decline_components(project, ["skill.skai-unit-testing"], manifest, "project", "N+1", "2026-10-12")
+            records = json.loads(state.read_text())["installedAdapters"]
+            for record in records:
+                entry = record["componentHistory"]["skill.skai-unit-testing"]
+                self.assertEqual((entry["installed"], entry["lastAppliedSHA"], entry["declinedSHA"], entry["declinedAt"]), (False, None, "N+1", "2026-10-12"))
+            self.assertEqual(result["declined"], ["skill.skai-unit-testing"])
+            new = {c["id"] for c in selection.resolve(project, "codex", "generic", manifest)["newComponents"]}
+            self.assertNotIn("skill.skai-unit-testing", new)
+            self.assertNotIn("skill.skai-suggestion", new)
+            with self.assertRaisesRegex(selection.ConfigurationError, "already in the component history"):
+                selection.decline_components(project, ["skill.skai-unit-testing"], manifest, "project", "N+1", "2026-10-12")
+            # A declined record is a valid, unknown-version baseline for the planner once re-enabled.
+            proposal = selection.plan_history(records[0], set(), {"skill.skai-unit-testing"}, fingerprint="f", target_sha="N+2", date="2026-10-13", track=True)
+            self.assertEqual(proposal["migrations"][0]["reason"], "no-known-installed-version")
+
 
 if __name__ == "__main__":
     unittest.main()

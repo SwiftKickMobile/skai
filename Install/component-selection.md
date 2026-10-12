@@ -79,9 +79,34 @@ On other platforms, the read-only standard-library helper returns the same effec
 python3 "<skai-root>/Bin/skai-configuration.py" --project-root "<host-project-root>" --resolve --adapter <codex|cursor|claude-code> --stack <generic|swift|android>
 ```
 
-Exit 0 returns `skills` and `policies` with stable IDs/source paths. Exit 2 is a configuration/catalog
-failure. Required administrator skills are included; policies use existing core/Swift applicability.
-Use these resolved sets rather than installing every adapter-tagged skill or every policy.
+Exit 0 returns `skills` and `policies` with stable IDs/source paths, plus `newComponents` (see
+below). Exit 2 is a configuration/catalog failure. Required administrator skills are included;
+policies use existing core/Swift applicability. Use these resolved sets rather than installing every
+adapter-tagged skill or every policy.
+
+## New components
+
+A component is **new** to a host when it is in the manifest, eligible for the adapter and stack,
+not listed in `skai/config.json`, and absent from the adapter's component history (never installed,
+disabled or declined; see [`component-history.md`](component-history.md)). Both resolvers return
+them as `newComponents`. With no project config nothing is new in this sense: defaults select
+everything eligible, so an update installs additions and the installer reports them at completion.
+
+With a project config, the installer never enables a new component silently. Under `auto` it
+enables every new component and reports them at completion; otherwise it stops at the update
+guide's new-components gate, where the supervisor opens the configure app or answers inline. Either
+way the choice is written through the configuration tool, not by editing JSON:
+
+```sh
+"<skai-root>/Bin/SKAIConfigure.app/Contents/MacOS/SKAIConfigure" --project-root "<host-project-root>" --skai-root "<skai-root>" --enable <id>[,<id>] --decline <id>[,<id>]
+python3 "<skai-root>/Bin/skai-configuration.py" --project-root "<host-project-root>" --enable <id>[,<id>] --decline <id>[,<id>]
+```
+
+`--enable` appends the IDs to the project config's `components`, preserving unrelated keys; it never
+creates a config on a default host. `--decline` records the IDs as declined in the adapter's
+component history so they stop counting as new. Unknown or ineligible IDs exit 2. In the app, new
+components appear in a **New** section at the top of the list until Save, which moves selected ones
+into the config and records the rest as declined.
 
 ## Installed wrapper paths
 
