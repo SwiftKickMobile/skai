@@ -412,7 +412,25 @@
     {
       "id": "guide.designer-guide",
       "type": "guide",
-      "sourcePath": "Guides/Design/designer-guide.md",
+      "sourcePath": "Guides/Design/figma-designer-guide.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.figma-designer-guide-multiple-sizes",
+      "type": "guide",
+      "sourcePath": "Guides/Design/figma-designer-guide-multiple-sizes.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.design-authoring",
+      "type": "guide",
+      "sourcePath": "Guides/Design/design-authoring.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.design-promotion",
+      "type": "guide",
+      "sourcePath": "Guides/Design/design-promotion.md",
       "tags": ["core"]
     },
     {
@@ -473,6 +491,18 @@
       "id": "skill.skai-requirements-promotion",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-requirements-promotion/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "skill.skai-design-authoring",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-design-authoring/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "skill.skai-design-promotion",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-design-promotion/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     }
   ]

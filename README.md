@@ -29,6 +29,8 @@ Recommended host locations for agent-facing docs:
   - [UI Map implementation](#ui-map-implementation-skill-skai-ui-map-implementation)
   - [Requirements authoring](#requirements-authoring-skill-skai-requirements-authoring)
   - [Requirements promotion](#requirements-promotion-skill-skai-requirements-promotion)
+  - [Design authoring](#design-authoring-skill-skai-design-authoring)
+  - [Design promotion](#design-promotion-skill-skai-design-promotion)
   - [Unit testing](#unit-testing-skill-skai-unit-testing)
   - [Debugging](#debugging-skill-skai-debugging)
   - [Dev retro](#dev-retro-skill-skai-dev-retro)
@@ -255,6 +257,33 @@ requirement text and IDs remain unchanged.
 1. **Promotion checks.** Agent screens the package for readiness, then writes an unchecked checklist covering ID stability, prefix collisions, cross-reference resolution, writing style, catalog traversability, and destination link preparation, ending with the terminal write. Gate: supervisor reviews what will become canon.
 2. **Execute.** Agent runs each check in order, records evidence, and writes the catalog. A failing check blocks and returns the package to authoring -- promotion never rewrites a requirement's prose. When the catalog itself is the problem, the agent raises a change request instead.
 
+### Design authoring (skill `skai-design-authoring`)
+
+Take a design change from an idea to approved mockups in a change package under `skai/changes/<change-id>/`, drafted on a change page named `<change-id>` in the project's design file. The production designs stay unchanged during authoring. Sources are open-ended -- an idea, sketches, a brief, a requirements package, an existing app to backfill from. The process guide is tool-agnostic and loads the conventions guide for the project's design tool (Figma today).
+
+- Guide [`Guides/Design/design-authoring.md`](Guides/Design/design-authoring.md)
+- Tool guide, loaded by the process guide: [`Guides/Design/figma-designer-guide.md`](Guides/Design/figma-designer-guide.md) for Figma (and [`figma-designer-guide-multiple-sizes.md`](Guides/Design/figma-designer-guide-multiple-sizes.md) for several target sizes)
+
+**Prerequisites:** The project README links the Figma file. Something to design from.
+
+**Phases** (alternating; never both at once):
+
+1. **Discussion.** Agent seeds topic-organized `- [ ]` items for the decisions it needs -- a proposed departure from the current app, something that looks like a defect, an open product question -- each with a written recommendation. Nothing is drawn. Gate: supervisor resolves each item.
+2. **Mockups.** Agent draws the resolved items on the change page; supervisor reviews the designs there. Feedback goes into the designs; anything needing a decision is parked and opens the next Discussion phase. Gate: supervisor says "approved", after which the agent writes the Design Changes inventory. Ends with `🏁 Complete.`
+
+### Design promotion (skill `skai-design-promotion`)
+
+Move an approved package's drafts from its change page into the production designs, have the supervisor confirm the result, and delete the page. Promotion refactors production to absorb the drafts; a draft that needs changing returns the package to authoring. Implementing designs in code is out of scope.
+
+- Guide [`Guides/Design/design-promotion.md`](Guides/Design/design-promotion.md)
+
+**Prerequisites:** A change package whose discussion is resolved and whose Design Changes inventory is written.
+
+**Phases:**
+
+1. **Promotion checks.** Agent screens the package for readiness, then writes an unchecked checklist: drafts meet the conventions, inventory matches the page, production absorbs the page, links repoint, page deleted. Gate: supervisor reviews what will land.
+2. **Execute.** Agent verifies and applies, then stops for the supervisor to review production in the design file. Gate: supervisor confirms, and the change page is deleted.
+
 ### Unit testing (skill `skai-unit-testing`)
 
 Plan-first testing workflow. The agent creates an orchestration document for the overall testing session, plans all tests upfront, runs one infrastructure pass across all planned tests, and then implements tests one logical section at a time (e.g. "Success Tests", "Error Handling Tests"). Handles new test suites, additions to existing suites, and fixing failing tests.
@@ -351,8 +380,9 @@ Update `skai` to the latest release (or a target you name), review what changed,
 
 ### Figma designs
 
-- A project's Figma design file follows [`Guides/Design/designer-guide.md`](Guides/Design/designer-guide.md): page roles, canvas layout, frames, color variables, components, and copy.
+- A project's Figma design file follows [`Guides/Design/figma-designer-guide.md`](Guides/Design/figma-designer-guide.md): page roles, conventions, canvas layout, frames, color and dimension variables, components, copy, and backfilling; a file with several target sizes also follows [`figma-designer-guide-multiple-sizes.md`](Guides/Design/figma-designer-guide-multiple-sizes.md).
 - The project README links each main page of the file (`Production`, `Components`, `Design System`).
+- Changing the designs follows [Design authoring](#design-authoring-skill-skai-design-authoring) and [Design promotion](#design-promotion-skill-skai-design-promotion).
 
 ## Development guide (for contributors)
 
