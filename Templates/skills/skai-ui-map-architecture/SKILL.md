@@ -7,6 +7,4 @@ description: Creates or changes UI Map architecture using skai (baseline maps, s
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/UIMap/ui-map-architecture.md` and follow it.
-- Use SKAI-native defaults from the UI Map guides when no project-specific override exists.
-- Read `skai/integration.md` for project-specific overrides, paths, and evidence requirements. STOP to ask only for missing values that are genuinely project-specific.
+- Read `Submodules/skai/Guides/UIMap/ui-map-architecture.md` in full, including its Project addendum instructions, and follow it.

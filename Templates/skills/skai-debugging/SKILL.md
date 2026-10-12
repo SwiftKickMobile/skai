@@ -7,9 +7,5 @@ description: Enforces evidence-first debugging using skai (facts-first, partitio
 
 ## Instructions
 
-- Read:
-  - `Submodules/skai/Policies/debugging-process-rule.md`
-  - `Submodules/skai/Guides/Core/debugging-guide.md`
-- Follow the rule's minimal loop and use the guide's tactics.
-- If you choose the bisection tactic, also read `Submodules/skai/Guides/Core/debugging-tactic-code-bisection.md`.
-- If required evidence is unavailable, STOP and ask the supervisor for the minimum output/artifacts needed.
+- Read `Submodules/skai/Policies/debugging-process-rule.md`.
+- Read `Submodules/skai/Guides/Core/debugging-guide.md` in full, including its Project addendum instructions, and follow it.

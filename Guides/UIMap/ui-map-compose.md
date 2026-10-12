@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.ui-map-compose
 Managed-Source: Guides/UIMap/ui-map-compose.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-11
+Managed-Updated-At: 2026-10-10
 
 # UI Map — Jetpack Compose Reference
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 Platform reference for implementing a UI Map in Jetpack Compose. Companion to [`ui-map-guide.md`](ui-map-guide.md), which defines the platform-agnostic YAML format.
 
@@ -227,3 +229,13 @@ Effects come from:
 - `processEvent` handlers called by the screen, e.g. a click handler that sends `Navigate(…)` to the effect channel.
 - External flows observed in the view model's `init`, e.g. an auth flow that sends `Navigate(AppChildRoute.Login)` when the user logs out.
 - Compose Navigation itself handles dismissal: system back press, drag-to-dismiss, and outside-tap pop the back stack automatically. The view model can pop programmatically via `CloseModal`.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-compose-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

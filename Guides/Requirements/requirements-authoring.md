@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.requirements-authoring
 Managed-Source: Guides/Requirements/requirements-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-05
+Managed-Updated-At: 2026-10-10
 
 # Requirements Authoring
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 ## Purpose
 
@@ -22,7 +24,7 @@ change items and change requests live in
 
 ## The change package
 
-A package lives at `skai/changes/<change-id>/` and holds:
+A package lives at `skai/changes/<change-id>/requirements/` and holds:
 
 | Path | What it is |
 | --- | --- |
@@ -32,37 +34,26 @@ A package lives at `skai/changes/<change-id>/` and holds:
 | `requirements-promotion.md` | promotion's artifact; may be absent |
 | `evidence/` | check output promotion persisted; may be absent |
 
-If the change ID is clear from the user's input, use it. If not, do not create the artifact yet:
-propose a short kebab-case default and stop at the blocked gate rather than guessing. When deriving a
-proposal from the current branch, use only the final path component, not the full branch path; for
-example, `work/billing-ui` proposes `billing-ui`. Once the change ID is resolved, create the artifact
-at its final path, then write `## Goal` and `## Inputs` into it before drafting anything.
+Use a supplied change ID; otherwise propose a short kebab-case ID and block before creation. Derive
+branch-based proposals from its final component (`work/billing-ui` → `billing-ui`). Check active and
+promoted paths: reopen unpromoted work; a closed C7 ID/type pair needs a new ID. Archival recovery
+belongs to promotion. Create the artifact and Goal/Inputs before drafting.
 
-A package may sit alongside a UI Map change package under the same `<change-id>` when one change
-produces both and both canonical artifacts live in the same repo. Otherwise each package stays with
-its own canonical artifact; link the packages by their resolved paths.
+This type owns its collateral independently of a related `ui-map/` sibling. Each package stays in
+its canonical repository; link resolved paths when repositories differ. Promotion moves this type
+to `skai/promoted/<change-id>/requirements/`, leaving siblings active.
 
 ### What `proposed-requirements/` holds
 
-**Only the files this package touches**, mirroring their path under the catalog root. A package
-changing three requirements in a catalog of two hundred files holds three files, not two hundred —
-carrying the rest would bury the change and make the package unreviewable.
+Hold only touched files, mirroring catalog paths, and draft each **whole**, carrying unchanged
+requirements, indexes and glossary entries. Copy existing files then edit; draft absent files fresh.
+Apply this per file, regardless of package mode: a new scope may still rewrite existing root/index
+files, which must be copied.
 
-Each file is drafted whole: a touched file holds all of its content — unchanged requirements, index
-lines, and glossary entries included, because promotion writes the file rather than patching it.
-
-Key this on the file, not on the package's mode: **a file the catalog already holds is copied from
-it and then edited; a file it does not hold is drafted fresh.** A package that is baseline for one
-scope still rewrites the root index and glossary the catalog already has, so those are copied.
-
-A first promotion creates the catalog, so on a wholly new tree anything not in the package will not
-exist — including `_requirements.md`, `glossary.md`, and a scope index for every scope populated. A
-package that populates a scope the catalog does not yet have carries the index of every folder it
-creates and the root index too, whose scope list would otherwise go stale.
-Files absent from the package are untouched, not deleted: a package has no way to express deleting a
-file, and retiring a requirement is an edit within its file. A file that must **split** therefore
-cannot be expressed either — the old path would have to go. Stop at the blocked gate rather than
-drafting both halves and leaving the original behind.
+A new catalog needs `_requirements.md`, `glossary.md` and indexes for every populated scope. A new
+scope in an existing catalog carries every created folder's index and the root index. Absent package
+files stay untouched; packages cannot delete or split files. Retirement edits a requirement within
+its file. If a split is needed, block rather than leave the old file alongside two halves.
 
 ### Artifact skeleton
 
@@ -127,7 +118,7 @@ Workflow-specific gate notes:
   against promotion's **verification** checks — `C1` through `C5` in
   [`requirements-promotion.md`](requirements-promotion.md), including the writing-style check. They are
   enumerated once, there, so nothing is discovered late and the two workflows cannot drift apart. Stop
-  at `C5`: `C6` and `C7` belong to promotion.
+  at `C5`: `C6` through `C8` belong to promotion.
   The gate presents what the supervisor reviews; fix the artifact before gating.
 - There is no separate "draft is ready, please review" gate. The drafting response itself ends with
   whichever gate applies — blocked when it produced items, planned when it produced none.
@@ -164,11 +155,18 @@ Rules:
 Progress tracking:
 
 - **Two conventions, by artifact type:**
-  - **`- [ ]` / `- [x]` in process artifacts** (markdown workflow docs). Completion is checking the box — the artifact preserves the audit trail of resolved items.
-  - **`🟡` in source files** seeded or planned by a skai workflow. Completion is **removal** of the marker.
+  - **`- [ ]` / `- [x]` in process artifacts** (markdown workflow docs: work specs, planning docs, working docs, retro outputs, ticket drafts, etc.). Completion is checking the box — the artifact preserves the audit trail of resolved items.
+  - **`🟡` in source files** (test code, application code) seeded or planned by a skai workflow. Completion is **removal** of the marker — the file's remaining work is read by which `🟡`s remain. Canonical in-code case: `Guides/Test/unit-test-planning-guide.md`.
 - Default rule: a progress marker means TODO or pending approval. Do not clear it without supervisor approval.
 - At a planned gate, advance intent is the approval signal for clearing the guide-owned progress markers completed by the phase that just finished.
-- Ordering rule: the agent first stops and waits at the gate, then clears the approved markers only after the supervisor gives advance intent.
+- Ordering rule: the agent first stops and waits at the gate, then clears the approved markers (`- [ ]` → `- [x]` in a process artifact; remove `🟡` in code) only after the supervisor gives advance intent.
+- If a workflow needs a custom marker lifecycle (for example, inline discussion items resolved during a supervisor-led discussion loop), define that exception explicitly and narrowly below.
+- If a workflow uses both gate/phase markers and local working markers, keep them distinct: local approvals clear local working markers; advance intent clears the gate/phase marker.
+- For any custom marker lifecycle, specify both:
+  - the artifact where the markers live
+  - the exact supervisor intent that authorizes clearing them
+
+**Not workflow progress:** the `🟡` convention in `Templates/docs/skai/integration.md` and `Install/integration-doc-install-update.md` (project-specific missing constants needing supervisor input during host install) is a separate concept, scoped to that section's rules. Don't conflate the two.
 
 **Workflow-specific marker lifecycle.** This workflow owns exactly one marker: the `- [ ] D<n>` items
 in `## Discussion` of the authoring artifact. They follow the discussion exception rather than the
@@ -200,15 +198,16 @@ On the signal:
    names does not resolve — stop at the blocked gate below. **Never fall back to a literal path**,
    and never read an unresolved root as an empty catalog. Resolve the repository that holds the catalog before scanning or creating packages: `skai/changes/` is relative to that repository, including under `shared`. Keep `skai/integration.md` relative to the app repo. If the catalog repository is unknown, STOP at a blocked gate.
 2. Read [`requirements-catalog.md`](requirements-catalog.md) and the existing catalog.
-3. Scan `skai/changes/*/requirements-authoring.md` in that repo. If an unpromoted package for this work already
+3. Scan `skai/changes/*/requirements/requirements-authoring.md` in that repo. If an unpromoted package for this work already
    exists — including one seeded by another workflow — reopen it rather than creating a second; see
    below.
-4. Otherwise resolve the change id and create the artifact — see *The change package* — then record
+4. Otherwise resolve the change id, check its active and promoted requirements paths, and create the artifact — see *The change package* — then record
    the sources in `## Goal` and `## Inputs`.
 5. Infer the mode. Baseline: read [`requirements-baseline.md`](requirements-baseline.md) before
    reading the implementation.
 6. Draft the requirement files under `proposed-requirements/` and seed `## Discussion`.
 
+A recorded write with mechanical C7 repair pending returns to promotion, not fresh drafting.
 A package whose promotion completed — `C7` checked in its `requirements-promotion.md` — is closed; new work on
 the same subject opens a new package. A seeded package may hold only drafts and `## Discussion`; complete
 the skeleton — `## Goal`, `## Inputs`, `## Mode` — before continuing. Treat the new input as additional context; a promotion finding is named
@@ -264,24 +263,18 @@ Item line: `- [ ] D<n> [Kind] <summary>`, where `[Kind]` is `[Question]`, `[Prop
 `[Tradeoff]`. Sub-bullet labels are bold with no separator: **Concern** (always), **Proposal**,
 **Question**, **Options**, **Detail**, **Why**, and **Decision** on resolution.
 
-**Every item carries a recommendation.** A `[Tradeoff]` names which option the agent recommends and
-why; a `[Question]` — reserved for cases with no basis to recommend — is rare. An item the supervisor
-cannot answer with "yes" is an item that will sit unresolved.
+Bring a recommendation whenever possible; Tradeoffs name the preferred option and why. Reserve
+Questions for cases with no basis to recommend.
 
 ### What earns an item
 
-Seed an item only where a real decision is needed. If the inputs determine the requirement, write it
-and move on; the draft files are the review surface. Requirements that are obvious from the source
-do not need the supervisor's approval to exist.
+Create items for uncertainties that change a requirement: conflicting sources, apparent defects,
+undefined boundaries, genuine placement/scope choices, or implemented behavior absent from designs.
+Draft fully specified behavior directly; assumptions record what is taken as given.
 
-An uncertainty whose resolution would change what a requirement *says* is an item; what the drafts
-take as given is an assumption. Items are earned by: two sources disagreeing, behavior that looks like a defect rather than intent, a
-rule whose boundary the sources leave undefined, a placement or scope call that could reasonably go
-either way, and behavior that exists in the implementation but appears in no design.
-
-If drafting produces no items, leave `## Discussion` as one plain paragraph: "The listed Inputs
-determine the proposed requirements; review the drafts under `proposed-requirements/` before they
-are finalized in Requirement Changes." Omit that sentence whenever the section holds any item.
+With no items, leave Discussion as: "The listed Inputs determine the proposed requirements; review
+the drafts under `proposed-requirements/` before they are finalized in Requirement Changes."
+Omit this empty-state sentence when items exist.
 
 ### Draft the requirement anyway
 
@@ -302,9 +295,7 @@ file/line link when the host supports it.
 - [ ] D2 [Proposal] A reminder that fires while the app is closed stays pending indefinitely
   - **Concern** [REMIND-04] leaves unacknowledged reminders pending indefinitely, so the list grows without bound.
   - **Proposal** Preserve the current behavior and state it as the requirement.
-  - **Why** It is consistent across every entry point and no design contradicts it, which reads as
-    intent. It is also exactly the shape an oversight takes, so it is worth your eye rather than
-    mine.
+  - **Why** Consistency suggests intent, but unbounded accumulation may be an oversight.
 
 ### Where sync boundaries fall
 
@@ -315,9 +306,7 @@ file/line link when the host supports it.
     - A — Theme syncs, matching the single control in the designs.
     - B — Theme is per-device, matching the implementation.
   - **Proposal** B.
-  - **Why** Theme tracks the device's own appearance settings, and a phone in dark mode should not
-    drag a desktop with it. The designs are silent rather than contradictory — one control does not
-    imply one value.
+  - **Why** Theme follows each device's appearance; one control need not imply a synced value.
 
 [REMIND-04]: proposed-requirements/features/reminders.md#remind-04
 [THEME-01]: proposed-requirements/features/theme.md#theme-01
@@ -369,3 +358,13 @@ not on every response, and under `auto` too, which bypasses the gate and not the
 - [`requirements-catalog.md`](requirements-catalog.md) — catalog content rules
 - [`requirements-promotion.md`](requirements-promotion.md) — promoting an approved package
 - [`requirements-artifacts.md`](requirements-artifacts.md) — change item and change request formats
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/requirements-authoring-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

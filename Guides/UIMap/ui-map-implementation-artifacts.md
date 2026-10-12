@@ -2,13 +2,18 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation-artifacts
 Managed-Source: Guides/UIMap/ui-map-implementation-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-03
+Managed-Updated-At: 2026-10-10
 
 # UI Map Implementation Artifact Formats
 
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
+
 The typed formats the implementation skill produces. Read an artifact with [`ui-map-implementation.md`](ui-map-implementation.md) for Mode and control flow, the platform guide named in its `## Inputs`, and [`ui-map-guide.md`](ui-map-guide.md) for the YAML map. The architecture-side formats the implementation skill *consumes* (map change items) and *raises* (change requests) live in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md).
 
-The implementation artifact (`ui-map-implementation.md`) sits in the change package at `skai/changes/<change-id>/` in the repo that holds the official map, parallel to the architecture artifact. Its `## Code Changes` section lists **code change items**; its `## Evidence` section holds **verification evidence**.
+The implementation artifact (`ui-map-implementation.md`) sits in the change package at `skai/changes/<change-id>/ui-map/` in the repo that holds the official map, parallel to the architecture artifact. After promotion it lives at `skai/promoted/<change-id>/ui-map/`; pending Plan work is recorded there.
+A conformance run without a proposal instead uses
+`skai/working-docs/<branch-path>/<session-name>/ui-map-implementation.md` in the map repository,
+with its requests and evidence beside it. Its `## Code Changes` section lists **code change items**; its `## Evidence` section holds **verification evidence**.
 
 ## Code change items
 
@@ -23,7 +28,9 @@ The implementation artifact (`ui-map-implementation.md`) sits in the change pack
 ```
 
 - **ID** — `T1`, `T2`, ... assigned in document order, never renumbered or reused, so the production skill can cite an item by a stable handle.
-- **Checkbox** — actual completion state. Write every item unchecked (`- [ ]`) at the Code Changes-ready gate. Check it (`- [x]`) only when the code or artifact state described by the item is true. A later workflow may check a `planned` or `handoff` item after completing or verifying it; it preserves the item's ID and Disposition.
+- **Checkbox** — actual completion state. Write new items unchecked (`- [ ]`) at the Code Changes-ready gate. Re-auditing existing work
+  preserves IDs, Dispositions, Evidence and still-valid verified checks; it does not reset all items.
+  Recheck changed work against the updated target before retaining completion. Check it (`- [x]`) only when the code or artifact state described by the item is true. A later workflow may check a `planned` or `handoff` item after completing or verifying it; it preserves the item's ID and Disposition.
 - **Disposition** — who owns the item and how it is treated; it does not change when the checkbox changes:
   - `implement` — UI Map implementation owns the item: either a mechanical, non-placeholder code change executed in Build, or the terminal promotion executed when a proposed map exists.
   - `placeholder` — UI Map implementation owns placeholder or navigation scaffolding and executes it in Build. Check the item when the scaffold is complete; later productionization is separate work.
@@ -34,6 +41,18 @@ The implementation artifact (`ui-map-implementation.md`) sits in the change pack
 
 There is no `Type` field: the identity and Description convey the kind at a glance (e.g. `T3 move pantry/ → inventory/`, `T5 scaffold edit_item`). Items are written top-down in structural order: any shared, cross-scene item (e.g. a generated `DomainColors`) **first**, then per domain → scene → route, mirroring the map.
 
+## Promotion state
+
+The terminal promote `T#` covers official YAML write, official render, then archival/link repair and
+promoted-preview regeneration. It is checked only after all succeed. Existing Evidence records the
+actual write outcome with package source/official destination before the render, whose command/result
+is recorded separately. A recorded write with incomplete render resumes rendering only if current
+official YAML still matches that source; intervening changes block reconciliation rather than being
+overwritten. Verified write/render with an unchecked terminal item resumes archival only.
+
+A checked terminal item closes the proposal; pending `planned`/`handoff` work remains in the promoted
+artifact. Older checked items retain their meaning; migration fabricates no new execution evidence.
+
 ## Verification evidence
 
 `## Evidence` records the verification trail: build checks at chunk boundaries and completion, plus the official render performed by a terminal promote item. One bracket per check:
@@ -43,3 +62,13 @@ There is no `Type` field: the identity and Description convey the kind at a glan
 ```
 
 On failure, persist and link the full output, so `output` is required. On success, `output` is optional when no output was persisted. The evidence brackets are the durable record that conformance and promotion were verified, not asserted.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-implementation-artifacts-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.ticket-filing
 Managed-Source: Guides/Process/ticket-filing.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-10
 
 # Ticket filing
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 Purpose: capture process improvement suggestions and file them as GitHub issues on the `skai` repo. Handles both ad-hoc suggestions (supervisor describes a problem or idea) and retro handoffs (drafts already written by the retro).
 
@@ -208,3 +210,13 @@ For each unchecked entry in `## Drafts`:
 Report the created issue numbers and URLs back to the supervisor.
 
 Then complete the workflow.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/ticket-filing-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

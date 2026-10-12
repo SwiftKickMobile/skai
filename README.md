@@ -1,3 +1,8 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="internal/branding/skai-logo-dark.svg">
+  <img src="internal/branding/skai-logo.svg" alt="SKAI" width="420">
+</picture>
+
 # `skai`
 
 Reusable, mostly IDE-agnostic **agentic coding guides** and **policies** you can vendor into any repo.
@@ -20,6 +25,8 @@ Recommended host locations for agent-facing docs:
 - [Quick start](#quick-start-recommended)
 - [How installs stay safe](#how-installs-stay-safe)
 - [Integration document](#integration-document-how-to-use-it)
+- [Project guide addenda](#project-guide-addenda)
+  - [Shared context and platform overrides](#shared-context-and-platform-overrides)
 - [IDE clutter / autocomplete](#ide-clutter--autocomplete-recommended)
 - [Usage](#usage)
   - [How all workflows work](#how-all-workflows-work)
@@ -35,6 +42,7 @@ Recommended host locations for agent-facing docs:
   - [Debugging](#debugging-skill-skai-debugging)
   - [Dev retro](#dev-retro-skill-skai-dev-retro)
   - [Suggestion](#suggestion-skill-skai-suggestion)
+  - [Configure SKAI](#configure-skai-skill-skai-configure)
   - [Update installation](#update-installation-skill-skai-update-installation)
   - [Working documents](#working-documents)
   - [Figma designs](#figma-designs)
@@ -98,6 +106,7 @@ Add a GitHub MCP server to your IDE's MCP configuration with a personal access t
 - **Managed blocks**: project-owned files (ignore files, agent instruction files) are updated only inside a delimited block, so a project's own content around it survives updates.
 - **Instruction files**: Claude Code uses [`CLAUDE.md`](CLAUDE.md); Codex uses root [`AGENTS.md`](AGENTS.md). Their dated managed blocks share [composition guidance](Install/agent-instructions-install-update.md) and inline applicable policies; your own instructions stay outside the block.
 - **Shared artifacts**: requirements and UI Map change packages live in the repo holding their canonical catalog or map, including a shared submodule. Point the project README at those artifacts so their repo can be resolved.
+- **Change packages**: related work shares a change ID, with independent active folders `skai/changes/<change-id>/requirements/` and `skai/changes/<change-id>/ui-map/`. Promotion moves only the selected type to `skai/promoted/<change-id>/<type>/` and repairs affected links; sibling types can promote in either order. The promoted UI Map artifact may retain unchecked Plan work for downstream implementation.
 - **Legacy installs**: lookalike files without the header are treated as **legacy candidates** and are not overwritten by default (see [`Install/conflict-precedence-policy.md`](Install/conflict-precedence-policy.md)).
 
 ## Integration document (how to use it)
@@ -117,6 +126,68 @@ How the project owner fills it:
 - If a future install/update can't infer a required value with high confidence, the installer may **restore** 🟡 + `INSTRUCTION:` prompts so the doc remains a complete, reliable source of truth.
 
 > **Note on `🟡`:** The Integration doc's `🟡` (missing project-specific value) is a separate concept from the workflow-progress `🟡` used in source files by skai workflows (see [Agent note-taking and progress tracking](#how-all-workflows-work) below). Both share the emoji; their lifecycles differ.
+
+## Project guide addenda
+
+Customize a guide with a project-owned, freeform Markdown file at
+`skai/addenda/<guide-name>-addendum.md`. Each guide's final **Project addendum** section gives its
+exact filename. The agent reads the full guide and any present addendum before using the guide,
+then reports the applicable status:
+
+```text
+📎 ADDENDUM: <project-entry filename> — loaded
+No project addendum found: <project-entry filename>.
+```
+
+Both messages show only the filename. The agent reports only the project entry’s status, without
+separate receipts for documents it
+references. The receipt is not an approval gate. Reference guides and nested skills check their own addenda
+when needed.
+
+Addenda may add rules or override guide defaults. Current task instructions and project-wide policies
+retain authority. No required template, headings, frontmatter, schema or managed header applies;
+SKAI updates preserve these files. Integration remains global operational settings, loaded by the
+base guide when needed. Addendum authors need not repeat that dependency.
+
+For example, `skai/addenda/requirements-promotion-addendum.md` could contain:
+
+```markdown
+Include a short evidence summary naming the requirement files checked.
+For this guide, replace the default completion sentence with:
+“Requirements are promoted and archived.”
+```
+
+### Shared context and platform overrides
+
+For iOS and Android projects sharing requirements, a UI Map or common conventions, keep the common
+addendum in the shared repository. Each platform's conventional addendum points to it and can add
+local rules. The conventional project file is the discovery entry point; the referenced content
+may live elsewhere. A task performed directly in the shared repository uses that repository as its
+active project.
+
+Copy this optional boilerplate into the platform project's
+`skai/addenda/requirements-promotion-addendum.md`, adjusting the shared path:
+
+```markdown
+First read and apply the [shared addendum](../../Submodules/shared-context/skai/addenda/requirements-promotion-addendum.md).
+
+Then apply these project-specific additions and overrides:
+- Include the iOS verification results in the evidence summary.
+```
+
+This example assumes the shared repository is checked out at `Submodules/shared-context/` under the
+platform project. Relative links resolve from the file containing them, so `../../` leads from
+`skai/addenda/` back to the project root. Use the actual checkout path for a sibling repository or
+another layout.
+
+- **Shared only:** the project addendum just instructs reading the shared file.
+- **Local only:** it contains the project's rules directly.
+- **Both:** read shared rules first, then apply local additions or overrides. Put explicit local
+  replacements in the project file so the intended precedence is clear.
+
+Required shared references must be read before proceeding; missing or unreadable references stop
+rather than count as an absent project addendum. These references do not produce additional
+receipt lines. Neither Integration nor README needs an inventory of addendum files.
 
 ## IDE clutter / autocomplete (recommended)
 
@@ -167,6 +238,8 @@ After installation, workflows are available as **skills** that your agent activa
 
 > **Note on `🟡`:** This is the workflow-progress `🟡`, distinct from the [Integration document](#integration-document-how-to-use-it) `🟡` (which marks missing project-specific values needing supervisor input). Both share the emoji; their lifecycles differ.
 
+**Project customization.** [Project guide addenda](#project-guide-addenda) add or override a guide's rules, including shared instructions and platform-local overrides.
+
 **Retros on demand.** At any point you can ask the agent to **"retro"** to check for gaps, update documents, backfill requirements, and reflect on process.
 
 ### Work spec design (skill `skai-work-spec-creation`)
@@ -197,12 +270,12 @@ Audit an approved work-spec design against the codebase, create its concrete tas
 
 ### UI Map architecture (skill `skai-ui-map-architecture`)
 
-Create or change the app's UI Map as an architecture artifact. Produces a change package under `skai/changes/<change-id>/` containing the architecture artifact, `proposed-ui-map.yaml`, and `proposed-ui-map.html`; the official map stays frozen during architecture.
+Create or change the app's UI Map as an architecture artifact. Produces a change package under `skai/changes/<change-id>/ui-map/` containing the architecture artifact, `proposed-ui-map.yaml`, and `proposed-ui-map.html`; the official map stays frozen during architecture.
 
 - Guide [`Guides/UIMap/ui-map-architecture.md`](Guides/UIMap/ui-map-architecture.md)
 - Example [`Guides/UIMap/ui-map-demo.md`](Guides/UIMap/ui-map-demo.md) -- a complete UI Map in YAML with its rendered diagram
 
-**Prerequisites:** Product/design/story inputs for a baseline map or scoped map change. Existing maps live at `skai/ui-map/ui-map.yaml`; architecture change artifacts live under `skai/changes/<change-id>/`.
+**Prerequisites:** Product/design/story inputs for a baseline map or scoped map change. Existing maps live at `skai/ui-map/ui-map.yaml`; architecture change artifacts live under `skai/changes/<change-id>/ui-map/`.
 
 **Phases:**
 
@@ -215,18 +288,18 @@ Execute or specify the structural code work needed to conform to the target UI M
 
 - Guide [`Guides/UIMap/ui-map-implementation.md`](Guides/UIMap/ui-map-implementation.md)
 
-**Prerequisites:** The app codebase and an identifiable target map: either a ready change package at `skai/changes/<change-id>/` (proposed map + render + architecture artifact) or the official `skai/ui-map/ui-map.yaml` for conformance work. Run mode (Plan vs Build) is inferred from context.
+**Prerequisites:** The app codebase and an identifiable target map: either a ready change package at `skai/changes/<change-id>/ui-map/` (proposed map + render + architecture artifact) or the official `skai/ui-map/ui-map.yaml` for conformance work. Run mode (Plan vs Build) is inferred from context.
 
 **Stages:**
 
 1. **Audit.** Agent compares the codebase to the target map within the change's scope and separates UI-map-owned work, concrete handoffs, and map-level change requests.
 2. **Discussion.** Agent resolves the non-mechanical decisions the audit raises. Gate: discussion complete.
 3. **Code Changes.** Agent writes typed, unchecked items with stable IDs and a Disposition (`implement` / `placeholder` / `planned` / `handoff`), ending with a terminal promote item when a proposed map exists. The checkbox records completion; Disposition records ownership. Gate: Code Changes ready.
-4. **Implement.** In Build, the agent executes owned items, verifies a fresh green build, and blocks before completion or promotion while any handoff remains unchecked. In Plan, owned code work remains unchecked as `planned`; the reviewed specification is the deliverable. When a proposed map exists, Plan promotes it after specification approval, while Build promotes it only after code conformance is green. Click-through QA is downstream, not a gate.
+4. **Implement.** In Build, the agent executes owned items, verifies a fresh green build, and blocks before completion or promotion while any handoff remains unchecked. In Plan, owned code work remains unchecked as `planned`; the reviewed specification is the deliverable. When a proposed map exists, Plan promotes it after specification approval, while Build promotes it only after code conformance is green. After successful map promotion, the agent archives the UI Map type folder and repairs links and its preview. Pending Plan work continues at the promoted path. A conformance run without a proposed map uses a working-doc session. Click-through QA is downstream, not a gate.
 
 ### Requirements authoring (skill `skai-requirements-authoring`)
 
-Draft behavioral requirements into a change package under `skai/changes/<change-id>/`, resolve the questions they raise, and leave the package ready to promote. The canonical catalog at `requirements/**` stays frozen during authoring. Sources are open-ended -- designs, an existing implementation, a product brief, a planning document, or a change request -- and the mode (baseline vs. scoped change) is inferred from the catalog rather than declared.
+Draft behavioral requirements into a change package under `skai/changes/<change-id>/requirements/`, resolve the questions they raise, and leave the package ready to promote. The canonical catalog at `requirements/**` stays frozen during authoring. Sources are open-ended -- designs, an existing implementation, a product brief, a planning document, or a change request -- and the mode (baseline vs. scoped change) is inferred from the catalog rather than declared.
 
 - Guide [`Guides/Requirements/requirements-authoring.md`](Guides/Requirements/requirements-authoring.md)
 - Baseline [`Guides/Requirements/requirements-baseline.md`](Guides/Requirements/requirements-baseline.md) — read when authoring infers Baseline mode
@@ -250,12 +323,12 @@ requirement text and IDs remain unchanged.
 
 - Guide [`Guides/Requirements/requirements-promotion.md`](Guides/Requirements/requirements-promotion.md)
 
-**Prerequisites:** A change package at `skai/changes/<change-id>/` whose discussion is fully resolved and whose requirement change items match its drafts.
+**Prerequisites:** A change package at `skai/changes/<change-id>/requirements/` whose discussion is fully resolved and whose requirement change items match its drafts.
 
 **Phases:**
 
-1. **Promotion checks.** Agent screens the package for readiness, then writes an unchecked checklist covering ID stability, prefix collisions, cross-reference resolution, writing style, catalog traversability, and destination link preparation, ending with the terminal write. Gate: supervisor reviews what will become canon.
-2. **Execute.** Agent runs each check in order, records evidence, and writes the catalog. A failing check blocks and returns the package to authoring -- promotion never rewrites a requirement's prose. When the catalog itself is the problem, the agent raises a change request instead.
+1. **Promotion checks.** Agent screens the package for readiness, then writes an unchecked checklist covering ID stability, prefix collisions, cross-reference resolution, writing style, catalog traversability, and destination link preparation, followed by the canonical write (C7) and package archival (C8). Gate: supervisor reviews what will become canon.
+2. **Execute.** Agent runs each check in order, records evidence, writes the catalog, then moves the requirements package to its promoted path and repairs references. An archival failure resumes only that step; the canonical write is not repeated. A failing verifying check blocks and returns the package to authoring -- promotion never rewrites a requirement's prose. When the catalog itself is the problem, the agent raises a change request instead.
 
 ### Design authoring (skill `skai-design-authoring`)
 
@@ -326,7 +399,7 @@ Completeness backstop that can be used at any point during any workflow. Reviews
 
 1. **Retro.** Agent performs the full checklist, reports findings, and completes immediately if neither a requirements finding nor a process suggestion was generated.
 2. **Requirements follow-up (optional).** If the session revealed behavior the catalog does not reflect, the agent seeds a change package -- draft requirements plus `- [ ] D<n>` items for what it could not settle -- and stops at a handoff gate. It never writes the catalog itself. On `next`, the agent enters [`Guides/Requirements/requirements-authoring.md`](Guides/Requirements/requirements-authoring.md), which owns resolving the items and, in turn, promotion.
-3. **Process improvement follow-up (optional).** If the retro identifies process improvements, agent lists them in the retro output as `- [ ] S<n>` items and stops at a handoff gate. On `next`, the agent enters [`Guides/Process/ticket-filing.md`](Guides/Process/ticket-filing.md), which drafts `process-tickets.md`, lets the supervisor review/edit the resulting `- [ ] T<n> Ticket: ...` entries, and files the remaining ones on `next`.
+3. **Process improvement follow-up (optional).** After all six retro steps, process suggestions remain as unchecked `S<n>` items. The ticket-drafting gate is used only when there is no requirements handoff. When both exist, requirements goes first and exits retro; the supervisor later invokes [`Guides/Process/ticket-filing.md`](Guides/Process/ticket-filing.md) from the retained suggestions. Ticket filing owns draft review and filing approval.
 
 ### Process refinement (skill `skai-process-refinement`)
 
@@ -358,13 +431,76 @@ The suggestion box for skai itself. A developer has an idea, request, or complai
 1. **Understand and draft.** Agent asks clarifying questions to understand the suggestion (skipped if the developer provides enough detail up front). Once it has enough context, it stops at a ready-to-draft gate. On `next`, it chooses a session name, writes one or more `- [ ] T<n> Ticket: ...` drafts (with bold sub-bullet body fields) to `skai/working-docs/<branch-path>/<session-name>/process-tickets.md`, and presents them for review.
 2. **Review and file (optional).** The draft-review gate is the main filing gate: the supervisor can revise drafts or move them to a `## Skipped` subsection, or say `next` to file the remaining unchecked `- [ ] T<n> Ticket: ...` entries as GitHub issues on `skai`. On filing, the entry is checked (`- [x]`) and a `- **Filed** #<n>` sub-bullet is appended.
 
+### Configure SKAI (skill `skai-configure`)
+
+Say **“configure SKAI”** in your project chat. The agent launches the bundled Mac app with a
+categorized checklist with descriptions for both parent categories and individual skills/policies. Project settings define the
+shared selection in **Project**; the **User** tab overrides components just for your working copy.
+
+Agent launches use **Save and Apply**: saving closes the app immediately and the waiting agent
+updates the installation. When opened independently, the app uses **Save**, remains open and shows
+a dialog explaining how to ask an agent to apply the saved choices. OK returns to the checklist;
+Save becomes available again after another edit. Closing discards unsaved edits and preserves saves.
+A double-click launch finds the owning host repository when SKAI is installed as a submodule,
+including under nested folders such as `Submodules/skai`. Otherwise, it asks you to choose a host.
+
+- Guide [Configure SKAI](Guides/Core/configure-skai.md)
+- App [SKAIConfigure.app](Bin/SKAIConfigure.app)
+- Selection contract [Component configuration](Install/component-selection.md)
+
+**Prerequisites:** An Apple Silicon Mac running macOS 13 or later and a harness that can launch
+a local command and wait for its completion. The bundled app needs no browser automation, server or runtime Xcode installation.
+The compiled app ships inside the SKAI checkout; users do not build it or install it separately. It
+uses **Project** and **User** tabs. Bulk actions such as Select all, Clear and Use project
+settings are in the compact **⋯** menu beside the tabs.
+
+**Phases:**
+
+1. **Choose components.** Agent opens the app for the active host project. Edit Project or User; Configure SKAI is always available and cannot be deselected.
+2. **Save and Apply.** In agent mode the app writes changed config layers, closes without confirmation and returns the saved result. The agent runs each installed adapter's runbook against the current checkout. Standalone Save keeps the app open and gives the manual apply prompt instead.
+3. **Verify.** Installer checks actual managed collateral against current config before recording success, even when selections or SKAI SHA are unchanged. Unmanaged conflicts and unrelated migrations retain their own approval requirements.
+
+Project selections live in `skai/config.json`. Private overrides live in gitignored
+`skai/config.local.json`, containing only explicit overrides:
+
+```json
+{
+  "schemaVersion": 1,
+  "overrides": {
+    "skill.skai-debugging": true,
+    "skill.skai-ui-map-architecture": false
+  }
+}
+```
+
+In the User tab, a **dash** means Use project setting and omits the key; **checked** means Turn on
+and writes `true`; **unchecked** means Turn off and writes `false`. Click the checkbox to cycle states.
+The User tab shows the override count. Overridden rows show blue **User: On/Off** labels on Project
+and **Project: On/Off** labels on User, displaying the other setting’s value. On User, inherited component names are subtly dimmed; category names are dimmed when none
+of their components has an override.
+Local settings take precedence; local-only edits leave project config untouched. The installer
+also ignores `skai/install-state.local.json`, where local effective installation history is recorded.
+Turning on a component locally can require migration of shared collateral under normal installation
+rules; the user owns that choice.
+
+Without either config file, every applicable component is installed. Once saved, the config is an explicit
+selection: unchecked components and newly introduced optional components remain disabled until
+selected. An empty selection retains configuration support. Guides and the app remain in the SKAI
+checkout; the installer controls host-installed skills/policies and preserves project-owned content,
+Integration values and addenda. If installation is interrupted, the saved desired config remains
+available for the next install/update. Component history starts with customization or any managed
+component removal, retaining each component’s last applied SHA through disable/re-enable.
+Unchanged default installs need no component ledger; returning to defaults never discards history once recorded. On re-enablement, migrations are
+checked from that component's version, even when the overall SKAI SHA hasn't changed. See
+[Component history and migrations](Install/component-history.md).
+
 ### Update installation (skill `skai-update-installation`)
 
 Update `skai` to the latest release (or a target you name), review what changed, and re-run adapter runbooks.
 
 - Guide [`Guides/Core/update-installation-guide.md`](Guides/Core/update-installation-guide.md)
 
-**Prerequisites:** An existing installation ([`skai/install-state.json`](skai/install-state.json) must exist from the initial install).
+**Prerequisites:** An existing installation ([`skai/install-state.json`](skai/install-state.json), or the gitignored local state, must exist from the initial install).
 
 **Phases:**
 
@@ -388,7 +524,7 @@ Update `skai` to the latest release (or a target you name), review what changed,
 
 This repo is typically maintained with an LLM. When you ask an LLM to make changes, point it at:
 - [`README.md`](README.md) (this file)
-- [`internal/maintain-skai.md`](internal/maintain-skai.md) (LLM maintainer runbook)
+- [`internal/maintain-skai.md`](internal/maintain-skai.md) (LLM maintainer entry point: common rules and a descriptive routing table for specialized references under [`internal/maintenance/`](internal/maintenance/))
 - [`internal/maintain-retro.md`](internal/maintain-retro.md) (post-change checklist to ensure nothing was forgotten)
 - [`internal/maintain-tickets.md`](internal/maintain-tickets.md) (work through process improvement tickets labeled `agent ready`)
 
@@ -403,6 +539,24 @@ This repo is typically maintained with an LLM. When you ask an LLM to make chang
   - no deletions
   - no dependency changes
 
+### App and branding development
+
+Maintainer-only app sources, tests and build tooling live under
+[internal/apps/ConfigureSKAI](internal/apps/ConfigureSKAI). Rebuild the bundled app with
+`bash internal/apps/ConfigureSKAI/build.sh` from the repository root; the
+[build script](internal/apps/ConfigureSKAI/build.sh) produces the Apple Silicon app bundle in
+[Bin/SKAIConfigure.app](Bin/SKAIConfigure.app). The repo-bundled app uses an ad hoc signature. Developer ID signing/notarization is a separate
+packaging choice, not a prerequisite for the Git-based SKAI release.
+
+Run the [configuration tests](internal/apps/ConfigureSKAI/test.sh) with
+`bash internal/apps/ConfigureSKAI/test.sh`. They cover native config editing/host discovery, migration
+history and agreement between the packaged Mac resolver and portable Python resolver. Rebuild the
+app before testing changes to its source. UI appearance and interactions are checked manually.
+
+Logo sources, exports and regeneration instructions live under
+[internal/branding](internal/branding/README.md). The main README references those exports directly.
+Host runtime tools stay in [Bin](Bin); app source and branding tooling are not installed into projects.
+
 ### Contributor rules
 
 - Keep sources in this repo **IDE-neutral** (`.md`). IDE-specific outputs are generated into host repos by install/update runbooks.
@@ -410,4 +564,4 @@ This repo is typically maintained with an LLM. When you ask an LLM to make chang
   - [`assets.manifest.json`](assets.manifest.json)
   - [`README.md`](README.md) Usage section (developer-facing guides should be documented at file level)
 - Update [`CHANGELOG.md`](CHANGELOG.md) for user-visible changes.
-- Do not introduce scripts that mutate host repos; installers are LLM-runbook-driven and must follow the safety policies in [`Policies/`](Policies/).
+- Installed collateral is changed by LLM-runbook-driven installers following [`Policies/`](Policies/). The configuration app writes only the project-owned desired config on explicit Save; it does not install or remove components. Other scripts must not mutate host repos.

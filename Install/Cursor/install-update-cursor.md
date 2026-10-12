@@ -5,6 +5,7 @@ This document is the canonical Cursor install/update runbook.
 ## Inputs (required reading)
 
 - `assets.manifest.json`
+- `Install/component-selection.md`
 - `Install/managed-header.md`
 - `Install/conflict-precedence-policy.md`
 - `Policies/safe-operations.md`
@@ -23,6 +24,11 @@ Key responsibilities:
 Follow the discover → classify → plan → confirm → execute workflow.
 
 ### 1) Discover (read-only)
+
+- Read the current host `skai/config.json` and resolve effective skills/policies for this adapter
+  using `Install/component-selection.md`. Inventory actual managed collateral every time, regardless
+  of unchanged SHA/config/state; invalid configuration blocks before writing. Read prior component
+  history under `Install/component-history.md` before any removal or SHA advancement.
 
 - Identify whether `skai` is already present as a submodule (and where).
 - If this is an update, record the current submodule commit SHA (pre-update) and the intended new SHA (post-update).
@@ -47,6 +53,10 @@ Classify each discovered artifact:
 ### 3) Plan (no changes yet)
 
 Prepare a concrete plan:
+- Reconcile the resolved component set: selected missing/changed outputs, deselected managed
+  outputs to remove, and managed policy blocks to recompose. Preserve all infrastructure and
+  project-owned content. Follow `Install/component-selection.md` for ownership and approval.
+
 - Files to create
 - Files to update (managed only)
 - Legacy candidates to supersede (create new managed files in canonical locations)
@@ -66,7 +76,11 @@ Required gray-area checks (ask the supervisor, then reflect the decision in the 
 
 ### 4) Confirm (supervisor gate)
 
-Present the plan and wait for supervisor approval before writing.
+Present the plan. A verified agent **Save and Apply**, or an explicit request to apply saved SKAI
+configuration, supplies component-reconciliation approval: proceed with that scoped plan under
+`Install/component-selection.md`. A standalone saved event alone does not authorize installation.
+Ordinary install/update plans still wait for supervisor approval before writing.
+Unmanaged conflicts, unrelated migrations and legacy cleanup still require their own resolution.
 
 If updating the submodule, include an "update review" section:
 - Summarize changes between the old SHA and new SHA for relevant paths:
@@ -89,14 +103,15 @@ If updating the submodule, include an "update review" section:
 3.5 Create/update ignore files (permission-gated if the files already exist and are project-owned):
    - Update `.gitignore` by inserting/updating a managed block:
      - Add `skai/working-docs/` so ephemeral working documents are not committed.
+     - Add `/skai/config.local.json` and `/skai/install-state.local.json` for private user settings/history.
    - Update `.cursorignore` by inserting/updating a managed block:
      - Exclude `.claude/**` so Cursor sessions don't ingest Claude-specific assets by default.
      - Do NOT exclude `Submodules/skai/**` here; use editor UI excludes for autocomplete/search clutter instead.
    - If `.claudeignore` exists, propose inserting/updating an equivalent managed block to exclude `.cursor/**` (ask approval before changing).
-4. Generate managed Cursor `.mdc` rule files into `.cursor/rules/skai/`.
+4. Generate selected/applicable managed policy `.mdc` files into `.cursor/rules/skai/`; remove deselected managed rules under `Install/component-selection.md`. Configuration remains discoverable through the required skai-configure skill.
 5. Install `skai` Cursor skills into `.cursor/skills/`.
 6. If approved, perform legacy cleanup (delete).
-7. Write/update `skai/install-state.json` (see "Install state file" below).
+7. Write/update the resolver's `historyStatePath` (see "Install state file" below).
 
 Required Integration doc fields to request (minimum set):
 - Build/compile command(s)
@@ -118,13 +133,13 @@ The Cursor adapter writes `.mdc` files directly into the host repo.
 Rules:
 - Each generated `.mdc` starts with YAML frontmatter (`description`, `globs`, `alwaysApply`), then the managed marker comment immediately after its closing `---` (see `Install/managed-header.md`). Nothing precedes the frontmatter.
 - For updates, overwrite only when the destination is missing or already has a managed header or marker comment. Convert an older header-first managed rule to frontmatter-first form; preserve its managed id and adapter.
-- Determine stack (Swift/Xcode vs Android/Kotlin, etc.) by inspecting the host repo, then ask the supervisor to confirm before writing.
+- Determine stack (Swift/Xcode vs Android/Kotlin, etc.) by inspecting the host repo, then confirm on initial installation or ambiguity. Reconfiguration reuses the established stack when repo signals agree.
 
 Initial supported stacks:
 - Swift/Xcode: generate `.mdc` with `globs: ["**/*.swift"]`.
 - Android/Kotlin: generate `.mdc` with `globs: ["**/*.kt", "**/*.kts"]`.
 
-Recommended generated rules (filenames are stable):
+Policy rule destinations (filenames are stable; generate only the selected/applicable resolved policies):
 - `.cursor/rules/skai/coding-patterns.mdc` ← `Policies/coding-patterns.md`
 - `.cursor/rules/skai/debugging-process.mdc` ← `Policies/debugging-process-rule.md`
 - `.cursor/rules/skai/error-handling.mdc` ← `Policies/error-handling.md`
@@ -137,19 +152,42 @@ Recommended generated rules (filenames are stable):
 
 Create these skills in the host repo under `.cursor/skills/` by copying the shared templates from the submodule and inserting the managed marker comment immediately after the YAML frontmatter (see `Install/managed-header.md`).
 
+Before stamping, apply the shared checkout-path rule in `Install/component-selection.md`:
+rewrite copied wrapper references to use the discovered SKAI checkout location.
+
 Use `Managed-Adapter: cursor` and `Managed-Id: skill.<skill-name>` (e.g., `skill.skai-debugging`).
 
 Rules:
 - Each destination `SKILL.md` is considered managed only if it contains the managed marker comment described in `Install/managed-header.md`.
 - Overwrite only if destination is missing or already contains the managed marker.
 
-Which skills to install is decided by `assets.manifest.json`, not by a list in this runbook: install every asset of type `skill` whose `tags` include `adapter:cursor`. For each such asset the skill name is its `id` without the `skill.` prefix; copy the asset's `sourcePath` from the actual SKAI checkout to `.cursor/skills/<name>/SKILL.md` and stamp the marker as above. Skip nothing the manifest lists, add nothing it doesn't.
+Which skills to install is decided by the manifest **and current host config**, resolved under
+`Install/component-selection.md`. Install each returned `skills` asset for this adapter using its
+stable id/sourcePath and the stamping rules above. No config returns the full adapter-tagged set;
+an explicit config installs only selected optional skills plus required configuration support.
 
-During discovery, also compare the installed managed skills under `.cursor/skills/` with that set: a managed SKAI skill (identified by its managed id/source) the manifest no longer tags for this adapter is a legacy candidate — propose its removal in the plan and do not delete it without approval.
+During discovery compare actual managed skills with that resolved set. Deselected SKAI-managed
+outputs are reconciliation removals under the shared contract; verify marker/id/adapter before
+removing their managed file, retain custom resources, and remove directories only if empty.
+Retired `skill.skai-ui-map-planning` is a managed retirement removal after plan approval or Save;
+its template/guide no longer exist. Verify managed markers before removal and preserve project
+addenda/artifacts. Other unmarked lookalikes and obsolete artifacts remain separate
+permission-gated legacy candidates. Never remove project addenda or canonical data.
 
 ## Install state file
 
-After a successful install or update, write/update `skai/install-state.json` so the `update-installation` skill can detect changes and re-run the appropriate adapters.
+Read `Install/component-history.md` on every reconciliation. Persist known baseline
+versions before removing outputs; re-enabling a component uses its retained last applied SHA for
+artifact migration even if the checkout/global SHA is unchanged. Keep local state/choices out of
+shared state. Record this adapter’s `lastSHA` on success even for defaults. A full ledger starts
+on customization or any managed removal; retain it thereafter under the shared history contract.
+
+Before recording success, verify the actual skill/policy inventory against a fresh config resolution
+under `Install/component-selection.md`. Config drift or incomplete reconciliation prevents recording
+success; report the outstanding work and preserve the other adapters' entries.
+
+
+After a successful install or update, write/update the resolver's `historyStatePath` so the `update-installation` skill can detect changes and re-run the appropriate adapters.
 
 Format:
 
@@ -164,17 +202,23 @@ Format:
     {
       "adapter": "<adapter-id>",
       "runbook": "<submodule-relative runbook path>",
-      "lastRunAt": "<yyyy-mm-dd>"
+      "lastRunAt": "<yyyy-mm-dd>",
+      "lastSHA": "<current submodule HEAD SHA>"
     }
   ]
 }
 ```
 
 Rules:
+- Resolve the state path under `Install/component-history.md`. If local state is new, seed from
+  shared state before merging; never overwrite shared state with local effective choices.
 - If the file does not exist, create it with this adapter's entry.
 - If the file already exists, **merge**: update `lastSHA`, `lastRelease`, `lastUpdatedAt`, and upsert this adapter's entry in `installedAdapters` (preserve entries from other adapters).
 - Determine `lastRelease` from the submodule's current HEAD: `git -C <submodulePath> tag --points-at HEAD --list 'v*'` -- if a `v<N>` tag points at HEAD, use the highest; otherwise set `lastRelease` to null.
 - The adapter ID for this runbook is `cursor`; the runbook path is `Install/Cursor/install-update-cursor.md`.
+
+Follow `Install/component-history.md` for configuration fingerprints, retained component records,
+migration ranges and failure recovery. Merge only verified applied state after reconciliation.
 
 ## Legacy artifact cleanup (permission-gated)
 

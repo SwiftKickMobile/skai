@@ -2,25 +2,26 @@ Managed-By: skai
 Managed-Id: guide.requirements-promotion
 Managed-Source: Guides/Requirements/requirements-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-05
+Managed-Updated-At: 2026-10-10
 
 # Requirements Promotion
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 ## Purpose
 
 Write an approved change package into the canonical catalog.
 
-Promotion writes requirement contracts into the catalog; work-spec implementation's verified
-known-difference cleanup is the narrow exception. Promotion validates the text and adjusts link
-definitions for the destination, without changing prose, IDs, or notes. A wording change belongs to
-authoring: a package defect returns there, while a catalog defect follows *Raising a change request*.
+Promotion owns contract writes; verified work-spec known-difference cleanup is the exception.
+Validate text and prepare destination links without changing prose, IDs, notes or drafts.
+Package wording defects return to authoring; catalog defects follow *Raising a change request*.
 
 In conversation, link requirement and Discussion IDs to the exact draft or canonical target using
 inline links. Prefer real anchors; Discussion checkbox IDs require a supported explicit anchor or
 a topic anchor with item context, or a verified file/line link supported by the host.
 
-Content rules live in [`requirements-catalog.md`](requirements-catalog.md); the package's typed
-formats live in [`requirements-artifacts.md`](requirements-artifacts.md).
+Use [`requirements-catalog.md`](requirements-catalog.md) for content rules and
+[`requirements-artifacts.md`](requirements-artifacts.md) for typed formats.
 
 ## When promotion happens
 
@@ -30,7 +31,7 @@ until shipment. This depends on the behavior, not Baseline versus Scoped change 
 
 ## The promotion artifact
 
-Promotion writes `skai/changes/<change-id>/requirements-promotion.md`, parallel to the authoring
+Promotion writes `skai/changes/<change-id>/requirements/requirements-promotion.md`, parallel to the authoring
 artifact:
 
 ```
@@ -65,44 +66,22 @@ In the planned gate line, `<what happens after your response>` should describe w
 If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
 Workflow-specific gate notes:
-- The Promotion Checks gate is the workflow's single review point. `Next` there means: execute the
-  listed checks, record evidence, and write the catalog. The supervisor reviews *what will become canon*
-  — the requirements themselves, not the mechanics — so the summary names the files and the count of
-  requirements the write puts into the catalog — every requirement in the files being written,
-  carried-forward ones included, because the write replaces whole files — not the checklist and not
-  the count of change items. A change to any requirement's wording returns the package
-  to authoring — as does a request to change anything else in the package's drafts.
+- Promotion Checks is the single review point: after readiness and the unchecked checklist, before
+  canon changes. `next` executes checks, writes canon and archives the package. Summarize the
+  destination files and **all requirements in those whole-file writes**, including carried-forward
+  requirements, not the checklist or change-item count. Requested draft edits return to authoring.
   - `⏳ GATE: Next: Promote <N> requirements to <paths>. Say "next" or what to change.`
 
-Planned gates for this workflow:
-- After the Promotion Checks are written and the readiness screen passes, before anything is written
-  to the catalog.
-
 Workflow-specific blocked gates:
-- The package fails any condition of the readiness screen (see *Readiness screen*). Restating those
-  conditions here would give them two homes to drift between; the screen is the one.
-- More than one package is open and the signal does not name which (see *Initiation*).
-- A verifying check (`C1`–`C5`) fails **on the package** during execution. The checks are enumerated
-  once, under *Promotion Checks*; a `C7` fault found after the write is repaired in place instead,
-  and a failure whose cause is the catalog goes to *Raising a change request*.
-- The supervisor asks at the Promotion Checks gate for a change to any requirement's wording — rewriting
-  is authoring.
-- The catalog contradicts what is landing, and the contradiction is load-bearing enough that writing
-  would leave canon inconsistent.
-- The Integration doc has no `Section: requirements` block, its values are unfilled, or the shape is
-  `none`, so promotion cannot know where to write — or, under `shared`, the root it names does not
-  resolve, which is not an empty catalog. Never fall back to a literal path. Under `none` the stop is
-  terminal, and `next` does not resolve it.
-
-A failed check, a failed readiness condition, a requested wording change, and a load-bearing catalog
-contradiction take a workflow-specific line rather than the standard one, because nothing the supervisor
-can do at the console resolves them — the package goes back to authoring, and inviting a `next` here
-would restart the whole checklist:
-
-`⏳ GATE: Blocked: <C# | readiness condition | requested wording | catalog contradiction> failed — <what failed>. The package returns to authoring; re-run promotion once it is resolved.`
-
-The other two take the standard line, naming what the supervisor supplies — the package, or the block's
-values. Under `none` the bullet above governs: nothing supplies a catalog.
+- Readiness failure, package verification failure (`C1`–`C5`), requested draft edits, or a catalog
+  contradiction making the write inconsistent return to authoring. Record the cause and use:
+  `⏳ GATE: Blocked: <C# | readiness condition | requested wording | catalog contradiction> failed — <what failed>. The package returns to authoring; re-run promotion once it is resolved.`
+- Ambiguous package selection, archive collision, inaccessible references or archival failure use
+  the standard blocked gate. Mechanical post-write C7 faults are repaired in place, without rewording;
+  archival recovery follows *Archive the package*.
+- Missing/unfilled Integration requirements values or an unresolved shared root block; never guess
+  a path or treat an unresolved root as an empty catalog. Shape `none` is terminal: `next` cannot
+  supply a catalog.
 
 ## Advance intent
 
@@ -119,52 +98,50 @@ Rules:
 Progress tracking:
 
 - **Two conventions, by artifact type:**
-  - **`- [ ]` / `- [x]` in process artifacts** (markdown workflow docs). Completion is checking the box — the artifact preserves the audit trail of resolved items.
-  - **`🟡` in source files** seeded or planned by a skai workflow. Completion is **removal** of the marker.
+  - **`- [ ]` / `- [x]` in process artifacts** (markdown workflow docs: work specs, planning docs, working docs, retro outputs, ticket drafts, etc.). Completion is checking the box — the artifact preserves the audit trail of resolved items.
+  - **`🟡` in source files** (test code, application code) seeded or planned by a skai workflow. Completion is **removal** of the marker — the file's remaining work is read by which `🟡`s remain. Canonical in-code case: `Guides/Test/unit-test-planning-guide.md`.
 - Default rule: a progress marker means TODO or pending approval. Do not clear it without supervisor approval.
 - At a planned gate, advance intent is the approval signal for clearing the guide-owned progress markers completed by the phase that just finished.
-- Ordering rule: the agent first stops and waits at the gate, then clears the approved markers only after the supervisor gives advance intent.
+- Ordering rule: the agent first stops and waits at the gate, then clears the approved markers (`- [ ]` → `- [x]` in a process artifact; remove `🟡` in code) only after the supervisor gives advance intent.
+- If a workflow needs a custom marker lifecycle (for example, inline discussion items resolved during a supervisor-led discussion loop), define that exception explicitly and narrowly below.
+- If a workflow uses both gate/phase markers and local working markers, keep them distinct: local approvals clear local working markers; advance intent clears the gate/phase marker.
+- For any custom marker lifecycle, specify both:
+  - the artifact where the markers live
+  - the exact supervisor intent that authorizes clearing them
 
-**Workflow-specific marker lifecycle.** This workflow owns the `- [ ] C<n>` items in
-`## Promotion Checks`. Every item is written unchecked while the gate is open — they are the gate's
-marker. After advance intent, each is executed in order and checked as it passes, with its evidence
-recorded. A **verifying** check (`C1`–`C5`) that fails on the package is left
-unchecked and the items after it are not executed, so the artifact shows exactly how far promotion
-got. A mechanical fault found after C7's write is repaired in place and then checked: correct
-prepared links and rewrite, never reword. Record the write honestly; a prose defect returns to authoring.
+**Not workflow progress:** the `🟡` convention in `Templates/docs/skai/integration.md` and `Install/integration-doc-install-update.md` (project-specific missing constants needing supervisor input during host install) is a separate concept, scoped to that section's rules. Don't conflate the two.
 
-**On re-run, every check is unchecked again.** When a failure sends the package back to authoring and
-the drafts change, the checks that passed were verified against text that no longer exists. Reset the
-whole section, keep the prior evidence brackets as history, and execute from `C1`. Promotion never
-resumes mid-list.
+**Workflow-specific marker lifecycle.** For a fresh or changed-draft run, write every `C<n>` unchecked for review. After advance
+intent, execute in order, record evidence and check each success. A package failure in C1–C5 leaves
+that check and later items unchecked; a mechanical fault after C7's write is repaired in place,
+never reworded. Record writes honestly; prose defects return to authoring. Canon carries no markers.
 
-Nothing written into the catalog ever carries a marker.
+After changed drafts, reset all checks, retain prior evidence and restart at C1. Archival-only
+recovery is separate: retain C1–C7 and their evidence; never repeat a successful write just to finish
+C8. Check C8 only after the move, link repair and archived verification succeed.
 
-**Workflow-specific `auto` behavior.** `auto` bypasses the Promotion Checks gate, so promotion runs
-end to end without review. Use it only for a package whose drafts have already been reviewed. It
-never bypasses a failing check: those are blocked gates. And under the `shared` shape the response
-still names the outside catalog root before writing to it — `auto` waives the review, not the
-warning that this promotion leaves the repo.
+`auto` skips review only for already-reviewed drafts; verification and other blockers still stop it.
+Under `shared`, name the outside catalog root before writing, even under `auto`.
 
 ## Initiation
 
-The workflow starts on an explicit signal — "promote the requirements", "promote this package", or
-equivalent. That signal often comes right after authoring completes, but it is still a signal:
-promotion is never a continuation authoring runs into on its own.
+Begin on explicit promotion intent, including after authoring completes; authoring does not run into
+promotion automatically. Read the app's `skai/integration.md` requirements block and resolve its
+catalog repository before discovery. `skai/changes/` is relative to that repository, including shared
+roots; unknown/unresolved roots block. Name a shared destination before writing; subsequent git
+handling belongs to the supervisor.
 
-Read the app repo's `skai/integration.md` `Section: requirements` block first: it names the
-repository shape and catalog root. Resolve the repository that holds the catalog before looking for
-packages. `skai/changes/` is relative to that repository, including under `shared`; an unknown or
-unresolved repository is a blocked gate, never an empty catalog or a host-repo fallback.
+Scan `skai/changes/*/requirements/requirements-authoring.md` for unpromoted requirements packages;
+ignore sibling types and promoted history. Multiple candidates without a named target block. Before fresh readiness, inspect existing promotion Evidence. A recorded C7 write with mechanical
+confirmation/repair pending resumes C7 in place, even unchecked: retain C1–C6, repair/verify output
+without rewording, then check C7 and archive. Changed drafts, intervening canon or uncertain outcomes
+block reconciliation; do not reset execution or assume an unrecorded write succeeded. C7
+checked means canon is written: an incomplete archive resumes *Archive the package* from its active
+or promoted location, without resetting checks. A fully archived package is not promoted again.
 
-Then identify the package. Open packages are directories under that repo's `skai/changes/` holding
-an unpromoted `requirements-authoring.md` (see *Completion*); the directory also holds other
-workflows' packages. More than one open package with no named target is a blocked gate rather than
-a guess.
-
-Under the `shared` shape that root — and the package, which lives beside it — is **outside this repo**, in a submodule's working tree. Say so
-before writing, naming the path, so it is never a surprise that a promotion touched files elsewhere.
-Writing them is all this workflow does; what happens to those changes afterwards is the supervisor's.
+Before a canonical write, ensure `skai/promoted/<change-id>/requirements/` is absent and identify live
+references in the catalog/app repositories and resolved repositories of linked related packages or callers. Collisions or inaccessible required references block;
+never overwrite or merge a destination.
 
 ### Readiness screen
 
@@ -177,19 +154,14 @@ Before writing `## Promotion Checks`, verify the package is promotable at all:
    return to authoring.
 3. No change request in the package remains `Proposed`.
 
-Any of the three failing is a blocked gate, and the resolution is authoring, not promotion. Do not
-write a checks section for a package that cannot be promoted; record the failing condition in
-`## Evidence` instead.
+On failure, record the condition in `## Evidence`, not a checks section, and return to authoring.
 
 ## Promotion Checks
 
 Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution order.
 
-**C1–C5 verify, C6 prepares destination links, C7 writes.** Verify new/changed content in its
-projected canonical location, retaining link target identities; leave drafts unchanged. Unchanged
-carried-forward content and unrelated catalog defects do not block. C1 also sweeps all IDs in each
-rewritten file and retired-ID reuse catalog-wide; C2 checks prefixes catalog-wide; C7 confirms all
-written text. Known-difference notes are observations, not new obligations or progress markers.
+Verify changed content at its projected canonical location; unchanged content and unrelated catalog
+defects do not block. Known-difference notes are observations, not obligations or markers.
 
 - `C1 IDs are append-only` — every ID in a rewritten catalog file remains in its draft, with no
   renumbering or retired-ID reuse. Non-ID content is carried forward by whole-file drafting, not an
@@ -215,9 +187,9 @@ written text. Known-difference notes are observations, not new obligations or pr
   when absent and leaving files outside the package untouched. Confirm destination links reach their
   intended targets and no Discussion citations, checkboxes, or `🟡` remain. Only retirement marks and
   labeled known-difference observations are allowed alongside the contract. Repair mechanical output
-  faults in place; never reword. C7 remains the terminal completion item.
-
-`C4` is the check most worth taking seriously and the easiest to wave through.
+  faults in place; never reword. Record the actual write outcome before output confirmation; extend that C7 evidence with confirmation/repair results, retaining failures. Check C7 only after confirmation succeeds, then archive.
+- `C8 Archive the package` — execute *Archive the package* below. This terminal item completes
+  promotion only after verified write and archival.
 
 **Example** (LumenNotes, mid-execution — `C4` failed, so `C5` onward were not run):
 
@@ -231,13 +203,14 @@ written text. Known-difference notes are observations, not new obligations or pr
 - [ ] C5 Traversal
 - [ ] C6 Prepare destination links
 - [ ] C7 Write the catalog
+- [ ] C8 Archive the package
 
 ## Evidence
 
-[evidence: C1; comm -23 <(grep -ohE '^## [A-Z-]+-[0-9]+' requirements/features/reminders.md | sed 's/^## //' | sort -u) <(grep -ohE '^## [A-Z-]+-[0-9]+' skai/changes/reminder-expiry/proposed-requirements/features/reminders.md | sed 's/^## //' | sort -u); comm -12 <(grep -rhoE '^## [A-Z-]+-[0-9]+ \(retired\)' requirements/ | grep -oE '[A-Z-]+-[0-9]+' | sort -u) <(grep -rhoE '^## [A-Z-]+-[0-9]+$' skai/changes/reminder-expiry/proposed-requirements/ | grep -oE '[A-Z-]+-[0-9]+' | sort -u); no ID dropped, none renumbered, no retired ID reused]
+[evidence: C1; comm -23 <(grep -ohE '^## [A-Z-]+-[0-9]+' requirements/features/reminders.md | sed 's/^## //' | sort -u) <(grep -ohE '^## [A-Z-]+-[0-9]+' skai/changes/reminder-expiry/requirements/proposed-requirements/features/reminders.md | sed 's/^## //' | sort -u); comm -12 <(grep -rhoE '^## [A-Z-]+-[0-9]+ \(retired\)' requirements/ | grep -oE '[A-Z-]+-[0-9]+' | sort -u) <(grep -rhoE '^## [A-Z-]+-[0-9]+$' skai/changes/reminder-expiry/requirements/proposed-requirements/ | grep -oE '[A-Z-]+-[0-9]+' | sort -u); no ID dropped, none renumbered, no retired ID reused]
 [evidence: C2; inspection of the prefix on each touched file's line in features/_features.md; both present, no new prefix introduced]
 [evidence: C3; every ID this package's new and changed text cites, resolved against the catalog plus the drafts; 0 unresolved]
-[evidence: C4; writing-style check over the changed requirements REMIND-04, REMIND-06, REMIND-09, against Required, Forbidden and Nothing that decays in full; FAILED on REMIND-06; output: skai/changes/reminder-expiry/evidence/promotion-run1-c4.md]
+[evidence: C4; writing-style check over the changed requirements REMIND-04, REMIND-06, REMIND-09, against Required, Forbidden and Nothing that decays in full; FAILED on REMIND-06; output: skai/changes/reminder-expiry/requirements/evidence/promotion-run1-c4.md]
 ```
 
 ## Evidence
@@ -248,62 +221,79 @@ written text. Known-difference notes are observations, not new obligations or pr
 [evidence: C<n>; <command or inspection>; <outcome>; output: <path when persisted>]
 ```
 
-The check ID comes first; `<outcome>` states what the check found — what the command's output
-showed, or what an inspection observed. The ID says which check a bracket belongs to, not which run
-— every run emits a `C1` — so a re-run appends its brackets below the
-previous run's under a `### Run <n>` heading rather than interleaving them.
+Name check/outcome; append re-runs under `### Run <n>`, preserving prior evidence.
 
 Inspection and preparation results name what was checked or changed:
 
 ```
-[evidence: C4; writing-style check over the changed prose — REMIND-04, REMIND-06, REMIND-09 and the `Expiry window` glossary entry — against Required, Forbidden and Nothing that decays in full; no mechanism named, no temporal reference, all four phrased as behavior]
-[evidence: C5; inspection — features/_features.md's line for reminders names expiry and dismissal, not just "reminders"; `Pending reminder` and `Expiry window` both have glossary entries pointing at REMIND-04 and REMIND-09; no behavioral claim outside a numbered requirement in the three written files]
+[evidence: C4; REMIND-04/06/09 and glossary `Expiry window` against Required, Forbidden and Nothing that decays; no mechanisms or temporal references; all describe behavior]
+[evidence: C5; features/_features.md names expiry/dismissal; glossary Pending reminder/Expiry window point to REMIND-04/09; no unnumbered behavioral claims in the three written files]
 [evidence: C6; NOTE-04 definition rebased from the draft location to ../domains/note.md#note-04; canonical target identity unchanged; known-difference notes retained]
 [evidence: C7; wrote features/reminders.md, features/_features.md, glossary.md; 9 requirements landed; grep -E '\(D[0-9]+\)|- \[[ x]\]|🟡' requirements/features/reminders.md requirements/features/_features.md requirements/glossary.md returned nothing; inspection — destination links resolve; REMIND-07 retirement and labeled known-difference notes retained]
 ```
 
-On failure, persist and link the full output, so `output` is required. Key its path to the run as
-well as the check — a later run failing the same check would otherwise overwrite the output an
-earlier run's retained bracket still cites. On success, `output` is
-optional when nothing was persisted. Where a check is an inspection rather than a command, name what
-was inspected precisely enough to repeat it.
-
-**Silence is not a pass.** Name the compared inputs and observed result; an unresolved path cannot
-pass by returning no matches. A legitimately empty subject passes only with the reason recorded.
-Compare catalog and draft IDs per rewritten file and retired IDs catalog-wide. Strip path prefixes
-before ID comparisons (`grep -rhoE`); otherwise paths make equivalent IDs appear different.
+On failure, persist/link full output at a run-and-check-specific path so later runs cannot overwrite
+retained evidence; success needs `output` only if persisted. Inspections name repeatable inputs and
+observations. Silence is not a pass: unresolved paths fail; genuinely empty subjects need a recorded
+reason. Compare IDs per rewritten file and retired IDs catalog-wide; strip path prefixes
+(`grep -rhoE`) before comparing IDs.
 
 ## Raising a change request
 
-If **the catalog is wrong** — an already-promoted requirement contradicts what is landing, or is
-internally inconsistent with what is about to be written, whether a check surfaces it or promotion
-reads it while preparing the write — that is not a defect in the package and cannot be fixed by
-editing the package's drafts alone. Raise a change request against the package, per
-[`requirements-artifacts.md`](requirements-artifacts.md), link it under `## Change Requests`, and
-either continue (when the contradiction
-does not affect this write) or block (when writing would leave canon inconsistent). On the continue
-branch the check is **checked**, with the request linked from its evidence: it passed as far as this
-package is concerned, and leaving it unchecked would make the artifact claim promotion stopped before
-a write it actually performed.
+A contradiction or inconsistency in existing canon needs a change request, not merely draft edits.
+Promotion alone raises these: use [`requirements-artifacts.md`](requirements-artifacts.md), link it
+under `## Change Requests`, and block if writing would leave canon inconsistent. Otherwise continue
+and check the passing check with its linked request; do not leave the artifact denying a write it
+performed. Name any still-Proposed request at completion; its catalog defect needs a new package.
 
-Promotion is the only workflow that raises these.
+## Archive the package
+
+After verified C7, execute C8:
+
+1. Move `skai/changes/<change-id>/requirements/` intact to
+   `skai/promoted/<change-id>/requirements/` in the catalog repository. Leave sibling types untouched;
+   remove the active change-ID grouping directory only if empty.
+2. Repair live incoming links across those resolved repositories, including related packages/work specs,
+   and relative links inside moved files, preserving target identities. Preserve prose, IDs, decisions
+   and recorded commands/results; annotate historical paths with current locations. Inaccessible or
+   unrepaired required links block.
+3. Verify archived files/links, absence of the active type path and preserved siblings; record move
+   and link evidence, then check C8 in the archived `requirements-promotion.md`.
+
+After a failure, report canon promoted but archival incomplete and use the standard blocked gate.
+Locate the same package at its active/promoted path, verify identity/evidence, and resume unfinished
+archival only; never overwrite a destination or repeat C7 solely to finish C8.
+
+**Example:** archive `reminder-expiry/requirements/` while `reminder-expiry/ui-map/` remains active;
+repair that sibling's incoming links. Then record and check C8 at the promoted location:
+
+```text
+[evidence: C8; moved skai/changes/reminder-expiry/requirements/ to skai/promoted/reminder-expiry/requirements/; active requirements path absent; archived files and live link targets verified; active ui-map sibling preserved]
+```
 
 ## Completion
 
-When `C7` is checked and its evidence is recorded, the catalog holds the package's requirements. End
-with `🏁 Complete. Let me know if anything needs adjustment.`
+C7 plus C8 with evidence means canon is written and the package is archived at
+`skai/promoted/<change-id>/requirements/`. Link its artifact and emit
+`🏁 Complete. Let me know if anything needs adjustment.`
 
-The package stays where it is. It is the durable record of why these requirements say what they say —
-the Discussion that produced them, the decisions, and the sources. Nothing about it is deleted on
-promotion.
-
-A promoted package is one whose `requirements-promotion.md` has `C7` checked. It is not promoted
-again, and it is not one of the open packages *Initiation* counts. If a change request is still
-`Proposed` at completion, name it in the completion message: the catalog defect it records needs its
-own scoped-change package, and this one will not be reopened to carry it.
+C7 alone closes the proposal and excludes it from unpromoted discovery. Newly produced packages
+need C8; migrated historical C7-only packages instead require their separately recorded, verified
+relocation. Missing completion evidence for the applicable case needs archival recovery. Promoted drafts are not reopened or re-promoted. Name any still-Proposed request
+with its archived link; resolve that catalog defect through a new scoped-change package.
 
 ## Cross-references
 
 - [`requirements-catalog.md`](requirements-catalog.md) — catalog content rules
 - [`requirements-authoring.md`](requirements-authoring.md) — the authoring workflow
 - [`requirements-artifacts.md`](requirements-artifacts.md) — change item and change request formats
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/requirements-promotion-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

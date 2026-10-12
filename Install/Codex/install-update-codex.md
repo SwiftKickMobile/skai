@@ -17,6 +17,7 @@ If any assumption is false in the host repo's setup, STOP and ask the supervisor
 ## Inputs (required reading)
 
 - `assets.manifest.json`
+- `Install/component-selection.md`
 - `Install/managed-header.md`
 - `Install/conflict-precedence-policy.md`
 - `Install/agent-instructions-install-update.md`
@@ -32,13 +33,18 @@ Follow the discover -> classify -> plan -> confirm -> execute workflow.
 
 ### 1) Discover (read-only)
 
+- Read the current host `skai/config.json` and resolve effective skills/policies for this adapter
+  using `Install/component-selection.md`. Inventory actual managed collateral every time, regardless
+  of unchanged SHA/config/state; invalid configuration blocks before writing. Read prior component
+  history under `Install/component-history.md` before any removal or SHA advancement.
+
 - Identify whether `skai` is already present as a submodule (and where).
 - If this is an update, record the current submodule commit SHA (pre-update) and the intended new SHA (post-update).
 - **Detect stack** from project signals:
   - Xcode/Swift: `.xcodeproj`, `.xcworkspace`, `Package.swift`, `*.swift`
   - Android/Kotlin: `build.gradle`, `settings.gradle`, `*.kt`, `*.kts`
   - Otherwise: generic (no stack addendum needed)
-  - Confirm the detected stack with the developer.
+  - Confirm the detected stack with the developer on initial installation or if ambiguous. During reconfiguration, reuse the established Integration/installed stack when repo signals agree; do not add a routine confirmation after Save.
 - **Detect other agent context** (for coexistence rules):
   - Note whether `.cursor/` exists (for optional `.cursorignore` setup).
   - Note whether `.claude/` exists (for optional `.claudeignore` setup).
@@ -60,6 +66,10 @@ Classify each discovered artifact:
 ### 3) Plan (no changes yet)
 
 Prepare a concrete plan:
+- Reconcile the resolved component set: selected missing/changed outputs, deselected managed
+  outputs to remove, and managed policy blocks to recompose. Preserve all infrastructure and
+  project-owned content. Follow `Install/component-selection.md` for ownership and approval.
+
 - Files to create
 - Files to update (managed only)
 - Legacy candidates to supersede (create new canonical outputs)
@@ -69,7 +79,11 @@ Prepare a concrete plan:
 
 ### 4) Confirm (supervisor gate)
 
-Present the plan and wait for supervisor approval before writing.
+Present the plan. A verified agent **Save and Apply**, or an explicit request to apply saved SKAI
+configuration, supplies component-reconciliation approval: proceed with that scoped plan under
+`Install/component-selection.md`. A standalone saved event alone does not authorize installation.
+Ordinary install/update plans still wait for supervisor approval before writing.
+Unmanaged conflicts, unrelated migrations and legacy cleanup still require their own resolution.
 
 If updating the submodule, include an "update review" section:
 - Summarize changes between the old SHA and new SHA for relevant paths:
@@ -96,11 +110,12 @@ If updating the submodule, include an "update review" section:
 6. Create/update ignore files (permission-gated if they already exist and are project-owned):
    - Update `.gitignore` by inserting/updating a managed block:
      - Add `skai/working-docs/` so ephemeral working documents are not committed.
+     - Add `/skai/config.local.json` and `/skai/install-state.local.json` for private user settings/history.
    - If `.cursorignore` exists, propose inserting/updating a managed block to exclude `.agents/**` so Cursor sessions don't ingest Codex-specific assets by default (ask approval before changing).
    - If `.claudeignore` exists, propose inserting/updating a managed block to exclude `.agents/**` so Claude sessions don't ingest Codex-specific assets by default (ask approval before changing).
    - Do NOT exclude `Submodules/skai/**` here; use editor UI excludes for autocomplete/search clutter instead.
 7. Optionally propose cleanup of legacy candidates as a separate explicit step.
-8. Write/update `skai/install-state.json` (see "Install state file" below).
+8. Write/update the resolver's `historyStatePath` (see "Install state file" below).
 
 Required Integration doc fields to request (minimum set):
 - Build/compile command(s)
@@ -113,19 +128,42 @@ Required Integration doc fields to request (minimum set):
 
 Create these skills in the host repo under `.agents/skills/` by copying the shared templates from the submodule and inserting the managed marker comment immediately after the YAML frontmatter (see `Install/managed-header.md`).
 
+Before stamping, apply the shared checkout-path rule in `Install/component-selection.md`:
+rewrite copied wrapper references to use the discovered SKAI checkout location.
+
 Use `Managed-Adapter: codex` and `Managed-Id: skill.<skill-name>` (e.g., `skill.skai-debugging`).
 
 Rules:
 - Each destination `SKILL.md` is considered managed only if it contains the managed marker comment described in `Install/managed-header.md`.
 - Overwrite only if destination is missing or already contains the managed marker.
 
-Which skills to install is decided by `assets.manifest.json`, not by a list in this runbook: install every asset of type `skill` whose `tags` include `adapter:codex`. For each such asset the skill name is its `id` without the `skill.` prefix; copy the asset's `sourcePath` from the actual SKAI checkout to `.agents/skills/<name>/SKILL.md` and stamp the marker as above. Skip nothing the manifest lists, add nothing it doesn't.
+Which skills to install is decided by the manifest **and current host config**, resolved under
+`Install/component-selection.md`. Install each returned `skills` asset for this adapter using its
+stable id/sourcePath and the stamping rules above. No config returns the full adapter-tagged set;
+an explicit config installs only selected optional skills plus required configuration support.
 
-During discovery, also compare the installed managed skills under `.agents/skills/` with that set: a managed SKAI skill (identified by its managed id/source) the manifest no longer tags for this adapter is a legacy candidate — propose its removal in the plan and do not delete it without approval.
+During discovery compare actual managed skills with that resolved set. Deselected SKAI-managed
+outputs are reconciliation removals under the shared contract; verify marker/id/adapter before
+removing their managed file, retain custom resources, and remove directories only if empty.
+Retired `skill.skai-ui-map-planning` is a managed retirement removal after plan approval or Save;
+its template/guide no longer exist. Verify managed markers before removal and preserve project
+addenda/artifacts. Other unmarked lookalikes and obsolete artifacts remain separate
+permission-gated legacy candidates. Never remove project addenda or canonical data.
 
 ## Install state file
 
-After a successful install or update, write/update `skai/install-state.json` so the `update-installation` skill can detect changes and re-run the appropriate adapters.
+Read `Install/component-history.md` on every reconciliation. Persist known baseline
+versions before removing outputs; re-enabling a component uses its retained last applied SHA for
+artifact migration even if the checkout/global SHA is unchanged. Keep local state/choices out of
+shared state. Record this adapter’s `lastSHA` on success even for defaults. A full ledger starts
+on customization or any managed removal; retain it thereafter under the shared history contract.
+
+Before recording success, verify the actual skill/policy inventory against a fresh config resolution
+under `Install/component-selection.md`. Config drift or incomplete reconciliation prevents recording
+success; report the outstanding work and preserve the other adapters' entries.
+
+
+After a successful install or update, write/update the resolver's `historyStatePath` so the `update-installation` skill can detect changes and re-run the appropriate adapters.
 
 Format:
 
@@ -140,17 +178,23 @@ Format:
     {
       "adapter": "<adapter-id>",
       "runbook": "<submodule-relative runbook path>",
-      "lastRunAt": "<yyyy-mm-dd>"
+      "lastRunAt": "<yyyy-mm-dd>",
+      "lastSHA": "<current submodule HEAD SHA>"
     }
   ]
 }
 ```
 
 Rules:
+- Resolve the state path under `Install/component-history.md`. If local state is new, seed from
+  shared state before merging; never overwrite shared state with local effective choices.
 - If the file does not exist, create it with this adapter's entry.
 - If the file already exists, **merge**: update `lastSHA`, `lastRelease`, `lastUpdatedAt`, and upsert this adapter's entry in `installedAdapters` (preserve entries from other adapters).
 - Determine `lastRelease` from the submodule's current HEAD: `git -C <submodulePath> tag --points-at HEAD --list 'v*'` -- if a `v<N>` tag points at HEAD, use the highest; otherwise set `lastRelease` to null.
 - The adapter ID for this runbook is `codex`; the runbook path is `Install/Codex/install-update-codex.md`.
+
+Follow `Install/component-history.md` for configuration fingerprints, retained component records,
+migration ranges and failure recovery. Merge only verified applied state after reconciliation.
 
 ## Legacy artifact cleanup (permission-gated)
 

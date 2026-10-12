@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.work-spec-creation
 Managed-Source: Guides/Spec/work-spec-creation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-03
+Managed-Updated-At: 2026-10-10
 
 # Work Spec Design
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 ## Purpose
 
@@ -302,3 +304,13 @@ Complete when the readiness screen passes. If the request was design-only, end w
 If the initiating request also includes a work spec or implementation, load
 [`work-spec-implementation.md`](work-spec-implementation.md) immediately and continue there without
 waiting at the skill boundary.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/work-spec-creation-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

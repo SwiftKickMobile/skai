@@ -2,15 +2,17 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture
 Managed-Source: Guides/UIMap/ui-map-architecture.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-06
+Managed-Updated-At: 2026-10-10
 
 # UI Map Architecture
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 The architecture method for the UI Map system. Use [`ui-map-guide.md`](ui-map-guide.md) for the YAML map format and [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md) for the change-package artifact formats (map change items, change requests).
 
 ## Purpose
 
-The **official map** (`skai/ui-map/ui-map.yaml`) is the frozen architecture authority a change is proposed against, and this guide does not change it. Code should conform to it; any approved gap is tracked by the implementation artifact's unchecked Code Changes items. This guide produces a **change package** at `skai/changes/<change-id>/`: the **proposed map** (`proposed-ui-map.yaml`), its render (`proposed-ui-map.html`), and the change artifact (decisions + change list).
+The **official map** (`skai/ui-map/ui-map.yaml`) is the frozen architecture authority a change is proposed against, and this guide does not change it. Code should conform to it; any approved gap is tracked by the implementation artifact's unchecked Code Changes items. This guide produces a **change package** at `skai/changes/<change-id>/ui-map/`: the **proposed map** (`proposed-ui-map.yaml`), its render (`proposed-ui-map.html`), and the change artifact (decisions + change list).
 
 Two things are the source of truth for the change. The **proposed map** is the architecture the change moves toward. The **change list** (`## Map Changes`) describes exactly the differences between the official map and the proposed map — downstream implementation scopes its work and its audit from it, so a missing, stale, or wrong map change item is a failure, not polish.
 
@@ -23,9 +25,13 @@ The workflow runs in two stages:
 
 ## The architecture change artifact
 
-One document. Create it at `skai/changes/<change-id>/ui-map-architecture.md`.
+One document. Create it at `skai/changes/<change-id>/ui-map/ui-map-architecture.md`.
 
 If the change ID is clear from the user's input, use it. If not, do not create the artifact yet. Ask inline for the change ID, propose a short kebab-case default when possible, and wait. When deriving a proposal from the current branch, use only the final path component, not the full branch path; for example, `work/billing-ui` proposes `billing-ui`. Once the change ID is resolved, create the artifact at its final path.
+
+The `ui-map/` type folder owns its architecture and implementation artifacts, proposed map,
+render, requests and evidence. A related `requirements/` sibling shares the change ID but promotes
+independently. After map promotion this folder lives at `skai/promoted/<change-id>/ui-map/`.
 
 Skeleton:
 
@@ -52,14 +58,28 @@ A **change request** from downstream implementation is not a separate mode. It a
 
 If no map change is needed, do not create architecture collateral just to say the map is unchanged.
 
-## Gates and control flow
+## Gates
+
+Core rule: every time the agent is waiting on the supervisor, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
 
 The supervisor is the human or authorized agent outside this workflow that resolves its discussion items and reviews its gates; the executing agent does not resolve or approve its own.
 
-Gate lines:
+**Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
+**No fabricated gates.** `⏳ GATE:` lines only appear at gates this `## Gates` section defines or at a properly emitted blocked gate. Do not invent new gate categories or labels to describe discussion state, partial completion, or intermediate review. If a `⏳ GATE:` line is needed that this guide doesn't define, that's a signal the guide is missing a gate — file it as a process improvement.
+
+Use these standard gate lines:
 - Planned gate: `⏳ GATE: Next: <what happens after your response>. Say "next" or what to change.`
 - Blocked gate: `⏳ GATE: Blocked: <reason>. Resolve and say "next" to continue.`
+
+Planned gates are the expected review points of this workflow. At each planned gate:
+1. Summarize what you did and what should happen next.
+2. End with the planned gate line.
+3. STOP and wait for the supervisor.
+
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the supervisor gives advance intent. If the gate is non-standard, make it describe the exact supervisor response or handoff needed to resume the workflow.
+
+If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
 At a planned gate: summarize what you did, include the current map-preview status when Discussion has a preview, end with the gate line, STOP and wait. When the architecture package is finished, emit the completion line shown in Map Changes.
 
@@ -75,15 +95,45 @@ At a planned gate: summarize what you did, include the current map-preview statu
 - Which repo holds the official map is unknown or ambiguous.
 - Inputs are too contradictory or incomplete to draft a stage.
 - A Discussion decision proves unworkable when realized in Map Changes; for example, the proposed map cannot be made valid without revisiting a decision.
-- Required tooling is unavailable; for example, the SKAI renderer, its runtime, the SVG dependency, or a project-specific render override cannot produce a valid render.
+- Required tooling is unavailable; for example, the SKAI renderer, its runtime, or a project-specific render override cannot produce a valid render.
 - The rendered map is invalid or cannot be produced.
 - The request requires app-code tasks, file moves, build steps, or implementation sequencing rather than a map artifact.
 
 The supervisor resolves the cause (resolves items, fixes inputs, revises decisions); the agent re-evaluates and emits the appropriate gate on the next response.
 
-**Advance intent** — moves past a planned gate. Signals: "next", "continue", "go ahead", "do it". Recognized only after this guide has emitted a `⏳ GATE: Next:` line. Expected deliverables named in the initiating request are not advance intent and never skip Discussion. "we should..." / "let's..." is discussion, NOT authorization.
+## Advance intent
 
-**`auto`** — advance intent that bypasses planned gates only. It never bypasses a blocked gate. `auto to discussion complete` runs until the discussion items are resolved, then STOPs before Map Changes.
+Advance intent moves past the current gate. Common signals: "next", "continue", "go ahead", "do it".
+
+Rules:
+- Recognized as approval to move past a gate only after you output a `⏳ GATE:` line.
+- "we should...", "let's..." = discussion/context-setting, NOT authorization.
+- Outside a gate, interpret "begin"/"next"/"continue" using the workflow's active-phase rules below. Do not use them to skip phases or clear unrelated progress markers.
+
+`auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit supervisor resolution.
+`auto to <milestone>` = auto-advance but STOP before the named planned gate. Use stable, workflow-specific milestone names.
+
+Progress tracking:
+
+- **Two conventions, by artifact type:**
+  - **`- [ ]` / `- [x]` in process artifacts** (markdown workflow docs: work specs, planning docs, working docs, retro outputs, ticket drafts, etc.). Completion is checking the box — the artifact preserves the audit trail of resolved items.
+  - **`🟡` in source files** (test code, application code) seeded or planned by a skai workflow. Completion is **removal** of the marker — the file's remaining work is read by which `🟡`s remain. Canonical in-code case: `Guides/Test/unit-test-planning-guide.md`.
+- Default rule: a progress marker means TODO or pending approval. Do not clear it without supervisor approval.
+- At a planned gate, advance intent is the approval signal for clearing the guide-owned progress markers completed by the phase that just finished.
+- Ordering rule: the agent first stops and waits at the gate, then clears the approved markers (`- [ ]` → `- [x]` in a process artifact; remove `🟡` in code) only after the supervisor gives advance intent.
+- If a workflow needs a custom marker lifecycle (for example, inline discussion items resolved during a supervisor-led discussion loop), define that exception explicitly and narrowly below.
+- If a workflow uses both gate/phase markers and local working markers, keep them distinct: local approvals clear local working markers; advance intent clears the gate/phase marker.
+- For any custom marker lifecycle, specify both:
+  - the artifact where the markers live
+  - the exact supervisor intent that authorizes clearing them
+
+**Not workflow progress:** the `🟡` convention in `Templates/docs/skai/integration.md` and `Install/integration-doc-install-update.md` (project-specific missing constants needing supervisor input during host install) is a separate concept, scoped to that section's rules. Don't conflate the two.
+
+Workflow-specific marker lifecycle: Discussion `D#` items are local working markers. Check them
+and append their Decisions only on the supervisor's approval of each decision. The resolved
+Discussion record remains at the Discussion complete gate; advance intent there approves writing
+Map Changes. The finished architecture package remains active until implementation promotes it.
+`auto to discussion complete` stops before Map Changes and never resolves open Discussion items.
 
 ## Initiation
 
@@ -91,7 +141,16 @@ The workflow starts on an explicit signal — "write the UI Map architecture doc
 
 On the signal: digest all available inputs, infer the mode — **baseline map** or **scoped map change** — and draft Discussion. Resolve the map repository from the project's README or established map location before drafting. `skai/ui-map/` and `skai/changes/` are relative to that repository. Keep app inputs and `skai/integration.md` relative to the app repo. If the map repository is unknown or ambiguous, STOP at a blocked gate. For a baseline, resolve where the new official map will live.
 
-If new map-relevant input arrives after the architecture package has completed — including a **change request** raised by downstream implementation — reopen the same architecture artifact in Discussion. Treat the new input as additional context and continue the normal Discussion loop, keeping the package's existing kind. Do not create a separate response artifact or replace the existing architecture artifact with a narrow response artifact. Proceed to Map Changes only after the discussion-complete gate advances.
+Scan `skai/changes/*/ui-map/` for existing unpromoted work before creating a package: look for
+`ui-map-architecture.md`, or an implementation artifact and change requests seeding a proposal that
+architecture has not drafted yet. Such a seed uses the same package and ID, not a second folder. Reuse the matching active package; if multiple packages fit and none is named, STOP at a
+blocked gate. Check `skai/promoted/<change-id>/ui-map/` before creation too: a promoted ID/type pair
+cannot be reused. A checked terminal promote item or recorded official YAML write closes the proposal to authoring;
+an incomplete render/archive follows implementation's restart procedure rather than reopening these drafts; new map changes need a new ID. Related
+requirements packages do not count as map-package candidates. Re-read the current official map on
+reopen and refresh the comparison while preserving resolved decisions, IDs and prior evidence.
+
+If new map-relevant input arrives after the architecture package is ready but before the official YAML write — including a **change request** raised by downstream implementation — reopen the same architecture artifact in Discussion. Treat the new input as additional context and continue the normal Discussion loop, keeping the package's existing kind. Do not create a separate response artifact or replace the existing architecture artifact with a narrow response artifact. Proceed to Map Changes only after the discussion-complete gate advances.
 
 When the new input is a change request artifact in the input set, either incorporate the requested map adjustment, reject it, or supersede it with a different map decision, and record the outcome on the artifact: update its `Reviewer Response` and set its `Change Request Status` (values per [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md)) — use `Incorporated` only once the adjustment is applied in the proposed map in Map Changes, and leave it `Proposed` until then.
 
@@ -141,8 +200,8 @@ Use `###` subsections only for actual Discussion topics: one or more `D#` items,
 During Discussion, once there is enough concrete structure to propose a map, maintain the proposed map and its render in the change package:
 
 ```text
-skai/changes/<change-id>/proposed-ui-map.yaml
-skai/changes/<change-id>/proposed-ui-map.html
+skai/changes/<change-id>/ui-map/proposed-ui-map.yaml
+skai/changes/<change-id>/ui-map/proposed-ui-map.html
 ```
 
 Seed the proposed map from the current official map (`skai/ui-map/ui-map.yaml`); for a baseline, where no official map exists yet, start from empty. Edit the proposed map here — the official map stays frozen.
@@ -166,7 +225,7 @@ Writing this forces the single-root check into the open — a bucket whose root 
 Before every gate line, include a short map-preview status:
 
 ```text
-🗺️ Updated provisional map render: skai/changes/<change-id>/proposed-ui-map.html
+🗺️ Updated provisional map render: skai/changes/<change-id>/ui-map/proposed-ui-map.html
 ```
 
 or, when unavailable:
@@ -257,15 +316,15 @@ Map change items are written and updated only in Map Changes, never during Discu
 
 Produce these together before completing:
 
-1. The typed map change items in `skai/changes/<change-id>/ui-map-architecture.md`.
-2. The Deferrals section in `skai/changes/<change-id>/ui-map-architecture.md` — one entry per approved map deferral, with TODO pointer and brief rationale. Omit the section if no deferrals were approved.
-3. The proposed map — `skai/changes/<change-id>/proposed-ui-map.yaml`. The official map stays frozen. Consult [`ui-map-guide.md`](ui-map-guide.md) for the YAML format and its *Authoring a UI Map* conventions.
-4. The render — run the project-specific render override when one exists; otherwise use the default SKAI renderer from [`ui-map-guide.md`](ui-map-guide.md) to produce `skai/changes/<change-id>/proposed-ui-map.html`. The render also validates schema and semantic checks: dangling refs, duplicate canonical homes, `primary_parent`, required modal styles and their vocabulary, and related map constraints. Fix until valid; never present an invalid map. The HTML page is the review surface.
+1. The typed map change items in `skai/changes/<change-id>/ui-map/ui-map-architecture.md`.
+2. The Deferrals section in `skai/changes/<change-id>/ui-map/ui-map-architecture.md` — one entry per approved map deferral, with TODO pointer and brief rationale. Omit the section if no deferrals were approved.
+3. The proposed map — `skai/changes/<change-id>/ui-map/proposed-ui-map.yaml`. The official map stays frozen. Consult [`ui-map-guide.md`](ui-map-guide.md) for the YAML format and its *Authoring a UI Map* conventions.
+4. The render — run the project-specific render override when one exists; otherwise use the default SKAI renderer from [`ui-map-guide.md`](ui-map-guide.md) to produce `skai/changes/<change-id>/ui-map/proposed-ui-map.html`. The render also validates schema and semantic checks: dangling refs, duplicate canonical homes, `primary_parent`, required modal styles and their vocabulary, and related map constraints. Fix until valid; never present an invalid map. The HTML page is the review surface.
 5. The Assumptions and TODOs section — map assumptions, unresolved design gaps that do not block the map, and any map TODOs added or updated.
 
 Before completion, update `## Provisional preview` so it no longer reads as an active Discussion status: the proposed map and render in the package are now the finished change package, pending review.
 
-If a project-specific render override is missing required values, is broken, or contradicts the SKAI renderer contract, STOP with a blocked gate. If no override exists, use the default SKAI renderer. STOP only when the SKAI root, renderer script, runtime dependency, SVG dependency, or validation result prevents a valid render.
+If a project-specific render override is missing required values, is broken, or contradicts the SKAI renderer contract, STOP with a blocked gate. If no override exists, use the default SKAI renderer. STOP only when the SKAI root, renderer script, runtime dependency, or validation result prevents a valid render.
 
 If every resolved decision produces zero map changes, state that in `## Map Changes`, render the proposed map when a renderer is available, and complete.
 
@@ -286,3 +345,13 @@ One bullet per approved map deferral: bold title, TODO pointer, brief rationale.
 ```
 
 The TODO identifier may be a top-level `todos:` scope (e.g. `todos[scope=login]`) or a scene-level marker (e.g. `verify: { todo: true }`). For deferrals that require adding a new TODO in this pass, cite the new identifier the same way — the new TODO is part of the proposed map in Map Changes.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-architecture-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

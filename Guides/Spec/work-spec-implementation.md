@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.work-spec-implementation
 Managed-Source: Guides/Spec/work-spec-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-05
+Managed-Updated-At: 2026-10-10
 
 # Work Spec Implementation
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 ## Purpose
 
@@ -182,7 +184,11 @@ design into the work spec; reference it.
 When the design links a UI Map change package, invoke
 [`../UIMap/ui-map-implementation.md`](../UIMap/ui-map-implementation.md) during the audit in the
 larger-feature context so it owns map conformance planning and its gates. After it completes, carry
-each of its `planned` and `handoff` items as an outer task; Realizes names
+each of its `planned` and `handoff` items as an outer task, using the sibling's returned artifact
+path under `skai/promoted/<change-id>/ui-map/` after promotion. If the design already links a promoted
+Plan, consume its pending items at that path instead of promoting it again; check the current
+official map for any later changes before relying on the plan. For a no-proposal conformance run,
+use its working-doc session path. In both cases, Realizes names
 the sibling artifact path and item ID. Give the outer task `Disposition handoff` only when this
 workflow does not own the work either. The sibling owns map promotion. When an outer task realizes a
 sibling item, update its checkbox and clear its in-code scaffold markers as its guide requires without
@@ -314,3 +320,13 @@ For Build, complete when every task is checked, required evidence is current, an
 
 If any task remains unchecked, use the appropriate blocked or requested-boundary gate instead of a
 completion line.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/work-spec-implementation-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

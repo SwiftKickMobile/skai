@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.working-doc-conventions
 Managed-Source: Guides/Core/working-doc-conventions.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-10
 
 # Working Document Conventions
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 Working documents (planning docs, work specs, test work docs, test artifacts) are ephemeral files that track in-progress work. They live under `skai/working-docs/`, are organized by git branch, and are grouped into named session folders so multiple efforts on the same branch do not collide.
 
@@ -64,3 +66,13 @@ Notes:
   - `skai/working-docs/<branch-path>/login-tests/testing/LoginViewModelTests/infrastructure.md`
 - Process improvement drafts:
   - `skai/working-docs/<branch-path>/retro-cleanup/process-tickets.md`
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/working-doc-conventions-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

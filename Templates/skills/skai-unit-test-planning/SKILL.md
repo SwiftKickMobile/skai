@@ -7,8 +7,4 @@ description: Plans unit tests using skai test planning rules. Use when scoping u
 
 ## Instructions
 
-- Read:
-  - `Submodules/skai/Guides/Test/unit-test-planning-guide.md`
-- If tests are failing or you need an evidence-driven investigation loop, also read:
-  - `Submodules/skai/Policies/debugging-process-rule.md`
-  - `Submodules/skai/Guides/Core/debugging-guide.md`
+- Read `Submodules/skai/Guides/Test/unit-test-planning-guide.md` in full, including its Project addendum instructions, and follow it.

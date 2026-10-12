@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.ticket-implementation
 Managed-Source: internal/maintain-tickets.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-03
+Managed-Updated-At: 2026-10-10
 
 # Ticket implementation session
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 Purpose: work through process improvement tickets filed against this repo. The supervisor initiates a session, the agent summarizes ready tickets, they discuss approach, and the agent implements with approval.
 
@@ -201,3 +203,13 @@ After all selected tickets are implemented:
 
 - Run the `internal/maintain-retro.md` checklist and report any misses.
 - Remind the supervisor to commit if they haven't already.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/maintain-tickets-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

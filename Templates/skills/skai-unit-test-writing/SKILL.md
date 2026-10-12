@@ -7,8 +7,4 @@ description: Writes unit tests using skai test writing rules. Use when implement
 
 ## Instructions
 
-- Read:
-  - `Submodules/skai/Guides/Test/unit-test-writing-guide.md`
-- When tests fail, debug evidence-first using:
-  - `Submodules/skai/Policies/debugging-process-rule.md`
-  - `Submodules/skai/Guides/Core/debugging-guide.md`
+- Read `Submodules/skai/Guides/Test/unit-test-writing-guide.md` in full, including its Project addendum instructions, and follow it.

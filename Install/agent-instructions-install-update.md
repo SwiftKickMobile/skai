@@ -2,6 +2,7 @@
 
 The Claude Code and Codex adapters use this procedure for the project-owned instruction file:
 `CLAUDE.md` (or existing `claude.md`) for Claude Code, root `AGENTS.md` for Codex.
+`Install/component-selection.md` supplies the resolved component set.
 `Install/managed-header.md` remains the authority for the three ownership forms and dated blocks.
 
 ## Templates
@@ -24,11 +25,12 @@ replace them with a `Section: instructions` marker or drop the marker date.
    block receives the block only after approval. Do not create or overwrite a symlink destination;
    classify it as a legacy candidate and obtain the separate cleanup decision first.
 2. Compose the interior from `Templates/agents/instructions-block.md`, omitting its source managed
-   header and substituting the actual checkout path for `<skai-root>`, followed by each applicable
-   `policy` asset in manifest order: all assets tagged `core`, plus stack-tagged policies only when
-   the confirmed stack matches (for example `swift` for Swift projects). Resolve each `sourcePath`
+   header and substituting the actual checkout path for `<skai-root>`, followed by each selected/applicable
+   `policy` asset returned by the component resolver, in manifest order. With no config this preserves
+   core plus confirmed-stack policies; with config omit disabled policies and recompose the block
+   so previously included deselected text does not survive. Resolve each `sourcePath`
    against the actual SKAI checkout, rather than assuming its default location.
-3. For each policy, remove its managed header if present and demote Markdown headings by two levels
+3. If no policies resolve, omit the empty `## Policies` section. Otherwise, for each policy, remove its managed header if present and demote Markdown headings by two levels
    outside fenced code blocks (`#` becomes `###`, `##` becomes `####`). Put the policy under
    `## Policies`, with a blank line between policies. Preserve its substantive text, including
    `universal-stop-conditions`.

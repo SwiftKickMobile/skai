@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.ui-map-demo
 Managed-Source: Guides/UIMap/ui-map-demo.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-07
+Managed-Updated-At: 2026-10-10
 
 # UI Map Demo
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 A complete UI Map shown in both representations: YAML source (the source of truth) and the Mermaid render derived from it. For feedback on the format and the render.
 
@@ -233,3 +235,13 @@ flowchart LR
 - **Container-attached notes.** A `notes:` entry on a scene can use `at: <route-kind>` to attach to a route container (wrapper) rather than the scene itself.
 - **Left-to-right layout.** The render is `flowchart LR`, laid out by Mermaid's ELK engine with simple node placement: depth runs left to right and siblings stack top to bottom, so a deep map stays compact rather than very wide.
 - **Auto-layout caveat.** Mermaid lays out the graph automatically; positions won't match the FigJam exactly. Topology, grouping, and edge labels match; relative positions within a domain are the renderer's choice. In particular, the order of screens within a group follows the layout's effort to minimise crossing lines, not the order written in the YAML.
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-demo-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

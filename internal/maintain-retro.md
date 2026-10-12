@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.maintain-retro
 Managed-Source: internal/maintain-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-03
+Managed-Updated-At: 2026-10-10
 
 # Maintenance retro checklist (agent + supervisor)
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 Use this after making changes to `skai` to ensure nothing was forgotten.
 
@@ -56,21 +58,24 @@ This retro is a **backstop for completeness**, not a git/diff report.
 
 ## 5) Consistency checks
 
-**Record the result of every check, even when clean.** For each check below, write down either `0 occurrences` (with the search / inspection used — file paths, `grep` / `rg` pattern, or "visual review of section X") or a list of occurrences classified per-check (`<path>:<line>` → `false positive (intentional per …)` / `to fix` / `to revisit`). Reading the check and self-certifying "done" without a recorded result is the failure mode this rule prevents — a `0 occurrences` line with the search used is the minimum evidence. This matches the recording discipline used by `internal/maintain-skai.md` § Sanity scan.
+**Record the result of every check, even when clean.** For each check below, write down either `0 occurrences` (with the search / inspection used — file paths, `grep` / `rg` pattern, or "visual review of section X") or a list of occurrences classified per-check (`<path>:<line>` → `false positive (intentional per …)` / `to fix` / `to revisit`). Reading the check and self-certifying "done" without a recorded result is the failure mode this rule prevents — a `0 occurrences` line with the search used is the minimum evidence. This matches the recording discipline used by [`maintenance/guide-authoring.md` § Sanity scan](maintenance/guide-authoring.md#sanity-scan-after-every-guide-edit).
 
 - Search for stale paths (e.g. old install target directories) and update all occurrences.
 - Ensure new files referenced by runbooks exist at those paths.
 - README link check: when `README.md` references a file or directory within this repo, ensure it is a markdown link (clickable in the browser), not just a bare backticked path.
 - If you added or substantially edited any files under `Guides/`:
   - Verify each changed/new guide has a managed header.
-  - Verify it has a `## Gates` section if it is a gated workflow — one where the agent waits on the supervisor and emits `⏳ GATE:` lines — and that it contains the standardized process-flow template (see `internal/maintain-skai.md`, "Standard structure for guides with gates"). A bare "STOP" inside a method guide (stop and run the self-check; stop and present a tradeoff) is not a gate and needs no `## Gates` section.
+  - Verify it has a `## Gates` section if it is a gated workflow — one where the agent waits on the supervisor and emits `⏳ GATE:` lines — and that its declared control model preserves the shared process-flow invariants (see [`maintenance/gated-workflows.md`](maintenance/gated-workflows.md), "Standard structure for guides with gates"). A bare "STOP" inside a method guide (stop and run the self-check; stop and present a tradeoff) is not a gate and needs no `## Gates` section.
   - Search for terminology drift (e.g., "Next Command") and fix to "advance intent".
-  - For each planned gate, verify the guide identifies a workflow-owned artifact, the specific gate/phase progress marker that remains while waiting (the unchecked `- [ ]` or the `🟡` in code), and the exact artifact change that happens only after advance intent.
+  - For each planned gate, verify its review artifact, declared state/marker lifecycle and post-approval action. Preserve explicit variants such as Discussion-only markers already resolved at the planned gate, or a no-auto control model; do not create default markers/auto behavior to satisfy a template check.
   - Verify marker conventions match the canonical rule: `- [ ]` / `- [x]` in process artifacts (markdown workflow docs); `🟡` only in source files (test code, app code) where completion = removal. The canonical in-code case is `Guides/Test/unit-test-planning-guide.md`.
   - Verify `- [ ]` items have stable letter-led IDs on the same line (`D1`, `T1`, `F1`, `S1`, etc.), tight lists under shared headings (no blank lines between sibling checkbox items), and that markers are never on heading lines.
   - Verify discussion-based phases use the Structured discussion items schema (`[Question]`/`[Proposal]`/`[Tradeoff]`, inline-with-topic, no aggregator sections like `## Questions` / `## Decisions`). See `Guides/Core/process-flow.md` "Structured discussion items".
-  - If the guide creates working docs or artifacts, verify its paths use `skai/working-docs/<branch-path>/<session-name>/...` rather than placing files directly under `skai/working-docs/<branch-path>/...`.
+  - If the guide creates ephemeral working docs, verify its paths use `skai/working-docs/<branch-path>/<session-name>/...` rather than placing files directly under `skai/working-docs/<branch-path>/...`.
 - Every manifest `skill` asset has at least one `adapter:` tag and an existing `sourcePath`; runbooks install from those fields. Untagged skills install nowhere.
+- If change-package workflows, artifact formats, or callers changed: run and record the [change package verification](maintenance/change-packages.md#verification), including coexistence, independent promotion, archival recovery, link repair and migration coverage.
+- If guides or wrappers changed: verify the [guide addendum contract](maintenance/guide-addenda.md#verification), including coverage, host-root paths, receipts, thin routing, name compatibility and preserving user files.
+- If maintenance references moved: verify the main routing table, cross-references and retro point to their current homes.
 - If a new skill was added or changed: verify the skill template is a **thin wrapper** (just references to Guides), not a self-contained document with inline logic. All substantive instructions must live in a Guide under `Guides/`.
 
 ## 6) Process reflection
@@ -96,3 +101,12 @@ If nothing stands out, say **"No process suggestions."**
 - If you found none: say **"Maintenance retro complete; no misses found."**
 - Include process suggestions from step 6 (if any) as a separate **"Process suggestions"** section at the end.
 
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/maintain-retro-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

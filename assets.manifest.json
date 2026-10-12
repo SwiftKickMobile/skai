@@ -2,45 +2,118 @@
   "manifestVersion": 1,
   "repo": "skai",
   "theme": "LumenNotes",
+  "retiredComponents": ["skill.skai-ui-map-planning"],
+  "componentCategories": [
+    {"name": "Setup", "description": "Configure SKAI and keep the project installation up to date."},
+    {"name": "Requirements", "description": "Define, review and maintain the project’s behavioral requirements."},
+    {"name": "UI Map", "description": "Describe screens and routes, then implement the approved map."},
+    {"name": "Work specs", "description": "Design changes and plan their implementation."},
+    {"name": "Testing", "description": "Plan coverage, prepare test infrastructure and write unit tests."},
+    {"name": "Debugging", "description": "Find the cause of defects and verify repairs."},
+    {"name": "Process", "description": "Review development work and improve guides and practices."},
+    {"name": "Policies", "description": "Set shared rules for code, debugging and safe project changes."}
+  ],
   "assets": [
     {
+      "id": "install-policy.component-history",
+      "type": "install-policy",
+      "sourcePath": "Install/component-history.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "application.skai-configure",
+      "type": "application",
+      "sourcePath": "Bin/SKAIConfigure.app",
+      "installRole": "required",
+      "tags": ["core", "platform:macos", "arch:arm64"]
+    },
+    {
+      "id": "tool.component-selection",
+      "type": "tool",
+      "sourcePath": "Bin/skai-configuration.py",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.configure-skai",
+      "type": "guide",
+      "sourcePath": "Guides/Core/configure-skai.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "skill.skai-configure",
+      "label": "Configure SKAI",
+      "category": "Setup",
+      "description": "Choose which SKAI skills and policies are installed in this project.",
+      "installRole": "required",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-configure/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "install-policy.component-selection",
+      "type": "install-policy",
+      "sourcePath": "Install/component-selection.md",
+      "tags": ["core"]
+    },
+    {
       "id": "policy.coding-patterns",
+      "label": "Coding patterns",
+      "category": "Policies",
+      "description": "Keep implementation patterns consistent and explain non-obvious choices.",
       "type": "policy",
       "sourcePath": "Policies/coding-patterns.md",
       "tags": ["core"]
     },
     {
       "id": "policy.error-handling",
+      "label": "Error handling",
+      "category": "Policies",
+      "description": "Handle failures explicitly and keep errors useful to callers.",
       "type": "policy",
       "sourcePath": "Policies/error-handling.md",
       "tags": ["core"]
     },
     {
       "id": "policy.unauthorized-changes",
+      "label": "Task scope",
+      "category": "Policies",
+      "description": "Keep edits within the requested task and respect explicit instructions.",
       "type": "policy",
       "sourcePath": "Policies/unauthorized-changes.md",
       "tags": ["core"]
     },
     {
       "id": "policy.debugging-process",
+      "label": "Debugging rules",
+      "category": "Policies",
+      "description": "Investigate with evidence before choosing or applying a fix.",
       "type": "policy",
       "sourcePath": "Policies/debugging-process-rule.md",
       "tags": ["core"]
     },
     {
       "id": "policy.safe-operations",
+      "label": "Safe operations",
+      "category": "Policies",
+      "description": "Protect project work during Git, file and other sensitive operations.",
       "type": "policy",
       "sourcePath": "Policies/safe-operations.md",
       "tags": ["core"]
     },
     {
       "id": "policy.universal-stop-conditions",
+      "label": "Stop conditions",
+      "category": "Policies",
+      "description": "Pause when required inputs, authority or a safe next step are missing.",
       "type": "policy",
       "sourcePath": "Policies/universal-stop-conditions.md",
       "tags": ["core"]
     },
     {
       "id": "policy.swift-code-organization",
+      "label": "Swift code organization",
+      "category": "Policies",
+      "description": "Organize Swift files and protocol conformances consistently. Applies to Swift projects.",
       "type": "policy",
       "sourcePath": "Policies/swift-code-organization.md",
       "tags": ["swift", "adapter:xcode"]
@@ -167,6 +240,9 @@
     },
     {
       "id": "skill.skai-process-refinement",
+      "label": "Process refinement",
+      "category": "Process",
+      "description": "Refine a guide through independent review and focused repairs.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-process-refinement/SKILL.md",
       "tags": [
@@ -177,6 +253,9 @@
     },
     {
       "id": "skill.skai-suggestion",
+      "label": "Suggestion and ticket filing",
+      "category": "Process",
+      "description": "Turn a process improvement suggestion into a reviewed ticket.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-suggestion/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
@@ -279,54 +358,81 @@
     },
     {
       "id": "skill.skai-debugging",
+      "label": "Debugging",
+      "category": "Debugging",
+      "description": "Investigate a defect, narrow its cause and verify the chosen repair.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-debugging/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-work-spec-creation",
+      "label": "Work spec design",
+      "category": "Work specs",
+      "description": "Turn a feature request into a reviewed technical design.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-work-spec-creation/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-work-spec-implementation",
+      "label": "Work spec implementation",
+      "category": "Work specs",
+      "description": "Plan and carry out the work needed by an approved design.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-work-spec-implementation/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-unit-testing",
+      "label": "Unit testing",
+      "category": "Testing",
+      "description": "Coordinate test planning, infrastructure and implementation.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-unit-testing/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-unit-test-planning",
+      "label": "Test planning",
+      "category": "Testing",
+      "description": "Design test coverage and test cases before implementing them.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-unit-test-planning/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-unit-test-infrastructure",
+      "label": "Test infrastructure",
+      "category": "Testing",
+      "description": "Prepare the shared setup, helpers and seams needed by tests.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-unit-test-infrastructure/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-unit-test-writing",
+      "label": "Test writing",
+      "category": "Testing",
+      "description": "Implement planned tests and record verification results.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-unit-test-writing/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-dev-retro",
+      "label": "Development retro",
+      "category": "Process",
+      "description": "Review session work, documentation gaps and follow-up needs.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-dev-retro/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-update-installation",
+      "label": "Update installation",
+      "category": "Setup",
+      "description": "Update the SKAI checkout and reconcile installed components.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-update-installation/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
@@ -386,12 +492,6 @@
       "tags": ["core"]
     },
     {
-      "id": "guide.ui-map-planning",
-      "type": "guide",
-      "sourcePath": "Guides/UIMap/ui-map-planning.md",
-      "tags": ["core"]
-    },
-    {
       "id": "guide.ui-map-implementation",
       "type": "guide",
       "sourcePath": "Guides/UIMap/ui-map-implementation.md",
@@ -401,12 +501,6 @@
       "id": "guide.ui-map-demo",
       "type": "guide",
       "sourcePath": "Guides/UIMap/ui-map-demo.md",
-      "tags": ["core"]
-    },
-    {
-      "id": "guide.ui-map-figjam",
-      "type": "guide",
-      "sourcePath": "Guides/UIMap/ui-map-figjam.md",
       "tags": ["core"]
     },
     {
@@ -435,18 +529,18 @@
     },
     {
       "id": "skill.skai-ui-map-architecture",
+      "label": "UI Map architecture",
+      "category": "UI Map",
+      "description": "Create or change the map of screens and routes.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-ui-map-architecture/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
-      "id": "skill.skai-ui-map-planning",
-      "type": "skill",
-      "sourcePath": "Templates/skills/skai-ui-map-planning/SKILL.md",
-      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
-    },
-    {
       "id": "skill.skai-ui-map-implementation",
+      "label": "UI Map implementation",
+      "category": "UI Map",
+      "description": "Plan or build code conformance to an approved UI Map.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-ui-map-implementation/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
@@ -483,12 +577,18 @@
     },
     {
       "id": "skill.skai-requirements-authoring",
+      "label": "Requirements authoring",
+      "category": "Requirements",
+      "description": "Draft and discuss behavioral requirements without changing the canonical catalog.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-requirements-authoring/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-requirements-promotion",
+      "label": "Requirements promotion",
+      "category": "Requirements",
+      "description": "Verify an approved package, write the catalog and archive the package.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-requirements-promotion/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]

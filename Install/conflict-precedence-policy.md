@@ -14,6 +14,12 @@ This policy defines how installers and update runbooks must behave in the presen
 - A managed block may be updated deterministically, but only within the block.
 - Anything not managed is never overwritten. Migrate by generating new managed outputs in the current canonical location; propose cleanup of legacy candidates as a separate, permission-gated step.
 
+## Project guide addenda
+
+Host files under `skai/addenda/` are project-owned instructions, never installed assets or legacy
+cleanup candidates. Preserve them unchanged on install/update even if their content resembles a
+managed guide or contains a managed header. Do not generate, overwrite, conform or delete them.
+
 ## When destination path already exists
 
 - If the destination does not exist: create it.

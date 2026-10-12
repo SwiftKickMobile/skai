@@ -7,6 +7,4 @@ description: Drafts behavioral requirements into a skai change package (mode inf
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Requirements/requirements-authoring.md` and follow it.
-- Read `Submodules/skai/Guides/Requirements/requirements-catalog.md` before drafting — it owns the content rules (scopes, layout, requirement format, IDs, writing style).
-- Preserve its hard boundaries: never write to the catalog — it is written only by requirements promotion; draft the requirement under the recommended reading and cite an open item rather than leaving a hole; infer the mode from the catalog rather than asking for it.
+- Read `Submodules/skai/Guides/Requirements/requirements-authoring.md` in full, including its Project addendum instructions, and follow it.

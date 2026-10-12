@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.requirements-catalog
 Managed-Source: Guides/Requirements/requirements-catalog.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-05
+Managed-Updated-At: 2026-10-10
 
 # Requirements Catalog
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 ## Purpose
 
@@ -91,7 +93,8 @@ Where the catalog lives varies by project. From any given repo there are three p
 - **`shared`** — the catalog is in another repo, typically pulled in as a submodule. This repo keeps
   none of its own. Common for a pair of platform repos — an iOS app and an Android app — that
   implement one product and therefore have one set of requirements. Change packages live with the
-  catalog: in that repo's `skai/changes/`, never in this one.
+  catalog: active at `skai/changes/<change-id>/requirements/`, promoted at
+  `skai/promoted/<change-id>/requirements/`, never in this one.
 - **`none`** — this project keeps no catalog, and requirements workflows skip.
 
 Every shape has exactly **one** catalog. IDs need no catalog namespace; linked citations keep the visible ID unchanged.
@@ -409,3 +412,13 @@ Before writing a requirement:
 - [`requirements-authoring.md`](requirements-authoring.md) — drafting requirements into a change package
 - [`requirements-promotion.md`](requirements-promotion.md) — promoting an approved package
 - [`requirements-artifacts.md`](requirements-artifacts.md) — typed formats for change items and change requests
+
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/requirements-catalog-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

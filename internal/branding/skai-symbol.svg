@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-labelledby="title">
+<title id="title">SKAI symbol</title>
+<desc>Flat SwiftKick cyan and magenta ribbon. The three straight diagonal bands have equal perpendicular width; opposing contours are rotationally symmetric. The visible bounds are centered.</desc>
+<defs>
+  <path id="half-outline" d="M 600.000 115.470 L 600.000 115.470 C 617.554 115.470 634.798 120.091 650.000 128.868 L 910.000 278.979 C 943.000 298.000 955.000 318.000 955.000 357.000 L 955.000 422.000 C 955.000 507.000 930.000 521.466 870.000 486.825 L 593.253 327.045 C 561.444 308.680 520.769 319.578 502.404 351.388 C 484.039 383.197 494.937 423.872 526.747 442.237 L 910.000 663.509 C 943.000 682.561 955.000 702.500 955.000 741.500 L 955.000 843.000 C 955.000 882.000 943.000 902.000 910.000 921.021 L 650.000 1071.132 L 650.000 1071.132 C 634.798 1079.909 617.554 1084.530 600.000 1084.530 L 600.000 1084.530 C 582.446 1084.530 565.202 1079.909 550.000 1071.132 L 290.000 921.021 C 257.000 902.000 245.000 882.000 245.000 843.000 L 245.000 778.000 C 245.000 693.000 270.000 678.534 330.000 713.175 L 606.747 872.955 C 638.556 891.320 679.231 880.422 697.596 848.612 C 715.961 816.803 705.063 776.128 673.253 757.763 L 290.000 536.491 C 257.000 517.439 245.000 497.500 245.000 458.500 L 245.000 357.000 C 245.000 318.000 257.000 298.000 290.000 278.979 L 550.000 128.868 L 550.000 128.868 C 565.202 120.091 582.446 115.470 600.000 115.470 Z"/>
+  <path id="cap-outline" d="M 0.000 0.000 L 1200.000 0.000 L 1200.000 830.940 L 526.747 442.237 L 320.000 322.872 C 290.000 310.000 285.000 290.000 290.000 279.000 L 0.000 0.000 Z"/>
+  <clipPath id="silhouette">
+    <use href="#half-outline"/>
+  </clipPath>
+  <clipPath id="upper-face"><use href="#cap-outline"/></clipPath>
+  <clipPath id="lower-face"><use href="#cap-outline" transform="rotate(180 600 600)"/></clipPath>
+  <linearGradient id="body" x1="220" y1="200" x2="960" y2="1100" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#009DDE"/>
+    <stop offset="0.48" stop-color="#504185"/>
+    <stop offset="1" stop-color="#A1268C"/>
+  </linearGradient>
+
+</defs>
+<g transform="translate(0.0 0.0) scale(1.0)">
+<g id="skai-symbol" clip-path="url(#silhouette)">
+  <rect width="1200" height="1200" fill="url(#body)"/>
+  <g clip-path="url(#upper-face)"><rect width="1200" height="1200" fill="#009DDE"/></g>
+  <g clip-path="url(#lower-face)"><rect width="1200" height="1200" fill="#A1268C"/></g>
+</g>
+</g>
+</svg>

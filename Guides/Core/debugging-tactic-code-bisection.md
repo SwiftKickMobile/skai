@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.debugging-tactic-code-bisection
 Managed-Source: Guides/Core/debugging-tactic-code-bisection.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-10
 
 # Debugging tactic: code bisection
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 Purpose: isolate the smallest delta that flips a result (fail -> pass or pass -> fail) by moving in approximate half-steps, systematically, with a clean and reversible state trail.
 
@@ -138,3 +140,12 @@ When you have isolated the smallest failing delta:
 
 Optional cleanup (permission-gated): deleting the temporary bisection branch is a separate action and should be done only if the supervisor explicitly asks.
 
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/debugging-tactic-code-bisection-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.

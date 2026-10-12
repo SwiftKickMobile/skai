@@ -7,12 +7,4 @@ description: Plans and writes unit tests using skai (planning, infrastructure, w
 
 ## Instructions
 
-- Read:
-  - `Submodules/skai/Guides/Test/unit-testing-guide.md`
-  - `Submodules/skai/Guides/Test/unit-test-planning-guide.md`
-  - `Submodules/skai/Guides/Test/unit-test-infrastructure-guide.md`
-  - `Submodules/skai/Guides/Test/unit-test-writing-guide.md`
-- When tests fail, follow the debugging process:
-  - `Submodules/skai/Policies/debugging-process-rule.md`
-  - `Submodules/skai/Guides/Core/debugging-guide.md`
-- Store test work docs/artifacts under `skai/working-docs/<branch-path>/<session-name>/testing/<suite>/...` per the guides (see `Submodules/skai/Guides/Core/working-doc-conventions.md`).
+- Read `Submodules/skai/Guides/Test/unit-testing-guide.md` in full, including its Project addendum instructions, and follow it.

@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.unit-test-infrastructure
 Managed-Source: Guides/Test/unit-test-infrastructure-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-30
+Managed-Updated-At: 2026-10-10
 
 # Unit Test Infrastructure Guide
+
+Before using this guide, complete [Project addendum](#project-addendum) loading below.
 
 ## Purpose
 
@@ -688,3 +690,12 @@ See `skai/integration.md` for all infrastructure locations and naming convention
 
 **Content sections:** Prefer "Already exists" vs "NEW" (avoid ✅/❌ completion markers)
 
+## Project addendum
+
+Read this guide fully; check `<host-project-root>/skai/addenda/unit-test-infrastructure-guide-addendum.md` before use.
+Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
+from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
+subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
+lookup/read errors or missing required references stop; never infer absence. Before work, report
+`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
+Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.
