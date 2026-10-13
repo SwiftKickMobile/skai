@@ -101,6 +101,8 @@ the demo doc and the guide describe the same conventions in prose.
      c. Zero inbound references → root scene: declared at top level, no
         enclosing wrapper.
      d. Multiple inbound references with no `primary_parent` → semantic error.
+     e. Every scene must be reachable from a root through its visual homes; a
+        loop of visual homes → semantic error listing the scenes it strands.
 
 5. WRAPPERS (one per route container)
    - Each route kind on a scene becomes a `subgraph <sid>_<kind>[" "]` (empty
@@ -225,6 +227,7 @@ the demo doc and the guide describe the same conventions in prose.
       Categories: duplicate canonical home, undefined scene reference,
       ambiguous visual home (multiple inbound, no primary_parent),
       `primary_parent` that doesn't actually route to the scene,
+      visual homes that form a loop,
       too many domains for the palette, missing modal_style or vocabulary,
       modal_style outside the vocabulary.
 """
@@ -439,6 +442,17 @@ def build_model(data: dict[str, Any]) -> Model:
                 f"Scene '{sid}' has {len(inbound[sid])} inbound refs ({listing}) "
                 f"but no primary_parent"
             )
+
+    # Every scene must hang from a root. A loop of visual homes (e.g. a
+    # primary_parent the scene itself routes to) would silently drop its scenes.
+    placed = {sid for sid, (p, _) in visual_parent.items() if p is None}
+    while grown := {sid for sid, (p, _) in visual_parent.items() if p in placed} - placed:
+        placed |= grown
+    if unplaced := [sid for sid in scenes if sid not in placed]:
+        raise SemanticError(
+            f"Visual homes form a loop, so these scenes can't be placed: {', '.join(unplaced)}. "
+            "Give one of them a primary_parent outside the loop"
+        )
 
     if len(domain_order) > len(DOMAIN_PALETTE):
         raise SemanticError(

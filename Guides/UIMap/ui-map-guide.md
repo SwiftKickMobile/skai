@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-guide
 Managed-Source: Guides/UIMap/ui-map-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-10
+Managed-Updated-At: 2026-10-13
 
 # UI Map Guide
 
@@ -197,6 +197,8 @@ thumbnail_slider:
 
 With a single inbound reference, `primary_parent` is unnecessary — the only parent is implicitly primary.
 
+Every scene must reach a root through its visual homes. A `primary_parent` that the scene itself leads to forms a loop, and the renderer rejects it.
+
 When the primary parent reaches the scene by more than one route kind and defines it in one of those containers, the canonical instance renders in that container; the other kinds get pointers. If the scene is defined elsewhere, the renderer falls back to the first matching kind in its fixed order (`nav`, `modal`, `composite`, `tab`, `child`). Define the scene under the route you want it drawn in:
 
 ```yaml
@@ -288,7 +290,7 @@ The formal contract is in [`ui-map.schema.json`](../../Bin/ui-map.schema.json) (
 pipx run check-jsonschema --schemafile ui-map.schema.json <your-map>.yaml
 ```
 
-The schema catches structural errors (missing required fields, invalid route kinds, malformed notes, etc.). Semantic errors (dangling cross-references, duplicate canonical homes) are validated by the render script.
+The schema catches structural errors (missing required fields, invalid route kinds, malformed notes, etc.). Semantic errors (dangling cross-references, duplicate canonical homes, visual-home loops) are validated by the render script.
 
 ## Authoring a UI Map
 
