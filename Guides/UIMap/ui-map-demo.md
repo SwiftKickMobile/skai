@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-demo
 Managed-Source: Guides/UIMap/ui-map-demo.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-10
+Managed-Updated-At: 2026-10-13
 
 # UI Map Demo
 
@@ -242,6 +242,7 @@ Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-demo-adden
 Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
 from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
 subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Before work, report
-`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
-Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.
+lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
+and before work, report `- 📖 SKAI guide: ui-map-demo`, nesting `- 📎 Addendum loaded` under it only if one
+loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
+once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.

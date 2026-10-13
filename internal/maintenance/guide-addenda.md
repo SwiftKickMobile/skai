@@ -25,9 +25,10 @@ Read this guide fully; check `<host-project-root>/skai/addenda/<guide-name>-adde
 Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
 from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
 subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Before work, report
-`📎 ADDENDUM: <project-entry filename> — loaded` or `No project addendum found: <project-entry filename>.`
-Report only the project entry, not each referenced document. Receipt is not a gate; keep GATE lines last.
+lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
+and before work, report `- 📖 SKAI guide: <guide-name>`, nesting `- 📎 Addendum loaded` under it only if one
+loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
+once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
 ```
 
 Initially use the guide filename stem, e.g. `requirements-promotion`. Treat the published name as a compatibility interface: preserve it on a future guide rename, or document an explicit host-addendum path migration without overwriting user content. Names must be unique; lookup never depends on an unannounced rename.
@@ -50,8 +51,8 @@ Use the installed instruction-block exception for supported guide overrides; do 
 
 ## Verification
 
-- Entry cue comes before use; footer path/name is correct and unique; absent status is a plain sentence; both statuses identify only the project-entry filename, and failures cannot count as absence.
-- Emit one status for the project entry, without separate receipts for referenced documents.
+- Entry cue comes before use; footer path/name is correct and unique; the guide line names the guide and follows the lookup; the nested addendum line appears only when one loaded; a failed lookup reports and stops, never counting as absence.
+- Emit one addendum line per guide, without separate lines for referenced documents.
 - Footer copies differ only in lookup name; neither gate placement nor the guide's no-addendum behavior changes.
 - Wrappers remain thin and have no competing guide-default instructions; base dependencies still exist in the guide.
 - Reference/handoff cases load the relevant guide's own addendum; no addendum user schema or new global workflow is introduced.

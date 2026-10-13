@@ -131,17 +131,20 @@ How the project owner fills it:
 
 Customize a guide with a project-owned, freeform Markdown file at
 `skai/addenda/<guide-name>-addendum.md`. Each guide's final **Project addendum** section gives its
-exact filename. The agent reads the full guide and any present addendum before using the guide,
-then reports the applicable status:
+exact filename. The agent reads the full guide and checks for its addendum, then reports the guide
+by name, with a nested line only when an addendum was loaded:
 
 ```text
-📎 ADDENDUM: <project-entry filename> — loaded
-No project addendum found: <project-entry filename>.
+- 📖 SKAI guide: requirements-promotion
+  - 📎 Addendum loaded
 ```
 
-Both messages show only the filename. The agent reports only the project entry’s status, without
-separate receipts for documents it
-references. The receipt is not an approval gate. Reference guides and nested skills check their own addenda
+The guide line comes only after the lookup finishes, so a guide line on its own means the project
+has no addendum for that guide. A failed lookup, such as an unreadable addendum or a missing shared
+reference, is never treated as absent: the agent nests `⛔ Addendum lookup failed` under the guide
+line and stops. Each guide is reported once per task, including reference guides another guide
+loads, so the lines also show which guides a workflow used. One addendum line covers any documents
+the addendum references. These lines are not an approval gate. Reference guides and nested skills check their own addenda
 when needed.
 
 Addenda may add rules or override guide defaults. Current task instructions and project-wide policies
@@ -187,7 +190,7 @@ another layout.
 
 Required shared references must be read before proceeding; missing or unreadable references stop
 rather than count as an absent project addendum. These references do not produce additional
-receipt lines. Neither Integration nor README needs an inventory of addendum files.
+addendum lines. Neither Integration nor README needs an inventory of addendum files.
 
 ## IDE clutter / autocomplete (recommended)
 
