@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## Release 12 — 2026-10-13
+
 **Installation**
 
 - 2026-10-12 **New components are offered, never silently skipped.** A component a host has never seen (in the manifest, eligible, not in `skai/config.json`, not in the adapter's component history) is `newComponents` in the resolver's output. On a configured host the update stops at a new-components gate: `next` opens the configure app, which lists them first in a **New** section until Save; an inline answer is written through the configuration tool's new `--enable` / `--decline` flags, which append to the project config or record a declined history entry, so the agent never edits config JSON. Under `auto`, new components are enabled and named at completion; a default host installs them as before and names them too. Declined components start the component ledger like any removal. The bundled app (rebuilt) and `Bin/skai-configuration.py` both return `newComponents` and accept `--enable` / `--decline` (with optional `--target-sha` and `--date`); the app lists new components first, checked, under **New 🔥 — configure to use** until Save, and Save stays available while any are listed. **Hosts:** no migration; the behaviour applies from the next update.
@@ -15,6 +17,7 @@
 **Guide addenda**
 
 - 2026-10-13 **New addendum report lines.** Before using a guide, the agent now reports `- 📖 SKAI guide: <lookup-name>`, with a nested `- 📎 Addendum loaded` only when an addendum was loaded; a guide line alone means the project has no addendum for it. A failed lookup nests `- ⛔ Addendum lookup failed: <what failed>` and stops. Each guide is reported once per task. This replaces `📎 ADDENDUM: <filename> — loaded` and `No project addendum found: <filename>.`; only each guide's Project addendum footer changed. No migration: lookup names, addendum paths and installed files are unchanged.
+
 **UI Map renderer**
 
 - 2026-10-13 **Visual-home loops are an error.** A map whose visual homes form a loop (for example a `primary_parent` the scene itself routes to) used to render without error while silently dropping the looped scenes. `Bin/ui-map-render.py` now aborts with a `UI Map error` listing the scenes it can't place. Maps that rendered correctly before render identically. Migration: none for maps that render today. If an existing map now fails with this error, its render was already missing those scenes; give one listed scene a `primary_parent` outside the loop and re-render.
