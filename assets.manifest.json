@@ -6,8 +6,8 @@
   "componentCategories": [
     {"name": "Setup", "description": "Configure SKAI and keep the project installation up to date."},
     {"name": "Requirements", "description": "Define, review and maintain the project’s behavioral requirements."},
-    {"name": "UI Map", "description": "Describe screens and routes, then implement the approved map."},
     {"name": "Design", "description": "Author design changes in the project’s design file and promote them to production."},
+    {"name": "UI Map", "description": "Describe screens and routes, then implement the approved map."},
     {"name": "Work specs", "description": "Design changes and plan their implementation."},
     {"name": "Testing", "description": "Plan coverage, prepare test infrastructure and write unit tests."},
     {"name": "Debugging", "description": "Find the cause of defects and verify repairs."},

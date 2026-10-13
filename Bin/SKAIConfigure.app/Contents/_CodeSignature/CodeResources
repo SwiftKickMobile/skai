@@ -4,18 +4,29 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>Resources/Assets.car</key>
+		<data>
+		4yQ2N3KMXBuguUupQ3B7fu90Cuw=
+		</data>
 		<key>Resources/SKAIConfigure.icns</key>
 		<data>
-		9QjIxK3mWF2i0MwVC1F1lYPXB0E=
+		5nsOXYRA1QDyBEGdfbOaNyaoPGs=
 		</data>
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>Resources/Assets.car</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Y42e+/xZXexYEURmYK66+vJ/w31P7/SNR6Cmdik3Uw0=
+			</data>
+		</dict>
 		<key>Resources/SKAIConfigure.icns</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Ye7y1EgYLwGyphj+JjIC+gbD+Iu+kyrecE2sgYBkDNY=
+			EHWS6OjcRF7h7SIgcFXarpT9gE3tFViIKUDBxFouOpY=
 			</data>
 		</dict>
 	</dict>

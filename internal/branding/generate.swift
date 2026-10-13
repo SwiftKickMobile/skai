@@ -146,22 +146,43 @@ func document(_ content: String, width: Int, title: String) -> String {
 }
 let destination = URL(fileURLWithPath: CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : "internal/branding", isDirectory: true)
 try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
-try document(symbol, width: 1200, title: "SKAI symbol").write(to: destination.appendingPathComponent("skai-symbol.svg"), atomically: true, encoding: .utf8)
 for (file, color) in [("skai-logo.svg", "#000000"), ("skai-logo-dark.svg", "#FFFFFF")] {
     let text = "<g fill=\"\(color)\" transform=\"translate(\(String(format: "%.3f", wordX)) \(String(format: "%.3f", baseline))) scale(1 -1)\">" + letters.joined() + "</g>"
     try document("<g transform=\"translate(\(symbolShift) 0)\">" + symbol + "</g>\n" + text, width: width, title: "SKAI").write(to: destination.appendingPathComponent(file), atomically: true, encoding: .utf8)
 }
-print("Generated symmetric SVG symbol and outlined wordmarks in \(destination.path)")
+print("Generated outlined wordmarks in \(destination.path)")
 
-// Legacy ICNS artwork includes its own rounded-square plate; the brand logo stays transparent.
-let appIcon = """
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title">
-<title id="title">Configure SKAI app icon</title>
-\(definitions)
-<rect x="64" y="64" width="896" height="896" rx="196" fill="#FFFFFF"/>
-<g transform="translate(142 142) scale(0.6166666667)">\(symbol)</g>
+// Icon Composer foreground layer, written into SKAIConfigure.icon: the symbol alone on a transparent 1024 canvas,
+// as plain paths (no clip paths or <use>, which Icon Composer may not honour). The system draws the
+// rounded square, whose size is the whole canvas, so the symbol keeps the proportion it had inside the
+// legacy white plate: its 1200 canvas filled 740 of the 896 plate.
+let layerScale: CGFloat = 1024 * (740.0 / 896) / 1200
+let layerOffset = (1024 - 1200 * layerScale) / 2
+var layerPlacement = CGAffineTransform(translationX: layerOffset, y: layerOffset)
+    .scaledBy(x: layerScale, y: layerScale).translatedBy(x: offsetX, y: offsetY)
+var halfTurn = CGAffineTransform(translationX: 600, y: 600).rotated(by: .pi).translatedBy(x: -600, y: -600)
+let lowerCap = cap.copy(using: &halfTurn)!
+func layerPath(_ path: CGPath) -> String { svgPath(path.copy(using: &layerPlacement)!) }
+func layerNumber(_ value: CGFloat) -> String { String(format: "%.3f", value) }
+let gradientStart = CGPoint(x: 220, y: 200).applying(layerPlacement), gradientEnd = CGPoint(x: 960, y: 1100).applying(layerPlacement)
+let iconLayer = """
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<title>SKAI symbol for the app icon: 1024 canvas, plain paths, transparent background</title>
+<defs>
+  <linearGradient id="body" x1="\(layerNumber(gradientStart.x))" y1="\(layerNumber(gradientStart.y))" x2="\(layerNumber(gradientEnd.x))" y2="\(layerNumber(gradientEnd.y))" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#009DDE"/>
+    <stop offset="0.48" stop-color="#504185"/>
+    <stop offset="1" stop-color="#A1268C"/>
+  </linearGradient>
+</defs>
+<path d="\(layerPath(outline))" fill="url(#body)"/>
+<path d="\(layerPath(outline.intersection(cap)))" fill="#009DDE"/>
+<path d="\(layerPath(outline.intersection(lowerCap)))" fill="#A1268C"/>
 </svg>
+
 """
-try appIcon.write(to: destination.appendingPathComponent("skai-app-icon.svg"), atomically: true, encoding: .utf8)
+let iconAssets = destination.appendingPathComponent("SKAIConfigure.icon/Assets", isDirectory: true)
+try FileManager.default.createDirectory(at: iconAssets, withIntermediateDirectories: true)
+try iconLayer.write(to: iconAssets.appendingPathComponent("skai-app-icon-symbol.svg"), atomically: true, encoding: .utf8)
 
 print("Straight band width: \(bandWidth); visible center: \(normalizedBounds.midX), \(normalizedBounds.midY); bounds: \(normalizedBounds)")

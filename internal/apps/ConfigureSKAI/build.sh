@@ -4,18 +4,16 @@ task_root="$(cd "$(dirname "$0")/../../.." && pwd)"
 task_branch="$(git -C "$task_root" symbolic-ref --short HEAD 2>/dev/null || printf '%s' detached)"
 task_build="$task_root/skai/working-docs/$task_branch/component-configuration/build"
 task_app="$task_root/Bin/SKAIConfigure.app"
-task_iconset="$task_build/SKAIConfigure.iconset"
-mkdir -p "$task_build/module-cache" "$task_app/Contents/MacOS" "$task_app/Contents/Resources" "$task_iconset"
-for task_size in 16 32 128 256 512; do
-    sips -z "$task_size" "$task_size" "$task_root/internal/branding/skai-app-icon.png" --out "$task_iconset/icon_${task_size}x${task_size}.png" >/dev/null
-    task_retina=$((task_size * 2))
-    sips -z "$task_retina" "$task_retina" "$task_root/internal/branding/skai-app-icon.png" --out "$task_iconset/icon_${task_size}x${task_size}@2x.png" >/dev/null
-done
-iconutil -c icns "$task_iconset" -o "$task_app/Contents/Resources/SKAIConfigure.icns"
+mkdir -p "$task_build/module-cache" "$task_app/Contents/MacOS" "$task_app/Contents/Resources"
+# Icon Composer source: actool emits Assets.car (the system-drawn icon, macOS 26+) and an ICNS fallback
+# for older macOS. Both are named SKAIConfigure, matching Info.plist.
+xcrun actool "$task_root/internal/branding/SKAIConfigure.icon" --compile "$task_app/Contents/Resources" --platform macosx \
+    --minimum-deployment-target 13.0 --app-icon SKAIConfigure \
+    --output-partial-info-plist "$task_build/icon-info.plist" --output-format human-readable-text >/dev/null
 task_sdk="$(xcrun --sdk macosx --show-sdk-path)"
 xcrun swiftc -parse-as-library -O -sdk "$task_sdk" -target "arm64-apple-macosx13.0" \
     -module-cache-path "$task_build/module-cache" \
-    "$task_root/internal/apps/ConfigureSKAI/Configuration.swift" "$task_root/internal/apps/ConfigureSKAI/App.swift" \
+    "$task_root/internal/apps/ConfigureSKAI/Configuration.swift" "$task_root/internal/apps/ConfigureSKAI/ConfigureModel.swift" "$task_root/internal/apps/ConfigureSKAI/App.swift" \
     -o "$task_build/SKAIConfigure-arm64"
 cp "$task_build/SKAIConfigure-arm64" "$task_app/Contents/MacOS/SKAIConfigure"
 cp "$task_root/internal/apps/ConfigureSKAI/Info.plist" "$task_app/Contents/Info.plist"

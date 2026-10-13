@@ -7,7 +7,7 @@ task_build="$task_root/skai/working-docs/$task_branch/component-configuration/bu
 mkdir -p "$task_build/module-cache"
 python3 "$task_root/internal/apps/ConfigureSKAI/test_history.py"
 xcrun swiftc -parse-as-library -module-cache-path "$task_build/module-cache" \
-    "$task_root/internal/apps/ConfigureSKAI/Configuration.swift" \
+    "$task_root/internal/apps/ConfigureSKAI/Configuration.swift" "$task_root/internal/apps/ConfigureSKAI/ConfigureModel.swift" \
     "$task_root/internal/apps/ConfigureSKAI/Tests.swift" -o "$task_build/configuration-tests"
 "$task_build/configuration-tests" "$task_root"
 python3 "$task_root/internal/apps/ConfigureSKAI/test_resolver_parity.py"

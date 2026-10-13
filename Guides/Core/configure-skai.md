@@ -88,10 +88,12 @@ booleans in local config. Overridden rows have blue **User: On/Off** labels on P
 **Project: On/Off** labels on User, showing the other setting’s value;
 on User, inherited component names are subtly dimmed, as are categories with no overridden
 components. A category retains normal contrast when any child is overridden on or off. Rows show
-the component name, description and any override badge. Components the host has never seen (new
-in this checkout; see *New components* in `component-selection.md`) are listed first in a **New**
-section until Save, which moves the selected ones into the config and records the rest as declined;
-on the next launch they sit in their categories like any other. Required Configure SKAI cannot be changed in either tab.
+the component name, description and any override badge. Categories start collapsed; the chevron
+beside each shows its components, and the category checkbox works either way. Components the host
+has never seen (new in this checkout; see *New components* in `component-selection.md`) are listed
+first, checked, under **New 🔥 — configure to use** until Save, which moves the checked ones into
+the config and records the rest as declined; Save stays available while any are listed. On the
+next launch they sit in their categories like any other. Required Configure SKAI cannot be changed in either tab.
 In the **⋯** menu, Select all/Clear optional affect project choices when Project is selected;
 Turn all on/Turn all off affect User overrides when User is selected. Use project settings clears
 User overrides. Drafts persist when switching tabs.

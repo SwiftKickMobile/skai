@@ -1,7 +1,7 @@
 import Foundation
 
 @main struct ConfigurationTests {
-    static func main() throws {
+    @MainActor static func main() throws {
         let skaiRoot = URL(fileURLWithPath: CommandLine.arguments[1])
         let temporary = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: temporary, withIntermediateDirectories: true)
@@ -221,6 +221,74 @@ import Foundation
         let afterSave = try Configuration(project: fresh, skaiRoot: skaiRoot)
         precondition(afterSave.newComponentIDs.isEmpty && afterSave.selected.contains("skill.skai-process-refinement"))
         print("PASS Save keeps selected new components and declines the rest")
+        try modelChecks(skaiRoot: skaiRoot, temporary: temporary)
         print("All native configuration checks passed.")
+    }
+
+    /// The window's behaviour, through the same model the SwiftUI view binds to.
+    @MainActor static func modelChecks(skaiRoot: URL, temporary: URL) throws {
+        let host = temporary.appendingPathComponent("model host")
+        try FileManager.default.createDirectory(at: host.appendingPathComponent("skai"), withIntermediateDirectories: true)
+        let catalog = try Configuration(project: host, skaiRoot: skaiRoot)
+        let design: Set<String> = ["skill.skai-design-authoring", "skill.skai-design-promotion"]
+        let chosen = catalog.optionalIDs.subtracting(design).sorted()
+        try JSONSerialization.data(withJSONObject: ["schemaVersion": 1, "components": chosen]).write(to: host.appendingPathComponent("skai/config.json"))
+        let history = Dictionary(uniqueKeysWithValues: chosen.map { ($0, ["installed": true, "lastAppliedSHA": "N"] as [String: Any]) })
+        try JSONSerialization.data(withJSONObject: ["installedAdapters": [["adapter": "claude-code", "componentHistory": history]]])
+            .write(to: host.appendingPathComponent("skai/install-state.json"))
+        let model = ConfigureModel(configuration: try Configuration(project: host, skaiRoot: skaiRoot), agentSession: true)
+        func component(_ id: String) -> Component { model.configuration.components.first { $0.id == id }! }
+        func section(_ id: String) -> ConfigureModel.Section { (model.newSections + model.mainSections).first { $0.id == id }! }
+
+        precondition(model.newIDs == design)
+        precondition(model.newSections.map(\.id) == ["new:Design"] && Set(model.newSections[0].members.map(\.id)) == design)
+        precondition(!model.mainSections.flatMap(\.members).contains { design.contains($0.id) })
+        precondition(design.allSatisfy { model.state(of: component($0)) == .on } && model.canSave)
+        precondition(model.expanded.isEmpty)
+        print("PASS model: new components listed first under their category, checked, so Save is enabled; all collapsed")
+
+        let authoring = component("skill.skai-design-authoring")
+        model.click(section("new:Design")); precondition(model.state(of: section("new:Design")) == .off && model.canSave)  // Save still records the decline
+        model.click(section("new:Design"))
+        model.click(authoring); precondition(model.state(of: authoring) == .off && model.state(of: section("new:Design")) == .mixed)
+        model.click(authoring); precondition(model.state(of: authoring) == .on && model.state(of: section("new:Design")) == .on)
+        model.click(section("new:Design")); precondition(design.allSatisfy { model.state(of: component($0)) == .off })
+        model.click(section("new:Design")); precondition(design.allSatisfy { model.state(of: component($0)) == .on })
+        let debugging = section("Debugging")
+        model.click(debugging); precondition(model.state(of: debugging) == .off)
+        model.click(debugging); precondition(model.state(of: debugging) == .on)
+        let configure = component("skill.skai-configure")
+        model.click(configure); precondition(model.state(of: configure) == .on && model.isEnabled(section("Setup")))
+        print("PASS model: Project tab component and category toggles; required component cannot change")
+
+        model.editingLocal = true
+        let retro = component("skill.skai-dev-retro")
+        precondition(model.state(of: retro) == .mixed && model.isDimmed(retro) && model.badge(for: retro) == nil)
+        model.click(retro); precondition(model.state(of: retro) == .on && model.badge(for: retro) == "Project: On" && !model.isDimmed(retro))
+        model.click(retro); precondition(model.state(of: retro) == .off && model.badge(for: retro) == "Project: On")
+        model.click(retro); precondition(model.state(of: retro) == .mixed && model.configuration.overrides[retro.id] == nil)
+        let process = section("Process")
+        precondition(model.state(of: process) == .mixed && model.isDimmed(process))
+        model.click(process); precondition(model.state(of: process) == .on)
+        model.click(process); precondition(model.state(of: process) == .off)
+        model.click(process); precondition(model.state(of: process) == .mixed && model.configuration.overrides.isEmpty)
+        print("PASS model: User tab cycles use project setting → on → off for components and categories, with badges and dimming")
+
+        model.selectAll(); precondition(model.overrideCount == model.configuration.optionalIDs.count)
+        model.editingLocal = false
+        precondition(model.badge(for: retro) == "User: On")
+        model.editingLocal = true
+        model.useProjectSettings(); precondition(model.overrideCount == 0)
+        model.editingLocal = false
+        model.clearOptional(); precondition(model.configuration.selected.isEmpty && model.summary == "0 of \(model.configuration.optionalIDs.count) effective · 0 overrides")
+        model.selectAll(); precondition(model.configuration.selected == model.configuration.optionalIDs)
+        model.toggleExpanded(debugging); precondition(model.expanded == ["Debugging"])
+        model.toggleExpanded(debugging); precondition(model.expanded.isEmpty)
+        print("PASS model: bulk actions, summary and expand/collapse")
+
+        _ = try model.configuration.save()
+        let reopened = ConfigureModel(configuration: try Configuration(project: host, skaiRoot: skaiRoot), agentSession: true)
+        precondition(reopened.newSections.isEmpty && !reopened.canSave)
+        print("PASS model: after Save nothing is new and Save is disabled until an edit")
     }
 }
