@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.design-specs-promotion
 Managed-Source: Guides/DesignSpecs/design-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # Design Specs Promotion
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: design-specs-promotion` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 ## Purpose
 
@@ -248,13 +248,8 @@ request with its archived link; its defect goes to a new scoped-change package.
 - [`design-specs-artifacts.md`](design-specs-artifacts.md) — change item and change request formats
 - [`design-specs-authoring.md`](design-specs-authoring.md) — the authoring workflow
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/design-specs-promotion-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: design-specs-promotion`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/design-specs-promotion-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

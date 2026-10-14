@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture
 Managed-Source: Guides/UIMap/ui-map-architecture.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # UI Map Architecture
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: ui-map-architecture` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 The architecture method for the UI Map system. Use [`ui-map-guide.md`](ui-map-guide.md) for the YAML map format and [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md) for the change-package artifact formats (map change items, change requests).
 
@@ -346,13 +346,8 @@ One bullet per approved map deferral: bold title, TODO pointer, brief rationale.
 
 The TODO identifier may be a top-level `todos:` scope (e.g. `todos[scope=login]`) or a scene-level marker (e.g. `verify: { todo: true }`). For deferrals that require adding a new TODO in this pass, cite the new identifier the same way — the new TODO is part of the proposed map in Map Changes.
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-architecture-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: ui-map-architecture`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/ui-map-architecture-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

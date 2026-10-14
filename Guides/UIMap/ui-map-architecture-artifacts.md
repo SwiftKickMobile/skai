@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture-artifacts
 Managed-Source: Guides/UIMap/ui-map-architecture-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # UI Map Architecture Artifact Formats
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: ui-map-architecture-artifacts` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 The typed formats the architecture skill produces and consumes. This is the consumer-facing layer: a downstream reader resolves any field or value here without reading the authoring method ([`ui-map-architecture.md`](ui-map-architecture.md)). For the YAML map format itself, see [`ui-map-guide.md`](ui-map-guide.md).
 
@@ -53,13 +53,8 @@ Reviewer Response: <filled by architecture on reopen>
 
 Lifecycle: the request opens `Proposed`; architecture's reviewer fills `Reviewer Response` and moves the status to `Incorporated` (only once the adjustment is applied in the proposed map in Map Changes), `Rejected`, or `Superseded`.
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-architecture-artifacts-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: ui-map-architecture-artifacts`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/ui-map-architecture-artifacts-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

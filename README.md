@@ -132,22 +132,17 @@ How the project owner fills it:
 ## Project guide addenda
 
 Customize a guide with a project-owned, freeform Markdown file at
-`skai/addenda/<guide-name>-addendum.md`. Each guide's final **Project addendum** section gives its
-exact filename. The agent reads the full guide and checks for its addendum, then reports the guide
-by name, with a nested line only when an addendum was loaded:
+`skai/addenda/<guide-name>-addendum.md`. Each guide's final **Project Addendum** section gives its
+exact filename. The agent prints the guide line on opening the guide, reads it fully, then reads the
+addendum if it exists and prints a nested line the moment it has:
 
 ```text
 - 📖 SKAI guide: requirements-promotion
   - 📎 Addendum loaded
 ```
 
-The guide line comes only after the lookup finishes, so a guide line on its own means the project
-has no addendum for that guide. A failed lookup, such as an unreadable addendum or a missing shared
-reference, is never treated as absent: the agent nests `⛔ Addendum lookup failed` under the guide
-line and stops. Each guide is reported once per task, including reference guides another guide
-loads, so the lines also show which guides a workflow used. One addendum line covers any documents
-the addendum references. These lines are not an approval gate. Reference guides and nested skills check their own addenda
-when needed.
+A guide line on its own means the project has no addendum for that guide. The addendum's rules
+are part of the guide and win any conflict with it. These lines are not an approval gate.
 
 Addenda may add rules or override guide defaults. Current task instructions and project-wide policies
 retain authority. No required template, headings, frontmatter, schema or managed header applies;

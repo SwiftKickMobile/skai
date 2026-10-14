@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.ui-map-guide
 Managed-Source: Guides/UIMap/ui-map-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # UI Map Guide
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: ui-map-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 A UI Map is a YAML document that defines every scene in an app and the routing relationships between them. The map is the single source of truth for the app's UI architecture; implementation should mirror it directly. A render script produces a visual diagram from the YAML for review.
 
@@ -330,13 +330,8 @@ The sections above define the format; these are the conventions that make a map 
 - **Route kind reflects the actual presentation.** Read `nav`/`modal`/`composite`/`tab`/`child` from how a destination is really presented — not from vague wording ("appears", "available from", "can access") and not from an enum's name. Use `modal` when the source says modal/sheet/dialog/popover/full-screen; use `nav` when it says pushed/opens detail/drills in/links to. When the basis is genuinely ambiguous, treat it as a decision to raise, not a guess to bury.
 - **Every modal destination has a `modal_style`, on the scene.** A scene presented modally carries one required `modal_style` at its canonical home — it describes the destination, not the route — and implementation must use it.
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-guide-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: ui-map-guide`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/ui-map-guide-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

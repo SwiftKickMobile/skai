@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.dev-retro
 Managed-Source: Guides/Process/dev-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # Dev-session retro (agent + supervisor)
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: dev-retro` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Purpose: a completeness backstop for an LLM-driven development session in a host repo. This retro covers **everything since the previous dev retro** (if any); if none, it covers the current session.
 
@@ -218,13 +218,8 @@ After all six steps, emit one gate using the precedence defined under Gates:
 - Otherwise, if SKAI process suggestions exist, end with `⏳ GATE: Next: Draft process tickets from these retro suggestions. Say "next" or what to change.` Advance intent enters `Guides/Process/ticket-filing.md` at Phase 1, step 2.
 - With neither handoff, emit `🏁 Complete. Let me know if anything needs adjustment.`
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/dev-retro-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: dev-retro`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/dev-retro-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

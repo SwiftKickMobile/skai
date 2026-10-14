@@ -7,4 +7,4 @@ description: Updates the skai submodule and re-runs installed adapter runbooks. 
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Core/update-installation-guide.md` in full, including its Project addendum instructions, and follow it.
+- Read `Submodules/skai/Guides/Core/update-installation-guide.md` in full, including its Project Addendum instructions, and follow it.

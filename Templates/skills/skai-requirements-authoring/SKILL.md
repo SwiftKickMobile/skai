@@ -7,4 +7,4 @@ description: Drafts behavioral requirements into a skai change package (mode inf
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Requirements/requirements-authoring.md` in full, including its Project addendum instructions, and follow it.
+- Read `Submodules/skai/Guides/Requirements/requirements-authoring.md` in full, including its Project Addendum instructions, and follow it.

@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.update-installation
 Managed-Source: Guides/Core/update-installation-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # Update Installation Guide
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: update-installation-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Updates the `skai` submodule and re-runs installed adapter runbooks.
 
@@ -176,13 +176,8 @@ Before the completion line, name every optional component this update installed 
 installed before (new to the catalog or newly enabled), and any the supervisor declined, so the
 change in what the agent can do is visible in the transcript. Then complete the workflow.
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/update-installation-guide-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: update-installation-guide`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/update-installation-guide-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

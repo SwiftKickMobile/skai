@@ -43,3 +43,5 @@ Round 9 (series D, with the observed failure) scored 2.5: one accepted, one clos
 | 2026-10-13 p1 r10 | F1 Design authoring's "new package" after a closed one does not say new change ID | logged (second sighting) | Restates round-8 F1; still no occurrence; promotion's archive-collision gate contains it. A third sighting with an occurrence meets the bar |
 
 Round 10 (series D) raised no live finding: convergence by clean round over the final text, with the round-9 deletion included. Pass 1 closed.
+| 2026-10-13 (from the addenda pass) | The block's "unavailable even when something else names it" could be read to forbid a lookup a guide prescribes by path (the addendum) | logged | No occurrence; the addendum footer says "if it exists", which is a guide-directed path, not a README resource. Revisit on an observed refusal |
+| 2026-10-14 (addenda tests) | A clean run (design-specs backfill) planned to use the Figma link in the package's Inputs for V5 despite the README linking no design file | logged (second sighting of the in-package-URL case, after the clause) | Planned, not executed; the other nine runs respected the rule. Watch for a third |

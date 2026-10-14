@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.requirements-catalog
 Managed-Source: Guides/Requirements/requirements-catalog.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # Requirements Catalog
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: requirements-catalog` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 ## Purpose
 
@@ -392,13 +392,8 @@ Before writing a requirement:
 - [`requirements-promotion.md`](requirements-promotion.md) — promoting an approved package
 - [`requirements-artifacts.md`](requirements-artifacts.md) — typed formats for change items and change requests
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/requirements-catalog-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: requirements-catalog`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/requirements-catalog-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

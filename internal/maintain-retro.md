@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.maintain-retro
 Managed-Source: internal/maintain-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # Maintenance retro checklist (agent + supervisor)
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: maintain-retro` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Use this after making changes to `skai` to ensure nothing was forgotten.
 
@@ -101,13 +101,8 @@ If nothing stands out, say **"No process suggestions."**
 - If you found none: say **"Maintenance retro complete; no misses found."**
 - Include process suggestions from step 6 (if any) as a separate **"Process suggestions"** section at the end.
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/maintain-retro-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: maintain-retro`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/maintain-retro-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

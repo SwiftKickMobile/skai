@@ -7,6 +7,6 @@ description: Takes a design change from idea to approved mockups in a skai chang
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Design/design-authoring.md` in full, including its Project addendum instructions, and follow it.
+- Read `Submodules/skai/Guides/Design/design-authoring.md` in full, including its Project Addendum instructions, and follow it.
 - Read the tool guide it names for the project's design tool before drawing — it owns the conventions the designs must meet (for Figma, `Submodules/skai/Guides/Design/figma-designer-guide.md`, plus `figma-designer-guide-multiple-sizes.md` when the file's `Conventions` list more than one target size).
 - Preserve its hard boundaries: never change the production designs — only promotion does; draw nothing during a discussion phase, and discuss nothing during a mockup phase; stop and ask when the tool cannot do what a draft needs, never work around it.

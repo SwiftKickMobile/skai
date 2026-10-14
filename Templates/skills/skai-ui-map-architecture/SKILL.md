@@ -7,4 +7,4 @@ description: Creates or changes UI Map architecture using skai (baseline maps, s
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/UIMap/ui-map-architecture.md` in full, including its Project addendum instructions, and follow it.
+- Read `Submodules/skai/Guides/UIMap/ui-map-architecture.md` in full, including its Project Addendum instructions, and follow it.

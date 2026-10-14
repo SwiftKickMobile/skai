@@ -7,4 +7,4 @@ description: Promotes an approved requirements change package into the canonical
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Requirements/requirements-promotion.md` in full, including its Project addendum instructions, and follow it.
+- Read `Submodules/skai/Guides/Requirements/requirements-promotion.md` in full, including its Project Addendum instructions, and follow it.

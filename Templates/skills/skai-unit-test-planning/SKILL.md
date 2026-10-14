@@ -7,4 +7,4 @@ description: Plans unit tests using skai test planning rules. Use when scoping u
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Test/unit-test-planning-guide.md` in full, including its Project addendum instructions, and follow it.
+- Read `Submodules/skai/Guides/Test/unit-test-planning-guide.md` in full, including its Project Addendum instructions, and follow it.

@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.figma-designer-guide-multiple-sizes
 Managed-Source: Guides/Design/figma-designer-guide-multiple-sizes.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # Figma Designer Guide: Multiple Target Sizes
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: figma-designer-guide-multiple-sizes` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 For a file whose `Conventions` list more than one target size. It extends the
 [Figma Designer Guide](figma-designer-guide.md); a file with one target size never needs it. Examples
@@ -36,13 +36,8 @@ call the sizes `Compact` and `Wide`.
    with variants that hug their content. Content goes in through component properties: overrides of
    nested layers are lost when the variable switches the variant.
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/figma-designer-guide-multiple-sizes-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: figma-designer-guide-multiple-sizes`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/figma-designer-guide-multiple-sizes-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.configure-skai
 Managed-Source: Guides/Core/configure-skai.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # Configure SKAI
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: configure-skai` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Launch the bundled Mac app to choose optional skills and policies for the active host project.
 The app saves project-owned `skai/config.json` and sparse gitignored `skai/config.local.json`
@@ -146,13 +146,8 @@ inventory and required component migrations match effective config. User overrid
 migrations of shared collateral under the ordinary ownership/collision rules; no extra approval
 is needed solely because the selection came from a local override. No commit, push or release is implied.
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/configure-skai-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: configure-skai`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/configure-skai-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

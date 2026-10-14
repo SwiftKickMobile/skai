@@ -8,4 +8,4 @@ description: Enforces evidence-first debugging using skai (facts-first, partitio
 ## Instructions
 
 - Read `Submodules/skai/Policies/debugging-process-rule.md`.
-- Read `Submodules/skai/Guides/Core/debugging-guide.md` in full, including its Project addendum instructions, and follow it.
+- Read `Submodules/skai/Guides/Core/debugging-guide.md` in full, including its Project Addendum instructions, and follow it.

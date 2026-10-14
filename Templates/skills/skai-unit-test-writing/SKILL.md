@@ -7,4 +7,4 @@ description: Writes unit tests using skai test writing rules. Use when implement
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Test/unit-test-writing-guide.md` in full, including its Project addendum instructions, and follow it.
+- Read `Submodules/skai/Guides/Test/unit-test-writing-guide.md` in full, including its Project Addendum instructions, and follow it.

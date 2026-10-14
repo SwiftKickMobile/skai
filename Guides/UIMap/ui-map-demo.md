@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.ui-map-demo
 Managed-Source: Guides/UIMap/ui-map-demo.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # UI Map Demo
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: ui-map-demo` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 A complete UI Map shown in both representations: YAML source (the source of truth) and the Mermaid render derived from it. For feedback on the format and the render.
 
@@ -236,13 +236,8 @@ flowchart LR
 - **Left-to-right layout.** The render is `flowchart LR`, laid out by Mermaid's ELK engine with simple node placement: depth runs left to right and siblings stack top to bottom, so a deep map stays compact rather than very wide.
 - **Auto-layout caveat.** Mermaid lays out the graph automatically; positions won't match the FigJam exactly. Topology, grouping, and edge labels match; relative positions within a domain are the renderer's choice. In particular, the order of screens within a group follows the layout's effort to minimise crossing lines, not the order written in the YAML.
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-demo-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: ui-map-demo`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/ui-map-demo-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

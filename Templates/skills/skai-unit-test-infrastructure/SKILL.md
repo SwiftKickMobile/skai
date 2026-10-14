@@ -7,4 +7,4 @@ description: Sets up unit test infrastructure using skai rules. Use when configu
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Test/unit-test-infrastructure-guide.md` in full, including its Project addendum instructions, and follow it.
+- Read `Submodules/skai/Guides/Test/unit-test-infrastructure-guide.md` in full, including its Project Addendum instructions, and follow it.

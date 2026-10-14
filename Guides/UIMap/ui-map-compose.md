@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.ui-map-compose
 Managed-Source: Guides/UIMap/ui-map-compose.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # UI Map — Jetpack Compose Reference
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: ui-map-compose` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Platform reference for implementing a UI Map in Jetpack Compose. Companion to [`ui-map-guide.md`](ui-map-guide.md), which defines the platform-agnostic YAML format.
 
@@ -230,13 +230,8 @@ Effects come from:
 - External flows observed in the view model's `init`, e.g. an auth flow that sends `Navigate(AppChildRoute.Login)` when the user logs out.
 - Compose Navigation itself handles dismissal: system back press, drag-to-dismiss, and outside-tap pop the back stack automatically. The view model can pop programmatically via `CloseModal`.
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/ui-map-compose-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: ui-map-compose`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/ui-map-compose-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

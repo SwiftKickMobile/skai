@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.debugging-tactic-code-bisection
 Managed-Source: Guides/Core/debugging-tactic-code-bisection.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # Debugging tactic: code bisection
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: debugging-tactic-code-bisection` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Purpose: isolate the smallest delta that flips a result (fail -> pass or pass -> fail) by moving in approximate half-steps, systematically, with a clean and reversible state trail.
 
@@ -140,13 +140,8 @@ When you have isolated the smallest failing delta:
 
 Optional cleanup (permission-gated): deleting the temporary bisection branch is a separate action and should be done only if the supervisor explicitly asks.
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/debugging-tactic-code-bisection-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: debugging-tactic-code-bisection`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/debugging-tactic-code-bisection-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

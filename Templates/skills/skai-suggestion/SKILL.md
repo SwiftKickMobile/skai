@@ -7,4 +7,4 @@ description: Suggestion box for skai itself — captures a developer's idea, req
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Process/ticket-filing.md` in full, including its Project addendum instructions, and follow it.
+- Read `Submodules/skai/Guides/Process/ticket-filing.md` in full, including its Project Addendum instructions, and follow it.

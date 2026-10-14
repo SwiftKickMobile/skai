@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.working-doc-conventions
 Managed-Source: Guides/Core/working-doc-conventions.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # Working Document Conventions
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: working-doc-conventions` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Working documents (planning docs, work specs, test work docs, test artifacts) are ephemeral files that track in-progress work. They live under `skai/working-docs/`, are organized by git branch, and are grouped into named session folders so multiple efforts on the same branch do not collide.
 
@@ -67,13 +67,8 @@ Notes:
 - Process improvement drafts:
   - `skai/working-docs/<branch-path>/retro-cleanup/process-tickets.md`
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/working-doc-conventions-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: working-doc-conventions`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/working-doc-conventions-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

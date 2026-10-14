@@ -35,3 +35,40 @@ After refinement, promote the exact settled entry/footer text into a maintainer 
 ## Shared-context follow-up — 2026-10-09
 
 Supervisor chose a conventional project addendum that points to shared content and may add local rules. The README provides optional copyable shared-first/local-second prose. This supersedes the prototype's categorical shared-repository exclusion; its review remains historical, not a new review of this clarification.
+
+## Footer Rewrite — 2026-10-13
+
+Supervisor decision. The boilerplate every guide carries (the entry cue after the title and the
+`## Project addendum` footer) is too long and says things that are not needed. What it must achieve,
+and nothing more:
+
+1. The agent reads the addendum for guide X, if one exists, after reading guide X in full, and
+   treats it as part of the guide. The addendum wins any conflict.
+2. The agent acknowledges the guide was read by printing a "guide" line.
+3. The agent acknowledges the addendum was read by printing an indented "addendum" line under it.
+4. If there is no addendum, there is no "addendum" line.
+5. The lines are printed immediately: the guide line on opening the guide, from the entry cue at
+   its top, before anything else; the addendum line the moment the addendum is read. "Before work" is not enough: agents have deferred the line behind other reading
+   (supervisor, 2026-10-14).
+
+**Placement (supervisor, 2026-10-14):** after seventeen cold runs and five agent interviews, the
+guide line moved from the footer to the entry cue at the top of the guide ("Print `- 📖 SKAI guide:
+<name>` now, as a line of its own. Read this guide fully, then follow Project Addendum."); the footer
+keeps only the addendum check and its nested line. The agent instruction block says the lines are
+printed when the guide says to and, when an agent's only output is a final report, first in it.
+Interviewed agents had read the footer but took it as "find the addendum", not as required output,
+and "now" at the end of a long guide read as a note.
+
+**Headroom (supervisor, 2026-10-14):** if testing shows the shortened footer is not effective, one
+more sentence may be added. No more than that without a new decision.
+
+**Size budget:** the footer at most half its current length (118 words → 59 words or fewer), the
+entry cue no longer than today's. Headings in Title Case. Anything in the current text that these
+four goals do not require is a candidate for deletion; the cold reviewer proposes the replacement
+wording. Earlier settled points stand where the goals do not touch them: the lookup path
+`skai/addenda/<guide-name>-addendum.md`, the shared-context entry convention, no schema, installers
+never touch addenda, the receipt is not a gate.
+
+**Dropped (supervisor, 2026-10-13):** the failure line and stop (unknown root, unreadable file,
+"never infer absence") are over-engineering. No addendum found means no addendum line; nothing
+else is reported about the lookup.

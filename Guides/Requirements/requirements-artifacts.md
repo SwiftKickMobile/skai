@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.requirements-artifacts
 Managed-Source: Guides/Requirements/requirements-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # Requirements Artifact Formats
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: requirements-artifacts` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 The typed formats the requirements workflows produce and consume. This is the consumer-facing layer:
 a downstream reader resolves any field or value here without reading the authoring method
@@ -200,13 +200,8 @@ Changes), `Rejected`, or `Superseded`.
 - [`requirements-authoring.md`](requirements-authoring.md) — the authoring workflow
 - [`requirements-promotion.md`](requirements-promotion.md) — the promotion workflow
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/requirements-artifacts-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: requirements-artifacts`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/requirements-artifacts-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

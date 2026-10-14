@@ -13,22 +13,17 @@ The initial addendum lookup is in the active project's `skai/addenda/`. That ent
 Insert this cue immediately after the guide's first title, before any procedure or content is applied:
 
 ```markdown
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: <guide-name>` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 ```
 
 Append this footer, replacing `<guide-name>` with the published lookup name:
 
 ```markdown
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/<guide-name>-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: <guide-name>`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/<guide-name>-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.
 ```
 
 Initially use the guide filename stem, e.g. `requirements-promotion`. Treat the published name as a compatibility interface: preserve it on a future guide rename, or document an explicit host-addendum path migration without overwriting user content. Names must be unique; lookup never depends on an unannounced rename.
@@ -51,7 +46,7 @@ Use the installed instruction-block exception for supported guide overrides; do 
 
 ## Verification
 
-- Entry cue comes before use; footer path/name is correct and unique; the guide line names the guide and follows the lookup; the nested addendum line appears only when one loaded; a failed lookup reports and stops, never counting as absence.
+- Entry cue prints the guide line first, then says to read the guide fully; footer path/name is correct and unique; the nested addendum line is printed the moment the addendum is read, and only then; no failure line.
 - Emit one addendum line per guide, without separate lines for referenced documents.
 - Footer copies differ only in lookup name; neither gate placement nor the guide's no-addendum behavior changes.
 - Wrappers remain thin and have no competing guide-default instructions; base dependencies still exist in the guide.

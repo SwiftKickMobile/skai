@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.requirements-baseline
 Managed-Source: Guides/Requirements/requirements-baseline.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # Requirements Baseline
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: requirements-baseline` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Read this when [`requirements-authoring.md`](requirements-authoring.md) infers Baseline mode. Three
 things go wrong wherever every file being drafted is new, and nowhere else.
@@ -39,13 +39,8 @@ citations, one term meaning two things, `D<n>` numbered per author and renumbere
 product rebuilt differently from each author's fragment — and one author holding the whole package
 avoids all of them.
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/requirements-baseline-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: requirements-baseline`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/requirements-baseline-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

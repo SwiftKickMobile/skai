@@ -7,4 +7,4 @@ description: Runs the skai dev-session retro checklist (self-review, gaps, plan 
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Process/dev-retro.md` in full, including its Project addendum instructions, and follow it.
+- Read `Submodules/skai/Guides/Process/dev-retro.md` in full, including its Project Addendum instructions, and follow it.

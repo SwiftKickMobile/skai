@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: guide.cold-review-prompt-template
 Managed-Source: Guides/Process/cold-review-prompt-template.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 # Cold-Review Prompt Template
 
-Before using this guide, complete [Project addendum](#project-addendum) loading below.
+Print `- 📖 SKAI guide: cold-review-prompt-template` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 A fill-in template for launching a **cold review** of a refinement target's guide(s) -- see `process-refinement-guide.md`. The maintainer fills the slots below and hands the result to a **fresh, no-context session** (a different session from the one that will do the refinement). The cold reviewer produces findings; the refining session consumes them.
 
@@ -161,13 +161,8 @@ A review report only. Structure it:
 Be direct and critical; prefer findings over summary; cite exact file paths and line numbers; distinguish verified findings from speculation; do not soften real problems; do not assume prior conversation context beyond the files; recommend fixes in prose, but do not edit files.
 ```
 
-## Project addendum
+## Project Addendum
 
-Read this guide fully; check `<host-project-root>/skai/addenda/cold-review-prompt-template-addendum.md` before use.
-Host root means the active project. Read a present addendum and required shared addenda fully; resolve links
-from their containing file. Apply shared rules, then local additions/overrides to guide defaults,
-subject to task instructions/project policies. This guide owns Integration lookup. Unknown root,
-lookup/read errors or missing required references stop; never infer absence. Once the lookup is done
-and before work, report `- 📖 SKAI guide: cold-review-prompt-template`, nesting `- 📎 Addendum loaded` under it only if one
-loaded. If the lookup fails, nest `- ⛔ Addendum lookup failed: <what failed>` and stop. Report each guide
-once per task; one addendum line covers referenced documents. Not a gate; keep GATE lines last.
+If `<active-project-root>/skai/addenda/cold-review-prompt-template-addendum.md` exists, read it and immediately print
+`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+guide and win any conflict.

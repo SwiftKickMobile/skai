@@ -13,6 +13,6 @@ This repo uses `skai` (`<skai-root>/`) for its development process: guide-based 
 - To change installed SKAI components, use `skai-configure`; the installer reconciles `skai/config.json` on every install/update. Project selections are in `skai/config.json`; private `skai/config.local.json` overrides them. With neither config, all eligible components are selected.
 - Use the installed `skai-*` skills when a request matches one of their descriptions. They live in this agent's skills folder and describe themselves.
 - Prefer the canonical guides under `<skai-root>/Guides/` over older copied guidance elsewhere in the repo.
-- Apply supported project guide addenda according to each guide's Project addendum instructions; intentional overrides of guide defaults need no separate approval. Current task instructions and project-wide policies still apply. For other unexpected instruction conflicts, ask the supervisor before proceeding.
+- Print each guide's `- 📖 SKAI guide:` line and any `- 📎 Addendum loaded` line when its guide says to, as lines of their own; if your only output is a final report, put them first in it. Apply supported project guide addenda according to each guide's Project Addendum instructions; intentional overrides of guide defaults need no separate approval. Current task instructions and project-wide policies still apply. For other unexpected instruction conflicts, ask the supervisor before proceeding.
 
 ## Policies

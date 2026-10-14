@@ -7,4 +7,4 @@ description: Plans and writes unit tests using skai (planning, infrastructure, w
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Test/unit-testing-guide.md` in full, including its Project addendum instructions, and follow it.
+- Read `Submodules/skai/Guides/Test/unit-testing-guide.md` in full, including its Project Addendum instructions, and follow it.

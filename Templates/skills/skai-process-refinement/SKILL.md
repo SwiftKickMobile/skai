@@ -7,4 +7,4 @@ description: Refines a process guide against a cold review using skai (commissio
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Process/process-refinement-guide.md` in full, including its Project addendum instructions, and follow it.
+- Read `Submodules/skai/Guides/Process/process-refinement-guide.md` in full, including its Project Addendum instructions, and follow it.
