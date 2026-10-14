@@ -4,12 +4,12 @@ import Combine
 /// A Project-tab checkbox's displayed state. `mixed` is the dash: a category with some members on.
 enum CheckState { case on, off, mixed }
 
-/// A User-tab component's override, chosen from a menu: keep the project setting, or turn it on or off.
+/// A User-tab component's override, chosen from a menu: Project (keep the project setting), On or Off.
 enum OverrideChoice: Hashable, CaseIterable {
     case inherit, on, off
     var title: String {
         switch self {
-        case .inherit: "Don't override"
+        case .inherit: "Project"
         case .on: "On"
         case .off: "Off"
         }
@@ -85,7 +85,7 @@ final class ConfigureModel: ObservableObject {
         }
     }
 
-    /// User tab: "Don't override" removes the key; On and Off write explicit booleans.
+    /// User tab: Project removes the key; On and Off write explicit booleans.
     func setOverride(_ component: Component, to choice: OverrideChoice) {
         guard !component.required else { return }
         objectWillChange.send()
@@ -100,12 +100,14 @@ final class ConfigureModel: ObservableObject {
         editingLocal && !component.required && configuration.overrides[component.id] == nil
     }
 
-    /// The other tab's value for an overridden component, shown beside it.
+    /// On Project, the user's value for an overridden component, shown beside it. User has no badge:
+    /// an overridden row's title is drawn in the accent color instead.
     func badge(for component: Component) -> String? {
-        guard let userValue = configuration.overrides[component.id] else { return nil }
-        let value = editingLocal ? configuration.selected.contains(component.id) : userValue
-        return (editingLocal ? "Project" : "User") + ": " + (value ? "On" : "Off")
+        guard !editingLocal, let userValue = configuration.overrides[component.id] else { return nil }
+        return "User: " + (userValue ? "On" : "Off")
     }
+
+    func isOverridden(_ component: Component) -> Bool { configuration.overrides[component.id] != nil }
 
     // MARK: Categories
 
@@ -133,9 +135,11 @@ final class ConfigureModel: ObservableObject {
         }
     }
 
-    func isDimmed(_ section: Section) -> Bool {
-        editingLocal && !optionalIDs(section).contains { configuration.overrides[$0] != nil }
-    }
+    /// A category with any overridden member is drawn in the accent color on both tabs, so overrides
+    /// can be found without expanding.
+    func hasOverrides(_ section: Section) -> Bool { optionalIDs(section).contains { configuration.overrides[$0] != nil } }
+
+    func isDimmed(_ section: Section) -> Bool { editingLocal && !hasOverrides(section) }
 
     func toggleExpanded(_ section: Section) {
         if expanded.contains(section.id) { expanded.remove(section.id) } else { expanded.insert(section.id) }

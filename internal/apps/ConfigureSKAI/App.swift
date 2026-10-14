@@ -140,6 +140,8 @@ private let contentLeading: CGFloat = 24
 private let disclosureGutter: CGFloat = 16
 /// Indent from a checkbox to its title text, so descriptions align under titles.
 private let checkboxTitleIndent: CGFloat = 21
+/// Width of the User tab's override menu, fixed so titles and descriptions align across rows.
+private let overrideMenuWidth: CGFloat = 92
 
 struct ConfigureView: View {
     @ObservedObject var model: ConfigureModel
@@ -254,13 +256,13 @@ struct CategorySection: View {
                     // No category control on User: overrides are set per component.
                     Text(section.name)
                         .font(.system(size: 15, weight: .bold))
-                        .foregroundColor(model.isDimmed(section) ? .secondary : .primary)
-                        .padding(.leading, checkboxTitleIndent)
+                        .foregroundColor(model.hasOverrides(section) ? .accentColor : .secondary)
                 } else {
                     TriStateCheckbox(state: model.state(of: section), action: { model.click(section) }) {
                         Text(section.name)
                             .font(.system(size: 15, weight: .bold))
-                            .foregroundColor(model.isEnabled(section) ? .primary : Color(nsColor: .disabledControlTextColor))
+                            .foregroundColor(!model.isEnabled(section) ? Color(nsColor: .disabledControlTextColor)
+                                             : model.hasOverrides(section) ? .accentColor : .primary)
                     }
                     .disabled(!model.isEnabled(section))
                 }
@@ -269,7 +271,7 @@ struct CategorySection: View {
                 Text(description)
                     .font(.system(size: 12)).foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.leading, disclosureGutter + checkboxTitleIndent)
+                    .padding(.leading, disclosureGutter + (model.editingLocal ? 0 : checkboxTitleIndent))
                     .padding(.top, 3)
             }
             if expanded {
@@ -292,29 +294,32 @@ struct ComponentRow: View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 12) {
                 if model.editingLocal {
+                    // The override menu sits where the Project tab's checkbox is; required components get
+                    // an empty slot of the same width so titles line up.
+                    Group {
+                        if component.required {
+                            Color.clear
+                        } else {
+                            Picker("Override", selection: Binding(get: { model.overrideChoice(of: component) },
+                                                                  set: { model.setOverride(component, to: $0) })) {
+                                ForEach(OverrideChoice.allCases, id: \.self) { Text($0.title).tag($0) }
+                            }
+                            .pickerStyle(.menu)
+                            .labelsHidden()
+                        }
+                    }
+                    .frame(width: overrideMenuWidth, height: 20)
                     Text(component.title + (component.required ? " · Always installed" : ""))
                         .font(.system(size: 13))
-                        .foregroundColor(component.required ? Color(nsColor: .disabledControlTextColor) : (model.isDimmed(component) ? .secondary : .primary))
-                        .padding(.leading, checkboxTitleIndent)
+                        .foregroundColor(component.required ? Color(nsColor: .disabledControlTextColor)
+                                         : model.isOverridden(component) ? .accentColor : .secondary)
                         .help(component.id)
-                    if let badge = model.badge(for: component) {
-                        Text(badge).font(.system(size: 11, weight: .semibold)).foregroundColor(.accentColor)
-                    }
-                    Spacer(minLength: 12)
-                    if !component.required {
-                        Picker("Override", selection: Binding(get: { model.overrideChoice(of: component) },
-                                                              set: { model.setOverride(component, to: $0) })) {
-                            ForEach(OverrideChoice.allCases, id: \.self) { Text($0.title).tag($0) }
-                        }
-                        .pickerStyle(.menu)
-                        .labelsHidden()
-                        .fixedSize()
-                    }
                 } else {
                     TriStateCheckbox(state: model.state(of: component), action: { model.click(component) }) {
                         Text(component.title + (component.required ? " · Always installed" : ""))
                             .font(.system(size: 13))
-                            .foregroundColor(component.required ? Color(nsColor: .disabledControlTextColor) : .primary)
+                            .foregroundColor(component.required ? Color(nsColor: .disabledControlTextColor)
+                                             : model.isOverridden(component) ? .accentColor : .primary)
                     }
                     .disabled(component.required)
                     .help(component.id)
@@ -327,7 +332,7 @@ struct ComponentRow: View {
                 Text(description)
                     .font(.system(size: 12)).foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.leading, checkboxTitleIndent)
+                    .padding(.leading, model.editingLocal ? overrideMenuWidth + 12 : checkboxTitleIndent)
             }
         }
     }

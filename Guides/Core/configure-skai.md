@@ -82,13 +82,13 @@ No browser, web server, custom URL scheme, Playwright, or runtime Xcode installa
 
 No project config checks all optional entries; an existing project config checks only its selection.
 The **Project** tab uses ordinary checkboxes; a category checkbox selects or clears its members and
-shows a dash when only some are selected. The **User** tab sets each component from a menu: Don't
-override, On or Off. Don't override omits the key; On and Off are explicit booleans in local config.
-Categories have no control on User. Overridden rows have blue **User: On/Off** labels on Project and
-**Project: On/Off** labels on User, showing the other setting’s value;
-on User, inherited component names are subtly dimmed, as are categories with no overridden
-components. A category retains normal contrast when any child is overridden on or off. Rows show
-the component name, description and any override badge. Categories start collapsed; the chevron
+shows a dash when only some are selected. The **User** tab sets each component from a menu in the
+checkbox's place: Project, On or Off. Project omits the key; On and Off are explicit booleans in local config.
+Categories have no control on User. An overridden component's name is blue on both tabs; on
+Project it also carries a blue **User: On/Off** label showing the user's value. On User, inherited
+component names are subtly dimmed, as are categories with no overridden components. On both tabs a category
+name is blue when any of its components is overridden, so overrides can be found without expanding. Rows show the component name, description and, on
+Project, any override badge. Categories start collapsed; the chevron
 beside each shows its components, and on Project the category checkbox works either way. Components the host
 has never seen (new in this checkout; see *New components* in `component-selection.md`) are listed
 first, checked, under **New 🔥 — configure to use** until Save, which moves the checked ones into

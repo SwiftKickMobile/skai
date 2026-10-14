@@ -504,11 +504,12 @@ Project selections live in `skai/config.json`. Private overrides live in gitigno
 }
 ```
 
-In the User tab, each component has a menu: **Don't override** omits the key, **On** writes `true`
-and **Off** writes `false`. Categories have no control on User.
-The User tab shows the override count. Overridden rows show blue **User: On/Off** labels on Project
-and **Project: On/Off** labels on User, displaying the other setting’s value. On User, inherited component names are subtly dimmed; category names are dimmed when none
-of their components has an override.
+In the User tab, each component has a menu in the checkbox's place: **Project** omits the key,
+**On** writes `true` and **Off** writes `false`. Categories have no control on User.
+The User tab shows the override count. An overridden component's name is blue on both tabs, as is
+the name of any category containing one; on Project the row also shows a blue **User: On/Off**
+label with the user's value. On User, inherited component names and categories without overrides
+are subtly dimmed.
 Local settings take precedence; local-only edits leave project config untouched. The installer
 also ignores `skai/install-state.local.json`, where local effective installation history is recorded.
 Turning on a component locally can require migration of shared collateral under normal installation
