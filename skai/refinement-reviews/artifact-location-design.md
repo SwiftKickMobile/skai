@@ -28,7 +28,8 @@ from the presence of a submodule.
    2026-10-13 after dry runs questioned a linked path against the fixed roots, searched before
    blocking, and used a design-file URL found inside a change package). The fixed roots of decision 1 govern where a new
    artifact goes; an existing artifact is where its link points. No guide describes how the README
-   is structured (no "resources table", no row names).
+   is structured (no "resources table", no row names) for the agent reading it; the hosting guide's
+   suggested entry (decision 7) is for writing a link where the README has no format of its own.
 3. **If information is missing, the agent blocks.** It is not the agent's job to distrust
    instructions or audit whether they are correct. No guide teaches discovery, fallback or
    verification of what the supervisor supplied: no scanning for packages, no "or established
@@ -47,6 +48,21 @@ from the presence of a submodule.
 6. **The Integration doc records no artifact locations.** The `requirements` and `design-specs`
    managed blocks are gone (removed 2026-10-13); the installer proposes removing a legacy block as
    cleanup after the README link exists.
+7. **A link entry is name, link and description** (supervisor, 2026-10-14). The hosting guide
+   suggests that shape for a README with no format for artifact links; a README's existing format
+   supersedes it. The description is what tells an agent whether to open the artifact, so the
+   guide gives the test it must pass: a reader who has not opened the artifact can tell from the
+   description alone whether their current question is answered there. From that follow: say what
+   questions it answers rather than what it contains; name the scope, so the reader also knows
+   what is not in it; do not restate the name, the format or how it was made; one sentence. A
+   repository column is optional, worth adding only when the path does not make the repository
+   obvious; the agent follows the link and gets nothing from the column.
+8. **Two READMEs when the repositories differ** (supervisor, 2026-10-14). The artifact is linked
+   from the README the agent reads, which is its lookup, and also from the README of the
+   repository that holds the artifact when that is a different repository, for anyone who opens
+   that repository on its own, including other teams it is shared with. Same entry in both, path
+   relative to each; the description cannot lean on the host project's context, because the
+   hosting repository's README may be read without it.
 
 ## Holes Already Found
 
@@ -55,6 +71,9 @@ from the presence of a submodule.
 - The design file cannot be bootstrapped by authoring; decision 4 applies to the three file
   artifacts. A project with no linked design file is blocked, correctly.
 - Every baseline's repository is the supervisor's call, never inferred.
+- The hosting guide said "add the README link" without saying what an entry is or that a hosting
+  repository has a README of its own. In SalesPro the context repository's README had no design
+  specs row while the host's did (found 2026-10-14).
 - Moving `requirements/` and `design-specs/` under `skai/` keeps their links to each other intact
   (same depth) but changes the depth of links from change packages and from the app README by
   one; migration must repair those.
@@ -73,7 +92,7 @@ and its paths; the content rules of any artifact (format, IDs, writing style).
 
 ## What Simple Looks Like
 
-- One shared guide for hosting, read only when the artifact does not exist yet. No size cap; the supervisor judges the draft (2026-10-13).
+- One shared guide for hosting, read only when the artifact does not exist yet. No size cap; the supervisor judges the draft (2026-10-13). It carries the entry shape, the description test and the two-README rule, since it is the one place a link is written.
 - Each authoring guide: one sentence pointing at it. Every other guide: nothing about location.
 - The instruction block line is the only runtime statement of where resources are found.
 - Net guide text shrinks; a refinement that adds location text anywhere else has failed.
@@ -85,3 +104,4 @@ and its paths; the content rules of any artifact (format, IDs, writing style).
 - Scanning `skai/changes/` and "multiple candidates" blocked gates: rejected.
 - Temporary README links to change packages: rejected.
 - Enumerating artifacts or README structure in the instruction line: rejected ("myopic").
+- A required repository column in the link entry: rejected; the link path is what the agent follows.

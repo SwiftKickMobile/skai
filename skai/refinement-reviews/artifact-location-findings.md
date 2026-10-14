@@ -45,3 +45,8 @@ Round 9 (series D, with the observed failure) scored 2.5: one accepted, one clos
 Round 10 (series D) raised no live finding: convergence by clean round over the final text, with the round-9 deletion included. Pass 1 closed.
 | 2026-10-13 (from the addenda pass) | The block's "unavailable even when something else names it" could be read to forbid a lookup a guide prescribes by path (the addendum) | logged | No occurrence; the addendum footer says "if it exists", which is a guide-directed path, not a README resource. Revisit on an observed refusal |
 | 2026-10-14 (addenda tests) | A clean run (design-specs backfill) planned to use the Figma link in the package's Inputs for V5 despite the README linking no design file | logged (second sighting of the in-package-URL case, after the clause) | Planned, not executed; the other nine runs respected the rule. Watch for a third |
+
+Pass 2 (2026-10-14): spec decisions 7 (link entry: name, link, description; description test; repository column optional) and 8 (two READMEs when repositories differ); `artifact-hosting.md` gained three sections. New series E.
+| 2026-10-14 p2 r11 | F1 The hosting guide's example description leaned on host context ("the app") and described organization, failing the guide's own description test | closed | Example replaced with a LumenNotes-scoped description naming the questions answered |
+
+Pass 2 converged by a clean round: round 12 (series E) raised no finding. Rounds: r11 E 1.875 · r12 E 0. Hosting guide 28 → 48 lines.
