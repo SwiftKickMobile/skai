@@ -59,6 +59,11 @@ printed when the guide says to and, when an agent's only output is a final repor
 Interviewed agents had read the footer but took it as "find the addendum", not as required output,
 and "now" at the end of a long guide read as a note.
 
+**Bullet dropped (supervisor, 2026-10-14):** the guide line is printed without a bullet
+(`📖 SKAI guide: <name>`), matching gate lines; the addendum line keeps its bullet and is indented
+two spaces under it (`  - 📎 Addendum loaded`). A bullet under a plain line still renders offset from
+it, so the parent bullet was carrying nothing.
+
 **Headroom (supervisor, 2026-10-14):** if testing shows the shortened footer is not effective, one
 more sentence may be added. No more than that without a new decision.
 

@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Figma Designer Guide: Multiple Target Sizes
 
-Print `- 📖 SKAI guide: figma-designer-guide-multiple-sizes` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: figma-designer-guide-multiple-sizes` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 For a file whose `Conventions` list more than one target size. It extends the
 [Figma Designer Guide](figma-designer-guide.md); a file with one target size never needs it. Examples
@@ -39,5 +39,5 @@ call the sizes `Compact` and `Wide`.
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/figma-designer-guide-multiple-sizes-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

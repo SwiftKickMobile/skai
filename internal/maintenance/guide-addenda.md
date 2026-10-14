@@ -13,7 +13,7 @@ The initial addendum lookup is in the active project's `skai/addenda/`. That ent
 Insert this cue immediately after the guide's first title, before any procedure or content is applied:
 
 ```markdown
-Print `- 📖 SKAI guide: <guide-name>` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: <guide-name>` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 ```
 
 Append this footer, replacing `<guide-name>` with the published lookup name:
@@ -22,7 +22,7 @@ Append this footer, replacing `<guide-name>` with the published lookup name:
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/<guide-name>-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.
 ```
 

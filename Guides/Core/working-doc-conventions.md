@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Working Document Conventions
 
-Print `- 📖 SKAI guide: working-doc-conventions` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: working-doc-conventions` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Working documents (planning docs, work specs, test work docs, test artifacts) are ephemeral files that track in-progress work. They live under `skai/working-docs/`, are organized by git branch, and are grouped into named session folders so multiple efforts on the same branch do not collide.
 
@@ -70,5 +70,5 @@ Notes:
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/working-doc-conventions-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

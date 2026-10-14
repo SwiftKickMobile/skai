@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Update Installation Guide
 
-Print `- 📖 SKAI guide: update-installation-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: update-installation-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Updates the `skai` submodule and re-runs installed adapter runbooks.
 
@@ -179,5 +179,5 @@ change in what the agent can do is visible in the transcript. Then complete the 
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/update-installation-guide-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

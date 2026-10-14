@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # UI Map — Jetpack Compose Reference
 
-Print `- 📖 SKAI guide: ui-map-compose` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: ui-map-compose` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Platform reference for implementing a UI Map in Jetpack Compose. Companion to [`ui-map-guide.md`](ui-map-guide.md), which defines the platform-agnostic YAML format.
 
@@ -233,5 +233,5 @@ Effects come from:
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/ui-map-compose-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

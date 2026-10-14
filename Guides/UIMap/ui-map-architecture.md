@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # UI Map Architecture
 
-Print `- 📖 SKAI guide: ui-map-architecture` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: ui-map-architecture` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 The architecture method for the UI Map system. Use [`ui-map-guide.md`](ui-map-guide.md) for the YAML map format and [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md) for the change-package artifact formats (map change items, change requests).
 
@@ -349,5 +349,5 @@ The TODO identifier may be a top-level `todos:` scope (e.g. `todos[scope=login]`
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/ui-map-architecture-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

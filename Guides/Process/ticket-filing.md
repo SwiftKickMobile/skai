@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Ticket filing
 
-Print `- 📖 SKAI guide: ticket-filing` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: ticket-filing` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Purpose: capture process improvement suggestions and file them as GitHub issues on the `skai` repo. Handles both ad-hoc suggestions (supervisor describes a problem or idea) and retro handoffs (drafts already written by the retro).
 
@@ -214,5 +214,5 @@ Then complete the workflow.
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/ticket-filing-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

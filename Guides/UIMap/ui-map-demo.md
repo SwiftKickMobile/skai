@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # UI Map Demo
 
-Print `- 📖 SKAI guide: ui-map-demo` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: ui-map-demo` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 A complete UI Map shown in both representations: YAML source (the source of truth) and the Mermaid render derived from it. For feedback on the format and the render.
 
@@ -239,5 +239,5 @@ flowchart LR
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/ui-map-demo-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # UI Map Implementation Artifact Formats
 
-Print `- 📖 SKAI guide: ui-map-implementation-artifacts` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: ui-map-implementation-artifacts` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 The typed formats the implementation skill produces. Read an artifact with [`ui-map-implementation.md`](ui-map-implementation.md) for Mode and control flow, the platform guide named in its `## Inputs`, and [`ui-map-guide.md`](ui-map-guide.md) for the YAML map. The architecture-side formats the implementation skill *consumes* (map change items) and *raises* (change requests) live in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md).
 
@@ -66,5 +66,5 @@ On failure, persist and link the full output, so `output` is required. On succes
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/ui-map-implementation-artifacts-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # UI Map Implementation
 
-Print `- 📖 SKAI guide: ui-map-implementation` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: ui-map-implementation` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 The implementation method for the UI Map system. It executes or specifies the code work needed to conform to an approved map and promotes an approved proposed map when one exists. Use [`ui-map-implementation-artifacts.md`](ui-map-implementation-artifacts.md) for the code-change and evidence formats this skill produces, [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md) for the map-change items it consumes and the change requests it raises, and [`ui-map-guide.md`](ui-map-guide.md) for the YAML map.
 
@@ -457,5 +457,5 @@ and link the artifact at `skai/promoted/<change-id>/ui-map/`.
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/ui-map-implementation-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

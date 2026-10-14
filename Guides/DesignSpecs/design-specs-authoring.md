@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Design Specs Authoring
 
-Print `- 📖 SKAI guide: design-specs-authoring` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: design-specs-authoring` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 - [Purpose](#purpose)
 - [The Change Package](#the-change-package)
@@ -389,5 +389,5 @@ intended artifact changes without applying them.
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/design-specs-authoring-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

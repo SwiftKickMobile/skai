@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Requirements Promotion
 
-Print `- 📖 SKAI guide: requirements-promotion` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: requirements-promotion` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 ## Purpose
 
@@ -283,5 +283,5 @@ with its archived link; resolve that catalog defect through a new scoped-change 
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/requirements-promotion-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

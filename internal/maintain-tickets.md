@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Ticket implementation session
 
-Print `- 📖 SKAI guide: maintain-tickets` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: maintain-tickets` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Purpose: work through process improvement tickets filed against this repo. The supervisor initiates a session, the agent summarizes ready tickets, they discuss approach, and the agent implements with approval.
 
@@ -207,5 +207,5 @@ After all selected tickets are implemented:
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/maintain-tickets-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

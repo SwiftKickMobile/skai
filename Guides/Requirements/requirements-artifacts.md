@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Requirements Artifact Formats
 
-Print `- 📖 SKAI guide: requirements-artifacts` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: requirements-artifacts` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 The typed formats the requirements workflows produce and consume. This is the consumer-facing layer:
 a downstream reader resolves any field or value here without reading the authoring method
@@ -203,5 +203,5 @@ Changes), `Rejected`, or `Superseded`.
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/requirements-artifacts-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

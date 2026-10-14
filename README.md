@@ -134,10 +134,10 @@ How the project owner fills it:
 Customize a guide with a project-owned, freeform Markdown file at
 `skai/addenda/<guide-name>-addendum.md`. Each guide's final **Project Addendum** section gives its
 exact filename. The agent prints the guide line on opening the guide, reads it fully, then reads the
-addendum if it exists and prints a nested line the moment it has:
+addendum if it exists and prints an indented line the moment it has:
 
 ```text
-- 📖 SKAI guide: requirements-promotion
+📖 SKAI guide: requirements-promotion
   - 📎 Addendum loaded
 ```
 

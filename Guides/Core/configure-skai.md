@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Configure SKAI
 
-Print `- 📖 SKAI guide: configure-skai` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: configure-skai` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Launch the bundled Mac app to choose optional skills and policies for the active host project.
 The app saves project-owned `skai/config.json` and sparse gitignored `skai/config.local.json`
@@ -149,5 +149,5 @@ is needed solely because the selection came from a local override. No commit, pu
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/configure-skai-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

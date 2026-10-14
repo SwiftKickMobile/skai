@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Figma Designer Guide
 
-Print `- 📖 SKAI guide: figma-designer-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: figma-designer-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Conventions for a project's Figma design file, the design source of truth for the app, for anyone
 editing it, designer or agent. They hold for any platform the app runs on. Examples use
@@ -265,5 +265,5 @@ project-specific ones stay in the project.
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/figma-designer-guide-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

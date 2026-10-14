@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Unit Test Infrastructure Guide
 
-Print `- 📖 SKAI guide: unit-test-infrastructure-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: unit-test-infrastructure-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 ## Purpose
 
@@ -693,5 +693,5 @@ See `skai/integration.md` for all infrastructure locations and naming convention
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/unit-test-infrastructure-guide-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

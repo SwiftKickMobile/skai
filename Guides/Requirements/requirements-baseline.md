@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Requirements Baseline
 
-Print `- 📖 SKAI guide: requirements-baseline` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: requirements-baseline` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Read this when [`requirements-authoring.md`](requirements-authoring.md) infers Baseline mode. Three
 things go wrong wherever every file being drafted is new, and nowhere else.
@@ -42,5 +42,5 @@ avoids all of them.
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/requirements-baseline-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Process flow (house style reference)
 
-Print `- 📖 SKAI guide: process-flow` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: process-flow` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Purpose: canonical definitions for process-flow mechanics (gates, advance intent, `auto`, and progress markers). This file is a **maintainer reference** used to ensure consistency across workflow guides. It is NOT a runtime dependency -- agents should not need to read this file during workflow execution. The operational core is inlined in each guide using the standard template defined in `internal/maintenance/gated-workflows.md`.
 
@@ -316,5 +316,5 @@ After resolution:
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/process-flow-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

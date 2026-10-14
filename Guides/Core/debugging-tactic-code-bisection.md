@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Debugging tactic: code bisection
 
-Print `- 📖 SKAI guide: debugging-tactic-code-bisection` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: debugging-tactic-code-bisection` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Purpose: isolate the smallest delta that flips a result (fail -> pass or pass -> fail) by moving in approximate half-steps, systematically, with a clean and reversible state trail.
 
@@ -143,5 +143,5 @@ Optional cleanup (permission-gated): deleting the temporary bisection branch is 
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/debugging-tactic-code-bisection-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

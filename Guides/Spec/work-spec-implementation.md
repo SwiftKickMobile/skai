@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Work Spec Implementation
 
-Print `- 📖 SKAI guide: work-spec-implementation` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: work-spec-implementation` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 ## Purpose
 
@@ -322,5 +322,5 @@ completion line.
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/work-spec-implementation-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

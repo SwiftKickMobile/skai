@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Cold-Review Prompt Template
 
-Print `- 📖 SKAI guide: cold-review-prompt-template` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: cold-review-prompt-template` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 A fill-in template for launching a **cold review** of a refinement target's guide(s) -- see `process-refinement-guide.md`. The maintainer fills the slots below and hands the result to a **fresh, no-context session** (a different session from the one that will do the refinement). The cold reviewer produces findings; the refining session consumes them.
 
@@ -164,5 +164,5 @@ Be direct and critical; prefer findings over summary; cite exact file paths and 
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/cold-review-prompt-template-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

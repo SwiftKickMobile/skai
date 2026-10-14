@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # UI Map — Jetpack Compose Placeholder Scenes
 
-Print `- 📖 SKAI guide: ui-map-compose-placeholders` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: ui-map-compose-placeholders` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 How the UI Map **implementation** skill scaffolds scenes in Jetpack Compose: skeleton + navigation, no feature content. Companion to [`ui-map-compose.md`](ui-map-compose.md) — read its **Scene file layout** and **Route enums** sections first; this doc builds on them. Load this doc while auditing, planning, or building whenever placeholder work is in scope; omit it only when no placeholder work is in scope.
 
@@ -237,5 +237,5 @@ Placeholders are skeleton + navigation only. If a scaffold seems to require feat
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/ui-map-compose-placeholders-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

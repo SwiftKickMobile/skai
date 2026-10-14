@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Process Refinement Guide
 
-Print `- 📖 SKAI guide: process-refinement-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: process-refinement-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 A process for refining a **refinement target** — the guide document(s) that tell an agent how to carry out some process — based on a cold review. Applies to any such document under development, whether or not it backs a skill.
 
@@ -204,5 +204,5 @@ The disciplines below apply when a target receives more than one refinement pass
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/process-refinement-guide-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

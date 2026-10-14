@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Maintenance retro checklist (agent + supervisor)
 
-Print `- 📖 SKAI guide: maintain-retro` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: maintain-retro` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Use this after making changes to `skai` to ensure nothing was forgotten.
 
@@ -104,5 +104,5 @@ If nothing stands out, say **"No process suggestions."**
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/maintain-retro-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

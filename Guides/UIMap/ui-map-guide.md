@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # UI Map Guide
 
-Print `- 📖 SKAI guide: ui-map-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: ui-map-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 A UI Map is a YAML document that defines every scene in an app and the routing relationships between them. The map is the single source of truth for the app's UI architecture; implementation should mirror it directly. A render script produces a visual diagram from the YAML for review.
 
@@ -333,5 +333,5 @@ The sections above define the format; these are the conventions that make a map 
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/ui-map-guide-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

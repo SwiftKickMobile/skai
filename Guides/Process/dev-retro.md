@@ -6,7 +6,7 @@ Managed-Updated-At: 2026-10-14
 
 # Dev-session retro (agent + supervisor)
 
-Print `- 📖 SKAI guide: dev-retro` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: dev-retro` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Purpose: a completeness backstop for an LLM-driven development session in a host repo. This retro covers **everything since the previous dev retro** (if any); if none, it covers the current session.
 
@@ -221,5 +221,5 @@ After all six steps, emit one gate using the precedence defined under Gates:
 ## Project Addendum
 
 If `<active-project-root>/skai/addenda/dev-retro-addendum.md` exists, read it and immediately print
-`- 📎 Addendum loaded` as a line of its own, nested under this guide's line; its rules are part of this
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.
