@@ -76,12 +76,8 @@ Workflow-specific blocked gates:
 - Readiness failure, package verification failure (`C1`–`C5`), requested draft edits, or a catalog
   contradiction making the write inconsistent return to authoring. Record the cause and use:
   `⏳ GATE: Blocked: <C# | readiness condition | requested wording | catalog contradiction> failed — <what failed>. The package returns to authoring; re-run promotion once it is resolved.`
-- Ambiguous package selection, archive collision, inaccessible references or archival failure use
-  the standard blocked gate. Mechanical post-write C7 faults are repaired in place, without rewording;
+- Archive collision, inaccessible references or archival failure use the standard blocked gate. Mechanical post-write C7 faults are repaired in place, without rewording;
   archival recovery follows *Archive the package*.
-- Missing/unfilled Integration requirements values or an unresolved shared root block; never guess
-  a path or treat an unresolved root as an empty catalog. Shape `none` is terminal: `next` cannot
-  supply a catalog.
 
 ## Advance intent
 
@@ -121,18 +117,14 @@ recovery is separate: retain C1–C7 and their evidence; never repeat a successf
 C8. Check C8 only after the move, link repair and archived verification succeed.
 
 `auto` skips review only for already-reviewed drafts; verification and other blockers still stop it.
-Under `shared`, name the outside catalog root before writing, even under `auto`.
 
 ## Initiation
 
 Begin on explicit promotion intent, including after authoring completes; authoring does not run into
-promotion automatically. Read the app's `skai/integration.md` requirements block and resolve its
-catalog repository before discovery. `skai/changes/` is relative to that repository, including shared
-roots; unknown/unresolved roots block. Name a shared destination before writing; subsequent git
-handling belongs to the supervisor.
+promotion automatically. Git handling after the write belongs to the supervisor.
 
-Scan `skai/changes/*/requirements/requirements-authoring.md` for unpromoted requirements packages;
-ignore sibling types and promoted history. Multiple candidates without a named target block. Before fresh readiness, inspect existing promotion Evidence. A recorded C7 write with mechanical
+The package is the one named or already in context; sibling types and promoted history are not
+targets. Before fresh readiness, inspect existing promotion Evidence. A recorded C7 write with mechanical
 confirmation/repair pending resumes C7 in place, even unchecked: retain C1–C6, repair/verify output
 without rewording, then check C7 and archive. Changed drafts, intervening canon or uncertain outcomes
 block reconciliation; do not reset execution or assume an unrecorded write succeeded. C7
@@ -207,7 +199,7 @@ defects do not block. Known-difference notes are observations, not obligations o
 
 ## Evidence
 
-[evidence: C1; comm -23 <(grep -ohE '^## [A-Z-]+-[0-9]+' requirements/features/reminders.md | sed 's/^## //' | sort -u) <(grep -ohE '^## [A-Z-]+-[0-9]+' skai/changes/reminder-expiry/requirements/proposed-requirements/features/reminders.md | sed 's/^## //' | sort -u); comm -12 <(grep -rhoE '^## [A-Z-]+-[0-9]+ \(retired\)' requirements/ | grep -oE '[A-Z-]+-[0-9]+' | sort -u) <(grep -rhoE '^## [A-Z-]+-[0-9]+$' skai/changes/reminder-expiry/requirements/proposed-requirements/ | grep -oE '[A-Z-]+-[0-9]+' | sort -u); no ID dropped, none renumbered, no retired ID reused]
+[evidence: C1; comm -23 <(grep -ohE '^## [A-Z-]+-[0-9]+' skai/requirements/features/reminders.md | sed 's/^## //' | sort -u) <(grep -ohE '^## [A-Z-]+-[0-9]+' skai/changes/reminder-expiry/requirements/proposed-requirements/features/reminders.md | sed 's/^## //' | sort -u); comm -12 <(grep -rhoE '^## [A-Z-]+-[0-9]+ \(retired\)' skai/requirements/ | grep -oE '[A-Z-]+-[0-9]+' | sort -u) <(grep -rhoE '^## [A-Z-]+-[0-9]+$' skai/changes/reminder-expiry/requirements/proposed-requirements/ | grep -oE '[A-Z-]+-[0-9]+' | sort -u); no ID dropped, none renumbered, no retired ID reused]
 [evidence: C2; inspection of the prefix on each touched file's line in features/_features.md; both present, no new prefix introduced]
 [evidence: C3; every ID this package's new and changed text cites, resolved against the catalog plus the drafts; 0 unresolved]
 [evidence: C4; writing-style check over the changed requirements REMIND-04, REMIND-06, REMIND-09, against Required, Forbidden and Nothing that decays in full; FAILED on REMIND-06; output: skai/changes/reminder-expiry/requirements/evidence/promotion-run1-c4.md]
@@ -229,7 +221,7 @@ Inspection and preparation results name what was checked or changed:
 [evidence: C4; REMIND-04/06/09 and glossary `Expiry window` against Required, Forbidden and Nothing that decays; no mechanisms or temporal references; all describe behavior]
 [evidence: C5; features/_features.md names expiry/dismissal; glossary Pending reminder/Expiry window point to REMIND-04/09; no unnumbered behavioral claims in the three written files]
 [evidence: C6; NOTE-04 definition rebased from the draft location to ../domains/note.md#note-04; canonical target identity unchanged; known-difference notes retained]
-[evidence: C7; wrote features/reminders.md, features/_features.md, glossary.md; 9 requirements landed; grep -E '\(D[0-9]+\)|- \[[ x]\]|🟡' requirements/features/reminders.md requirements/features/_features.md requirements/glossary.md returned nothing; inspection — destination links resolve; REMIND-07 retirement and labeled known-difference notes retained]
+[evidence: C7; wrote features/reminders.md, features/_features.md, glossary.md; 9 requirements landed; grep -E '\(D[0-9]+\)|- \[[ x]\]|🟡' skai/requirements/features/reminders.md skai/requirements/features/_features.md skai/requirements/glossary.md returned nothing; inspection — destination links resolve; REMIND-07 retirement and labeled known-difference notes retained]
 ```
 
 On failure, persist/link full output at a run-and-check-specific path so later runs cannot overwrite
@@ -277,7 +269,7 @@ C7 plus C8 with evidence means canon is written and the package is archived at
 `skai/promoted/<change-id>/requirements/`. Link its artifact and emit
 `🏁 Complete. Let me know if anything needs adjustment.`
 
-C7 alone closes the proposal and excludes it from unpromoted discovery. Newly produced packages
+C7 alone closes the proposal to authoring. Newly produced packages
 need C8; migrated historical C7-only packages instead require their separately recorded, verified
 relocation. Missing completion evidence for the applicable case needs archival recovery. Promoted drafts are not reopened or re-promoted. Name any still-Proposed request
 with its archived link; resolve that catalog defect through a new scoped-change package.

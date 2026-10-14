@@ -16,7 +16,7 @@ For platform-specific code conventions, load [`ui-map-swiftui.md`](ui-map-swiftu
 
 Implementation makes app code conform to an approved UI Map architecture or records the conformance work for a larger effort, then advances the official map when a proposed map exists. The system keeps two map files:
 
-- **Official map** — `skai/ui-map/ui-map.yaml`, the approved architecture authority; frozen while a proposed change is under review.
+- **Official map** — the approved architecture authority; frozen while a proposed change is under review.
 - **Proposed map** — `skai/changes/<change-id>/ui-map/proposed-ui-map.yaml`, the architecture the change moves toward.
 
 When a proposed map exists, implementation works against it, then **promotes** it after the Code Changes spec is approved: copy the proposed YAML to the official YAML, then regenerate the official HTML page from that official YAML, so the approved architecture advances. The proposed HTML page is a preview, not a promotion source. In Build this follows a green conforming build. In Plan the approved map intentionally leads the unchecked implementation work recorded in the artifact. Promotion and archival are the final UI Map implementation step of every run that changes the map; a no-package conformance run works against and leaves the official map unchanged.
@@ -45,14 +45,12 @@ For a new artifact the skill **infers** its run mode from context at initiation;
 
 Required:
 
-Resolve the map repository from the project's README or established map location. `skai/ui-map/` and `skai/changes/`, including this workflow's artifact, are relative to that repository. App-code paths, build/test commands, and `skai/integration.md` remain relative to the app repo. If the map repository is unknown or ambiguous, STOP at a blocked gate before auditing or writing.
-
 - The target map: when an architecture change package exists at `skai/changes/<change-id>/ui-map/`, its proposed map (`proposed-ui-map.yaml`), render, and architecture artifact (`ui-map-architecture.md`) with `## Map Changes`; otherwise the official map for a no-package conformance run. For an unexecuted proposal, a package is ready when Discussion is resolved, no request remains `Proposed`, and the proposed
 YAML, nonempty render and Map Changes are present. Recompute the difference against the **current**
 official map: every difference must have a matching Map Changes item and every item must still
 match. A mismatch returns to architecture's reopen procedure; implementation never merges or edits
 the proposal itself.
-- The official map `skai/ui-map/ui-map.yaml`, the frozen baseline the change is measured against. (For a baseline there is none yet.)
+- The official map, the frozen baseline the change is measured against. (For a baseline there is none yet.)
 - The app codebase.
 - The platform convention guide: [`ui-map-swiftui.md`](ui-map-swiftui.md) for iOS/SwiftUI or [`ui-map-compose.md`](ui-map-compose.md) for Android/Compose.
 - The matching placeholder guide whenever placeholder work is in scope during Audit, Plan, or Build: [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md) or [`ui-map-compose-placeholders.md`](ui-map-compose-placeholders.md). Omit it only when no placeholder work is in scope.
@@ -63,13 +61,12 @@ Expected when available:
 - The project's `README.md` or equivalent project-conventions doc for overrides such as modal styles, route wrappers, folder layout, or view-model conventions. Standard guide-covered patterns do not require one.
 - Scoped architecture/change collateral for the active story, and the active upstream requirement/story/bug scope.
 
-If no change package is present, conform code to the official `skai/ui-map/ui-map.yaml` as the frozen source of truth (the map is unchanged); a missing architecture artifact is not a blocker when the map and codebase are present. If the map (proposed or official) is missing, invalid, or not identifiable, STOP with a blocked gate (see *Gates*). Discover proposed maps only under `skai/changes/*/ui-map/`; sibling types and promoted packages
+If no change package is present, conform code to the official map as the frozen source of truth (the map is unchanged); a missing architecture artifact is not a blocker when the map and codebase are present. If the map (proposed or official) is missing, invalid, or not identifiable, STOP with a blocked gate (see *Gates*). The target package is the one named or already in context; sibling types and promoted packages
 are not active targets. A checked terminal promote item is closed. A recorded successful official
 write/render with incomplete archival resumes *Archive the package* only. A recorded YAML write
 with an incomplete official render instead follows *Promotion progress and restart* below; do not
 apply the unexecuted-proposal diff screen to its own partial write. Fully archived packages are not
-promoted again. Multiple plausible change packages
-with no named target make the map not identifiable; do not choose one. If the app codebase is not present, STOP with a blocked gate.
+promoted again. If the app codebase is not present, STOP with a blocked gate.
 
 ## Implementation artifact
 
@@ -319,10 +316,10 @@ Execute the terminal item in order, recording actual progress in existing `## Ev
 1. **Before the first write**, repeat Inputs' comparison against current official YAML. A stale
    change list blocks and returns to architecture; retain completed code items and re-audit the
    updated proposal. Implementation never merges map content itself.
-2. Copy proposed YAML to `skai/ui-map/ui-map.yaml`. Record the actual write outcome, identifying this
+2. Copy proposed YAML over the official map. Record the actual write outcome, identifying this
    package's proposed source and official destination, **before rendering**.
-3. Run the project override or default SKAI renderer on that official YAML, targeting
-   `skai/ui-map/ui-map.html`. Require exit 0 and a nonempty page; record command/result separately.
+3. Run the project override or default SKAI renderer on that official YAML, targeting the
+   official render beside it. Require exit 0 and a nonempty page; record command/result separately.
    Do not copy the proposed page. A failed render leaves the terminal item unchecked and blocks.
 4. Perform *Archive the package*, then check the terminal item in the archived artifact.
 

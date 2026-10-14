@@ -139,12 +139,12 @@ Map Changes. The finished architecture package remains active until implementati
 
 The workflow starts on an explicit signal — "write the UI Map architecture document", "create the baseline map", "update the UI Map", or equivalent. Whatever came before (designs, requirements, a discussion, a story, a change request, or a bug request) is context the agent digests; there is no declared mode.
 
-On the signal: digest all available inputs, infer the mode — **baseline map** or **scoped map change** — and draft Discussion. Resolve the map repository from the project's README or established map location before drafting. `skai/ui-map/` and `skai/changes/` are relative to that repository. Keep app inputs and `skai/integration.md` relative to the app repo. If the map repository is unknown or ambiguous, STOP at a blocked gate. For a baseline, resolve where the new official map will live.
+On the signal: digest all available inputs, infer the mode — **baseline map** or **scoped map change** — and draft Discussion. When the map does not exist yet, follow [`artifact-hosting.md`](../Core/artifact-hosting.md) to settle where it will live and link it from the README.
 
-Scan `skai/changes/*/ui-map/` for existing unpromoted work before creating a package: look for
-`ui-map-architecture.md`, or an implementation artifact and change requests seeding a proposal that
-architecture has not drafted yet. Such a seed uses the same package and ID, not a second folder. Reuse the matching active package; if multiple packages fit and none is named, STOP at a
-blocked gate. Check `skai/promoted/<change-id>/ui-map/` before creation too: a promoted ID/type pair
+The package is the one named or already in context: an existing `ui-map-architecture.md`, or an
+implementation artifact and change requests seeding a proposal that architecture has not drafted
+yet. Such a seed uses the same package and ID, not a second folder; reuse it rather than creating a
+second. Check `skai/promoted/<change-id>/ui-map/` before creation too: a promoted ID/type pair
 cannot be reused. A checked terminal promote item or recorded official YAML write closes the proposal to authoring;
 an incomplete render/archive follows implementation's restart procedure rather than reopening these drafts; new map changes need a new ID. Related
 requirements packages do not count as map-package candidates. Re-read the current official map on
@@ -204,7 +204,7 @@ skai/changes/<change-id>/ui-map/proposed-ui-map.yaml
 skai/changes/<change-id>/ui-map/proposed-ui-map.html
 ```
 
-Seed the proposed map from the current official map (`skai/ui-map/ui-map.yaml`); for a baseline, where no official map exists yet, start from empty. Edit the proposed map here — the official map stays frozen.
+Seed the proposed map from the current official map; for a baseline, where no official map exists yet, start from empty. Edit the proposed map here — the official map stays frozen.
 
 Add or update `## Provisional preview` in `ui-map-architecture.md` with paths to the proposed map and render and a status line saying they are provisional until Discussion resolves and Map Changes completes.
 

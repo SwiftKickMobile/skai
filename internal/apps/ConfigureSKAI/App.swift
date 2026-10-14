@@ -250,12 +250,20 @@ struct CategorySection: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel((expanded ? "Hide " : "Show ") + section.name)
-                TriStateCheckbox(state: model.state(of: section), action: { model.click(section) }) {
+                if model.editingLocal {
+                    // No category control on User: overrides are set per component.
                     Text(section.name)
                         .font(.system(size: 15, weight: .bold))
-                        .foregroundColor(model.isEnabled(section) ? (model.isDimmed(section) ? .secondary : .primary) : Color(nsColor: .disabledControlTextColor))
+                        .foregroundColor(model.isDimmed(section) ? .secondary : .primary)
+                        .padding(.leading, checkboxTitleIndent)
+                } else {
+                    TriStateCheckbox(state: model.state(of: section), action: { model.click(section) }) {
+                        Text(section.name)
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundColor(model.isEnabled(section) ? .primary : Color(nsColor: .disabledControlTextColor))
+                    }
+                    .disabled(!model.isEnabled(section))
                 }
-                .disabled(!model.isEnabled(section))
             }
             if let description = section.description, !description.isEmpty {
                 Text(description)
@@ -283,15 +291,36 @@ struct ComponentRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 12) {
-                TriStateCheckbox(state: model.state(of: component), action: { model.click(component) }) {
+                if model.editingLocal {
                     Text(component.title + (component.required ? " · Always installed" : ""))
                         .font(.system(size: 13))
                         .foregroundColor(component.required ? Color(nsColor: .disabledControlTextColor) : (model.isDimmed(component) ? .secondary : .primary))
-                }
-                .disabled(component.required)
-                .help(model.editingLocal && !component.required ? "Checked: Turn on. Unchecked: Turn off. Dash: Use project setting. Click to cycle." : component.id)
-                if let badge = model.badge(for: component) {
-                    Text(badge).font(.system(size: 11, weight: .semibold)).foregroundColor(.accentColor)
+                        .padding(.leading, checkboxTitleIndent)
+                        .help(component.id)
+                    if let badge = model.badge(for: component) {
+                        Text(badge).font(.system(size: 11, weight: .semibold)).foregroundColor(.accentColor)
+                    }
+                    Spacer(minLength: 12)
+                    if !component.required {
+                        Picker("Override", selection: Binding(get: { model.overrideChoice(of: component) },
+                                                              set: { model.setOverride(component, to: $0) })) {
+                            ForEach(OverrideChoice.allCases, id: \.self) { Text($0.title).tag($0) }
+                        }
+                        .pickerStyle(.menu)
+                        .labelsHidden()
+                        .fixedSize()
+                    }
+                } else {
+                    TriStateCheckbox(state: model.state(of: component), action: { model.click(component) }) {
+                        Text(component.title + (component.required ? " · Always installed" : ""))
+                            .font(.system(size: 13))
+                            .foregroundColor(component.required ? Color(nsColor: .disabledControlTextColor) : .primary)
+                    }
+                    .disabled(component.required)
+                    .help(component.id)
+                    if let badge = model.badge(for: component) {
+                        Text(badge).font(.system(size: 11, weight: .semibold)).foregroundColor(.accentColor)
+                    }
                 }
             }
             if let description = component.description, !description.isEmpty {

@@ -263,16 +263,18 @@ import Foundation
 
         model.editingLocal = true
         let retro = component("skill.skai-dev-retro")
-        precondition(model.state(of: retro) == .mixed && model.isDimmed(retro) && model.badge(for: retro) == nil)
-        model.click(retro); precondition(model.state(of: retro) == .on && model.badge(for: retro) == "Project: On" && !model.isDimmed(retro))
-        model.click(retro); precondition(model.state(of: retro) == .off && model.badge(for: retro) == "Project: On")
-        model.click(retro); precondition(model.state(of: retro) == .mixed && model.configuration.overrides[retro.id] == nil)
+        precondition(model.overrideChoice(of: retro) == .inherit && model.isDimmed(retro) && model.badge(for: retro) == nil)
+        model.setOverride(retro, to: .on); precondition(model.configuration.overrides[retro.id] == true && model.badge(for: retro) == "Project: On" && !model.isDimmed(retro))
+        model.setOverride(retro, to: .off); precondition(model.configuration.overrides[retro.id] == false && model.overrideChoice(of: retro) == .off)
+        model.setOverride(retro, to: .inherit); precondition(model.configuration.overrides[retro.id] == nil && model.overrideChoice(of: retro) == .inherit)
+        model.setOverride(configure, to: .off); precondition(model.configuration.overrides[configure.id] == nil)
         let process = section("Process")
-        precondition(model.state(of: process) == .mixed && model.isDimmed(process))
-        model.click(process); precondition(model.state(of: process) == .on)
-        model.click(process); precondition(model.state(of: process) == .off)
-        model.click(process); precondition(model.state(of: process) == .mixed && model.configuration.overrides.isEmpty)
-        print("PASS model: User tab cycles use project setting → on → off for components and categories, with badges and dimming")
+        precondition(model.isDimmed(process))
+        model.click(process); precondition(model.configuration.overrides.isEmpty)  // no category control on User
+        model.setOverride(retro, to: .on); precondition(!model.isDimmed(process))
+        model.setOverride(retro, to: .inherit)
+        precondition(OverrideChoice.allCases.map(\.title) == ["Don't override", "On", "Off"])
+        print("PASS model: User tab sets each component to Don't override / On / Off from a menu; categories have no control")
 
         model.selectAll(); precondition(model.overrideCount == model.configuration.optionalIDs.count)
         model.editingLocal = false

@@ -36,8 +36,9 @@ A package lives at `skai/changes/<change-id>/requirements/` and holds:
 
 Use a supplied change ID; otherwise propose a short kebab-case ID and block before creation. Derive
 branch-based proposals from its final component (`work/billing-ui` → `billing-ui`). Check active and
-promoted paths: reopen unpromoted work; a closed C7 ID/type pair needs a new ID. Archival recovery
-belongs to promotion. Create the artifact and Goal/Inputs before drafting.
+promoted paths: reopen unpromoted work; a recorded `C7` write with repair or archival pending
+returns to promotion, not drafting; a closed `C7` ID/type pair needs a new ID. Create the artifact
+and Goal/Inputs before drafting.
 
 This type owns its collateral independently of a related `ui-map/` sibling. Each package stays in
 its canonical repository; link resolved paths when repositories differ. Promotion moves this type
@@ -130,11 +131,6 @@ Planned gates for this workflow:
 Workflow-specific blocked gates:
 - Inputs are too contradictory or incomplete to draft the requirements for a subject.
 - The change ID cannot be determined from the input, so the package has no path yet.
-- The Integration doc has no `Section: requirements` block, its values are unfilled, or the shape is
-  `none` — so this project either cannot say where its catalog lives or keeps none. The resolution is the
-  supervisor filling the block's 🟡 values, or — if the block is absent entirely — re-running the skai
-  installation update. Say which applies; under `none` the stop is terminal, and `next` does not
-  resolve it.
 - A new requirement needs a prefix that collides with one already in use, and the resolution is a
   naming call rather than a placement call.
 - A file must be split into a folder, which a package cannot express — see
@@ -193,23 +189,19 @@ context the agent digests. There is no declared entry point and no declared mode
 
 On the signal:
 
-1. Read `skai/integration.md`'s `Section: requirements` block to learn this project's repository
-   shape and where the catalog lives. If it cannot answer that — or, under `shared`, the root it
-   names does not resolve — stop at the blocked gate below. **Never fall back to a literal path**,
-   and never read an unresolved root as an empty catalog. Resolve the repository that holds the catalog before scanning or creating packages: `skai/changes/` is relative to that repository, including under `shared`. Keep `skai/integration.md` relative to the app repo. If the catalog repository is unknown, STOP at a blocked gate.
+1. When the catalog does not exist yet, follow [`artifact-hosting.md`](../Core/artifact-hosting.md)
+   to settle where it will live and link it from the README.
 2. Read [`requirements-catalog.md`](requirements-catalog.md) and the existing catalog.
-3. Scan `skai/changes/*/requirements/requirements-authoring.md` in that repo. If an unpromoted package for this work already
-   exists — including one seeded by another workflow — reopen it rather than creating a second; see
-   below.
+3. If an unpromoted package for this work is named or already in context — including one seeded by
+   another workflow — reopen it rather than creating a second; see below.
 4. Otherwise resolve the change id, check its active and promoted requirements paths, and create the artifact — see *The change package* — then record
    the sources in `## Goal` and `## Inputs`.
 5. Infer the mode. Baseline: read [`requirements-baseline.md`](requirements-baseline.md) before
    reading the implementation.
 6. Draft the requirement files under `proposed-requirements/` and seed `## Discussion`.
 
-A recorded write with mechanical C7 repair pending returns to promotion, not fresh drafting.
-A package whose promotion completed — `C7` checked in its `requirements-promotion.md` — is closed; new work on
-the same subject opens a new package. A seeded package may hold only drafts and `## Discussion`; complete
+Which package to reopen, return to promotion, or create is *The change package*'s rule; new work on
+a closed subject opens a new package. A seeded package may hold only drafts and `## Discussion`; complete
 the skeleton — `## Goal`, `## Inputs`, `## Mode` — before continuing. Treat the new input as additional context; a promotion finding is named
 in the package's `requirements-promotion.md` Evidence and is fixed in the drafts, not turned into a
 Discussion item — unless the fix is itself a decision.

@@ -16,8 +16,7 @@ the supervisor confirm the result, delete the change page, and archive the packa
 Promotion refactors production to absorb the drafts; it does not redesign them. A design that needs
 changing returns the package to authoring. This guide is tool-agnostic. The conventions the designs
 must meet, and what "page", "production", and "component library" mean in the tool, live in the
-tool's own guide: load [`figma-designer-guide.md`](figma-designer-guide.md) for Figma. The project
-README's link to the design file says which tool it is.
+tool's own guide: load [`figma-designer-guide.md`](figma-designer-guide.md) for Figma.
 
 Implementing the designs in code is outside this workflow.
 
@@ -71,7 +70,6 @@ Planned gates for this workflow:
 
 Workflow-specific blocked gates:
 - The package fails a condition of the readiness screen (see *Readiness screen*).
-- More than one package is open and the signal does not name which.
 - `C1` or `C2` fails on the package: the package returns to authoring; re-run promotion once it is
   resolved. A fault in `C3` (production) or `C4` (the links) is a promotion mistake, repaired in
   place, never by redesigning; one that needs something the agent lacks (access, a library) takes
@@ -120,9 +118,7 @@ Production review gate: the supervisor looks at production before the drafts are
 The workflow starts on an explicit signal — "promote the designs", "promote this package", or
 equivalent. It is never a continuation authoring runs into on its own.
 
-Identify the package: open packages are `skai/changes/<change-id>/design/` folders whose promotion
-has not completed; `skai/promoted/` holds closed ones. More than one open with no named target is a
-blocked gate. Find the design file through the project README, and read the tool guide. If the
+The package is the one named or already in context. Read the tool guide. If the
 package already holds an unfinished `design-promotion.md`, continue it (see the marker lifecycle);
 the readiness screen below is for a new run.
 
@@ -175,7 +171,7 @@ Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution or
 
 ## Evidence
 
-[evidence: C1; script over page `pinned-notes` (bindings, names) passed, output: skai/changes/pinned-notes/evidence/promotion-run1-c1.txt; inspection of the remaining rules (components in context, kit instances linked, sample data) — no finding]
+[evidence: C1; script over page `pinned-notes` (bindings, names) passed, output: skai/changes/pinned-notes/design/evidence/promotion-run1-c1.txt; inspection of the remaining rules (components in context, kit instances linked, sample data) — no finding]
 [evidence: C2; inspection — 3 entries, 3 frames on `pinned-notes`, each entry links one frame; none extra]
 [evidence: C3; `notes` and `notes — empty` updated in place on Production; `note editor — pin menu` added below `note editor — date picker`; `Pinned Header` moved to Components → Controls, 1 instance]
 [evidence: C4; 3 links repointed to Production frames]

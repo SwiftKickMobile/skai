@@ -88,10 +88,9 @@ Read the documents and artifacts that were produced or used during this session,
 - Evidence artifacts produced during the session:
   - build/test outputs, logs, result bundles/reports, screenshots/screen recordings, crash reports, etc.
 - The canonical requirements catalog:
-  - the requirements catalog, at the root named in `skai/integration.md`'s `Section: requirements`
-    block — not a literal path, which is wrong under the `shared` shape
-- Open requirements change packages:
-  - `skai/changes/*/requirements/requirements-authoring.md` in the catalog repo named by the app Integration doc — behavior already captured but not yet promoted. Read these before step 5 so it does not re-raise what is already pending.
+  - the requirements catalog
+- Open requirements change packages supplied or used during the session — behavior already captured
+  but not yet promoted. Read these before step 5 so it does not re-raise what is already pending.
 
 If any of these inputs are missing but required to perform the retro, STOP and ask the supervisor where they are.
 
@@ -137,13 +136,13 @@ Goal: if the session discovered or clarified externally observable behavior, cap
 
 Detection is this step's work, and it is unchanged:
 - Infer externally observable or cross-component behavioral contracts from the code + evidence from this session.
-- Compare them to the existing catalog and to any open change package. Under shape `none` this
-  project keeps no catalog, so step 5 seeds nothing.
+- Compare them to the existing catalog and to those open change packages. A project with no catalog
+  seeds nothing.
 - Identify what is missing, and what is recorded but now incorrect or outdated.
 
-**Retro does not write the catalog.** Resolve the catalog repository from the app Integration doc before seeding; an unknown or unresolved root blocks rather than falling back to the app repo. Findings are seeded into that repository's `skai/changes/<change-id>/requirements/`, per `Guides/Requirements/requirements-authoring.md` — draft requirement files plus a `## Discussion` holding what this session could not settle as `- [ ] D<n>` items. Write complete requirements under the recommended reading and link each Discussion item to its affected drafts; content rules are in `Guides/Requirements/requirements-catalog.md`.
+**Retro does not write the catalog.** Findings are seeded into that repository's `skai/changes/<change-id>/requirements/`, per `Guides/Requirements/requirements-authoring.md` — draft requirement files plus a `## Discussion` holding what this session could not settle as `- [ ] D<n>` items. Write complete requirements under the recommended reading and link each Discussion item to its affected drafts; content rules are in `Guides/Requirements/requirements-catalog.md`.
 
-If a requirements package for this work is already open, add to it rather than creating a second. Check the promoted requirements path before seeding: a closed ID/type pair requires a new change ID. Leave related UI Map packages untouched. If the session found nothing, create no package and skip the requirements handoff gate.
+Which package to add to or create is the rule of `Guides/Requirements/requirements-authoring.md` § *The change package*. Leave related UI Map packages untouched. If the session found nothing, create no package and skip the requirements handoff gate.
 
 Retro seeds and hands off. It does not resolve discussion items and it does not promote; both belong to the requirements workflow.
 

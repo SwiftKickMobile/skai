@@ -1,9 +1,20 @@
 import Foundation
 import Combine
 
-/// A checkbox's displayed state. `mixed` is the dash: a category with mixed members, or (User tab)
-/// a component that uses the project setting.
+/// A Project-tab checkbox's displayed state. `mixed` is the dash: a category with some members on.
 enum CheckState { case on, off, mixed }
+
+/// A User-tab component's override, chosen from a menu: keep the project setting, or turn it on or off.
+enum OverrideChoice: Hashable, CaseIterable {
+    case inherit, on, off
+    var title: String {
+        switch self {
+        case .inherit: "Don't override"
+        case .on: "On"
+        case .off: "Off"
+        }
+    }
+}
 
 /// The window's state and every user action, kept free of view code so it can be tested directly.
 @MainActor
@@ -48,26 +59,40 @@ final class ConfigureModel: ObservableObject {
 
     // MARK: Components
 
+    /// The Project tab's checkbox for a component.
     func state(of component: Component) -> CheckState {
         if component.required { return .on }
-        if editingLocal { return configuration.overrides[component.id].map { $0 ? .on : .off } ?? .mixed }
         return configuration.selected.contains(component.id) ? .on : .off
     }
 
-    /// Project tab: on/off. User tab: use project setting → turn on → turn off → use project setting.
+    /// Project tab: toggles the component's project selection.
     func click(_ component: Component) {
         guard !component.required else { return }
         objectWillChange.send()
-        if editingLocal {
-            switch configuration.overrides[component.id] {
-            case nil: configuration.overrides[component.id] = true
-            case true?: configuration.overrides[component.id] = false
-            case false?: configuration.overrides.removeValue(forKey: component.id)
-            }
-        } else if configuration.selected.contains(component.id) {
+        if configuration.selected.contains(component.id) {
             configuration.selected.remove(component.id)
         } else {
             configuration.selected.insert(component.id)
+        }
+    }
+
+    /// The User tab's menu value for a component.
+    func overrideChoice(of component: Component) -> OverrideChoice {
+        switch configuration.overrides[component.id] {
+        case nil: .inherit
+        case true?: .on
+        case false?: .off
+        }
+    }
+
+    /// User tab: "Don't override" removes the key; On and Off write explicit booleans.
+    func setOverride(_ component: Component, to choice: OverrideChoice) {
+        guard !component.required else { return }
+        objectWillChange.send()
+        switch choice {
+        case .inherit: configuration.overrides.removeValue(forKey: component.id)
+        case .on: configuration.overrides[component.id] = true
+        case .off: configuration.overrides[component.id] = false
         }
     }
 
@@ -88,30 +113,20 @@ final class ConfigureModel: ObservableObject {
 
     func isEnabled(_ section: Section) -> Bool { !optionalIDs(section).isEmpty }
 
+    /// The Project tab's checkbox for a category. The User tab has no category control.
     func state(of section: Section) -> CheckState {
         let ids = optionalIDs(section)
         guard !ids.isEmpty else { return .on }
-        if editingLocal {
-            let values = Set(ids.map { configuration.overrides[$0] })
-            return values == [true] ? .on : (values == [false] ? .off : .mixed)
-        }
         let count = ids.filter { configuration.selected.contains($0) }.count
         return count == ids.count ? .on : (count == 0 ? .off : .mixed)
     }
 
-    /// Project tab: select all, or clear all when all are selected. User tab: cycles the whole group
-    /// through turn on → turn off → use project settings.
+    /// Project tab: select all, or clear all when all are selected.
     func click(_ section: Section) {
         let ids = optionalIDs(section)
-        guard !ids.isEmpty else { return }
+        guard !ids.isEmpty, !editingLocal else { return }
         objectWillChange.send()
-        if editingLocal {
-            switch state(of: section) {
-            case .mixed: ids.forEach { configuration.overrides[$0] = true }
-            case .on: ids.forEach { configuration.overrides[$0] = false }
-            case .off: ids.forEach { configuration.overrides.removeValue(forKey: $0) }
-            }
-        } else if ids.allSatisfy({ configuration.selected.contains($0) }) {
+        if ids.allSatisfy({ configuration.selected.contains($0) }) {
             configuration.selected.subtract(ids)
         } else {
             configuration.selected.formUnion(ids)

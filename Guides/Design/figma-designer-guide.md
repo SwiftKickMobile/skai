@@ -15,12 +15,6 @@ editing it, designer or agent. They hold for any platform the app runs on. Examp
 Designs are upstream of the UI Map, so the file's Sections and frame names need not match its
 domains or scenes.
 
-## Where the file is listed
-
-The project README's resources table has a row per main page (`Figma — production`,
-`Figma — components`, `Figma — design system`), each linking to that page, plus a row for any other
-page developers take assets from (an app icon page).
-
 ## Pages
 
 1. **Every file has three main pages.**

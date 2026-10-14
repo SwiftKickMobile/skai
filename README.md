@@ -38,6 +38,8 @@ Recommended host locations for agent-facing docs:
   - [Requirements promotion](#requirements-promotion-skill-skai-requirements-promotion)
   - [Design authoring](#design-authoring-skill-skai-design-authoring)
   - [Design promotion](#design-promotion-skill-skai-design-promotion)
+  - [Design specs authoring](#design-specs-authoring-skill-skai-design-specs-authoring)
+  - [Design specs promotion](#design-specs-promotion-skill-skai-design-specs-promotion)
   - [Unit testing](#unit-testing-skill-skai-unit-testing)
   - [Debugging](#debugging-skill-skai-debugging)
   - [Dev retro](#dev-retro-skill-skai-dev-retro)
@@ -105,7 +107,7 @@ Add a GitHub MCP server to your IDE's MCP configuration with a personal access t
 - **Managed files**: host-project files written by the installer have a required header (see [`Install/managed-header.md`](Install/managed-header.md)). The installer overwrites only files that already contain this header.
 - **Managed blocks**: project-owned files (ignore files, agent instruction files) are updated only inside a delimited block, so a project's own content around it survives updates.
 - **Instruction files**: Claude Code uses [`CLAUDE.md`](CLAUDE.md); Codex uses root [`AGENTS.md`](AGENTS.md). Their dated managed blocks share [composition guidance](Install/agent-instructions-install-update.md) and inline applicable policies; your own instructions stay outside the block.
-- **Shared artifacts**: requirements and UI Map change packages live in the repo holding their canonical catalog or map, including a shared submodule. Point the project README at those artifacts so their repo can be resolved.
+- **Shared artifacts**: requirements, design-spec and UI Map change packages live in the repo holding their canonical artifact, including a shared submodule. The project README links each canonical artifact; agents resolve the repo from that link.
 - **Change packages**: related work shares a change ID, with independent active folders `skai/changes/<change-id>/requirements/` and `skai/changes/<change-id>/ui-map/`. Promotion moves only the selected type to `skai/promoted/<change-id>/<type>/` and repairs affected links; sibling types can promote in either order. The promoted UI Map artifact may retain unchecked Plan work for downstream implementation.
 - **Legacy installs**: lookalike files without the header are treated as **legacy candidates** and are not overwritten by default (see [`Install/conflict-precedence-policy.md`](Install/conflict-precedence-policy.md)).
 
@@ -276,6 +278,7 @@ Audit an approved work-spec design against the codebase, create its concrete tas
 Create or change the app's UI Map as an architecture artifact. Produces a change package under `skai/changes/<change-id>/ui-map/` containing the architecture artifact, `proposed-ui-map.yaml`, and `proposed-ui-map.html`; the official map stays frozen during architecture.
 
 - Guide [`Guides/UIMap/ui-map-architecture.md`](Guides/UIMap/ui-map-architecture.md)
+- Hosting [`Guides/Core/artifact-hosting.md`](Guides/Core/artifact-hosting.md) — read when the artifact does not exist yet: which repository it goes in, and the README link
 - Example [`Guides/UIMap/ui-map-demo.md`](Guides/UIMap/ui-map-demo.md) -- a complete UI Map in YAML with its rendered diagram
 
 **Prerequisites:** Product/design/story inputs for a baseline map or scoped map change. Existing maps live at `skai/ui-map/ui-map.yaml`; architecture change artifacts live under `skai/changes/<change-id>/ui-map/`.
@@ -306,10 +309,11 @@ Draft behavioral requirements into a change package under `skai/changes/<change-
 
 - Guide [`Guides/Requirements/requirements-authoring.md`](Guides/Requirements/requirements-authoring.md)
 - Baseline [`Guides/Requirements/requirements-baseline.md`](Guides/Requirements/requirements-baseline.md) — read when authoring infers Baseline mode
+- Hosting [`Guides/Core/artifact-hosting.md`](Guides/Core/artifact-hosting.md) — read when the artifact does not exist yet: which repository it goes in, and the README link
 - Content rules [`Guides/Requirements/requirements-catalog.md`](Guides/Requirements/requirements-catalog.md) -- scopes, layout, requirement format, IDs, writing style
 - Formats [`Guides/Requirements/requirements-artifacts.md`](Guides/Requirements/requirements-artifacts.md) -- requirement change items and change requests
 
-**Prerequisites:** Sources describing the behavior to capture. An existing catalog at `requirements/`, or the intent to start one.
+**Prerequisites:** Sources describing the behavior to capture. An existing catalog, linked from the project README, or the intent to start one.
 
 **Phases:**
 
@@ -359,6 +363,35 @@ Move an approved package's drafts from its change page into the production desig
 
 1. **Promotion checks.** Agent screens the package for readiness, then writes an unchecked checklist: drafts meet the conventions, inventory matches the page, production absorbs the page, links repoint, page deleted. Gate: supervisor reviews what will land.
 2. **Execute.** Agent verifies and applies, then stops for the supervisor to review production in the design file. Gate: supervisor confirms; the change page is deleted and the package archived.
+
+### Design specs authoring (skill `skai-design-specs-authoring`)
+
+Draft design specs -- the rules joining a screen's design to the requirements: which drawn state shows under which condition, how data is formatted, what each control does, where the screen leads -- into a change package under `skai/changes/<change-id>/design-specs/`, resolve the questions they raise, and leave the package ready to promote. The canonical specs at `design-specs/**` stay frozen during authoring. Sources are open-ended -- a story, a requirements or design change, designer notes, an existing app to backfill from -- and the mode (baseline vs. scoped change) is inferred from the specs rather than declared. Specs speak product language only: no frame, component or node names, no appearance words, no platform names outside a known-difference note.
+
+- Guide [`Guides/DesignSpecs/design-specs-authoring.md`](Guides/DesignSpecs/design-specs-authoring.md)
+- Hosting [`Guides/Core/artifact-hosting.md`](Guides/Core/artifact-hosting.md) — read when the artifact does not exist yet: which repository it goes in, and the README link
+- Content rules [`Guides/DesignSpecs/design-specs.md`](Guides/DesignSpecs/design-specs.md) -- layout, item format, IDs, writing style, the ten verification checks
+- Formats [`Guides/DesignSpecs/design-specs-artifacts.md`](Guides/DesignSpecs/design-specs-artifacts.md) -- spec change items and change requests
+
+**Prerequisites:** The project README links the design file. The requirements the specs will cite.
+
+**Phases:**
+
+1. **Discussion.** Agent reads the drawings, the requirements and (in a backfill) the app, drafts the spec files screen by screen, and seeds topic-organized `- [ ]` items for what needs the supervisor -- a difference between the design and the app, a state the design does not draw, a product question. Specs are drafted under the recommended reading; an item whose answer is a drawing stays open until the drawing exists. A requirements gap seeds a sibling requirements package rather than being specified quietly. Gate: supervisor resolves each item.
+2. **Spec changes.** Agent runs the verification checks, then writes typed change items describing exactly the difference between the frozen specs and the drafts, each with its text inline and naming its source. Ends with `🏁 Complete.` once the package is ready to promote.
+
+### Design specs promotion (skill `skai-design-specs-promotion`)
+
+Write an approved design-spec package into the canonical specs and archive it to `skai/promoted/<change-id>/design-specs/`. Promotion verifies; it never rewrites a spec's prose. A spec promotes on the supervisor's approval, whatever the state of the implementation.
+
+- Guide [`Guides/DesignSpecs/design-specs-promotion.md`](Guides/DesignSpecs/design-specs-promotion.md)
+
+**Prerequisites:** A package whose Discussion is resolved and whose Spec Changes are written, citing only canonical requirements.
+
+**Phases:**
+
+1. **Promotion checks.** Agent screens the package for readiness, then writes an unchecked checklist: the ten verification checks, destination link preparation, the write, archival. Gate: supervisor reviews what will become canon.
+2. **Execute.** Agent runs the checks with evidence, writes the specs, moves the package to its promoted path and repairs references. A failing check returns the package to authoring; when the existing specs are the problem, the agent raises a change request instead.
 
 ### Unit testing (skill `skai-unit-testing`)
 
@@ -476,8 +509,8 @@ Project selections live in `skai/config.json`. Private overrides live in gitigno
 }
 ```
 
-In the User tab, a **dash** means Use project setting and omits the key; **checked** means Turn on
-and writes `true`; **unchecked** means Turn off and writes `false`. Click the checkbox to cycle states.
+In the User tab, each component has a menu: **Don't override** omits the key, **On** writes `true`
+and **Off** writes `false`. Categories have no control on User.
 The User tab shows the override count. Overridden rows show blue **User: On/Off** labels on Project
 and **Project: On/Off** labels on User, displaying the other setting’s value. On User, inherited component names are subtly dimmed; category names are dimmed when none
 of their components has an override.

@@ -83,31 +83,10 @@ feature entry defining the user-visible behavior. When that happens, cross-refer
 
 Scope is by behavioral domain, never by implementation grouping.
 
-## Repository shape
-
-Where the catalog lives varies by project. From any given repo there are three possibilities:
-
-- **`local`** — the catalog is, or will be, in this repo, at the root the Integration block names. A project that intends
-  to keep requirements here is `local` before the folder exists; `none` is an opt-out, not a
-  not-yet.
-- **`shared`** — the catalog is in another repo, typically pulled in as a submodule. This repo keeps
-  none of its own. Common for a pair of platform repos — an iOS app and an Android app — that
-  implement one product and therefore have one set of requirements. Change packages live with the
-  catalog: active at `skai/changes/<change-id>/requirements/`, promoted at
-  `skai/promoted/<change-id>/requirements/`, never in this one.
-- **`none`** — this project keeps no catalog, and requirements workflows skip.
-
-Every shape has exactly **one** catalog. IDs need no catalog namespace; linked citations keep the visible ID unchanged.
-
-**The shape and the catalog root are recorded in the project's Integration doc**, under the managed
-`Section: requirements` block. Read that section before reading or writing the catalog: it is what
-tells you where requirements live in this project — and under `shared`, that the path is outside
-this repo.
-
 ## Layout
 
 ```
-requirements/
+skai/requirements/
   _requirements.md              <- root index (system overview + map of scopes)
   glossary.md                   <- domain terms, and the catalog's second index
   platform/

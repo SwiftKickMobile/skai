@@ -309,9 +309,7 @@ Before Build completion, compare task evidence with later mutations and rerun on
 mutations may have invalidated. Do not add a blanket rerun when all relevant evidence remains current.
 
 After verifying implemented behavior, update or remove known-difference notes for requirements
-addressed by this work. Preserve differences that remain, including on other platforms. Resolve the
-catalog from the project's Integration requirements block, including shared roots; an unresolved
-root blocks cleanup. Change only those notes and their now-unused link definitions, never requirement
+addressed by this work. Preserve differences that remain, including on other platforms. Change only those notes and their now-unused link definitions, never requirement
 text or IDs. Issue closure alone is not verification.
 
 For Build, complete when every task is checked, required evidence is current, and no handoff remains:

@@ -4,7 +4,7 @@ Read this maintainer reference when creating or editing a workflow that authors,
 
 ## Ownership and location
 
-A change package holds a proposal against a canonical artifact and the durable record of its review and promotion. It lives in the repository holding that canonical artifact, including a shared repository or submodule. Resolve that repository before discovery or creation; an unresolved root blocks rather than falling back to the app repo. App inputs and `skai/integration.md` still belong to the app repo.
+A change package holds a proposal against a canonical artifact and the durable record of its review and promotion. It lives in the repository holding that canonical artifact, including a shared repository or submodule; the README links the artifact, and the agent instruction block says to read it first and block when a resource is not linked. App inputs and `skai/integration.md` still belong to the app repo.
 
 Use these paths, relative to the canonical repository:
 
@@ -14,13 +14,17 @@ skai/
     <change-id>/
       requirements/
       ui-map/
+      design/
+      design-specs/
   promoted/
     <change-id>/
       requirements/
       ui-map/
+      design/
+      design-specs/
 ```
 
-`<change-id>` groups related work. Each `<type>` folder is one independent package; the parent is a grouping directory, not a package. Current types are `requirements` and `ui-map`. Add future types here when defining their workflows. Each type owns all its drafts, review and execution artifacts, change requests, and evidence under its folder. Do not share evidence or requests at the grouping-directory level.
+`<change-id>` groups related work. Each `<type>` folder is one independent package; the parent is a grouping directory, not a package. Current types are `requirements`, `ui-map`, `design` and `design-specs`. Add future types here when defining their workflows. Each type owns all its drafts, review and execution artifacts, change requests, and evidence under its folder. Do not share evidence or requests at the grouping-directory level.
 
 Use a short, stable kebab-case change ID. Use a supplied ID; if it is unclear, propose one and obtain supervisor resolution before creation. When deriving a proposal from a branch, use its final component (`work/billing-ui` → `billing-ui`). Reuse the ID for related types, including in different canonical repositories, and link their resolved locations. Do not reuse a promoted ID/type pair for a new proposal.
 
@@ -45,7 +49,7 @@ explicitly supports that (UI Map Plan); archival closes the proposal, not pendin
 
 ## Creation, discovery, and reopening
 
-- Scan only `skai/changes/*/<type>/` for that workflow's active packages. Ignore siblings of other types and all `skai/promoted/` packages. Multiple plausible targets without a named package block; never choose arbitrarily.
+- The package a workflow acts on is the one named or already in context. No guide scans `skai/changes/` for candidates or chooses among several; siblings of other types and all `skai/promoted/` packages are not targets.
 - Reopen an existing unpromoted package for the same work rather than creating a duplicate. Preserve resolved decisions, stable item IDs, and prior evidence; refresh the comparison against current canon.
 - A review-ready proposal is still active. Authoring completion does not move it; only successful promotion does.
 - Canonical-write evidence distinguishes an unpromoted proposal from a package awaiting archival repair. Never redraft or re-promote canon just because such a package still occupies its active path.
@@ -86,7 +90,7 @@ After a move, repair live incoming/outgoing references and regenerate location-d
 
 For every affected authoring, promotion and caller guide, record the applicable checks:
 
-- Path formulas, discovery globs, examples, request paths and evidence paths use the type folder and resolved canonical repository.
+- Path formulas, examples, request paths and evidence paths use the type folder and the artifact's repository; no discovery globs.
 - Same-ID requirements and UI Map packages coexist; either can promote first without moving or consuming its sibling.
 - Reopen finds active work; a review-ready package stays active; a promoted package is not redrafted or re-promoted.
 - Promotion verifies canon before moving, repairs links/previews, records archived evidence, and only then marks completion.

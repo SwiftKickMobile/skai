@@ -16,11 +16,11 @@ ready to promote.
 
 Authoring edits the change page and the package; the production designs stay unchanged. This guide
 is tool-agnostic. The conventions the designs must meet live in the design tool's own guide: load
-[`figma-designer-guide.md`](figma-designer-guide.md) for Figma. The project README's link to the
-design file says which tool it is. Read the tool guide before drawing anything.
+[`figma-designer-guide.md`](figma-designer-guide.md) for Figma. Read the tool guide before drawing
+anything.
 
 The input is whatever the supervisor brings: an idea, sketches, a product brief, a requirements
-package, screenshots of an existing app. Nothing else is required.
+package, screenshots of an existing app.
 
 ## The change package
 
@@ -30,11 +30,12 @@ A package lives at `skai/changes/<change-id>/design/` and holds:
 | --- | --- |
 | `design-authoring.md` | this workflow's artifact |
 | `design-promotion.md` | promotion's artifact; may be absent |
+| `evidence/` | check output promotion persisted; may be absent |
 
 The drafts themselves live in the design file, on a **change page** named `<change-id>`. Every
 design tool SKAI supports has named pages; the tool guide says what a page is in its tool. Other
-types for the same change (`requirements/`, `ui-map/`) sit beside `design/` under the same
-`<change-id>`; promotion archives each type independently to `skai/promoted/<change-id>/<type>/`.
+types for the same change share its `<change-id>`; promotion archives each type independently to
+`skai/promoted/<change-id>/<type>/`.
 
 If the change ID is clear from the input, use it. If not, do not create the artifact yet: propose a
 short kebab-case default and stop at the blocked gate rather than guessing. Once the ID is resolved,
@@ -107,8 +108,6 @@ Planned gates for this workflow:
 
 Workflow-specific blocked gates:
 - The change ID cannot be determined from the input, so the package has no path yet.
-- The design file cannot be found: the project README's resources table does not link it (see the
-  tool guide, *Where the file is listed*).
 - The tool cannot do what a draft needs (a font it cannot load, a library it is not subscribed to).
   The tool guide names these; the resolution is the supervisor's, never a workaround.
 
@@ -150,14 +149,15 @@ equivalent. Whatever came before is context the agent digests.
 
 On the signal:
 
-1. Read the tool guide and find the design file through the project README.
-2. Scan `skai/changes/*/design/design-authoring.md`. If an unpromoted package for this work exists,
-   reopen it rather than creating a second; a package under `skai/promoted/` is closed.
+1. Read the tool guide.
+2. If a package for this work is named or already in context and promotion has not taken it up —
+   no `design-promotion.md`, or one that returned it to authoring — reopen it rather than creating
+   a second. A package promotion holds is promotion's to continue; a closed one, and new work on
+   its subject, opens a new package.
 3. Otherwise resolve the change ID, create the artifact, and record `## Goal` and `## Inputs`.
 4. Open the first Discussion phase.
 
-A package whose promotion completed (see `design-promotion.md`) is closed; new work on the same
-subject opens a new package. On reopen, resolved decisions are never disturbed: a resolved
+On reopen, resolved decisions are never disturbed: a resolved
 `- [x] D<n>` is not removed, rewritten, or renumbered; new items continue the numbering. A reopen
 that changes the designs removes `## Design Changes`, since it recorded an approval that no longer
 covers them; it is rewritten after the next approval.

@@ -2,12 +2,13 @@ Managed-By: skai
 Managed-Id: template.agent-instructions-block
 Managed-Source: Templates/agents/instructions-block.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-09
+Managed-Updated-At: 2026-10-13
 
 ## SKAI
 
 This repo uses `skai` (`<skai-root>/`) for its development process: guide-based building blocks installed as skills, and the policies below.
 
+- Read `README.md` first; it links the project's resources, and a linked resource is where the README says it is. If a resource a task needs is not linked there, it is unavailable even when something else names it: stop at a blocked gate; do not look for it.
 - Read `skai/integration.md` before running any build, test, or verification command. It is the project-owned source of truth for commands, destinations, and evidence collection.
 - To change installed SKAI components, use `skai-configure`; the installer reconciles `skai/config.json` on every install/update. Project selections are in `skai/config.json`; private `skai/config.local.json` overrides them. With neither config, all eligible components are selected.
 - Use the installed `skai-*` skills when a request matches one of their descriptions. They live in this agent's skills folder and describe themselves.

@@ -49,17 +49,12 @@ When creating/updating the Integration doc:
      - `Templates/docs/skai/integration-sections/android-gradle.md`
    - remove irrelevant managed blocks if the stack is not present (or the supervisor says omit).
    - Note: a project may use both `xcode` and `swift-package` sections (e.g., app targets built via Xcode and library submodules built as Swift packages).
-4. Insert/update the `requirements` managed block from
-   `Templates/docs/skai/integration-sections/requirements.md`. Unlike the stack sections above this
-   one is **not stack-dependent** — every project gets it, because every workflow that reads or
-   writes requirements needs to know the repository shape and where the catalog lives. A project
-   that keeps no requirements records shape `none`; that is what tells those workflows to skip.
-   - Infer where you can: an existing `requirements/` directory means shape `local` with that root.
-     Absence of one does not mean `none` — a greenfield project intending to keep requirements here
-     is `local`, and `none` is a deliberate opt-out. Do not guess `shared` — whether another repo
-     holds the catalog is the supervisor's call.
-   - See `Guides/Requirements/requirements-catalog.md` for what each shape and scope means.
-5. If required project-specific constants/mappings cannot be inferred:
+4. Where the project's canonical artifacts live is **not** recorded here: the project README links
+   them, and the agent instruction block tells every session to read it first. If an existing
+   Integration doc still carries a `requirements` or `design-specs` managed block from an earlier
+   skai, propose removing it (see *Legacy cleanup*); before removal, confirm the README links the
+   artifact the block named, or propose adding the link — a project-owned edit with its own approval.
+5. If required project-specific constants6. If required project-specific constants/mappings cannot be inferred:
    - restore/leave 🟡 markers + instruction lines in the `required-values` block
    - STOP and ask the supervisor the minimum questions needed
 

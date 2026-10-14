@@ -262,12 +262,12 @@ finish the design without another approval.
 
 Invoke sibling workflows only when their owned artifact is needed:
 
-- When `skai/ui-map/ui-map.yaml` exists in the map repo identified by the project, invoke
+- When the project has an official UI Map, invoke
   [`../UIMap/ui-map-architecture.md`](../UIMap/ui-map-architecture.md) for a new or changed scene,
   route, or domain. If no official map exists, invoke the sibling only when the supervisor approves a
   material `D#` adopting one; otherwise describe the UI design in this document. Its completed package
   becomes an input.
-- When `skai/integration.md` declares a requirements catalog, invoke
+- When the project has a requirements catalog, invoke
   [`../Requirements/requirements-authoring.md`](../Requirements/requirements-authoring.md) if existing
   shipping behavior needed by this work is absent. It owns the backfill package and its gates. The
   backfill runs here only when an open `D#` or the current slice's API Sketch cannot be resolved

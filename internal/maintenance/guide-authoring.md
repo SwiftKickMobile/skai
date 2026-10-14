@@ -8,13 +8,14 @@ All runtime guides live under a topical subdirectory within `Guides/`. Do not pl
 
 | Subdirectory | Purpose |
 |---|---|
-| `Core/` | Cross-cutting foundations: debugging, working-doc conventions, update installation |
+| `Core/` | Cross-cutting foundations: debugging, working-doc conventions, artifact hosting, update installation |
 | `Spec/` | Work spec design and implementation |
 | `Test/` | Unit testing (planning, infrastructure, writing) |
 | `Process/` | Retro, process problem reporting, ticket creation |
 | `UIMap/` | UI Map system: YAML format, platform references, architecture/implementation methods |
 | `Requirements/` | Requirements system: catalog content rules, authoring, promotion, artifact formats |
 | `Design/` | Figma design file conventions |
+| `DesignSpecs/` | Design specs system: content rules, authoring, promotion |
 
 When adding a new guide, place it in the most appropriate existing subdirectory. If none fits, propose a new subdirectory and document it here.
 

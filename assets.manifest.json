@@ -7,6 +7,7 @@
     {"name": "Setup", "description": "Configure SKAI and keep the project installation up to date."},
     {"name": "Requirements", "description": "Define, review and maintain the project’s behavioral requirements."},
     {"name": "Design", "description": "Author design changes in the project’s design file and promote them to production."},
+    {"name": "Design specs", "description": "Specify how each screen presents the requirements in its design, and promote the specs."},
     {"name": "UI Map", "description": "Describe screens and routes, then implement the approved map."},
     {"name": "Work specs", "description": "Design changes and plan their implementation."},
     {"name": "Testing", "description": "Plan coverage, prepare test infrastructure and write unit tests."},
@@ -138,6 +139,12 @@
       "tags": ["core"]
     },
     {
+      "id": "guide.artifact-hosting",
+      "type": "guide",
+      "sourcePath": "Guides/Core/artifact-hosting.md",
+      "tags": ["core"]
+    },
+    {
       "id": "guide.process-flow",
       "type": "guide",
       "sourcePath": "Guides/Core/process-flow.md",
@@ -165,12 +172,6 @@
       "id": "template.integration-section-android-gradle",
       "type": "template",
       "sourcePath": "Templates/docs/skai/integration-sections/android-gradle.md",
-      "tags": ["core"]
-    },
-    {
-      "id": "template.integration-section-requirements",
-      "type": "template",
-      "sourcePath": "Templates/docs/skai/integration-sections/requirements.md",
       "tags": ["core"]
     },
     {
@@ -577,6 +578,30 @@
       "tags": ["core"]
     },
     {
+      "id": "guide.design-specs",
+      "type": "guide",
+      "sourcePath": "Guides/DesignSpecs/design-specs.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.design-specs-authoring",
+      "type": "guide",
+      "sourcePath": "Guides/DesignSpecs/design-specs-authoring.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.design-specs-promotion",
+      "type": "guide",
+      "sourcePath": "Guides/DesignSpecs/design-specs-promotion.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.design-specs-artifacts",
+      "type": "guide",
+      "sourcePath": "Guides/DesignSpecs/design-specs-artifacts.md",
+      "tags": ["core"]
+    },
+    {
       "id": "skill.skai-requirements-authoring",
       "label": "Requirements authoring",
       "category": "Requirements",
@@ -610,6 +635,24 @@
       "description": "Move an approved design package into the production designs after supervisor review.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-design-promotion/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "skill.skai-design-specs-authoring",
+      "label": "Design specs authoring",
+      "category": "Design specs",
+      "description": "Draft and discuss design specs without changing the canonical specs.",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-design-specs-authoring/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "skill.skai-design-specs-promotion",
+      "label": "Design specs promotion",
+      "category": "Design specs",
+      "description": "Verify an approved package, write the specs and archive the package.",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-design-specs-promotion/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     }
   ]
