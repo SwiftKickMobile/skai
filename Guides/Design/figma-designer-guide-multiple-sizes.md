@@ -33,8 +33,9 @@ call the sizes `Compact` and `Wide`.
 
 5. **Chrome switches by variable.** App chrome that differs by target size (navigation, tab bar,
    header) is a local component whose `Target` variant property is bound to the `target` variable,
-   with variants that hug their content. Content goes in through component properties: overrides of
-   nested layers are lost when the variable switches the variant.
+   with variants that hug their content. Content goes in through component properties. Inside each
+   screen instance on a size page, the chrome's properties are set again to the screen component's
+   values: values set only in the screen component can be lost when the variable switches the variant.
 
 ## Project Addendum
 

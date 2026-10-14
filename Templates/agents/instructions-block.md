@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: template.agent-instructions-block
 Managed-Source: Templates/agents/instructions-block.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-13
+Managed-Updated-At: 2026-10-14
 
 ## SKAI
 

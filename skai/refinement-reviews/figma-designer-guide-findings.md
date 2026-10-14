@@ -89,3 +89,18 @@ the 17,500 cap (series 1 took the single guide from 19,899 to 17,297 before the 
 | 2026-10-12 post | Tim: how Dark colours are chosen (adding the mode, mirroring lightness) is methodology, not a file convention | closed — by ruling | Both bullets deleted from Styles 1; deviant naming, Light pins and the both-mode check remain |
 | 2026-10-12 routed | From design-authoring r1 F5: a new component a draft needs had no placement satisfying both the authoring boundary and Components 1 / Screen pages 7 | closed | Both rules now allow a change page to hold a draft's new components until promotion moves them |
 | 2026-10-12 post | SKAI Release 11 Project addendum boilerplate added to both guides (cue after the title, footer with the lookup names `figma-designer-guide` and `figma-designer-guide-multiple-sizes`) | closed — by ruling | Combined cap raised 17,500 → 19,000 for the ~750 bytes per guide of mandatory boilerplate; no rule changed. Not re-reviewed |
+
+## 2026-10-14 — series 3 (scoped: chrome content lost on size pages)
+
+Scoped review on an observed failure: following rule 5, chrome content set through properties in
+each screen component showed component defaults on every instance on a second size's page; setting
+the properties inside those instances held.
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-10-14 s3r1 | F1: rule 5 implied component properties set in the screen component survive the variant switch | closed | Rule 5 now has the chrome's properties set again inside each size-page instance; the draft's "drops whatever" and case examples dropped as broader than the evidence |
+| 2026-10-14 s3r2 | F1: "set on each screen instance" left unclear whether the values go on the screen instance or the chrome inside it | closed | "Inside each screen instance on a size page, the chrome's properties are set again to the screen component's values" |
+| 2026-10-14 s3r3 | No findings | — | Clean round over the current text |
+
+Series 3: s3r1 2.5 → s3r2 2.5 → s3r3 0; converged by a clean round. Size 17,872 → 18,007 bytes
+for both guides against the 19,000 cap; 16,674 after merging the shorter Project Addendum footer.
