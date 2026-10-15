@@ -58,3 +58,12 @@ Pass 1 converged by a clean round: round 10 (series B) raised no finding. Rounds
 | 2026-10-14 p1 r15 | F1 new-file grouping swallowed a declared move into the new file | closed | Incoming moves listed separately from a new file's own items |
 
 Pass 1 closed by supervisor ruling after round 15 (stop rule b): no unimplemented findings; rounds 11–15 scored 5 · 4.375 · 2.5 · 3.75 · 1.875, each one or two consistency defects adjacent to the prior repair. Final size 59658. Evaluation runs: clean audit (after V10's source clause) caught every critique group unaided; fresh authoring of a new screen conformed.
+| 2026-10-14 backfill b1–b2 | Authoring's check pass produced no evidence; agents reported "pass" and a cold conformance review found 10 and 12 defects (two sightings) | closed | Evidence line per check under `## Verification` before the gate; spec D10 amended |
+| 2026-10-14 backfill b1–b2 | Five rules missed at drafting in both buckets (cite-not-copy, glossary counts/position, motion as substitution, position words, static copy) | closed | ❌/✅ examples added to the three rules lacking one |
+| 2026-10-14 p1 r16 | F1 component-appearance example stated a difference, not a condition→variant mapping (twice) | closed | Example maps condition to named variant; duplicate deleted |
+| 2026-10-14 p1 r17 | F1 badge example applied pending variants outside the pending state | closed | "When pending: …" |
+| 2026-10-14 p1 r17 | F2 incoming-link repair covered moves only; retirement changes heading anchors | closed | Moves and retired headings, in authoring, artifacts and promotion C2 |
+| 2026-10-14 p1 r18 | F1 "a glossary name brings all governing items" readable as implicit inheritance | logged | No occurrence; Glossary's "never binds" governs. If it strands, delete the clause (−44 bytes) |
+
+Pass 1 re-converged by a clean round: round 18 (series B) after the post-backfill repairs (evidence per check, three examples, r16–r17 fixes). Rounds 16–18: 2.5 · 4.375 · 0. Size 59,958.
+| 2026-10-15 backfill b1–b3 | Authors' self-checks passed while a cold reviewer found 10–13 defects per bucket; proposed a required delegated cold check before the Discussion gate | rejected (supervisor) | Review mechanics are not baked into the guide; whether and when to run a cold check is a supervisory decision per package. Do not re-raise |

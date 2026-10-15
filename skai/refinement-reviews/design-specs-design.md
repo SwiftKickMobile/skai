@@ -107,6 +107,9 @@ UI Map is a technical document downstream of all three and references none of th
     language, static copy, drawn state (the agent looks, on production or any approved change
     page; unavailable access blocks), links, one home, IDs and prefixes, indexes and glossary,
     completeness. Scope is the changed items plus every touched file as a whole.
+    Authoring records one evidence line per check in its artifact before the gate (supervisor,
+    2026-10-14: two backfill rounds in which the authoring agent reported the checks passed and a
+    cold conformance review then found ten and twelve defects).
 
 ## Guide Shape
 

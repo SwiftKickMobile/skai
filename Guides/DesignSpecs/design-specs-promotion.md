@@ -144,8 +144,9 @@ Known-difference notes are observations, not obligations or markers.
 - `C1 Verification` — run [`V1`–`V10`](design-specs.md#verification-checks) with evidence per
   check. Open the design for `V5`; unavailable access blocks. Failures return to authoring.
 - `C2 Prepare destination links` — map package draft targets to canonical destinations,
-  including now-canonical requirements; retain untouched dependency targets. For moves, repoint
-  incoming spec links through the prepared package files and annotate external references (packages/work specs) with the new location.
+  including now-canonical requirements; retain untouched dependency targets. For moves or retired
+  headings, repoint incoming spec links in prepared files and annotate external references
+  (packages/work specs) with new locations.
   Preserve prose, IDs, notes and target identities; do not edit drafts. Record adjusted definitions
   or that none needed changes.
 - `C3 Write the specs` — write prepared whole files to the resolved root, creating it if absent;
@@ -168,7 +169,7 @@ Known-difference notes are observations, not obligations or markers.
 
 ## Evidence
 
-[evidence: C1/V1; UI-NOTES-01.02, UI-NOTES-02.02, UI-NOTES-05 compared with cited contracts; each adds a screen binding]
+[evidence: C1/V1; UI-NOTES-01.02, UI-NOTES-05 compared with cited contracts; each adds a screen binding]
 [evidence: C1/V3; all touched-file text checked for design-tool, platform, mechanism and code terms; platform name only in UI-NOTES-03's known-difference note]
 [evidence: C1/V5; Production › Notes: `notes`, `notes — empty`, `notes — stale` found; `notes — acknowledged reminder` named by UI-NOTES-02.02 NOT FOUND on Production or any approved change page; FAILED]
 ```

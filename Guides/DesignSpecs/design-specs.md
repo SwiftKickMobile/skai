@@ -77,7 +77,8 @@ file (`notes.md` and `trash.md` use `list-screen.md`).
 Put a rule in the first fitting home: screen; family common file under `screens/`; `shared/`
 for cross-family pieces; `global/` for patterns every screen uses (loading, errors, empty states,
 connectivity). Extract when a rule would first be written twice. Cite another spec's rule rather than copying it;
-only a declared override restates (*Citing by Reference*).
+only a declared override restates (*Citing by Reference*). ❌ a stage file repeating the family's
+heading rule · ✅ "Headings as [UI-LIST-01.02]".
 
 Create all three folders and indexes immediately. Moves preserve IDs; restructures use `move`
 items and never delete files.
@@ -187,7 +188,7 @@ The reminder badge shows the note's reminder state ([REMIND-02]), in [REMIND-02]
 | overdue | OVERDUE |
 | acknowledged | DONE |
 
-- **01** Pending looks different on a row due today and on a later day's row.
+- **01** When pending: due-today pending badge if due today; later pending badge otherwise.
 
 ## Empty State
 
@@ -294,7 +295,8 @@ Motion and transitions require words; see *What Counts as a State*.
 Quote only formats (`{N} min`, `Last refreshed {age}`), data-dependent copy (per-notebook
 empty messages, badge labels) or copy the design does not draw (a system tip's message).
 Carry these as data; the design owns other copy. Name controls by function (“a button that
-opens the app's page in device settings”), never labels. Map variable labels under the item.
+opens the app's page in device settings”), never labels: ❌ "the OK button" · ✅ "the
+acknowledgement button". Map variable labels under the item.
 
 ### Mechanism Is the Developer's
 
@@ -314,14 +316,16 @@ Never restate requirements; cite another spec's rule, or restate it only as a de
 
 - **Screen state:** different layout. Design draws it; spec binds its condition.
 - **Component appearance:** same layout, conditional styling (badge styles, heading looks,
-  placeholder glyph). Design draws variants; spec binds by product name (“pending looks
-  different on a row due today”).
+  placeholder glyph). Design draws variants; spec binds each condition to a variant by product
+  name.
 - **Data substitution:** different string, same look (per-notebook empty messages, day-heading
   text). Specify data; no drawing.
 - **Motion and polish:** transitions, animation, timing, haptics, loading/refresh feel, entrances
   and exits. Design cannot draw these and a careful developer will not add them unasked.
   Specify under the applicable item what moves, when and what it conveys (“the new row slides
   in from where it was added, so the person sees where it went”), never easing curves or pixels.
+  ❌ "the label gives way to an indicator" (a substitution, not its motion) · ✅ "the label fades
+  out as the indicator fades in".
 
 An element disappearing without moving the rest (missing date, absent contact button) is a
 component property; internal reflow does not count and not every combination is drawn.
@@ -330,8 +334,8 @@ no drawing is required, and the spec never says whether it is drawn.
 
 ### Nothing That Decays
 
-As in the catalog, omit temporal references (“as before the redesign”) and workflow state
-(“while the design is reconsidered”): the spec must survive the change's memory.
+As in the catalog, omit temporal references (“as before the redesign”) and workflow state: the
+spec must survive the change's memory.
 
 ## Verification Checks
 

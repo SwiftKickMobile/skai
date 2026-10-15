@@ -107,8 +107,9 @@ including neighbouring items.
 - **Retire:** strike through text; burn the ID.
 - **Move:** unchanged identity, omitted text, Touches `from → to`. Promotion verifies identical
   prose/resolved targets and repoints incoming links. Use move plus modify only for the same contract. Verify move identity before applying the
-  declared modify; final endpoints need not have identical text. Include incoming-link spec files
-  in drafts and in Touches after the source → destination pair.
+  declared modify; final endpoints need not have identical text.
+
+For moves and retired headings, draft incoming-link spec files; list in Touches after any move pair.
 
 **Scoped example** (LumenNotes; Discussion topics: Reminder badges, Stale notice):
 

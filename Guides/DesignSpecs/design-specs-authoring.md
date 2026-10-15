@@ -50,6 +50,7 @@ Restructure with `move` items, retaining unmoved source content.
 ## Inputs                 the sources this artifact was drafted from
 ## Mode                   Baseline | Scoped change
 ## Discussion             the open questions and resolved decisions
+## Verification           one evidence line per check, before the Discussion gate advances
 ## Spec Changes           typed change items from resolved decisions
 ## Assumptions and TODOs  what the drafts assume; unresolved gaps that need no decision; may be empty
 ## Out of scope           boundaries this package deliberately doesn't address; may be empty
@@ -92,10 +93,10 @@ Workflow-specific gate notes:
   that advances to Spec Changes.
   - Blocked: `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to Spec Changes.`
   - Planned: `⏳ GATE: Next: Discussion complete. Say "next" to advance to Spec Changes.`
-  Before the Discussion gate advances, run the drafts against the verification checks `V1`–`V10`
-  in [`design-specs.md`](design-specs.md) § Verification Checks. They are enumerated once, there,
-  so nothing is discovered late and authoring and promotion cannot drift apart. `V5` means looking
-  at the design file; a drawing not found is a Discussion item (*Undrawn States*), not a failed
+  Before the Discussion gate advances, run the drafts against `V1`–`V10` in
+  [`design-specs.md`](design-specs.md) § Verification Checks and record one evidence line per check
+  under `## Verification` (`[evidence: V<n>; <what was inspected>; <outcome>]`); a check with no
+  evidence has not run. `V5` means looking at the design file; a drawing not found is a Discussion item (*Undrawn States*), not a failed
   gate. The gate presents what the supervisor reviews; fix the artifact before gating.
 - An item whose resolution is a drawing (*Undrawn States*, *Design vs. App Differences*) stays open
   until the drawing exists and the agent has seen it, so the Discussion gate stays blocked that long.
@@ -196,9 +197,9 @@ Only observed differences become known-difference notes.
 
 Retain draft and canonical IDs. Apply
 [Modify vs. Retire](design-specs.md#modify-vs-retire); ambiguous calls need Discussion because they
-burn IDs and repoint citations. Moves retain text and repair links; classify text changes by that test.
-Include incoming-link spec files in the drafts and list them in the move's Touches after its
-source → destination pair.
+burn IDs and repoint citations. Moves preserve text; classify edits by that test. Repair links
+affected by moves or retirement in incoming-link spec drafts; list them in Touches, after
+source → destination for moves.
 
 ### Design vs. App Differences
 
@@ -255,7 +256,6 @@ With no items use: “The listed Inputs determine the proposed specs; review the
   - **Concern** Acknowledged reminders keep their badge until refresh. Only pending and overdue
     badges are drawn; [UI-NOTES-02] has no acknowledged state to bind.
   - **Proposal** Draw `notes — acknowledged reminder` on Production; the file is unmanaged.
-  - **Why** A third badge style belongs in the design.
 
 [UI-NOTES-02]: proposed-design-specs/screens/notes.md#ui-notes-02
 ```
@@ -286,8 +286,8 @@ Promotion is separately invoked and supervisor-approved; implementation and desi
 ## Artifact Maintenance
 
 Before responding, update the authoring artifact, align drafts, then emit the prescribed gate.
-Apply changes, never merely describe them. Run `V1`–`V10` before the advancing gate, even under
-`auto`; on audits run them before edits.
+Apply changes, never merely describe them. Run `V1`–`V10`, with their evidence, before the advancing
+gate, even under `auto`; on audits run them before edits.
 
 ## Project Addendum
 
