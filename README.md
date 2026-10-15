@@ -361,7 +361,7 @@ Move an approved package's drafts from its change page into the production desig
 
 ### Design specs authoring (skill `skai-design-specs-authoring`)
 
-Draft design specs -- the rules joining a screen's design to the requirements: which drawn state shows under which condition, how data is formatted, what each control does, where the screen leads -- into a change package under `skai/changes/<change-id>/design-specs/`, resolve the questions they raise, and leave the package ready to promote. The canonical specs at `design-specs/**` stay frozen during authoring. Sources are open-ended -- a story, a requirements or design change, designer notes, an existing app to backfill from -- and the mode (baseline vs. scoped change) is inferred from the specs rather than declared. Specs speak product language only: no frame, component or node names, no appearance words, no platform names outside a known-difference note.
+Draft design specs -- the rules joining a screen's design to the requirements: which drawn state shows under which condition, how data is formatted, what each control does, where the screen leads -- into a change package under `skai/changes/<change-id>/design-specs/`, resolve the questions they raise, and leave the package ready to promote. The canonical specs at `skai/design-specs/**` stay frozen during authoring; an existing open package can be audited against the guides, the checks running over every draft before any edit. Sources are open-ended -- a story, a requirements or design change, designer notes, an existing app to backfill from -- and the mode (baseline vs. scoped change) is inferred from the specs rather than declared. Specs speak product language only: no frame, component or node names, no appearance words, no platform names outside a known-difference note.
 
 - Guide [`Guides/DesignSpecs/design-specs-authoring.md`](Guides/DesignSpecs/design-specs-authoring.md)
 - Hosting [`Guides/Core/artifact-hosting.md`](Guides/Core/artifact-hosting.md) — read when the artifact does not exist yet: which repository it goes in, and the README link
@@ -372,8 +372,8 @@ Draft design specs -- the rules joining a screen's design to the requirements: w
 
 **Phases:**
 
-1. **Discussion.** Agent reads the drawings, the requirements and (in a backfill) the app, drafts the spec files screen by screen, and seeds topic-organized `- [ ]` items for what needs the supervisor -- a difference between the design and the app, a state the design does not draw, a product question. Specs are drafted under the recommended reading; an item whose answer is a drawing stays open until the drawing exists. A requirements gap seeds a sibling requirements package rather than being specified quietly. Gate: supervisor resolves each item.
-2. **Spec changes.** Agent runs the verification checks, then writes typed change items describing exactly the difference between the frozen specs and the drafts, each with its text inline and naming its source. Ends with `🏁 Complete.` once the package is ready to promote.
+1. **Discussion.** Agent reads the drawings, the requirements and (in a backfill) the app, drafts the spec files screen by screen, and seeds topic-organized `- [ ]` items for what needs the supervisor -- a difference between the design and the app, a state the design does not draw, a product question. Specs are drafted under the recommended reading; an item whose answer is a drawing stays open until the drawing exists. A requirements gap seeds a sibling requirements package rather than being specified quietly. The ten verification checks run before the gate advances. Gate: supervisor resolves each item.
+2. **Spec changes.** Agent writes typed change items describing exactly the difference between the frozen specs and the drafts, in the formats guide's shape, each naming its source. Ends with `🏁 Complete.` once the package is ready to promote.
 
 ### Design specs promotion (skill `skai-design-specs-promotion`)
 

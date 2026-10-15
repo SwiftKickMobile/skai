@@ -20,49 +20,27 @@ Print `📖 SKAI guide: design-specs-authoring` now, as a line of its own. Read 
 
 ## Purpose
 
-Draft design specs into a **change package**, resolve the questions they raise with the supervisor,
-and leave the package ready to promote.
+Draft specs into a change package, resolve supervisor questions and leave it ready to promote.
+Edit only the package and drafts. Before drafting, read [content rules and checks](design-specs.md);
+use [artifact formats](design-specs-artifacts.md) for typed changes and requests.
 
-Authoring edits the package and its drafts; the canonical specs stay unchanged. Content rules —
-layout, item format, IDs, writing style, the verification checks — live in
-[`design-specs.md`](design-specs.md). Read it before drafting. Typed formats for change items and
-change requests live in [`design-specs-artifacts.md`](design-specs-artifacts.md).
-
-Inputs are open-ended: a requirements change, a design change, designer notes, a story, an existing
-app to backfill from. The agent always proposes; Discussion items are only for what needs the
-supervisor's input.
+Inputs are open-ended: requirements, designs, designer notes, stories or an app to backfill.
+Always propose; reserve Discussion for supervisor input.
 
 ## The Change Package
 
-A package lives at `skai/changes/<change-id>/design-specs/` in the repository that holds the specs
-and holds:
-
-| Path | What it is |
-| --- | --- |
-| `design-specs-authoring.md` | this workflow's artifact |
-| `proposed-design-specs/**` | the draft spec files |
-| `change-requests/design-specs-<nnn>.md` | requests raised by promotion; may be absent |
-| `design-specs-promotion.md` | promotion's artifact; may be absent |
-| `evidence/` | check output promotion persisted; may be absent |
-
-Use a supplied change ID; otherwise propose a short kebab-case ID and block before creation. Derive
-branch-based proposals from the branch's final component (`work/pinned-notes` → `pinned-notes`).
-Check active and promoted paths: reopen unpromoted work; a promoted ID/type pair needs a new ID.
-Create the artifact and Goal/Inputs before drafting.
-
-This type owns its collateral independently of any `requirements/`, `design/` or `ui-map/` sibling
-under the same change ID. It never assumes a sibling exists; where a drawing
-was made — production or a change page, named for this change or another — is incidental, and the
-spec never references it. Promotion moves this type to `skai/promoted/<change-id>/design-specs/`,
-leaving siblings active.
+[Artifact formats § The Package](design-specs-artifacts.md#the-package) owns contents, path and
+decoupling. Use the supplied change ID; otherwise propose a short kebab-case ID and block before
+creation. For branches use the final component (`work/pinned-notes` → `pinned-notes`).
+Check active and promoted paths: reopen unpromoted work; promoted ID/type pairs need new IDs.
+Create the artifact with Goal/Inputs before drafting.
 
 ### What `proposed-design-specs/` Holds
 
-Only touched files, mirroring the specs' paths, each drafted **whole**: carrying its unchanged items,
-index lines and glossary entries. Copy existing files then edit; draft absent files fresh. New specs
-need `_design-specs.md`, `glossary.md` and all three folder indexes. Absent package files stay
-untouched; a package cannot delete a file. A restructure is `move` items, each source file keeping
-whatever was not moved.
+Mirror only touched paths, drafting whole files. Reuse existing drafts; initialize a missing
+draft from canon, or create it when canon is absent. Carry unchanged items, index lines and glossary entries. New specs require the root index,
+glossary and all three folder indexes. Absent files remain untouched; files cannot be deleted.
+Restructure with `move` items, retaining unmoved source content.
 
 ### Artifact Skeleton
 
@@ -79,14 +57,9 @@ whatever was not moved.
 
 ## Modes
 
-- **Baseline** — the specs hold nothing for the screens this package touches. Everything is an
-  addition.
-- **Scoped change** — the specs already hold items this package modifies, retires, moves or adds to.
-
-**Mode is inferred, never declared.** Read the specs: if nothing exists for the screens touched, it
-is baseline; otherwise a scoped change. When in doubt, scoped change — it degrades to the same thing
-with more explicit items. A change request is not a third mode; it is new input on an existing
-package, handled on reopen.
+Infer from the specs, never declaration: **Baseline** if nothing exists for the touched screens
+(all additions); otherwise **Scoped change** (modify, retire, move or add). In doubt, use Scoped
+change: it handles a baseline with explicit items. A change request is input on reopen, not a mode.
 
 ## Gates
 
@@ -174,217 +147,147 @@ are supervisor decisions.
 
 ## Initiation
 
-The workflow starts on an explicit signal — "write the design specs", "spec the pipeline screens",
-"backfill the specs for X", or equivalent. Whatever came before — a story, a requirements package, a
-design package, designer notes, a running app — is context the agent digests.
+Begin on explicit intent to write, backfill or audit specs; preceding stories, packages, notes
+and app observations are context.
 
-On the signal:
+1. For first specs, follow [artifact hosting](../Core/artifact-hosting.md) and add the README link.
+2. Read [content rules](design-specs.md), existing specs and affected requirements. Read the design
+   tool guide for drawing conventions and production/change pages
+   ([Figma](../Design/figma-designer-guide.md)).
+3. Reopen a named or contextual unpromoted package; otherwise resolve the ID, check active/promoted
+   paths and create its artifact with Goal/Inputs.
+4. Infer mode; read *Working a Baseline* before code.
+5. Draft under `proposed-design-specs/` and seed Discussion.
 
-1. When the specs do not exist yet, follow [`artifact-hosting.md`](../Core/artifact-hosting.md) to
-   settle where they will live and link them from the README.
-2. Read [`design-specs.md`](design-specs.md), the existing specs, and the requirements the inputs
-   touch. Learn from the design file's tool guide
-   ([`figma-designer-guide.md`](../Design/figma-designer-guide.md) for Figma) where production and
-   change pages are. Drawing conventions are the tool guide's; this guide does not restate them.
-3. If an unpromoted package for this work is named or already in context, reopen it rather than
-   creating a second.
-4. Otherwise resolve the change ID, check its active and promoted paths, create the artifact, and
-   record `## Goal` and `## Inputs`.
-5. Infer the mode. Baseline: read *Working a Baseline* before opening the code.
-6. Draft the spec files under `proposed-design-specs/` and seed `## Discussion`.
+A recorded `C3` write awaiting confirmation or archival returns to promotion. Checked `C3`
+closes the package; new work needs a new package. On every reopen, reread canon, rederive mode
+and recompute the diff. Preserve resolved `D<n>` items unchanged and unrenumbered; continue
+numbering and maintain draft links.
 
-A recorded `C3` write with confirmation or archival pending returns to promotion, not fresh
-drafting. A package whose specs are written — `C3` checked in its `design-specs-promotion.md` — is
-closed; new work on the same screens opens a new package. **Re-read the specs on every reopen**: another
-package may have promoted since, so re-derive the mode and recompute the diff. **Resolved decisions
-are never disturbed**: a resolved `- [x] D<n>` is not removed, rewritten or renumbered; new items
-continue the numbering. Keep its draft links current.
+**Audit:** on an audit request or changed guides, before any edit run `V1`–`V10` over every
+draft. Record each failure with a proposed fix in Discussion; block until resolved, then fix.
 
-When the new input is a **change request** raised by promotion, incorporate it, reject it (including
-when it is valid but belongs in a new package, which the `Reviewer Response` names), or supersede it,
-and record the outcome on the request: fill `Reviewer Response` and set `Change Request Status`.
-`Incorporated` only once the adjustment is in the drafts *and* in `## Spec Changes`; a request left
-`Proposed` blocks promotion.
+On a promotion change request, fill `Reviewer Response` and set `Change Request Status`:
+incorporate, reject (name a new package when the valid request belongs there), or supersede.
+Mark `Incorporated` only after updating both drafts and Spec Changes. `Proposed` blocks readiness.
 
 ## Drafting
 
-Work **screen by screen**. For each screen: open its drawings (production, and any change page
-whose mockups are approved), the requirements it presents, and — in a backfill — the running app and
-its code; write the spec; record what is uncertain as Discussion items; move on. Never interrupt
-drafting to seek a decision; the gate comes once, after the last screen.
+Work screen by screen: open production/approved-change drawings, requirements and, for backfills,
+the app and code; draft; record uncertainties; continue. Seek decisions only after the last screen.
 
-**Look before asking.** "What does the app do" is answered from the code and the requirements, never
-asked of the supervisor. Only genuine product intent is a Discussion item.
+Answer app-behavior questions from code and requirements; ask only about product intent. Draft
+even uncertain items using the recommended reading, linked from Discussion's Concern or Proposal.
+Drafts remain complete; Discussion holds uncertainty.
 
-**Draft the item anyway.** An open item never leaves a hole: write the item under the recommended
-reading, and link it from the item's Concern or Proposal. The drafts read as complete specs; the
-Discussion explains the uncertainty.
+Unobserved platform/service differences are package Assumptions; write specs for every app.
+Only observed differences become known-difference notes.
 
-Platform differences the agent could not observe — the other app, a remote service — are recorded
-as assumptions in `## Assumptions and TODOs`, and the spec is written for every app alike. A
-difference becomes a known-difference note only once observed on that app.
+- Draft cited files first. Cite existing draft/canonical IDs, never predictions. For mutual
+  references, draft one file, the other, then revisit.
+- One author writes drafts. Research/review may be delegated, but returned text is input only.
 
 ### Working a Baseline
 
-Three things go wrong where every file is new:
-
-- **Orient before reading the code.** Write the root index's product paragraph first, from the
-  requirements root and the design file; every draft is then held to *what the product shows*, not
-  how the code is shaped.
-- **Draft cited files first.** A citation uses an ID already present in a draft or a canonical file,
-  never a predicted one. Where two new files cite each other, draft one, then the other, then return
-  for the citations the first could not yet make.
-- **No delegated authoring.** Research and review may be delegated; what comes back is input the
-  one author drafts from, never text carried into a draft. One author holding the whole package is
-  what keeps IDs, terms and the glossary coherent.
+- Before code, write the root product paragraph from the requirements root and design: organize
+  by product, not implementation.
 
 ### Working a Scoped Change
 
-Copy each file being changed out of the specs into `proposed-design-specs/` and edit the copy,
-keeping every ID. For each item whose text changes apply *Modify vs. Retire* in
-[`design-specs.md`](design-specs.md); when the call could go either way it is a Discussion item,
-since it burns an ID and re-points every citation. An item that belongs in another file is a `move`
-— text identical, links repaired; a move that also changes the text is a move and a modify.
+Retain draft and canonical IDs. Apply
+[Modify vs. Retire](design-specs.md#modify-vs-retire); ambiguous calls need Discussion because they
+burn IDs and repoint citations. Moves retain text and repair links; classify text changes by that test.
+Include incoming-link spec files in the drafts and list them in the move's Touches after its
+source → destination pair.
 
 ### Design vs. App Differences
 
-In a backfill, the drawings and the app will disagree somewhere. Each confirmed difference is a
-Discussion item with a recommendation and two options: **the design stands** — the app is in known
-difference, noted under the item, with the tracking issue — or **the app stands** — the design is
-changed. The supervisor decides; the resolution is recorded on the item. When the app stands, the
-drawing is corrected: directly, by the agent on the supervisor's say-so, when the project's design
-file is not under change management, or through a design package
-([`design-authoring.md`](../Design/design-authoring.md)) when it is. The project's design conventions
-or Integration say which; the supervisor says who. When sources disagree or observed behavior may be
-a defect, identify the intended contract and its existing coverage first, then bring it to
-Discussion with a recommendation. Do not multiply items to enumerate instances of one defect.
+For each confirmed backfill difference, recommend one of two outcomes in Discussion:
+**design stands** (note the app's known difference with its tracking issue), or **app stands**
+(correct the drawing). Follow project conventions: direct drawing when unmanaged, otherwise a
+[design package](../Design/design-authoring.md); the supervisor assigns the work.
+For conflicting sources or suspected defects, establish the intended contract and bring one
+item, not one per instance.
 
 ### Undrawn States
 
-A rule that needs a screen state or component variant the design does not draw is a Discussion
-item with a proposal naming the drawing. First check it needs one: a different string in the same
-look is data; an element dropping out without moving the rest is a component property; standard
-system UI the app does not style is specified by condition and choices and never drawn (*What
-Counts as a State* in [`design-specs.md`](design-specs.md)). The fix is a drawing, made directly or
-through a design package as above; the item resolves when the drawing exists and the agent has seen
-it. The spec binds to the drawing by its product-language name and never says where it was drawn.
+Before requesting a drawing, apply [What Counts as a State](design-specs.md#what-counts-as-a-state):
+data, dropped elements, unstyled system UI and motion use words. A needed undrawn state/variant
+gets a Discussion proposal naming its drawing. Produce it directly or through design management
+as above; resolve only after it exists and the agent sees it. Specs use its product name, never
+its drawing location.
 
 ### Requirements Gaps
 
-A rule that belongs in the requirements — a promise the product makes regardless of screen, a
-visibility rule that narrows a requirement — is a requirements gap, never specified quietly. Seed a
-requirements package for this change, chosen by
-[`requirements-authoring.md`](../Requirements/requirements-authoring.md) § *The change package*.
-Create its artifact skeleton with `## Goal`, `## Inputs` and
-the Discussion item, and draft the requirement whole-file under its `proposed-requirements/` with
-its new ID (as that guide's *What `proposed-requirements/` holds*). Then go no further: requirements authoring is invoked separately
-and owns the item. The spec cites the draft ID — permanent from first drafting — and its promotion
-waits for the requirement's. The two packages stay decoupled otherwise.
+Never quietly specify a screen-independent promise or narrowed requirement. Seed a requirements
+package via [requirements authoring § The change package](../Requirements/requirements-authoring.md#the-change-package):
+skeleton, Goal/Inputs, Discussion item, and whole-file requirement draft with its new ID.
+Stop; requirements authoring owns resolution. Cite that permanent draft ID; spec promotion waits
+for requirement promotion.
 
 ## Discussion
 
-`## Discussion` holds the decisions this package needs from the supervisor. Topics are `###`
-subsections with their items inline. Do not create aggregator sections (`## Questions`,
-`## Open Items`) that pull items out of their topics.
+Group items under `###` topics, never aggregate them into Questions/Open Items sections.
 
-Item line: `- [ ] D<n> [Kind] <summary>`, where `[Kind]` is `[Question]`, `[Proposal]`, or
-`[Tradeoff]`. Sub-bullet labels are bold with no separator: **Concern** (always), **Proposal**,
-**Question**, **Options**, **Detail**, **Why**, and **Decision** on resolution.
+Use `- [ ] D<n> [Kind] <summary>`, with Kind `Question`, `Proposal` or `Tradeoff`.
+Bold sub-bullet labels, without separators: **Concern** (required), **Proposal**, **Question**,
+**Options**, **Detail**, **Why**, **Decision**. Recommend whenever possible; Tradeoffs name
+the preferred option and why. Reserve Questions for cases with no basis to recommend.
 
-Bring a recommendation whenever possible; Tradeoffs name the preferred option and why. Reserve
-Questions for cases with no basis to recommend.
-
-**Concerns are plain prose** that reads correctly with every ID link deleted; links supplement the
-explanation, never replace it. A Concern may name frames, nodes and code files — the restrictions
-on product language govern the spec files, not the package's prose.
+Concerns must read without ID links; links supplement prose. Package prose may name frames,
+nodes and code files.
 
 ### What Earns an Item
 
-Create items for what changes a spec and needs the supervisor: a design-vs-app difference, an
-undrawn state, a modify-or-retire call that could go either way, a placement call that could go
-either way, genuine product intent the inputs leave open. Draft fully specified behavior directly;
-assumptions record what is taken as given.
+Only supervisor-dependent spec changes: design/app differences, undrawn states, ambiguous
+modify/retire or placement calls, unresolved product intent, and audit failures.
+Draft determined behavior directly; record givens as assumptions.
 
-With no items, leave Discussion as: "The listed Inputs determine the proposed specs; review the
-drafts under `proposed-design-specs/` before they are finalized in Spec Changes." Omit this
-sentence when items exist.
+With no items use: “The listed Inputs determine the proposed specs; review the drafts under
+`proposed-design-specs/` before they are finalized in Spec Changes.” Omit when items exist.
 
-**Example** (LumenNotes — an undrawn state and a design-vs-app difference):
+**Example** (LumenNotes — undrawn state):
 
 ```markdown
 ### Reminder Badges
 
 - [ ] D1 [Proposal] The acknowledged badge is not drawn
-  - **Concern** A note whose reminder was acknowledged keeps its badge until the list is next
-    refreshed, so the person sees that the reminder was handled. The notes list is drawn with
-    pending and overdue badges only; the spec item binding the badge's states ([UI-NOTES-02]) has
-    nothing to bind the acknowledged state to.
-  - **Proposal** Draw a `notes — acknowledged reminder` state. The file is not under change
-    management, so draw it directly on Production.
-  - **Why** It is a third style of the same badge, the kind of difference the design owns.
-
-### Stale Notice
-
-- [ ] D2 [Tradeoff] The stale notice is drawn above the list; the app shows it below
-  - **Concern** The design places the stale notice above the first group, where it is seen before
-    the person starts reading. The app places it at the bottom of the list, where it is seen only
-    after scrolling everything. The spec item ([UI-NOTES-05]) is drafted to the design.
-  - **Options**
-    - A — The design stands; the app is in known difference.
-    - B — The app stands; the frame is changed.
-  - **Proposal** A.
-  - **Why** A notice about freshness is useful before reading, not after; nothing suggests the
-    app's placement was chosen.
+  - **Concern** Acknowledged reminders keep their badge until refresh. Only pending and overdue
+    badges are drawn; [UI-NOTES-02] has no acknowledged state to bind.
+  - **Proposal** Draw `notes — acknowledged reminder` on Production; the file is unmanaged.
+  - **Why** A third badge style belongs in the design.
 
 [UI-NOTES-02]: proposed-design-specs/screens/notes.md#ui-notes-02
-[UI-NOTES-05]: proposed-design-specs/screens/notes.md#ui-notes-05
 ```
 
 ### Resolution
 
-On the supervisor's explicit approval of an item: check the box and append
-`- **Decision** <resolution>.` as the last sub-bullet. The original stays visible — the decision is
-appended, never substituted or inserted into the Concern. When the decision calls for a drawing, the
-box is checked once the drawing exists and the agent has seen it; the Decision records the call and
-names the drawing by its product-language name. When the decision differs from the recommendation,
-update the draft before continuing; when the design stands over the app, add the known-difference
-note under the affected item. Keep the item's draft links aligned.
+Follow the item approval/marker lifecycle in *Advance Intent*. Preserve original text; append
+Decision last, never into Concern. For drawings, name the product-language drawing in Decision
+and check only after seeing it. Apply decisions differing from recommendations before continuing.
+If design stands, add the item's known-difference note. Maintain draft links.
 
 ## Spec Changes
 
-Written after the Discussion gate advances. Compare the specs and the drafts by prose and resolved
-link targets, ignoring only relative-path changes caused by location, and record one typed item per
-difference using [`design-specs-artifacts.md`](design-specs-artifacts.md): each item's identity a
-link to the draft, its Touches links to the draft files, the new or changed text inline. Granularity
-keys on whether the file is new.
+After Discussion advances, diff canon and drafts by prose and resolved targets, ignoring only
+location-required relative paths. Use [typed formats](design-specs-artifacts.md): one item per
+difference, granularity by file newness, identity/Touches linked to drafts, changed text inline
+for changes inside existing files.
 
-This diff is recomputable at any time. On reopen with items already written, recompute and
-reconcile: an item that still matches keeps its `S#` and justification; a new difference gets a new
-item; a difference that no longer holds loses its item. Never reset the section.
+On reopen, reconcile the recomputed diff: retain matching `S#` items and justifications, add new
+differences, remove vanished ones. Never reset the section.
 
-Then bring `## Assumptions and TODOs` and `## Out of scope` up to date, and the package is ready to
-promote. End with `🏁 Complete. Let me know if anything needs adjustment.`
+Update Assumptions/TODOs and Out of scope, then emit
+`🏁 Complete. Let me know if anything needs adjustment.`
 
-Promotion is invoked separately. A spec promotes on the supervisor's approval; promotion has no
-concern with implementation or with the design file beyond what `V5` checks.
+Promotion is separately invoked and supervisor-approved; implementation and design state beyond
+`V5` are irrelevant.
 
 ## Artifact Maintenance
 
-Through drafting and Discussion, update the artifact before speaking: revise
-`design-specs-authoring.md`, bring `proposed-design-specs/` into line with it, then end the response
-at whichever gate *Gates* prescribes. The `V1`–`V10` pass runs once, at the point the advancing gate
-would be emitted — under `auto` too, which bypasses the gate and not the pass. Do not describe
-intended artifact changes without applying them.
-
-## Cross-References
-
-- [`design-specs.md`](design-specs.md) — content rules and the verification checks
-- [`design-specs-artifacts.md`](design-specs-artifacts.md) — change item and change request formats
-- [`design-specs-promotion.md`](design-specs-promotion.md) — promoting an approved package
-- [`design-authoring.md`](../Design/design-authoring.md) — the design package, when a drawing goes
-  through change management; the tool guide it names holds the drawing conventions
-- [`requirements-authoring.md`](../Requirements/requirements-authoring.md) — the workflow that
-  receives a requirements gap
+Before responding, update the authoring artifact, align drafts, then emit the prescribed gate.
+Apply changes, never merely describe them. Run `V1`–`V10` before the advancing gate, even under
+`auto`; on audits run them before edits.
 
 ## Project Addendum
 

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+**Design specs**
+
+- 2026-10-14 **Design-specs guides refined and shortened.** After the first review of a prototype package, the four guides under `Guides/DesignSpecs/` went through fifteen cold-review rounds against an amended `skai/refinement-reviews/design-specs-design.md`. Rules added or sharpened: a semantic test for appearance (`V2`, with ❌/✅ pairs); the glossary says what a term means and is for, may carry a recognizable detail, never inventories elements, position or appearance, and is sectioned Global, Shared, then per screen family by the governing item's home (`V9`); every item opens with a statement and its requirement link, and a `##` part may carry a nonbinding line; prefixes carry their kind when the noun is abstract (`V8`, which also rejects duplicate IDs in projected canon); an override declares itself and links the rule it supersedes, the parent never names its overrides, and another spec's rule is cited, not copied (`V6`, `V7`); motion and polish are a fourth thing a spec binds, under the item, in product language (`V10`, which also traces every required binding to an item); "audit this package" is an authoring entry that runs the ten checks over every draft before any edit; one check scope (changed items plus every touched file whole); moves, retirements, readiness prerequisites and change-request routing made consistent across the four guides. Every section outside Gates and Advance Intent was rewritten for concision: 76,459 → 59658 bytes against a 60,000-byte budget. The authoring wrapper's trigger adds "audit". **Migration:** re-run the installation update to refresh the `skai-design-specs-authoring` wrapper; existing open design-spec packages should be audited under the revised guides before promotion (the audit entry in `design-specs-authoring.md` § Initiation).
+
 ## Release 13 — 2026-10-14
 
 **Design specs**
