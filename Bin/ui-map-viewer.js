@@ -41,7 +41,7 @@
   ].filter(Boolean);
 
   // hops: 1 | 2 | "all" — how far from the selection (or the chosen domains) the filter reaches.
-  const state = { selected: null, domains: new Set(), query: "", hops: 1, help: false };
+  const state = { selected: null, panel: true, domains: new Set(), query: "", hops: 1, help: false };
 
   // ---- theme ----
   try { const t = localStorage.getItem("um-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
@@ -115,9 +115,9 @@
     const pos = {}, boxes = [];
     let y = 0;
     for (const row of R) {
-      // Place boxes in groups (one source scene's boxes) so a wrap never splits a scene's boxes.
-      const groups = [];
-      for (const box of row) { const g = groups[groups.length - 1]; if (g && !box.bare && !g[0].bare && g[0].source === box.source) g.push(box); else groups.push([box]); }
+      // Each route container is its own wrap unit, so a line may break between two containers of
+      // the same scene. A wrap never splits a container: its cells always share one line.
+      const groups = row.map(box => [box]);
       let x = 0, placed = 0;
       for (const g of groups) {
         const gw = g.reduce((a, b) => a + boxW(b), 0) + (g.length - 1) * BGAP;
@@ -134,6 +134,14 @@
       }
       y += BH + ROWGAP;
     }
+    // Centre each visual line in the available width. Boxes on one line share a y, and the line's
+    // extent is its rightmost edge; offsets snap down to the 4px layout grid so borders stay crisp.
+    // A line wider than the window (a container too wide to wrap) gets no offset and stays flush left.
+    const ext = new Map();
+    for (const b of boxes) ext.set(b.y, Math.max(ext.get(b.y) || 0, b.x + b.w));
+    const dx = ly => Math.floor(Math.max(0, width - ext.get(ly)) / 8) * 4;
+    for (const b of boxes) b.x += dx(b.y);
+    for (const p of Object.values(pos)) p.x += dx(p.y - BPAD);
     return { pos, boxes, w: width, h: y - ROWGAP + 8, rows: R.length };
   }
 
@@ -189,7 +197,7 @@
 
   // ---- selection ----
   function select(id, scrollTo) {
-    state.selected = id; state.domains.clear();
+    state.selected = id; state.panel = true; state.domains.clear();
     render();
     if (scrollTo && id) flash(id, false);
   }
@@ -209,6 +217,9 @@
   }
 
   // ---- render ----
+  // Set for the one render that follows a panel dismissal: the graph keeps the place it already
+  // has on screen instead of being positioned again for the wider viewport the panel gives back.
+  let holdPlace = false;
   function render() {
     const app = $("#app");
     const prevWrap = app.querySelector(".canvasw");
@@ -216,16 +227,20 @@
     const prevGraph = prevWrap ? leaving(prevWrap) : null;   // the outgoing graph, for the animation
     const keepScroll = prevWrap ? [prevWrap.scrollTop, prevWrap.scrollLeft] : [0, 0];   // the scroll position never changes on its own
     app.innerHTML = "";
-    app.className = "app" + (state.selected ? " with-panel" : "");
+    app.className = "app" + (state.selected && state.panel ? " with-panel" : "");
     app.append(renderTop());
     const main = el("div", { class: "main" });
-    const wrap = el("div", { class: "canvasw" });
+    // A click on empty canvas clears the selection. The edges layer and the route labels are
+    // pointer-events:none, so only the canvas or the graph itself can be the target of one.
+    const wrap = el("div", { class: "canvasw",
+      onclick: e => { if (e.target === wrap || e.target.classList.contains("dag")) select(null); } });
     const panel = renderPanel();
     if (panelWasOpen) panel.classList.add("steady");
     main.append(wrap, panel);
     app.append(main);
     if (state.help) app.append(renderHelp());
     const draw = prev => {
+      const hold = holdPlace; holdPlace = false;
       const [keepTop, keepLeft] = prev ? keepScroll : [wrap.scrollTop, wrap.scrollLeft];
       wrap.innerHTML = "";
       // The layout width is the canvas minus its base side padding, whether or not the side panel is
@@ -236,15 +251,23 @@
       const shown = rows();
       const { pos, boxes, w, h } = layout(width, shown);
       // Where the filtered graph sits relative to the window (t = the graph origin's position inside the
-      // canvas's viewport) is chosen by three objectives, in priority order:
+      // canvas's viewport) is chosen by four objectives, in priority order:
       //   1. the selected cell is fully visible, not under the side panel (a safe area on the right);
-      //   2. as many cells as possible are fully visible;
-      //   3. the selected cell is as close as possible to its home: its place in the full map.
-      // Visible-cell counts only change when a cell edge crosses a window edge, so those positions are
-      // the candidates. The chosen t is then realised as a graph offset (margin) and a scroll position.
+      //   2. as much cell area as possible is visible, measured continuously: a cell clipped at one
+      //      edge still counts for the part that shows, so closing a gap always beats leaving one;
+      //   3. of what does not fit, as little as possible falls off the left edge. Overflow past the
+      //      right edge sits under the side panel and is revealed, in place, when the panel is
+      //      dismissed; overflow past the left edge can only be reached by scrolling back;
+      //   4. the selected cell is as close as possible to its home: its place in the full map.
+      // Visible area is piecewise linear in t and turns only where a cell edge crosses a window edge,
+      // so those positions are the candidates (counting whole cells instead would score two visibly
+      // different positions the same and hand the choice to 3, leaving a gap beside a clipped cell).
+      // The chosen t is then realised as a graph offset (margin) and a scroll position.
       const padL = parseFloat(cs.paddingLeft), padR = parseFloat(cs.paddingRight), padT = parseFloat(cs.paddingTop), padB = parseFloat(cs.paddingBottom);
-      let t = { x: padL - keepLeft, y: padT - keepTop };   // unchanged: cells stay where they are
-      const here = state.selected && shown !== full ? pos[state.selected] : null;
+      // prev.left/top already include any graph margin, so this is the origin as it sits on screen.
+      let t = hold && prev ? { x: prev.left - keepLeft, y: prev.top - keepTop }
+                           : { x: padL - keepLeft, y: padT - keepTop };   // unchanged: cells stay where they are
+      const here = !hold && state.selected && shown !== full ? pos[state.selected] : null;
       if (here) {
         const vis = { x0: padL, x1: wrap.clientWidth - padR, y0: padT, y1: wrap.clientHeight - padB };
         const home = layout(width, full).pos[state.selected];
@@ -255,12 +278,19 @@
         const up4 = v => Math.ceil(v / 4) * 4, down4 = v => Math.floor(v / 4) * 4;
         for (const c of cells) { candX.add(up4(vis.x0 - c.x)); candX.add(down4(vis.x1 - c.x - IW)); candY.add(up4(vis.y0 - c.y)); candY.add(down4(vis.y1 - c.y - IH)); }
         const inside = (c, tx, ty) => c.x + tx >= vis.x0 && c.x + tx + IW <= vis.x1 && c.y + ty >= vis.y0 && c.y + ty + IH <= vis.y1;
+        const seen = (c, tx, ty) => Math.max(0, Math.min(c.x + tx + IW, vis.x1) - Math.max(c.x + tx, vis.x0))
+                                  * Math.max(0, Math.min(c.y + ty + IH, vis.y1) - Math.max(c.y + ty, vis.y0));
+        const vh = (c, ty) => Math.max(0, Math.min(c.y + ty + IH, vis.y1) - Math.max(c.y + ty, vis.y0));
+        const offLeft = (c, tx, ty) => Math.max(0, Math.min(vis.x0 - (c.x + tx), IW)) * vh(c, ty);
         let best = null;
         for (const tx of candX) for (const ty of candY) {
           if (!inside(here, tx, ty)) continue;                                   // 1
-          const count = cells.reduce((a, c) => a + inside(c, tx, ty), 0);        // 2
-          const dist = Math.abs(tx - ideal.x) + Math.abs(ty - ideal.y);          // 3
-          if (!best || count > best.count || (count === best.count && dist < best.dist)) best = { tx, ty, count, dist };
+          const area = cells.reduce((a, c) => a + seen(c, tx, ty), 0);           // 2
+          const left = cells.reduce((a, c) => a + offLeft(c, tx, ty), 0);        // 3
+          const dist = Math.abs(tx - ideal.x) + Math.abs(ty - ideal.y);          // 4
+          const better = !best || area > best.area
+            || (area === best.area && (left < best.left || (left === best.left && dist < best.dist)));
+          if (better) best = { tx, ty, area, left, dist };
         }
         if (best) t = { x: best.tx, y: best.ty };
       }
@@ -338,7 +368,7 @@
     const s = state.selected && S[state.selected]; if (!s) return panel;
     const apps = appearances(s.id);
     panel.append(el("div", { class: "ph" },
-      el("div", { class: "row1" }, el("h2", {}, s.label), el("button", { class: "close", onclick: () => select(null), "aria-label": "Close" }, "×")),
+      el("div", { class: "row1" }, el("h2", {}, s.label), el("button", { class: "close", onclick: () => { holdPlace = true; state.panel = false; render(); }, "aria-label": "Close" }, "×")),
       el("p", { class: "sub" }, el("span", { class: "dom" }, el("i", { class: "dm", style: `--c:${domainColor[s.domain]}` }), `${domainLabel[s.domain]} domain`), s.todo ? ["·", "TODO"] : null)));
     const body = el("div", { class: "pbody" });
     const link = (id, kind, where) => el("button", { class: "lk", onclick: () => select(id, true) },
@@ -394,7 +424,7 @@
             row(route("composite"), "The parent embeds the child as a subview without any routing."),
             row(el("span", { class: "st static" }, "Nav", icon("note", "")), "A note is attached to this route; the parent's panel shows it.")),
           el("div", { class: "pg" }, el("span", { class: "lab" }, "Using the viewer"),
-            el("p", {}, "Click a scene to see only the scenes connected to it; the clicked scene stays where it is and the rest of the map collapses around it. 1 hop shows direct connections, 2 hops one step further, All keeps the whole map and dims what is unconnected. Click the scene again, press Escape, or use Clear to restore the map."),
+            el("p", {}, "Click a scene to see only the scenes connected to it; the clicked scene stays where it is and the rest of the map collapses around it. 1 hop shows direct connections, 2 hops one step further, All keeps the whole map and dims what is unconnected. Click the scene again, click an empty part of the map, press Escape, or use Clear to restore the map. Closing the side panel leaves the scene selected."),
             el("p", {}, "Click domains in the top bar to filter to those domains and their connections. Type in the search box to highlight scenes; Enter selects the first match.")))));
   }
 

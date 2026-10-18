@@ -185,8 +185,10 @@ the demo doc and the guide describe the same conventions in prose.
       route containers sit in the row below it as dashed boxes (composite:
       filled, no border) holding the destination cells, with the route kind as
       a label on the connector. A box is never shared between scenes, so every
-      connector runs one row down. A row too wide for the window wraps, keeping
-      one scene's boxes together.
+      connector runs one row down. A row too wide for the window wraps
+      between route containers, never inside one, so a scene's containers may
+      land on different lines. Each visual line is centred horizontally in the
+      window; a line too wide to fit stays flush left.
     - Cells: neutral boxes with the title centred (two lines, then clipped), a
       domain colour swatch top-left and icons top-right marking only the
       existence of callouts — notes, implements, modal style — whose content the
@@ -197,15 +199,23 @@ the demo doc and the guide describe the same conventions in prose.
       top bar), removes everything else and collapses empty rows. The
       selected cell, its route boxes, every box holding it, and their
       connectors and labels are highlighted; All shows the whole map and dims
-      the unconnected parts instead. Clicking the selected cell again, Escape,
-      or Clear restores the full map. The domain legend filters the same way
-      (multi-select). A search box highlights matches; Enter selects the first.
+      the unconnected parts instead. Clicking the selected cell again,
+      clicking empty canvas, Escape, or Clear restores the full map; closing
+      the side panel instead leaves the scene selected and the view filtered,
+      uncovering the part of the map it hid without moving anything (see
+      Placement). The domain legend filters the same way (multi-select). A
+      search box highlights matches; Enter selects the first.
     - Placement after a selection, in priority order: the selected cell is
-      fully visible and clear of the side panel; as many cells as possible are
-      visible; the selected cell is as close as possible to its home, its
-      place in the full map. A cell already at home does not move. Placement
-      is a graph offset plus a scroll position, kept on the 4px layout grid so
-      1px borders stay crisp at fractional device pixel ratios.
+      fully visible and clear of the side panel; as much cell area as possible
+      is visible, counted continuously so that closing a gap always beats
+      leaving one beside a clipped cell; of what does not fit, as little as
+      possible falls off the left edge, so overflow sits under the side panel
+      instead; the selected cell is as close as possible to its home, its
+      place in the full map. A cell already at home does not move. Dismissing
+      the side panel re-places nothing: the graph keeps the place it has and
+      the overflow the panel covered is simply revealed. Placement is a graph
+      offset plus a scroll position, kept on the 4px layout grid so 1px
+      borders stay crisp at fractional device pixel ratios.
     - Animation: on every state change, cells, route boxes and labels present
       before and after slide (and boxes resize) to their new place, departing
       elements fade out, arriving ones fade in. The side panel slides in when
