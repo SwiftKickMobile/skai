@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-compose
 Managed-Source: Guides/UIMap/ui-map-compose.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-18
 
 # UI Map — Jetpack Compose Reference
 
@@ -14,10 +14,10 @@ Each scene's routing is implemented locally: the view model emits one-shot navig
 
 ## Scene file layout
 
-Map scene IDs are lower snake case. Keep the map ID as the package name and convert each word to UpperCamelCase for code types: `trail_detail` becomes:
+Map scene IDs are lower snake case. Remove the underscores from the map ID for the package name and convert each word to UpperCamelCase for code types: `trail_detail` becomes:
 
 ```
-trail_detail/
+traildetail/
   TrailDetailScreen.kt          // @Composable fun TrailDetailScreen(viewModel: TrailDetailViewModel = hiltViewModel())
   TrailDetailViewModel.kt       // route enums at the top, then @HiltViewModel class TrailDetailViewModel : ViewModel()
   TrailDetailViewState.kt       // data class for observable scene state
@@ -32,7 +32,7 @@ A scene's package may contain a `views/` subpackage for the scene's own subviews
 
 Package nesting mirrors the map's canonical definition nesting inside `domains:` — not references, `primary_parent`, or other inbound routes. Each domain is a package directly under the scenes root, and a scene's package is placed where the map *defines* it (a collapsed domain at the domain package itself; an inline-defined scene inside its container's owning scene's package; a scene in a non-collapsed domain's `scenes:` list directly under the domain package). Every other appearance of a scene is a reference: the referencing scene calls the composable directly — a reference (cross-domain or `primary_parent`) never creates or moves a package.
 
-Scenes in the YAML's top-level `common:` group are domain-agnostic. They live in the shared UI module under its own top-level `Scenes/` package — one package per scene, following the same per-scene layout as any other scene.
+Scenes in the YAML's top-level `common:` group are domain-agnostic. They live in the shared UI module under its own top-level `scenes/` package — one package per scene, following the same per-scene layout as any other scene.
 
 ## Route enums
 
