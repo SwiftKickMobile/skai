@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.maintain-retro
 Managed-Source: internal/maintain-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-19
 
 # Maintenance retro checklist (agent + supervisor)
 
@@ -70,7 +70,7 @@ This retro is a **backstop for completeness**, not a git/diff report.
   - Search for terminology drift (e.g., "Next Command") and fix to "advance intent".
   - For each planned gate, verify its review artifact, declared state/marker lifecycle and post-approval action. Preserve explicit variants such as Discussion-only markers already resolved at the planned gate, or a no-auto control model; do not create default markers/auto behavior to satisfy a template check.
   - Verify marker conventions match the canonical rule: `- [ ]` / `- [x]` in process artifacts (markdown workflow docs); `🟡` only in source files (test code, app code) where completion = removal. The canonical in-code case is `Guides/Test/unit-test-planning-guide.md`.
-  - Verify `- [ ]` items have stable letter-led IDs on the same line (`D1`, `T1`, `F1`, `S1`, etc.), tight lists under shared headings (no blank lines between sibling checkbox items), and that markers are never on heading lines.
+  - Verify `- [ ]` items have stable letter-led IDs on the same line (`D01`, `T01`, `F01`, `S01`, etc.), tight lists under shared headings (no blank lines between sibling checkbox items), and that markers are never on heading lines.
   - Verify discussion-based phases use the Structured discussion items schema (`[Question]`/`[Proposal]`/`[Tradeoff]`, inline-with-topic, no aggregator sections like `## Questions` / `## Decisions`). See `Guides/Core/process-flow.md` "Structured discussion items".
   - If the guide creates ephemeral working docs, verify its paths use `skai/working-docs/<branch-path>/<session-name>/...` rather than placing files directly under `skai/working-docs/<branch-path>/...`.
 - Every manifest `skill` asset has at least one `adapter:` tag and an existing `sourcePath`; runbooks install from those fields. Untagged skills install nowhere.

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-creation
 Managed-Source: Guides/Spec/work-spec-creation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-19
 
 # Work Spec Design
 
@@ -139,11 +139,11 @@ the artifact before every response during Discussion; do not merely describe int
 Organize Discussion by design topic, not by workflow categories such as Questions or Decisions. Use:
 
 ```markdown
-- [ ] D1 [Proposal] <summary; name the affected API or type when API-specific>
+- [ ] D01 [Proposal] <summary; name the affected API or type when API-specific>
   - **Concern** <what requires review>
   - **Proposal** <recommended resolution>
   - **Why** <rationale>
-- [ ] D2 [Tradeoff] <summary>
+- [ ] D02 [Tradeoff] <summary>
   - **Concern** <what requires review>
   - **Options**
     - A — <option>
@@ -192,7 +192,7 @@ deriving it from the approved decisions, API Sketch, inputs, and repository.
 ````markdown
 ### Image loading
 
-- [ ] D1 [Tradeoff] Implement `ImageProviding` with an image service or existing storage
+- [ ] D01 [Tradeoff] Implement `ImageProviding` with an image service or existing storage
   - **Concern** The feature needs transformations the current path does not provide.
   - **Options**
     - A — Adopt the service.

@@ -188,7 +188,7 @@ With no items, leave `## Discussion` as: "The listed Inputs determine the design
 ```markdown
 ### Pinned notes
 
-- [ ] D1 [Proposal] Pinned notes sit in their own group above the list
+- [ ] D01 [Proposal] Pinned notes sit in their own group above the list
   - **Concern** The brief says "pinned notes are easy to find" but not where they go. The current
     app sorts them first with a pin glyph, which is easy to miss.
   - **Proposal** A `Pinned` group with its own header above the rest of the list.
@@ -203,7 +203,7 @@ On the supervisor's explicit approval of an item: check the box and append
 A decision that changes or adds a product spec is filed as a **change request** against the
 change's open product spec package (with none, one is opened through its authoring), in the form of
 [`product-specs-artifacts.md` § Change Requests](../ProductSpecs/product-specs-artifacts.md#change-requests),
-optionally with proposed drafts; the designer never edits that package. This holds in any phase,
+with drafts as that section says; the designer never edits that package. This holds in any phase,
 and every request the package filed stays listed under `## Assumptions and TODOs`, with its
 status, through promotion; a Decision that produced one names it.
 

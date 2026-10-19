@@ -56,7 +56,18 @@ Conformance work with no proposed canonical change must be distinguishable from 
   and `skai/promoted/<change-id>/`.
 - Change requests are folders, `change-requests/<nnn>/`, holding `request.md` (status, reviewer
   response, title, Goal, Requested Changes in the typed change-item format) and optionally the
-  request's own drafts in the spec file shape. They may be filed by any downstream consumer against
-  an open package or the canonical artifact, for product specs and design specs alike; the owning
-  authoring workflow triages them. Promotion still cannot move a type folder while a request in it is
-  `Proposed`.
+  request's own drafts in the spec file shape, written from the requester's input. They are filed
+  by a downstream consumer against an open package (never the canonical artifact: with no package
+  open, the finder opens one through authoring), for product specs and design specs alike; the
+  supervisor rules on each and the owning authoring workflow applies the ruling (decisions of
+  2026-10-19 in `product-specs-system-design.md`). Promotion still cannot move a type folder while
+  a request in it is `Proposed`.
+
+## Amendment — 2026-10-19
+
+- **Stable IDs in process artifacts are zero-padded to two digits** (supervisor, 2026-10-19):
+  Discussion items `D01`, tasks `T01`, findings `F01`, suggestions `S01`, change entries `R01` /
+  `S01`, three digits past 99 (`D100`), matching the spec IDs' `-01` form. The rule lives in
+  `Guides/Core/process-flow.md` § Stable letter-led IDs; every guide's examples follow it. Artifacts
+  written before this change keep their unpadded IDs; tools and readers accept both, and an
+  artifact never mixes the two forms within one list.

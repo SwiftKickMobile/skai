@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.process-flow
 Managed-Source: Guides/Core/process-flow.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-19
 
 # Process flow (house style reference)
 
@@ -195,23 +195,23 @@ Do not propagate markers up the hierarchy by accident:
 - A section or heading may carry a marker only when it intentionally tracks real gate/phase state for that section, not merely because child items remain open.
 
 **Stable letter-led IDs** (`- [ ]` items):
-- Every `- [ ]` item carries a stable letter-led ID on the same line — `D1`, `T1`, `F1`, `S1`, etc. The guide defines its prefix(es) to fit context (`D` for discussion, `T` for tasks/tickets, `F` for findings, `S` for suggestions).
-- Letter-led so a leading digit isn't misparsed as an ordered-list item — some markdown renderers see `- [ ] 1 …` as the start of a numbered list and break the checkbox onto its own line. `- [ ] T1 …` renders correctly.
-- IDs are continuous within their section and never renumbered; removing an item retires its ID, so cross-references stay stable.
+- Every `- [ ]` item carries a stable letter-led ID on the same line — `D01`, `T01`, `F01`, `S01`, etc.: a letter, then the number zero-padded to two digits (three past 99: `D100`), matching the spec IDs' `-01` form. The guide defines its prefix(es) to fit context (`D` for discussion, `T` for tasks/tickets, `F` for findings, `S` for suggestions).
+- Letter-led so a leading digit isn't misparsed as an ordered-list item — some markdown renderers see `- [ ] 1 …` as the start of a numbered list and break the checkbox onto its own line. `- [ ] T01 …` renders correctly.
+- IDs are continuous within their section and never renumbered; removing an item retires its ID, so cross-references stay stable. Artifacts written before padding keep their unpadded IDs (readers accept both), but one list never mixes the two forms.
 
 For 🟡 in code, the identifier is whatever stable text already lives on the line (function name, MARK section title, etc.).
 
 **Formatting rules for `- [ ]` items:**
 - **Tight lists.** Where two or more `- [ ]` items sit under the same heading, leave no blank line between them. A blank line makes the list "loose," which pushes the checkbox onto its own line in some renderers; a tight list keeps the checkbox inline with the title.
 - **Content lines only.** Place the marker on the specific content line that needs attention — never on a heading, never as a roll-up on a parent. The marker count equals the number of real decisions or units of work.
-- **No checkbox inside a heading.** Markdown task lists are scoped to list items; `## - [ ] Foo` renders as plain text, not a checkbox. If a unit of work needs heading-shaped structure for its body, give it a stable-ID heading (`## Ticket: T1 <summary>`) and track state with a `- [ ]` list item elsewhere or with an inline status sub-bullet.
+- **No checkbox inside a heading.** Markdown task lists are scoped to list items; `## - [ ] Foo` renders as plain text, not a checkbox. If a unit of work needs heading-shaped structure for its body, give it a stable-ID heading (`## Ticket: T01 <summary>`) and track state with a `- [ ]` list item elsewhere or with an inline status sub-bullet.
 
 Allowed stable identifiers (choose the best fit per artifact):
-- Work-spec tasks: `- [ ] T1 **Do thing**` (or similar)
-- Discussion items: `- [ ] D1 [Kind] <summary>` (see Structured discussion items below)
-- Audit findings: `- [ ] F1 [Kind] <summary>`
-- Retro suggestions: `- [ ] S1 <suggestion>`
-- Tickets: `- [ ] T1 Ticket: <summary>`
+- Work-spec tasks: `- [ ] T01 **Do thing**` (or similar)
+- Discussion items: `- [ ] D01 [Kind] <summary>` (see Structured discussion items below)
+- Audit findings: `- [ ] F01 [Kind] <summary>`
+- Retro suggestions: `- [ ] S01 <suggestion>`
+- Tickets: `- [ ] T01 Ticket: <summary>`
 - Unit tests (in code): function name (`@Test func testFoo() … // 🟡`) or MARK section title (`// MARK: - Success Tests 🟡`)
 
 Tooling expectation:
@@ -226,7 +226,7 @@ Workflows with a "discussion phase" — where the agent proposes and the supervi
 
 `- [ ] <ID> [Kind] <summary>`
 
-- `<ID>`: stable letter-led ID per the guide's prefix convention (e.g., `D1`, `F1`).
+- `<ID>`: stable letter-led ID per *Stable letter-led IDs* above and the guide's prefix convention (e.g., `D01`, `F01`).
 - `[Kind]`: one of `[Question]`, `[Proposal]`, `[Tradeoff]` (see below).
 - `<summary>`: plain-language description of what's being decided.
 
@@ -291,7 +291,7 @@ Unresolved:
 
 A note needs a way to share its contents. Today it has no outgoing share route.
 
-- [ ] D1 [Tradeoff] How is share presented from a note?
+- [ ] D01 [Tradeoff] How is share presented from a note?
   - **Concern** Share can be a modal sheet over the note or a pushed screen.
   - **Options**
     - A — modal sheet over the note
@@ -303,7 +303,7 @@ A note needs a way to share its contents. Today it has no outgoing share route.
 After resolution:
 
 ```
-- [x] D1 [Tradeoff] How is share presented from a note?
+- [x] D01 [Tradeoff] How is share presented from a note?
   - **Concern** Share can be a modal sheet over the note or a pushed screen.
   - **Options**
     - A — modal sheet over the note

@@ -23,7 +23,7 @@ package, is not a dependency.
 
 The layout is the product spec package's, with `design-specs-authoring.md` (`## Spec Changes`),
 `proposed-design-specs/**` (touched files only, each whole),
-`design-specs-review.html`, `change-requests/<nnn>/request.md` with optional
+`design-specs-review.html`, `change-requests/<nnn>/request.md` with its
 `proposed-design-specs/**` beside it, and `design-specs-promotion.md`. The review page and each
 request's `request-review.html` follow the product spec guide's render and link rules. Checked
 `C3` in the promotion artifact means the specs are written, `C4` the package archived.
@@ -40,7 +40,7 @@ under its justification, so an entry carries no text of its own.
   - **Touches** draft-file links; an intro or index line is an entry or a line here
 ```
 
-- **ID** `S1`, `S2`, …: never renumbered or reused; package-local — work specs cite `UI-*`, never
+- **ID** `S01`, `S02`, …: never renumbered or reused; package-local — work specs cite `UI-*`, never
   `S`. Entries run root, glossary, then folder, file and item order; no checkbox.
 - **Operation** `add | modify | retire | move` × **object** `spec file | item | rule | index line |
   glossary entry | known-difference note`. Only items move; a rule changing parent retires and is
@@ -61,7 +61,7 @@ folder indexes). In an existing file, each changed item, rule, glossary entry, i
 known-difference note is its own entry.
 
 ```markdown
-- S2 move item: [UI-NOTES-05]
+- S02 move item: [UI-NOTES-05]
   - **Justification** Catalog: reuse on a second screen would duplicate the rule.
   - **Touches** [notes][s-notes] → [list-screen][s-list]
 
@@ -78,7 +78,7 @@ authoring instead. Promotion's own failed check is not a request: it blocks and 
 package to authoring. The proposer never edits the package.
 
 `change-requests/<nnn>/request.md` takes the product spec guide's form — status, response, title,
-Goal, Requested Changes as `S<n>` entries, optional drafts beside it diffed on its page — and its
+Goal, Requested Changes as `S<n>` entries, drafts beside it as that guide says — and its
 lifecycle — only the supervisor's instruction moves the status, `Incorporated` once drafts and
 Spec Changes reflect it.
 

@@ -70,3 +70,19 @@ Refiner-facing cross-pass record. Do not show this file to the cold reviewer; su
 |---|---|---|---|
 | 2026-10-09 r4 | F2 Integration value ownership | closed | installation.md now permits prompted value filling/associated prompt clearing while limiting freeform edits to overrides and retaining installer-owned form/block structure. Saved sentence inspected; existing README and runtime Integration procedure agree. |
 | 2026-10-09 r4 | Pass stop | complete by supervisor direction | Supervisor explicitly chose round 4 as final, selective feedback implementation and no round 5 unless major regression. Selected clarification passed local checks; no major regression found. No claim of a fresh clean post-repair round. F1/F3 remain logged, not represented as repaired. |
+
+## Stable-ID padding — round 1, 2026-10-19
+
+Target: `Guides/Core/process-flow.md` § Stable letter-led IDs and the example IDs across the guides, README and internal docs. Standard: this spec's Amendment — 2026-10-19. Reviewer: Codex `gpt-6-astra`, template verbatim.
+
+| # | Finding | Labels | Disposition |
+|---|---|---|---|
+| F01 | process-flow § Structured discussion items restates the ID form without the three-past-99 and older-artifact clauses | divergent · off-normal · speculative | accept — refers to § Stable letter-led IDs instead |
+| F02 | Reopen instructions preserve IDs but do not say additions inherit the list's form | divergent · off-normal · speculative | log-only |
+| F03 | README § Unit testing shows a `- [ ]` checklist with no stable IDs | divergent · normal · speculative | accept — phases described in prose |
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 4.375 | 2 | 0 | 2 | 0 | 1 |
+
+Closure — 2026-10-19 (by ruling): F01 and F03 applied; F02 logged. The supervisor judged a cold review disproportionate for a format sweep; no further round.

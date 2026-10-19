@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ticket-filing
 Managed-Source: Guides/Process/ticket-filing.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-19
 
 # Ticket filing
 
@@ -61,7 +61,7 @@ Progress tracking:
 - Default marker convention: `- [ ]` / `- [x]` in the process-tickets file (process artifact). See `Guides/Core/process-flow.md`, "Progress markers".
 - Default rule: a `- [ ]` ticket item means pending draft / pending filing. Do not check it without supervisor approval.
 - The workflow-owned artifact is `skai/working-docs/<branch-path>/<session-name>/process-tickets.md`.
-- In that artifact, each ticket is a `- [ ] T<n> Ticket: <summary>` list item (stable letter-led ID — `T1`, `T2`, …) with body fields as sub-bullets.
+- In that artifact, each ticket is a `- [ ] T<n> Ticket: <summary>` list item (stable letter-led ID — `T01`, `T02`, …) with body fields as sub-bullets.
 - The Phase 1 understanding gate does not require its own workflow artifact or marker; it is a supervisor approval stop before drafting begins.
 - At the Phase 1 draft-review gate, STOP with the ticket items still unchecked.
 - If the supervisor gives advance intent at the Phase 1 draft-review gate, create GitHub issues for each unchecked ticket and update each entry by checking the box (`- [x]`) and appending a `- **Filed** #<number>` sub-bullet.
@@ -135,7 +135,7 @@ Draft format:
   - **Verification** <how to confirm the change worked next time> (optional)
 ```
 
-Where `<n>` is sequential within this file — `T1`, `T2`, `T3`, … — never reused. Letter-led so a leading digit isn't misparsed as an ordered-list item.
+Where `<n>` is sequential within this file — `T01`, `T02`, `T03`, … — never reused. Letter-led so a leading digit isn't misparsed as an ordered-list item.
 
 Sub-bullet field labels are **bold** with no separator after the label — the bold weight is the separator (matching the canonical Structured discussion items conventions).
 
@@ -148,16 +148,16 @@ Full file structure:
 
 ## Drafts
 
-- [ ] T1 Ticket: <summary>
+- [ ] T01 Ticket: <summary>
   - **Labels** ...
   - **Friction** ...
   - ...
-- [ ] T2 Ticket: <summary>
+- [ ] T02 Ticket: <summary>
   - ...
 
 ## Skipped
 
-- [ ] ~~T3 Ticket: <summary>~~ — skipped during review (<short reason>).
+- [ ] ~~T03 Ticket: <summary>~~ — skipped during review (<short reason>).
   - (body sub-bullets remain for context, unchanged)
 ```
 

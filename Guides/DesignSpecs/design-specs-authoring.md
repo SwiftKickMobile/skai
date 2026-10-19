@@ -153,8 +153,9 @@ Begin on explicit intent to write, backfill or audit specs; whatever came before
 
 Reopening follows product specs authoring
 [§ The change package](../ProductSpecs/product-specs-authoring.md#the-change-package) and
-[§ Reopening](../ProductSpecs/product-specs-authoring.md#reopening), with `C3` for `C7`: a recorded
-write returns to promotion; resolved `D<n>` items are never disturbed.
+[§ Reopening](../ProductSpecs/product-specs-authoring.md#reopening), with `C3` for `C7`,
+`## Spec Changes` for `## Requirement Changes`, the canonical specs for the catalog and
+`design-specs-promotion.md` for its promotion artifact.
 
 **Audit:** on an audit request or changed guides, before any edit run `V1`–`V10` over every
 draft. Record each failure with a proposed fix in Discussion; block until resolved, then fix.
@@ -188,9 +189,9 @@ Only observed differences become known-difference notes.
 Retain draft and canonical IDs. Apply
 [Modify vs. Retire](design-specs.md#modify-vs-retire); ambiguous calls need Discussion because they
 burn IDs and repoint citations. **Before modifying or retiring an ID or a glossary entry, run the
-tool's `references`** (the ID, or the term for every linked occurrence) over the specs, the product
+tool's `references`** over the specs, the product
 catalog and the active packages and decide per citation whether it still holds: a spec citation
-that does not is repaired by drafting its file (in Touches, as the artifact formats say); one in
+that does not is repaired by drafting its file; one in
 the product specs by *Requirements Gaps*; one in a work spec or
 another package is not the author's to edit — name it in the sweep for its owner. Record the sweep
 under `## Verification`. Moves preserve text; classify edits by that test.
@@ -216,7 +217,7 @@ above.
 Never quietly specify a screen-independent promise or narrowed requirement. With a product spec
 package open for the subject, file a change request against it in the form of
 [`product-specs-artifacts.md` § Change Requests](../ProductSpecs/product-specs-artifacts.md#change-requests),
-optionally with proposed drafts, never editing that package; the gap is a Discussion item linking
+with drafts as that section says, never editing that package; the gap is a Discussion item linking
 the request, drafted under the recommended reading and resolved when the supervisor's outcome is
 applied to the draft: on `Incorporated` the spec cites the requirement's draft ID and spec
 promotion waits for its promotion; otherwise the supervisor's reason and the resulting coverage

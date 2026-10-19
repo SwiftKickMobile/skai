@@ -59,7 +59,7 @@ Checks:
 
 **Marker convention compliance:**
 - `🟡` used in process artifacts (markdown workflow docs) — should be `- [ ]` / `- [x]` instead. `🟡` is reserved for in-code progress (test files, source files) where completion = removal. Canonical in-code case: `Guides/Test/unit-test-planning-guide.md`.
-- `- [ ]` items missing a stable letter-led ID on the same line (e.g., `- [ ] Do thing` instead of `- [ ] T1 Do thing`). Letter-led so a leading digit isn't misparsed as an ordered-list item.
+- `- [ ]` items missing a stable letter-led ID on the same line (e.g., `- [ ] Do thing` instead of `- [ ] T01 Do thing`). Letter-led so a leading digit isn't misparsed as an ordered-list item.
 - Loose `- [ ]` lists under the same heading (blank lines between sibling items) — pushes the checkbox onto its own line in some renderers. Use tight lists for sibling checkbox items.
 - `- [ ]` inside a heading line (`## - [ ] Foo`) — markdown task lists are scoped to list items; this renders as plain text.
 - Discussion items in aggregator sections (`## Questions`, `## Decisions`, `## Tradeoffs`, `## Open Items`) instead of inline with their topic.

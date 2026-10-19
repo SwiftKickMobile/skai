@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.dev-retro
 Managed-Source: Guides/Process/dev-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-19
 
 # Dev-session retro (agent + supervisor)
 
@@ -67,7 +67,7 @@ Progress tracking:
 - Default rule: a `- [ ]` item means TODO or pending approval. Do not check it without supervisor approval.
 - This guide does not require a separate phase marker for ordinary retro work.
 - If SKAI process suggestions are generated, the workflow-owned handoff artifact is the retro output's `SKAI process suggestions` section.
-- In that section, each suggestion is a `- [ ]` item with a stable letter-led ID (`S1`, `S2`, …). The unchecked state shows it is pending handoff into the drafting workflow.
+- In that section, each suggestion is a `- [ ]` item with a stable letter-led ID (`S01`, `S02`, …). The unchecked state shows it is pending handoff into the drafting workflow.
 - At the ticket-filing handoff gate, STOP with the suggestion items still unchecked.
 - If the supervisor gives advance intent at that handoff gate, transfer control to `Guides/Process/ticket-filing.md` starting at Phase 1, step 2 using the unchecked `S<n>` suggestions as the draft inputs.
 - Do not draft `process-tickets.md` in this guide. `Guides/Process/ticket-filing.md` owns ticket drafting, review, and filing.
@@ -179,7 +179,7 @@ Suggestion quality bar (problem-first; solution optional):
   - **Verification plan** (how to know next time)
 - Hard rule: do not output suggestions that are purely abstract ("be more careful", "improve quality") without evidence and a verifiable check.
 
-Format each as a `- [ ] S<n> <concise summary>` item (stable letter-led ID — `S1`, `S2`, …) with sub-bullets for the required details:
+Format each as a `- [ ] S<n> <concise summary>` item (stable letter-led ID — `S01`, `S02`, …) with sub-bullets for the required details:
   - **Friction/problem** — concrete.
   - **Evidence/example** — what happened in this session.
   - **Failure mode** — what goes wrong if this repeats.
@@ -192,7 +192,7 @@ Format each as a `- [ ] S<n> <concise summary>` item (stable letter-led ID — `
 Example:
 
 ```
-- [ ] S1 Retro forgets to scan README for stale paths
+- [ ] S01 Retro forgets to scan README for stale paths
   - **Friction/problem** Three retros in a row missed a stale `Templates/` reference because the consistency check didn't run on README.
   - **Evidence/example** This session's retro skipped step 5 (consistency check) and shipped with a stale path.
   - **Failure mode** Stale paths in README slip into production until a supervisor notices them.

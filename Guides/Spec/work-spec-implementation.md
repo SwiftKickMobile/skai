@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-implementation
 Managed-Source: Guides/Spec/work-spec-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-19
 
 # Work Spec Implementation
 
@@ -79,7 +79,7 @@ Use this compact shape:
 ### Task format
 
 ```markdown
-- [ ] T1 **<coherent outcome>**
+- [ ] T01 **<coherent outcome>**
   - **Realizes** <API area, D#, requirement ID, sibling item, or named input>
   - **Disposition** handoff <!-- only when another operator owns completion -->
   - **Done when** <observable completion criteria>
@@ -113,14 +113,14 @@ sequence of intentionally broken tasks.
 Example:
 
 ```markdown
-- [ ] T1 **Integrate the service-backed image provider**
-  - **Realizes** Design API Sketch — `ImageProviding`; D1
+- [ ] T01 **Integrate the service-backed image provider**
+  - **Realizes** Design API Sketch — `ImageProviding`; D01
   - **Done when** Image requests use `ServiceImageProvider` and surface provider failures to callers.
   - **Work** Add the adapter and connect it at the existing image-provider composition point.
   - **Verification** Run `<build command>` from `skai/integration.md`; launch the app and confirm a
-    requested image loads through the provider without a runtime error; T2 unit tests prove failure
+    requested image loads through the provider without a runtime error; T02 unit tests prove failure
     surfacing. [evidence: pending]
-- [ ] T2 **Test image-provider behavior**
+- [ ] T02 **Test image-provider behavior**
   - **Realizes** Design API Sketch — `ImageProviding`
   - **Done when** Success and provider-failure paths pass with deterministic results, and the test
     files carry no 🟡 markers.

@@ -22,7 +22,7 @@ ID/type pair. A sibling package of another type is independent.
 product-specs-authoring.md          authoring's artifact; ## Requirement Changes
 proposed-product-specs/**           drafts mirroring the catalog: touched files only, each whole
 product-specs-review.html          the rendered review page
-change-requests/<nnn>/request.md   a request; optional drafts beside it, proposed-product-specs/**
+change-requests/<nnn>/request.md   a request; its drafts beside it, proposed-product-specs/**
 change-requests/<nnn>/request-review.html
 product-specs-promotion.md          promotion's artifact; may be absent
 evidence/                          persisted check output; may be absent
@@ -41,8 +41,8 @@ archived.
 ## Requirement Change Items
 
 `## Requirement Changes` lists exactly the differences between the catalog and the drafts the
-package holds, one typed entry per difference, compared by prose and resolved target identity (a
-draft's longer path to `NOTE-04` is not a change; retargeting the citation is). The rendered page
+package holds, one typed entry per difference, compared by prose and resolved target identity. The
+rendered page
 shows each difference under its justification; an entry carries no text of its own.
 
 ```
@@ -51,7 +51,7 @@ shows each difference under its justification; an entry carries no text of its o
   - **Touches** catalog-relative paths of the files this entry changes
 ```
 
-- **ID** `R1`, `R2`, …: never renumbered or reused. Entries run in catalog order and carry no
+- **ID** `R01`, `R02`, …: never renumbered or reused. Entries run in catalog order and carry no
   checkbox.
 - **Type** `add folder` | `add file` | `add requirement` | `modify requirement` |
   `retire requirement` | `add glossary entry` | `modify glossary entry` | `retire glossary entry`.
@@ -80,15 +80,15 @@ and glossary. Inside a file the catalog has, each requirement or glossary entry 
 retired is its own entry.
 
 ```markdown
-- R1 modify requirement: [REMIND-04]
-  - **Justification** Resolved decision: [D2]
+- R01 modify requirement: [REMIND-04]
+  - **Justification** Resolved decision: [D02]
   - **Touches** features/reminders.md
 
-- R2 add file: features/sharing.md
+- R02 add file: features/sharing.md
   - **Justification** Design: the share sheet screens.
   - **Touches** features/sharing.md, features/_features.md
 
-[D2]: #missed-reminders
+[D02]: #missed-reminders
 [REMIND-04]: proposed-product-specs/features/reminders.md#remind-04
 ```
 
@@ -96,9 +96,8 @@ retired is its own entry.
 
 Any downstream consumer — design authoring, design specs, work specs, tests, promotion — files a
 change request for any reason, against the open package for the subject; with none open, whoever
-finds the defect opens a change package through authoring. Promotion's own failed check is not a
-request: it blocks. The proposer never edits the package. Supervisor input during authoring is a
-decision, never a request.
+finds the defect opens a change package through authoring. The proposer never edits the package.
+Supervisor input during authoring is a decision, never a request.
 
 `change-requests/<nnn>/request.md`, numbered by filing order:
 
@@ -116,12 +115,14 @@ A shared note's reminder must expire for the recipient too.
 
 ## Requested Changes
 
-- R1 modify requirement: [REMIND-04]
+- R01 modify requirement: [REMIND-04]
   …
 ```
 
-Its optional drafts are diffed on its page against the package's drafts,
-falling back to the catalog; without drafts the page lists each requested change.
+Its drafts, written from the supervisor's input, are diffed on its page against the package's
+drafts, falling back to the catalog; what the input leaves unsettled the filer asks at its own
+Discussion gate, and only a supervisor who, asked, agrees they cannot be written sends a request
+without drafts, its page then listing each requested change.
 
 Lifecycle: filed `Proposed`; only the supervisor's instruction moves the status, applied by
 authoring ([`product-specs-authoring.md`](product-specs-authoring.md) § Reopening):

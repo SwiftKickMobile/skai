@@ -275,7 +275,7 @@ inline, or verified file/line links where the host supports them.
 ```markdown
 ### Where sync boundaries fall
 
-- [ ] D5 [Tradeoff] Does the selected theme sync across devices?
+- [ ] D05 [Tradeoff] Does the selected theme sync across devices?
   - **Concern** [THEME-01] is drafted as device-local. Designs show one control; the implementation
     stores it locally, so two devices can disagree.
   - **Options**

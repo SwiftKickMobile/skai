@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation-artifacts
 Managed-Source: Guides/UIMap/ui-map-implementation-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-19
 
 # UI Map Implementation Artifact Formats
 
@@ -27,7 +27,7 @@ with its requests and evidence beside it. Its `## Code Changes` section lists **
   - **Touches** files / folders / types affected
 ```
 
-- **ID** — `T1`, `T2`, ... assigned in document order, never renumbered or reused, so the production skill can cite an item by a stable handle.
+- **ID** — `T01`, `T02`, ... assigned in document order, never renumbered or reused, so the production skill can cite an item by a stable handle.
 - **Checkbox** — actual completion state. Write new items unchecked (`- [ ]`) at the Code Changes-ready gate. Re-auditing existing work
   preserves IDs, Dispositions, Evidence and still-valid verified checks; it does not reset all items.
   Recheck changed work against the updated target before retaining completion. Check it (`- [x]`) only when the code or artifact state described by the item is true. A later workflow may check a `planned` or `handoff` item after completing or verifying it; it preserves the item's ID and Disposition.
@@ -39,7 +39,7 @@ with its requests and evidence beside it. Its `## Code Changes` section lists **
 - **Description for `planned` / `handoff`** — include what remains, why this run is not doing it, and the relevant UI Map/platform guidance or constraints the receiving workflow must preserve. A `handoff` Description must define enough of the expected outcome to decide when its checkbox is true.
 - **Realizes** — what this item carries out, so each code change traces back to the map: an `M#` from the architecture change list, a `D#` discussion decision, a short description of the audit finding when it has no ID, or — for the terminal promote item — the approved change as a whole rather than a single `M#`.
 
-There is no `Type` field: the identity and Description convey the kind at a glance (e.g. `T3 move pantry/ → inventory/`, `T5 scaffold edit_item`). Items are written top-down in structural order: any shared, cross-scene item (e.g. a generated `DomainColors`) **first**, then per domain → scene → route, mirroring the map.
+There is no `Type` field: the identity and Description convey the kind at a glance (e.g. `T03 move pantry/ → inventory/`, `T05 scaffold edit_item`). Items are written top-down in structural order: any shared, cross-scene item (e.g. a generated `DomainColors`) **first**, then per domain → scene → route, mirroring the map.
 
 ## Promotion state
 

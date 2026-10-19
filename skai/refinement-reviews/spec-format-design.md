@@ -171,6 +171,12 @@ does not restate it.
     open items start expanded. The body (Concern, Options, Proposal, Why, Decision) shows on
     expand. Reason: the list grows long and the state was hard to see.
 
+20. **Popover delay (supervisor, 2026-10-19; skai#84).** A popover opens only after the pointer has
+    rested on its chip or term for about 400 ms, and a pending open is cancelled when the pointer
+    leaves first, so moving across the page does not pop a trail of cards; keyboard focus opens at
+    once; hiding stays immediate. Chips and terms inside an open popover open nothing (no nested
+    popovers) and do not close it.
+
 ## Open
 
 - Whether the judgment half of the catalog guide's layout section (topic-file sizing, index lines

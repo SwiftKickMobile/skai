@@ -9,8 +9,14 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
-- **Change requests.** The supervisor rules on a change request and the agent applies the ruling; a request is always against an open package, never the catalog.
-- **Spec tool.** `check-changes` matches each entry only to things of its own kind, so a glossary term and a same-named index line or section no longer collide; `render` and `check-changes` can layer another open package's drafts over the catalog with `--base`; `link-terms` no longer nests a link inside a longer term's link; the review page links bare IDs and glossary terms in Discussion, Situations and justifications, and its package card says "discussion complete" rather than claiming promotion readiness, and discussion items are collapsible cards with their state on the summary line.
+## Release 15 — 2026-10-19
+
+Technical document: [`Releases/release-15.md`](Releases/release-15.md).
+
+- **Change requests.** The supervisor rules on a change request and the agent applies the ruling; a request is always against an open package, never the catalog, and carries drafts written from the requester's input. A supervisor's input during authoring is a decision, not a request.
+- **House style.** Stable IDs in process artifacts are zero-padded (`D01`, `T01`, `R01`); existing artifacts keep their IDs.
+- **Review page.** Discussion items are collapsible cards with their state on the summary line; bare IDs and glossary terms in Discussion, Situations and justifications get chips and popovers; popovers open after a short rest and stay open while you read them; the package card says "discussion complete" instead of claiming promotion readiness.
+- **Spec tool.** `check-changes` matches each entry only to things of its own kind, so a glossary term and a same-named index line no longer collide; `render` and `check-changes` can layer another open package's drafts over the catalog with `--base`; `link-terms` no longer nests a link inside a longer term's link.
 
 ## Release 14 — 2026-10-18
 

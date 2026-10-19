@@ -224,8 +224,15 @@ product owner had made. Shared by product specs, design specs and UI Map archite
    open for the subject, whoever finds the defect opens a change package through authoring; the
    supervisor reviews it like any other. There is no request against the catalog, and supervisor
    input during authoring is a decision, never a request.
+3. **A request carries drafts (supervisor, 2026-10-19).** Filing a request is authoring in
+   miniature: the agent drafts the requested changes, in the spec shape, from the supervisor's
+   input, and its page diffs them against the package's drafts like the package's own page. Where
+   the input does not settle what the drafts should say, the agent asks at the filing workflow's
+   own Discussion gate; a request goes out without drafts only when the supervisor, asked, agrees
+   the drafts cannot be written from what they know. Observed 2026-10-19: a request filed from a
+   fully stated model as a bare list, because the guide called drafts "optional".
 
-Design specs adopt both decisions of [`product-specs-system-design.md`](product-specs-system-design.md) § Decisions — 2026-10-19 unchanged; UI Map architecture adopts decision 1 (its requests come only from implementation).
+Design specs adopt all three decisions of [`product-specs-system-design.md`](product-specs-system-design.md) § Decisions — 2026-10-19 unchanged; UI Map architecture adopts decision 1 (its requests come only from implementation).
 
 ## Size Budgets — 2026-10-18
 

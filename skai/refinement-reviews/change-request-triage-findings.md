@@ -160,3 +160,22 @@ No live finding in the guides: terminal by clean round (stop rule a). F1 routed;
 ## Closure — 2026-10-19
 
 Accepted and applied: r1 F1–F3, r2 F1–F3, r3 F1–F2, r4 F1–F4, r5 F1–F2, r6 F1–F2, r7 F1–F2. Routed: r8 F1 (tool). Logged: r8 F2, F3. Consolidation trigger fired twice (r4-F1, r7-F1), both in product-specs-authoring's supervisor-decision text; the r7 restructure held in r8.
+
+## Series 2 (decision 3: a request carries drafts) — round 1, 2026-10-19
+
+| # | Finding | Labels | Disposition |
+|---|---|---|---|
+| F1 | design-specs-artifacts package layout still calls a request's drafts "optional" | divergent · off-normal · speculative | accept — "optional" deleted; § Change Requests owns draft presence |
+| F2 | design-specs-authoring inherits product specs § Reopening with only the C7→C3 substitution explicit | divergent · off-normal · speculative | accept — Spec Changes / canonical design specs / design-specs-promotion.md substitutions stated |
+| F3 | Promotion files requests under a rule that asks unsettled drafting input at a Discussion gate promotion does not have | divergent · off-normal · speculative | supervisor decision — presented |
+| F4 | Observed supervisor-input misroute is past-a-rule under current text | divergent · past-a-rule · speculative | log-only |
+
+Collapse: F1+F2 one defect (incomplete adaptation into design specs), heaviest F1 = 1.875; F3 = 1.875; F4 noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| s2-r1 | 3.75 | 2 | 0 | 2 | 0 | 1 |
+
+## Series 2 closure — 2026-10-19 (by ruling)
+
+F1, F2 applied. F3: deferred to skai#76, the planned holistic rule for calling out discrepancies across all guides; promotion's request filing stays as it was until then. F4 logged. No further round: the supervisor judged further cold review disproportionate for these edits.

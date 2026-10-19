@@ -160,7 +160,7 @@ The Discussion section is topic-organized. Do NOT create workflow-shaped section
 
 Open items use one format:
 
-`- [ ] D<n> [Kind] <summary>` — a letter-led id, a bracketed Kind, and a plain-language summary. The id is `D1`, `D2`, ... across the whole Discussion section; IDs are continuous and never renumbered, so each decision has a stable handle the Map Changes section can cite. The Kind is one of:
+`- [ ] D<n> [Kind] <summary>` — a letter-led id, a bracketed Kind, and a plain-language summary. The id is `D01`, `D02`, ... across the whole Discussion section; IDs are continuous and never renumbered, so each decision has a stable handle the Map Changes section can cite. The Kind is one of:
 
 - `[Question]` — needs the supervisor's input; the agent has no basis to recommend. Rare — propose a default whenever there is one.
 - `[Proposal]` — the agent recommends a course of action; the supervisor accepts / rejects / modifies.
@@ -243,7 +243,7 @@ or, when unavailable:
 
 A note needs a way to share its contents. Today it has no outgoing share route.
 
-- [ ] D1 [Tradeoff] How is share presented from a note?
+- [ ] D01 [Tradeoff] How is share presented from a note?
   - **Concern** Share can be a modal sheet over the note or a pushed screen.
   - **Options**
     - A — `modal` sheet over the note
@@ -253,7 +253,7 @@ A note needs a way to share its contents. Today it has no outgoing share route.
 
 ### Scene name
 
-- [ ] D2 [Proposal] Name for the share scene
+- [ ] D02 [Proposal] Name for the share scene
   - **Concern** The new scene needs a scene id.
   - **Proposal** `share_sheet`.
   - **Why** Matches the modal's role and reads clearly in the map.
@@ -267,7 +267,7 @@ A note needs a way to share its contents. Today it has no outgoing share route.
 The listed Inputs determine the proposed map; review the provisional preview before it is finalized in Map Changes.
 ```
 
-Each discussion item is its own `- [ ]` item under the appropriate `###` subsection. The title is `<id> [Kind] <plain-language summary>` — the id is `D1`, `D2`, ... (letter-led so renderers don't misparse it as a list; continuous across subsections, no per-group reset), `[Kind]` is `Proposal` / `Tradeoff` / `Question`, and the title itself carries no bold. Sub-bullet labels are **bold** with no separator after: `Concern` always, then either a `Proposal` (the recommended action — a `Tradeoff` adds `Options`) or, for a `Question`, a `Question` line (what you need decided and why you can't recommend yet); `Detail` when the concern needs elaboration; `Why` for the rationale. On approval, check the box and append a `- **Decision** <succinct resolution>.` line as the last sub-bullet.
+Each discussion item is its own `- [ ]` item under the appropriate `###` subsection. The title is `<id> [Kind] <plain-language summary>` — the id is `D01`, `D02`, ... (letter-led so renderers don't misparse it as a list; continuous across subsections, no per-group reset), `[Kind]` is `Proposal` / `Tradeoff` / `Question`, and the title itself carries no bold. Sub-bullet labels are **bold** with no separator after: `Concern` always, then either a `Proposal` (the recommended action — a `Tradeoff` adds `Options`) or, for a `Question`, a `Question` line (what you need decided and why you can't recommend yet); `Detail` when the concern needs elaboration; `Why` for the rationale. On approval, check the box and append a `- **Decision** <succinct resolution>.` line as the last sub-bullet.
 
 **Keep discussion items tight:** where two or more `- [ ]` items sit under the same heading, leave no blank line between them. A blank line makes the list "loose," which pushes the checkbox onto its own line in some renderers; a tight list keeps the checkbox inline with the title. This applies to discussion items and map change items alike.
 

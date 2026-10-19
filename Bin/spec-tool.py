@@ -190,7 +190,7 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
  8. Every citation and glossary term that resolves is a link: citations as chips, glossary terms
     as dotted text, both with the link pointer. In artifact prose (Discussion, Situations,
     justifications, a request's head) a bare ID and every glossary term are linked the same way at
-    render time, outside links and code. Hovering opens a popover card with the full cited
+    render time, outside links and code. Resting the pointer on one for about 400 ms (keyboard focus: at once) opens a popover card with the full cited
     item (statement, tables, rules; a cited rule outlined) or the glossary entry; an item cited
     from outside the roots gets its popover too when its link definition finds the file on disk. Citations that
     cannot resolve are plain muted text, never styled as links. The browser's own tooltip is not
@@ -1697,8 +1697,11 @@ function show(a){{var t=document.getElementById(a.dataset.tip);if(!t)return;pop.
 var rule=a.dataset.rule;if(rule){{var rid=a.textContent.trim();var li=pop.querySelector('[data-rid="'+rid+'"]');if(li)li.classList.add('hit');}}
 var r=a.getBoundingClientRect();pop.style.display='block';var top=r.bottom+window.scrollY+6,left=Math.min(r.left+window.scrollX,window.scrollX+document.documentElement.clientWidth-pop.offsetWidth-16);
 pop.style.top=top+'px';pop.style.left=Math.max(8,left)+'px';}}
-document.addEventListener('mouseover',function(e){{var a=e.target.closest('[data-tip]');if(a){{clearTimeout(timer);show(a);}}}});
-document.addEventListener('mouseout',function(e){{if(e.target.closest('[data-tip]'))timer=setTimeout(function(){{pop.style.display='none';}},150);}});
+var wait;
+document.addEventListener('mouseover',function(e){{if(pop.contains(e.target))return;var a=e.target.closest('[data-tip]');if(a){{clearTimeout(timer);clearTimeout(wait);wait=setTimeout(function(){{show(a);}},400);}}}});
+document.addEventListener('mouseout',function(e){{if(pop.contains(e.target))return;if(e.target.closest('[data-tip]')){{clearTimeout(wait);timer=setTimeout(function(){{pop.style.display='none';}},150);}}}});
+document.addEventListener('focusin',function(e){{if(pop.contains(e.target))return;var a=e.target.closest('[data-tip]');if(a){{clearTimeout(timer);clearTimeout(wait);show(a);}}}});
+document.addEventListener('focusout',function(e){{if(!pop.contains(e.target)&&e.target.closest('[data-tip]'))pop.style.display='none';}});
 pop.addEventListener('mouseenter',function(){{clearTimeout(timer);}});pop.addEventListener('mouseleave',function(){{pop.style.display='none';}});
 }})();
 function openTarget(){{var el=location.hash&&document.getElementById(decodeURIComponent(location.hash.slice(1)));if(!el)return;var d=el.closest('details');while(d){{d.open=true;d=d.parentElement&&d.parentElement.closest('details');}}el.scrollIntoView();}}

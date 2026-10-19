@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.process-refinement
 Managed-Source: Guides/Process/process-refinement-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-19
 
 # Process Refinement Guide
 
@@ -171,7 +171,7 @@ The reviewer never grades; it states three facts the template requires of every 
 
 `Total defects` is the sum of the three consequence columns; noise is counted separately. Beneath the table put the round's arithmetic on one line, naming each row by the findings it came from:
 
-> F1+F3+F6 one defect, heaviest F3, so the row is divergent · normal · verified = 5 · F2 round-2 closure did not hold, live again, irreversible · off-normal · speculative = 7.5 · F4 rejected, noise · F5 outside the binding target, routed to the schema doc · F7 open question, neither
+> F01+F03+F06 one defect, heaviest F03, so the row is divergent · normal · verified = 5 · F02 round-2 closure did not hold, live again, irreversible · off-normal · speculative = 7.5 · F04 rejected, noise · F05 outside the binding target, routed to the schema doc · F07 open question, neither
 >
 > `| r3 | 12.5 | 2 | 1 | 1 | 0 | 1 |`
 
