@@ -153,11 +153,12 @@ does not restate it.
 5. `references` finds rule citations as well as item citations.
 6. The converter run over a catalog produces a validating catalog with no prose change.
 
-17. **Absorbed items (supervisor, 2026-10-18).** A package reorganizing the catalog may fold an
-    item whose whole content becomes a row or rule of another item and drop its heading with no
-    `(retired)` stub; the ID stays burned. The projection shows it as `missing`; `check-changes`
-    accepts a `retire` entry for it (tool, 2026-10-18). The catalog guide's retire-with-stub rule
-    still governs a contract change.
+17. **Absorbed items — a one-off exception (supervisor, 2026-10-18).** For the first rework of a
+    catalog into this shape, made while the catalog was still at its baseline, an item whose whole
+    content became a row or rule of another item dropped its heading with no `(retired)` stub; the
+    ID stays burned. This was granted once for that rework, not as a rule: the catalog guide's
+    retire-with-stub rule governs every later retirement. The tool keeps accepting the case (a
+    `missing` item with a `retire` entry, shown in its base position) so that package renders.
 18. **Layered bases (supervisor, 2026-10-18).** `render` and `check-changes` take `--base DIR`
     (repeatable): further roots layered over the catalog, later ones winning, so a package can be
     drafted on top of another open package's drafts and diff against them, as `validate` already
