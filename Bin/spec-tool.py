@@ -84,7 +84,8 @@ Usage:
         file, and no entry names something unchanged or
         absent, including a rule (ID-NN, ID-NN-NN) the drafts do not define. The declared
         operation must match the projection: add names something added, modify something
-        modified, retire something retired or removed, move (design specs) an item missing from
+        modified, retire something retired, removed or missing (an item whose heading is gone,
+        as a catalog rework absorbs it), move (design specs) an item missing from
         one file and added in another, or a glossary entry removed from one glossary file and
         added in another (keyed by term across files, so a relocation is one move, never a retire
         plus an add; a modify entry rides on it when the text changed on the way); a file-typed entry names the file itself (never its index
@@ -1862,7 +1863,7 @@ def check_changes(catalog, drafts, authoring):
         elif op == "move" or (op == "modify" and any(c.keys & m.keys for m in moves)):
             ok = found in ({"added", "missing"}, {"added", "removed"})  # an item leaves a file; a glossary entry leaves a glossary file
         else:
-            ok = found <= {"add": {"added"}, "modify": {"modified"}, "retire": {"retired", "removed"}}.get(op, set())
+            ok = found <= {"add": {"added"}, "modify": {"modified"}, "retire": {"retired", "removed", "missing"}}.get(op, set())
         if not ok:
             seen_ = "; ".join(f"{describe(w, n)} is {s}" for w, n, s in sorted(actual[c.cid]))
             issues.append(Issue(authoring, c.line, f"{c.cid} declares {op} but {seen_}"))

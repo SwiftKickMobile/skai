@@ -9,6 +9,8 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **Spec tool.** `check-changes` accepts a retire entry for an item a rework absorbs without leaving a retired stub.
+
 ## Release 14 — 2026-10-18
 
 **Installing agent: before running the adapter runbooks, read `Releases/release-<n>.md` for every release after the one installed on the host, in ascending order, ending with [`Releases/release-14.md`](Releases/release-14.md). The installed release is `lastRelease` in the host's install state; with none recorded, `git tag --list 'v[0-9]*' --merged <lastSHA> --sort=-v:refname | head -1` in the skai checkout gives it.** Hosts on Release 13 or earlier run an update guide that reads this section; the documents under `Releases/` are what it needs.
