@@ -21,8 +21,8 @@ Use these references when writing and reviewing the replacement guides:
   [`Guides/UIMap/ui-map-implementation.md`](../../Guides/UIMap/ui-map-implementation.md) for open-ended
   input, proposal-led discussion, a continuously updated review surface, ownership boundaries, and
   implementation dispositions.
-- [`Guides/Requirements/requirements-authoring.md`](../../Guides/Requirements/requirements-authoring.md)
-  and [`Guides/Requirements/requirements-promotion.md`](../../Guides/Requirements/requirements-promotion.md)
+- [`Guides/ProductSpecs/product-specs-authoring.md`](../../Guides/ProductSpecs/product-specs-authoring.md)
+  and [`Guides/ProductSpecs/product-specs-promotion.md`](../../Guides/ProductSpecs/product-specs-promotion.md)
   for focused artifacts, inferred entry conditions, workflow ownership, and verification before a
   canonical write.
 
@@ -78,7 +78,7 @@ implementation details.
 The API sketch is primary, not exclusive. When a material decision cannot be reviewed adequately as
 an API diff, the design document exposes it in the smallest useful form. Use prose by default; create
 or invoke another artifact only when the subject has independent structure or ownership, as the UI
-Map and requirements change packages do.
+Map and product spec change packages do.
 
 ### P4. Discussion comes before the sketch
 
@@ -125,8 +125,8 @@ explicitly linked inputs. Chat history is useful context, never a hidden depende
 ### P9. Workflow ownership stays narrow
 
 Work Spec Design owns the technical design. Work Spec Implementation owns the codebase audit, task
-list, code changes, and verification. Requirements Authoring owns requirements change packages, and
-Requirements Promotion writes requirement contracts. As approved in issue #53 (2026-10-05), Work Spec Implementation may update/remove known-difference notes only after verifying the affected implementation; requirement text and IDs remain read-only. Each workflow references other artifacts instead
+list, code changes, and verification. Product Specs Authoring owns product spec change packages, and
+Product Specs Promotion writes requirement contracts. As approved in issue #53 (2026-10-05), Work Spec Implementation may update/remove known-difference notes only after verifying the affected implementation; requirement text and IDs remain read-only. Each workflow references other artifacts instead
 of duplicating their content or progress state.
 
 ### P10. Review attention follows leverage
@@ -360,7 +360,7 @@ the workflow.
 
 A whole-app port, greenfield product, or similarly large initiative is not forced into one work spec.
 Use one coherent top-level design, the relevant baseline and target artifacts, and multiple buildable
-slices. For a mobile port those inputs may include a requirements baseline and UI Map; for another
+slices. For a mobile port those inputs may include a product specs baseline and UI Map; for another
 system they may be different. Slicing is successful decomposition, not a failure of the default
 workflow.
 
@@ -379,22 +379,22 @@ operator when it owns the larger feature. It consumes the UI Map implementation 
 the overall task list. Each invoked workflow retains ownership of its artifacts and gates, then returns
 its result as an input; this composition is not treated as a human handoff.
 
-## Requirements boundary
+## Product specs boundary
 
 Ordinary work-spec design reads and references applicable canonical requirements but does not invoke
-a requirements-normalization phase, duplicate their prose, or write the catalog.
+a product-specs-normalization phase, duplicate their prose, or write the catalog.
 
-Missing behavior that already ships is requirements backfill. When `skai/integration.md` declares a
-requirements catalog, Work Spec Design invokes Requirements Authoring to create or reopen its change
+Missing behavior that already ships is product specs backfill. When `skai/integration.md` declares a
+product specs catalog, Work Spec Design invokes Product Specs Authoring to create or reopen its change
 package; do not place provisional canonical requirements in the design document or work spec. Each
 workflow retains its own artifacts and gates. Backfill blocks the design only when its unresolved
 behavior is needed to settle the design. Otherwise, Design records the backfill need for the supervisor
 to orchestrate separately and continues without waiting. If the project keeps no catalog, record the
 missing behavior as a non-blocking assumption.
 
-New behavior being planned does not automatically invoke Requirements Authoring. It remains grounded
-in the supplied product input and approved design unless the supervisor separately initiates requirements
-work. Requirements Promotion is never an automatic continuation of work-spec creation or implementation.
+New behavior being planned does not automatically invoke Product Specs Authoring. It remains grounded
+in the supplied product input and approved design unless the supervisor separately initiates product specs
+work. Product Specs Promotion is never an automatic continuation of work-spec creation or implementation.
 
 ## Verification and testing
 
@@ -455,7 +455,7 @@ A cold reviewer should verify:
    complete work spec in one pass after auditing the approved design against the codebase.
 5. Implementation runs continuously after final approval while preserving material stop conditions.
 6. Optional slicing is invisible in the common case and lightweight when activated.
-7. Requirements work is absent except for correctly routed backfill.
+7. Product specs work is absent except for correctly routed backfill.
 8. Each round reports guide sizes and deltas from the 45,512-byte baseline and 35,000-byte cap; the
    combined guides do not exceed the cap without an explicit supervisor decision.
 9. A fresh agent can execute from the artifacts and linked inputs without chat history.
@@ -472,7 +472,7 @@ A cold reviewer should verify:
     where practical; automated UI test suites remain opt-in.
 15. Planned human testing is the final handoff task, while an unexpected need for human testing blocks
     immediately with the current task unchecked.
-16. Work Spec Design and Implementation invoke UI Map and requirements workflows when their owned
+16. Work Spec Design and Implementation invoke UI Map and product specs workflows when their owned
     artifacts are needed, preserving sibling ownership and returning their results as inputs.
 17. Required Integration commands exist before implementation planning; missing commands block rather
     than creating a temporary second source of truth in the work spec.

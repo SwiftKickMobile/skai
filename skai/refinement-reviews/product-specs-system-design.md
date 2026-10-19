@@ -1,11 +1,14 @@
-# Requirements System Design
+# Product Specs System Design
 
 ## Purpose
 
-This document defines SKAI's requirements system: a per-project catalog of behavioral requirements,
-the authoring workflow that drafts changes to it, and the promotion workflow that writes them. It is
-the standard used to write and cold-review the runtime guides; it is not another guide an executing
-agent must read.
+This document defines SKAI's product specs system (called the requirements system until
+2026-10-18; the individual ID'd item is still a *requirement*): a per-project catalog of behavioral
+requirements, the authoring workflow that drafts changes to it, the promotion workflow that writes
+them, and the change requests downstream consumers file against either. The spec file shape and the
+tool that validates, cross-references and renders it are shared with design specs and have their own
+standard, [`spec-format-design.md`](spec-format-design.md). This document is the standard used to
+write and cold-review the runtime guides; it is not another guide an executing agent must read.
 
 The catalog exists so an agent implementing, testing, or debugging can learn what the system must do
 without reading code or chat history. Everything below follows from that: stable IDs a work spec can
@@ -13,7 +16,7 @@ cite, indexes an agent can route by, prose a non-engineer can verify, and a writ
 that nothing reaches canon unchecked.
 
 Reconstructed 2026-09-28 from the four guides and the findings log at
-[`requirements-system-findings.md`](requirements-system-findings.md), which had been carrying the
+[`product-specs-system-findings.md`](product-specs-system-findings.md), which had been carrying the
 design decisions without a spec to record them.
 
 ## Authority and references
@@ -25,7 +28,7 @@ design decisions without a spec to record them.
   change-package model this system adopted: drafts and discussion in a package, a canonical artifact
   written only by promotion.
 
-This document is authoritative for requirements behavior. Where a guide and this document conflict,
+This document is authoritative for product specs behavior. Where a guide and this document conflict,
 the guide is the stale side unless the findings log records a later decision.
 
 ## Complexity baseline
@@ -46,6 +49,11 @@ correct fix; raised to 11,000 on 2026-09-28 when the set measured 11,024, with t
 existing guides can be trimmed. Record each guide's size and the delta from the budget after every
 refinement round; a real defect whose fix cannot fit is a supervisor decision, never a silent overrun.
 
+**2026-10-18:** the guides are renamed `product-specs-*.md`, the file-shape rules move out to the
+shared spec-format guide, and authoring gains the concept inventory, Situations, the reference sweep
+and change-request triage. The budget is re-measured after those moves and re-set by the supervisor;
+until then 11,000 words is the reference point, not a binding cap.
+
 A new gate, check, artifact, mirror field, or proof burden is a complexity tradeoff, not an
 improvement. The characteristic failure of this guide set, visible across its findings log, is a rule
 re-cut on one line while every other sentence describing it stayed behind; repairs that add a second
@@ -55,9 +63,9 @@ home for a rule are worse than the defect.
 
 ### P1. One catalog, controlled writers
 
-Every project has at most one catalog, at the root its Integration block names, in one of three
-repository shapes: `local`, `shared` (another repo's catalog, typically a submodule), or `none` (a
-deliberate opt-out; requirements workflows skip). IDs need no catalog namespace; citations are linked.
+Every project has at most one catalog, at the root the project README links (since Release 13;
+earlier an Integration block named it and a `local | shared | none` shape vocabulary applied), in
+whichever repository the supervisor names for it. IDs need no catalog namespace; citations are linked.
 **Promotion writes requirement contracts.** Authoring and retro never touch the catalog. Work-spec
 implementation may update/remove confirmed known-difference notes for verified fixes only; contracts
 and IDs remain read-only. Approved release migrations may change link presentation without changing
@@ -66,7 +74,10 @@ block: the workflow stops instead.
 
 ### P2. The catalog is a stable contract
 
-A requirement is an `##` heading carrying only its ID, with prose beneath. IDs are `<PREFIX>-<NN>`,
+A requirement is a `###` item carrying only its ID, in the shared spec file shape
+([`spec-format-design.md`](spec-format-design.md)): a statement, then numbered rules cited as `ID-NN`
+(one nesting level, `ID-NN-NN`, and no deeper) and tables whose rows carry no IDs, grouped under
+uncited `##` sections. Rules retire in place like items. IDs are `<PREFIX>-<NN>`,
 append-only **from the moment they are drafted** — a work spec may cite a `(pending)` ID — and never
 renumbered. A retired requirement keeps its heading and ID with `(retired)` and a pointer to what
 superseded it; nothing else in the catalog carries a status, a checkbox, a `🟡`, or a `(D#)`.
@@ -89,20 +100,28 @@ or team.
 
 A requirement that depends on another cites it inline by ID at the point of dependency. Index lines
 name the questions a file answers, not its subject. The glossary is the catalog's second index:
-every entry ends by pointing at the requirements that govern the term, and it gains each cross-cutting
-term in the package that introduces it. Every behavioral claim has an ID; orientation prose carries
-none.
+every entry is a `###` heading (so it has an anchor) ending by pointing at the requirements that
+govern the term, and it gains each cross-cutting term in the package that introduces it. **Every
+occurrence of a glossary term in spec prose links its entry**; the link is what tells a reader a word
+is a defined term, so terms stay in sentence case (2026-10-18). The items an entry names as governing
+it are exempt. An app's index lists the shared feature files that app offers; a feature absent from an
+app's index is not in that app (`features/` exists to avoid duplicating shared behavior across apps,
+not as a third kind of rule). Every behavioral claim has an ID; orientation prose carries none.
 
 ### P5. Drafts live in a package; the package is the review surface
 
-Authoring writes `skai/changes/<change-id>/`: the authoring artifact, `proposed-requirements/**`, and
-whatever promotion later adds. The package holds **only the files it touches**, each drafted whole
+Authoring writes `skai/changes/<change-id>/product-specs/`: the authoring artifact,
+`proposed-product-specs/**`, and whatever promotion and change requests later add. The package holds **only the files it touches**, each drafted whole
 (supervisor decision, pass 1). A file the catalog already has is copied out and edited; one it lacks is
 drafted fresh. A package cannot express deleting or splitting a file; either stops at a blocked gate.
 
 The drafts always read as a complete catalog. An open question never leaves a hole: the requirement
 is drafted under the recommended reading. Discussion links to affected draft requirements; draft
 requirements do not cite Discussion. Requirement dependencies remain inline reference-style links.
+
+The artifacts of one change (product specs, designs, design specs) update freely while the change is
+open; promotion is the control point, not the boundary between them (2026-10-18). A downstream
+consumer that wants the package changed files a change request (P10) instead of editing it.
 
 ### P6. Mode is inferred, per scope, from the catalog
 
@@ -121,6 +140,14 @@ implementation that appears in no design. Every item carries the agent's recomme
 forced by the inputs are encoded directly. `## Assumptions and TODOs` is not a second parking lot:
 anything whose resolution would change what a requirement *says* is an item.
 
+Drafting starts with a **concept inventory** (2026-10-18): the concepts the change touches, checked
+against the company's own vocabulary and against `domains/` and the glossary. New or changed concepts
+are drafted and confirmed by the supervisor before any app behavior is drafted on them; the Offers
+package drafted app behavior on a catalog that had no Opportunity, and every app requirement had to
+be rewritten. The authoring artifact may carry a `## Situations` section: the concrete situations the
+requirements serve, in plain language, each pointing at the IDs that serve it, so the product manager
+can confirm their input was understood in their own terms and a designer has the brief.
+
 A backfill drafts every subject in scope before stopping — never one subject per turn — and the
 Discussion gate comes once, after the last subject. `auto` bypasses that planned gate, never the
 blocked one: unresolved items are supervisor decisions.
@@ -129,13 +156,21 @@ blocked one: unresolved items are supervisor decisions.
 
 Promotion runs `C1`–`C5` (IDs append-only, prefixes collide nowhere, cross-references resolve,
 writing style, traversal), then `C6` prepares destination-relative link definitions without changing
-prose or the drafts, then `C7` writes the catalog and confirms the written text. The five verifying
+prose or the drafts, `C7` writes the catalog and confirms the written text, and `C8` archives the
+package. The five verifying
 checks are enumerated once, in promotion; authoring runs the same five before its gate so nothing is
 discovered late. Each check covers what the package **adds or changes**; two verify wider and say so.
 
 Promotion never rewrites a requirement's prose. A failing check blocks and returns the package to
 authoring with the finding. When the catalog itself is wrong, promotion raises a **change request**
 instead; the package cannot promote while one is `Proposed`.
+
+The spec tool validates the drafts projected onto the catalog — shape, IDs unique, rule numbering,
+table keys, link definitions, glossary links — at authoring's gate and before promotion writes; a
+validation failure blocks (2026-10-18). Before modifying or retiring an ID **or a glossary entry**, authoring runs the tool's
+`references` command, lists every citing location (for a term, every linked occurrence) across the
+catalog, the design specs and active packages, and decides per citation whether the surrounding text
+still holds; promotion checks that the sweep was recorded (glossary terms added 2026-10-18).
 
 **A check records a result or it did not run.** Silence is never a pass; an empty subject records
 its emptiness. Codified after the third sighting of silence-as-proof.
@@ -150,8 +185,14 @@ revisit only if an observed run actually drops content.
 
 ### P10. Workflow ownership stays narrow
 
-Authoring owns the package and its drafts. Promotion owns the catalog write, its checks, and change
-requests. Work-spec design invokes authoring for backfill and never places provisional requirements
+Authoring owns the package and its drafts. Promotion owns the catalog write and its checks.
+**Change requests** (2026-10-18) may be filed by any downstream consumer — design authoring, design
+specs, work specs, tests, promotion — for any reason, against the open package when there is one,
+otherwise against the catalog, which opens a new package. A request carries a status, a reviewer
+response, a title, a goal, and a `## Requested Changes` list in the same typed format as Requirement
+Changes, optionally with its own `proposed-product-specs/**` drafts in the spec shape. Authoring
+triages each to Incorporated, Rejected or Superseded and records the outcome on the request; the
+proposer never edits the package; a package cannot promote while a request is `Proposed`. Work-spec design invokes authoring for backfill and never places provisional requirements
 in a design document; retro seeds a package and hands off. A promoted package is closed; new work on
 the same subject opens a new package. Each workflow points at the others' artifacts rather than
 restating their rules.
@@ -164,24 +205,30 @@ reporting rule, is what carries a concern to the human.
 
 ```text
 <catalog root>/                       written only by promotion
-  _requirements.md   glossary.md
+  _product-specs.md   glossary.md
   platform/ domains/ features/ apps/<app>/   each with <folder>/_<folder>.md
 
-skai/changes/<change-id>/
-  requirements-authoring.md           authoring's artifact
-  proposed-requirements/**            the drafts, mirroring the catalog layout
-  change-requests/requirements-<nnn>.md   raised by promotion; may be absent
-  requirements-promotion.md           promotion's artifact; may be absent
+skai/changes/<change-id>/product-specs/
+  product-specs-authoring.md          authoring's artifact
+  proposed-product-specs/**           the drafts, mirroring the catalog layout
+  change-requests/<nnn>/request.md    status, reviewer response, title, Goal, Requested Changes
+  change-requests/<nnn>/proposed-product-specs/**   the request's drafts; optional
+  product-specs-promotion.md          promotion's artifact; may be absent
   evidence/                           persisted check output; may be absent
 ```
 
+The tool renders a package as one review page and a request as its own page relative to the package;
+what those pages show is in [`spec-format-design.md`](spec-format-design.md).
+
 ### Authoring artifact
 
-`## Goal` · `## Inputs` · `## Mode` · `## Discussion` (topic `###` subsections, `- [ ] D<n> [Kind]`
+`## Goal` · `## Situations` (optional, 2026-10-18) · `## Inputs` · `## Mode` · `## Discussion` (topic `###` subsections, `- [ ] D<n> [Kind]`
 items with **Concern** / **Proposal** / **Why**, resolved by appending **Decision**) ·
-`## Requirement Changes` (typed `R<n>` items stating exactly the catalog-to-drafts difference, written
-after the gate, recomputable and reconciled on reopen) · `## Assumptions and TODOs` · `## Out of
-scope`. Formats for change items and change requests live in `requirements-artifacts.md`, the
+`## Requirement Changes` (typed `R<n>` items stating exactly the catalog-to-drafts difference, maintained
+as the drafts change — the rendered page takes each change's reason from it, so it is never deferred to
+after the gate (2026-10-18) — checked against the computed diff by the tool, reconciled on reopen) · `## Verification` (evidence of the pre-gate pass and the reference sweep; a check records a
+result or did not run, 2026-10-18, target 3) · `## Assumptions and TODOs` · `## Out of
+scope`. Formats for change items and change requests live in `product-specs-artifacts.md`, the
 consumer-facing layer a downstream reader resolves without the authoring method.
 
 ### Promotion artifact
@@ -197,19 +244,23 @@ run-keyed path; re-runs append below history). `## Completion` defines the promo
 1. **Initiate** on an explicit signal — "write", "backfill", "update the requirements for X" — with
    any input. Read the Integration block; stop if it cannot say where the catalog lives. Reopen an
    unpromoted package for this work rather than creating a second. Resolve the change id or stop.
-2. **Draft** every subject in scope under `proposed-requirements/`, running `requirements-baseline.md`
-   first when the catalog starts empty. Seed items only where a decision is real. End at the blocked
+2. **Draft**: the concept inventory first, confirmed by the supervisor; then every subject in scope
+   under `proposed-product-specs/`, running the baseline guide first when the catalog starts empty.
+   Run the reference sweep before any modify or retire, and the spec tool's validation before the gate. Seed items only where a decision is real. End at the blocked
    Discussion gate while items remain; at the planned gate when none do or once all are resolved,
    after the `C1`–`C5` pass.
-3. **Requirement Changes** after advance intent; bring assumptions and out-of-scope current; end
-   `🏁 Complete.`, saying whether promotion is the human's next move or waits for a ship.
+3. **Completion** after advance intent: the change list already current (it is maintained with the
+   drafts; the tool's `check-changes` confirms it), bring assumptions and out-of-scope current, render,
+   and end `🏁 Complete.`, saying whether promotion is the supervisor's next move or waits for a ship.
 
 ### Promotion
 
 4. **Readiness screen**: Discussion fully resolved, change items match a recomputed diff, no change
-   request `Proposed`, Integration block resolvable under its shape. Failure is a blocked gate.
+   request `Proposed`, the catalog root linked from the project README (the root-location authority
+   since Release 13, via `artifact-hosting.md` for a first artifact; the "Integration block" wording
+   above is historical, 2026-10-18). Failure is a blocked gate.
 5. **Checks listed** unchecked; planned gate: the human reviews what will become canon.
-6. **Execute** `C1`–`C7` in order with evidence. A `C1`–`C5` failure blocks and returns to authoring;
+6. **Execute** `C1`–`C8` in order with evidence. A `C1`–`C5` failure blocks and returns to authoring;
    a fault after `C7` is repaired in place, since the write happened. Change requests go on reopen.
 
 ## Acceptance checks for the guides
@@ -228,6 +279,14 @@ A cold reviewer should verify:
 10. The whole-content risk is stated as accepted, and no guide claims a check covers it.
 11. Each round reports the four guides' word counts against the 11,000 budget.
 12. A fresh agent can author and promote from the artifacts without chat history.
+13. Files follow the shared spec shape and the tool validates them at both gates; the guides cite the
+    shape guide rather than restating it.
+14. The concept inventory precedes app behavior and is gated; Situations is present and optional.
+15. Glossary entries are headings and every occurrence of a term is linked.
+16. Modify and retire trigger the reference sweep with the tool, recorded as evidence.
+17. Change requests come from any consumer, are triaged on the request, and the proposer never
+    edits the package.
+18. An app's index lists the feature files it offers.
 
 ## Approved release decisions — 2026-10-05
 
@@ -255,7 +314,7 @@ are the standard for this scoped refinement. No new runtime guide or peer-guide 
   Discussion item links use supported explicit anchors or topic anchors with item context, and verified
   file/line links when appropriate. Promotion rebases destinations, including dependencies outside a
   partial package; keep C7 as the completion identity so history remains interpretable.
-- Migration: changelog instructs upgrading agents to sweep existing catalogs/open packages, convert
+- Migration: the release document instructs upgrading agents to sweep existing catalogs/open packages, convert
   links, transfer draft-to-Discussion associations before removing `(D#)`, and verify destinations.
   Preserve prose, IDs, decisions, approval/completion state and verification history; surface ambiguity.
   Honor shared roots and existing upgrade approval. No historical promoted-package rewrite for style.
@@ -275,3 +334,64 @@ Recorded so a cold review does not re-raise them as findings:
 - The four guides measure 11,020 against the 11,000 budget: 20 words over. Trim expected.
 - P6 keys Baseline per file while Workflow step 2 says "when the catalog starts empty"; reconcile in the spec before either guide is edited on the trigger (r3 open question).
 - The citation invariant is general but read only in Baseline mode; relocating it to the catalog guide costs ~35 budgeted words (r3 F4, logged by ruling).
+
+## Decisions — 2026-10-18 (product specs)
+
+Supervisor decisions from the Offers retrospective, recorded in the SalesPro checkout at
+`working-docs/requirements-process/planning.md` (ephemeral) with the format draft, fixtures and tool
+beside it. They qualify the invariants above and are the standard for the next refinement pass.
+
+- **Name.** Requirements become *product specs*: folders (`skai/product-specs/`,
+  `proposed-product-specs/`), the four guides, four skills, README rows, the artifact tree above.
+  *Requirement* stays as the name of the ID'd item. Done in one pass so files move once.
+- **Shape.** The design-spec item shape, shared: sections, `###` items, numbered rules cited with
+  dashes, tables keyed on their first column, glossary entries as headings, every term occurrence
+  linked. One nesting level below a rule. Reason: tables and nested rules are how a product manager
+  conveys enumerations (stages, fields, statuses) and related constraints; the flat paragraph form
+  turned seven stages into nine requirements.
+- **Tool.** One script beside the UI Map renderer: `validate`, `references`, `link-terms`, `render`,
+  `render-request`. The validator is the enforcement of the shape; the renderer is how a human reads
+  a package. Markdown stays the source.
+- **Concept inventory** before app behavior; **Situations** section, optional.
+- **Change requests** from any consumer, with optional drafts, triaged by authoring.
+- **Reference sweep** on modify or retire.
+- **Design justifications name screens, never drafts** (settled 2026-10-18, consistency pass): a
+  change item's `Design` source names the screen or state by product name; it never links a
+  change-page draft, which design promotion deletes.
+- **Retired items stay in place.** Deleting uncited retired items at promotion was considered and
+  declined for now.
+- **Migration.** After the release lands, the tool's converter rewrites every existing catalog,
+  the unpromoted design-specs baseline and open packages mechanically; the release document instructs it.
+  The rename and migration entry in the release document spells out a **reviewed process**, beyond the standard
+  migration activities (supervisor, 2026-10-18): convert, validate, render, supervisor review of the
+  rendered catalog and of every open package's page before anything is committed, addendum rename
+  with lookup-name compatibility, link and README verification, with the converter's run recorded
+  as evidence.
+- **Refinement order.** The shared shape guide and tool first, then product specs, then design
+  specs, then one consistency pass; sequential because design specs cite product specs and a cold
+  review needs a stable target.
+- **Open:** the word budget after the rename and the shape move; whether the catalog guide keeps
+  the judgment half of its layout section (topic-file sizing, index lines name questions, glossary
+  as second index) or that also moves to the shared guide.
+
+## Size Budgets — 2026-10-18
+
+Set by the supervisor from four efficiency reviews (SalesPro checkout, `working-docs/requirements-process/reviews/`), as today's size less measured obsolete content, less the reviewed trim on what remains, plus known growth. Whole-file bytes by `wc -c`, managed header and addendum footer included. They bind every repair per the refinement guide's size-budget rule.
+
+These replace the 11,000-word budget above for the product spec guides.
+
+| Target | File | Cap |
+| --- | --- | --- |
+| 2. Content | product-specs-catalog.md | 10,500 |
+| 2. Content | product-specs-artifacts.md | 6,500 |
+| 3. Authoring | product-specs-authoring.md | 20,500 (compact Advance intent block adopted) |
+| 3. Authoring | product-specs-baseline.md | 1,700 |
+| 3. Authoring | skai-product-specs-authoring skill | 450 |
+| 4. Promotion | product-specs-promotion.md | 17,000 |
+| 4. Promotion | skai-product-specs-promotion skill | 450 |
+
+Group caps across both spec types and the design process guides: content 37,000; authoring 54,900 (raised 2026-10-18 with design-specs-authoring); promotion 42,700.
+
+**Rendered page, prominently linked (supervisor, 2026-10-18).** The authoring artifact and the promotion artifact each link the package's rendered review page (`product-specs-review.html`) at the top, directly under the title, before Goal or Inputs; a change request's `request.md` links `request-review.html` the same way. The link is the first thing a reviewer sees.
+
+**Live render (supervisor, 2026-10-18).** The rendered page is the primary way the supervisor views a change package while it is being iterated on. Any time the package materially changes — a draft edited, a discussion item resolved, a change item added, a request triaged — the agent validates and re-renders before anything else, in every workflow that writes a package. The gate and promotion renders are not the only ones; they are the last of many. Validation and rendering take milliseconds, so there is no cost argument for deferring them.

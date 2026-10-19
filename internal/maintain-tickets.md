@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ticket-implementation
 Managed-Source: internal/maintain-tickets.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-18
 
 # Ticket implementation session
 
@@ -181,7 +181,7 @@ For each selected ticket, in the agreed order:
 4. **Update bookkeeping.** For each change set:
    - `assets.manifest.json` (if assets were added/moved/renamed)
    - `README.md` Usage section (if a developer-facing workflow changed)
-   - `CHANGELOG.md` (under "Unreleased", prefixed with today's date)
+   - `Releases/unreleased.md` (a dated technical entry) and `CHANGELOG.md` (a human line under "Unreleased") for a host-affecting change
 5. **Report.** Summarize what changed and list touched files.
 
 After implementing a phase, report what changed and STOP at the phase-completion gate before moving to the next phase.

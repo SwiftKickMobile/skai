@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.dev-retro
 Managed-Source: Guides/Process/dev-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-18
 
 # Dev-session retro (agent + supervisor)
 
@@ -36,15 +36,15 @@ In the planned gate line, `<what happens after your response>` should describe w
 If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
 Workflow-specific gate notes:
-- The requirements handoff is a non-standard planned gate, emitted only when step 5 seeded a change package. `Next` there means: hand that package to `Guides/Requirements/requirements-authoring.md`, where that workflow will own resolving the discussion items and, in turn, promotion. Retro never resolves them itself and never writes the catalog.
+- The product specs handoff is a non-standard planned gate, emitted only when step 5 seeded a change package. `Next` there means: hand that package to `Guides/ProductSpecs/product-specs-authoring.md`, where that workflow will own resolving the discussion items and, in turn, promotion. Retro never resolves them itself and never writes the catalog.
 - At that handoff gate, the seeded package is the handoff artifact. Its unchecked `- [ ] D<n>` items remain pending while waiting for the supervisor.
 - The ticket-filing handoff is a non-standard planned gate. `Next` there means: hand the current SKAI process suggestions to `Guides/Process/ticket-filing.md`, where that workflow will own ticket drafting, review, and filing.
 - At that handoff gate, the retro output's `SKAI process suggestions` section is the handoff artifact. The unchecked `- [ ]` suggestion items there remain pending while waiting for the supervisor to approve drafting.
-- **Both handoffs come after the full retro output is prepared, and the requirements handoff comes first.** Complete all six checklist steps before emitting either gate: step 6's reflection can be informed by what step 5 found, and a half-run retro should never be left open while its handoffs are worked.
-- Emit one handoff gate at a time. Taking the requirements handoff enters another workflow and the retro does not resume afterwards — so when both handoffs are pending, say so in the summary at the first gate. The retro output is what keeps the second discoverable: its unchecked `- [ ] S<n>` items remain, and the supervisor takes that handoff by invoking ticket filing when ready.
+- **Both handoffs come after the full retro output is prepared, and the product specs handoff comes first.** Complete all six checklist steps before emitting either gate: step 6's reflection can be informed by what step 5 found, and a half-run retro should never be left open while its handoffs are worked.
+- Emit one handoff gate at a time. Taking the product specs handoff enters another workflow and the retro does not resume afterwards — so when both handoffs are pending, say so in the summary at the first gate. The retro output is what keeps the second discoverable: its unchecked `- [ ] S<n>` items remain, and the supervisor takes that handoff by invoking ticket filing when ready.
 
 Planned gates for this workflow:
-- After the retro output is prepared and step 5 seeded a change package, but before handing it off to requirements authoring. Skipped when step 5 found nothing.
+- After the retro output is prepared and step 5 seeded a change package, but before handing it off to product specs authoring. Skipped when step 5 found nothing.
 - After the retro output is prepared and SKAI process suggestions have been identified, but before handing them off to the ticket-filing workflow for drafting.
 
 Workflow-specific blocked gates:
@@ -73,7 +73,7 @@ Progress tracking:
 - Do not draft `process-tickets.md` in this guide. `Guides/Process/ticket-filing.md` owns ticket drafting, review, and filing.
 
 Workflow-specific advance behavior:
-- `auto` may complete the retro itself and may develop suggestions, but when ticket filing is the active handoff it must still STOP at that gate. Requirements retains first-handoff precedence; pending ticket suggestions do not create a return-to-retro cycle.
+- `auto` may complete the retro itself and may develop suggestions, but when ticket filing is the active handoff it must still STOP at that gate. Product specs retains first-handoff precedence; pending ticket suggestions do not create a return-to-retro cycle.
 - Use `draft process tickets` as the stable bounded-auto target for this guide's planned handoff gate.
 
 ## Inputs (read what exists)
@@ -87,9 +87,9 @@ Read the documents and artifacts that were produced or used during this session,
   - `skai/integration.md`
 - Evidence artifacts produced during the session:
   - build/test outputs, logs, result bundles/reports, screenshots/screen recordings, crash reports, etc.
-- The canonical requirements catalog:
-  - the requirements catalog
-- Open requirements change packages supplied or used during the session — behavior already captured
+- The canonical product specs:
+  - the product specs catalog
+- Open product spec change packages supplied or used during the session — behavior already captured
   but not yet promoted. Read these before step 5 so it does not re-raise what is already pending.
 
 If any of these inputs are missing but required to perform the retro, STOP and ask the supervisor where they are.
@@ -130,7 +130,7 @@ If the session changed behavior, conventions, or integration details:
 
 If you are not confident what should be documented, STOP and ask the supervisor what level of documentation is expected.
 
-### 5) Product requirements backfill (retro requirements)
+### 5) Product specs backfill (retro requirements)
 
 Goal: if the session discovered or clarified externally observable behavior, capture it so the catalog can reflect it.
 
@@ -140,11 +140,11 @@ Detection is this step's work, and it is unchanged:
   seeds nothing.
 - Identify what is missing, and what is recorded but now incorrect or outdated.
 
-**Retro does not write the catalog.** Findings are seeded into that repository's `skai/changes/<change-id>/requirements/`, per `Guides/Requirements/requirements-authoring.md` — draft requirement files plus a `## Discussion` holding what this session could not settle as `- [ ] D<n>` items. Write complete requirements under the recommended reading and link each Discussion item to its affected drafts; content rules are in `Guides/Requirements/requirements-catalog.md`.
+**Retro does not write the catalog.** Findings are seeded into that repository's `skai/changes/<change-id>/product-specs/`, per `Guides/ProductSpecs/product-specs-authoring.md` — draft requirement files plus a `## Discussion` holding what this session could not settle as `- [ ] D<n>` items. Write complete requirements under the recommended reading and link each Discussion item to its affected drafts; content rules are in `Guides/ProductSpecs/product-specs-catalog.md`.
 
-Which package to add to or create is the rule of `Guides/Requirements/requirements-authoring.md` § *The change package*. Leave related UI Map packages untouched. If the session found nothing, create no package and skip the requirements handoff gate.
+Which package to add to or create is the rule of `Guides/ProductSpecs/product-specs-authoring.md` § *The change package*. Leave related UI Map packages untouched. If the session found nothing, create no package and skip the product specs handoff gate.
 
-Retro seeds and hands off. It does not resolve discussion items and it does not promote; both belong to the requirements workflow.
+Retro seeds and hands off. It does not resolve discussion items and it does not promote; both belong to the product specs workflow.
 
 ### 6) Process reflection
 
@@ -214,7 +214,7 @@ Then output only:
 - **SKAI process suggestions** section from step 6 (with `- [ ]` items and `S<n>` IDs if any).
 After all six steps, emit one gate using the precedence defined under Gates:
 
-- If step 5 seeded a requirements package, end with `⏳ GATE: Next: Hand the seeded package to Requirements Authoring. Say "next" or what to change.` Advance intent transfers control to `Guides/Requirements/requirements-authoring.md`. If process suggestions also exist, report that pending ticket handoff; retain its unchecked S items for the supervisor to invoke ticket filing later. Retro does not resume afterwards.
+- If step 5 seeded a product spec package, end with `⏳ GATE: Next: Hand the seeded package to Product Specs Authoring. Say "next" or what to change.` Advance intent transfers control to `Guides/ProductSpecs/product-specs-authoring.md`. If process suggestions also exist, report that pending ticket handoff; retain its unchecked S items for the supervisor to invoke ticket filing later. Retro does not resume afterwards.
 - Otherwise, if SKAI process suggestions exist, end with `⏳ GATE: Next: Draft process tickets from these retro suggestions. Say "next" or what to change.` Advance intent enters `Guides/Process/ticket-filing.md` at Phase 1, step 2.
 - With neither handoff, emit `🏁 Complete. Let me know if anything needs adjustment.`
 

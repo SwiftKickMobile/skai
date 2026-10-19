@@ -1,6 +1,6 @@
 ---
 name: skai-design-specs-promotion
-description: Promotes an approved design-spec change package into the canonical design specs (readiness screen, the ten verification checks with evidence, change requests when the existing specs are wrong). Use when the user asks to promote design specs or land a design-spec package.
+description: Promotes an approved design-spec package into the canonical design specs (readiness, ten checks with evidence, change requests for spec defects). Use to promote design specs or land a design-spec package.
 ---
 
 # SKAI: Design specs promotion

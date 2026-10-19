@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.artifact-hosting
 Managed-Source: Guides/Core/artifact-hosting.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-18
 
 # Artifact Hosting
 
@@ -23,7 +23,7 @@ resources when it has one. When it has none, a table:
 
 | Resource | Description | Path |
 | --- | --- | --- |
-| Product requirements | What LumenNotes must do when a note is captured, organized or shared, by domain | [`skai/requirements/_requirements.md`](skai/requirements/_requirements.md) |
+| Product specs | What LumenNotes must do when a note is captured, organized or shared, by domain | [`skai/product-specs/_product-specs.md`](skai/product-specs/_product-specs.md) |
 
 Add a repository column only when the path does not make the repository obvious; the agent follows
 the link and learns nothing from the column.

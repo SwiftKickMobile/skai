@@ -2,10 +2,10 @@
   "manifestVersion": 1,
   "repo": "skai",
   "theme": "LumenNotes",
-  "retiredComponents": ["skill.skai-ui-map-planning"],
+  "retiredComponents": ["skill.skai-ui-map-planning", "skill.skai-requirements-authoring", "skill.skai-requirements-promotion"],
   "componentCategories": [
     {"name": "Setup", "description": "Configure SKAI and keep the project installation up to date."},
-    {"name": "Requirements", "description": "Define, review and maintain the project’s behavioral requirements."},
+    {"name": "Product specs", "description": "Define, review and maintain the project’s product specs: its behavioral requirements."},
     {"name": "Design", "description": "Author design changes in the project’s design file and promote them to production."},
     {"name": "Design specs", "description": "Specify how each screen presents the requirements in its design, and promote the specs."},
     {"name": "UI Map", "description": "Describe screens and routes, then implement the approved map."},
@@ -136,6 +136,18 @@
       "id": "guide.working-doc-conventions",
       "type": "guide",
       "sourcePath": "Guides/Core/working-doc-conventions.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.spec-file-shape",
+      "type": "guide",
+      "sourcePath": "Guides/Core/spec-file-shape.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "tool.spec-tool",
+      "type": "tool",
+      "sourcePath": "Bin/spec-tool.py",
       "tags": ["core"]
     },
     {
@@ -548,33 +560,33 @@
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
-      "id": "guide.requirements-catalog",
+      "id": "guide.product-specs-catalog",
       "type": "guide",
-      "sourcePath": "Guides/Requirements/requirements-catalog.md",
+      "sourcePath": "Guides/ProductSpecs/product-specs-catalog.md",
       "tags": ["core"]
     },
     {
-      "id": "guide.requirements-authoring",
+      "id": "guide.product-specs-authoring",
       "type": "guide",
-      "sourcePath": "Guides/Requirements/requirements-authoring.md",
+      "sourcePath": "Guides/ProductSpecs/product-specs-authoring.md",
       "tags": ["core"]
     },
     {
-      "id": "guide.requirements-baseline",
+      "id": "guide.product-specs-baseline",
       "type": "guide",
-      "sourcePath": "Guides/Requirements/requirements-baseline.md",
+      "sourcePath": "Guides/ProductSpecs/product-specs-baseline.md",
       "tags": ["core"]
     },
     {
-      "id": "guide.requirements-promotion",
+      "id": "guide.product-specs-promotion",
       "type": "guide",
-      "sourcePath": "Guides/Requirements/requirements-promotion.md",
+      "sourcePath": "Guides/ProductSpecs/product-specs-promotion.md",
       "tags": ["core"]
     },
     {
-      "id": "guide.requirements-artifacts",
+      "id": "guide.product-specs-artifacts",
       "type": "guide",
-      "sourcePath": "Guides/Requirements/requirements-artifacts.md",
+      "sourcePath": "Guides/ProductSpecs/product-specs-artifacts.md",
       "tags": ["core"]
     },
     {
@@ -602,21 +614,21 @@
       "tags": ["core"]
     },
     {
-      "id": "skill.skai-requirements-authoring",
-      "label": "Requirements authoring",
-      "category": "Requirements",
-      "description": "Draft and discuss behavioral requirements without changing the canonical catalog.",
+      "id": "skill.skai-product-specs-authoring",
+      "label": "Product specs authoring",
+      "category": "Product specs",
+      "description": "Draft and discuss product specs without changing the canonical catalog.",
       "type": "skill",
-      "sourcePath": "Templates/skills/skai-requirements-authoring/SKILL.md",
+      "sourcePath": "Templates/skills/skai-product-specs-authoring/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
-      "id": "skill.skai-requirements-promotion",
-      "label": "Requirements promotion",
-      "category": "Requirements",
+      "id": "skill.skai-product-specs-promotion",
+      "label": "Product specs promotion",
+      "category": "Product specs",
       "description": "Verify an approved package, write the catalog and archive the package.",
       "type": "skill",
-      "sourcePath": "Templates/skills/skai-requirements-promotion/SKILL.md",
+      "sourcePath": "Templates/skills/skai-product-specs-promotion/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {

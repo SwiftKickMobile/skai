@@ -19,7 +19,7 @@ The base guide owns its dependencies, including reading Integration whenever ope
 
 ## Prototype and rollout
 
-Prototype Requirements Promotion with its thin wrapper and the installed instruction-block exception. Other guides' addendum support is not yet assumed during prototype review. Review the loading/precedence/receipt contract in this concrete guide; unrelated requirements semantics and earlier change-package work are outside this review.
+Prototype Product Specs Promotion with its thin wrapper and the installed instruction-block exception. Other guides' addendum support is not yet assumed during prototype review. Review the loading/precedence/receipt contract in this concrete guide; unrelated requirements semantics and earlier change-package work are outside this review.
 
 After refinement, promote the exact settled entry/footer text into a maintainer house-style reference and apply it to all 35 registered guide assets: 33 files under Guides plus the two internal guide-runbooks. Non-guide installer runbooks and maintainer-only references are not separate skill building blocks; their ownership/update instructions must preserve addenda. No new runtime loader or guide dependency is requested.
 
@@ -27,10 +27,10 @@ After refinement, promote the exact settled entry/footer text into a maintainer 
 
 - Current guide behavior remains the default when no addendum exists; no new review gate or progress field.
 - Only the thin wrapper routes to the canonical guide; it must not restate procedure restrictions that contradict overrides or current recovery.
-- Keep the existing 11,000-word cap across the four requirements guides. Initial total is 10,608; additions during rollout may need compensating trims.
+- Keep the existing 11,000-word cap across the four product spec guides. Initial total is 10,608; additions during rollout may need compensating trims.
 - Verify no-addendum, added-rule, explicit-override, unreadable/unknown-root and root-project/task conflict paths. The receipt must be truthful and before work, while existing gate placement is preserved.
 - This is instruction-based loading and acknowledgement, not a technical guarantee that an agent obeys the text. Do not add hooks, mandatory user schemas or proof fields to address that limitation.
-- Preserve current asset IDs, addendum content and released changelog history. No commit, push, release, host migration or issue operation is requested.
+- Preserve current asset IDs, addendum content and released history (`CHANGELOG.md` and `Releases/`). No commit, push, release, host migration or issue operation is requested.
 
 ## Shared-context follow-up — 2026-10-09
 

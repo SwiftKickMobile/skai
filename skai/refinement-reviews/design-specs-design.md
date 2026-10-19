@@ -22,7 +22,8 @@ UI Map is a technical document downstream of all three and references none of th
 1. **One home per fact.** Requirements own promises and product thresholds; the design owns
    appearance and the copy of what it draws; the spec owns how a screen presents the promises. A
    spec cites a requirement and never restates its rule. A rule that narrows a requirement is a
-   requirements gap, raised as a sibling requirements package, never specified quietly.
+   requirements gap, raised as a change request against the open product spec package or the
+   catalog (amended 2026-10-18; previously a sibling requirements package), never specified quietly.
 2. **Product language only, never appearance, never mechanism.** No design-tool identifiers, no
    platform names in rules, no color, position, shape or size words, no framework or code names.
    The ban on appearance is semantic: established product names and the relationships needed to
@@ -61,7 +62,9 @@ UI Map is a technical document downstream of all three and references none of th
    says so and links the rule it supersedes; the parent rule never names its overrides. The
    override may restate the parent rule with its modifications rather than only the delta, for
    readability; that bends "stated once" deliberately. No silent precedence.
-6. **IDs.** `UI-<PREFIX>-<NN>` per item, `.<NN>` per rule beneath it. Prefixes name the thing
+6. **IDs.** `UI-<PREFIX>-<NN>` per item, `-<NN>` per rule beneath it and `-<NN>-<NN>` one level
+   down, which is the limit (amended 2026-10-18 from `.<NN>` and "nested as needed"; dashes read as
+   one ID and parse unambiguously because a prefix never holds a digit). Prefixes name the thing
    specified, never the file, and are unique across the specs; a prefix is a namespace and may span
    files after a move. IDs are file-independent and append-only from first drafting; retire in
    place at every level; modify keeps the ID when the promise is the same, a changed contract
@@ -69,14 +72,17 @@ UI Map is a technical document downstream of all three and references none of th
    between packages is caught when the later one promotes. A prefix names the thing including its
    kind where the bare noun is abstract (`UI-DEFAULT-STAGE`, not `UI-DEFAULT`; supervisor,
    2026-10-14); abbreviation is fine, readers learn prefixes by familiarity.
-7. **Format.** Title Case headings. A title and an intro paragraph, then `##` parts (not cited),
-   `###` per citable item carrying only its ID, rules as bold two-digit bullets, data as tables or
-   plain lists. An item opens with a brief statement of what it is about and the link to the
+7. **Format.** The shared spec file shape of [`spec-format-design.md`](spec-format-design.md),
+   common to product specs and design specs since 2026-10-18: Title Case headings, a title and an
+   intro paragraph, then `##` parts (not cited), `###` per citable item carrying only its ID, rules
+   as bold two-digit bullets, data as tables keyed on their first column or plain lists. Glossary
+   entries are `###` headings and every occurrence of a glossary term in spec prose links its entry.
+   The spec tool validates the shape before the ten checks run. An item opens with a brief statement of what it is about and the link to the
    requirement it presents, then its rules (supervisor, 2026-10-14: `UI-STAGE-01` opened straight
    into "Day headings" with no statement of what a day group is and no link to the requirement
    defining it). A `##` part is a grouping only: it may open with a one-line description that
    orients and binds nothing; anything that says what shows or when belongs under an item. Reference-style links with definitions at the bottom; requirement IDs cited as
-   links that may target a draft in an active requirements package until promotion repoints them;
+   links that may target a draft in an active product spec package until promotion repoints them;
    nothing links into the design tool. Known differences are a blockquote under the item, in the
    catalog's form, platform words appearing there and nowhere else. Pending specs are named inline
    as `(spec pending: <file>)`; a pending destination never blocks promotion, a pending global
@@ -92,13 +98,16 @@ UI Map is a technical document downstream of all three and references none of th
    since an open package was drafted, is input on that package. The first move is all ten checks
    over every draft in it, not only changed items; each failure becomes a Discussion item before
    any fix. An agent must not presume an open package's drafts conform.
-9. **Change packages.** Same shape as requirements: authoring then promotion, under
+9. **Change packages.** Same shape as product specs: authoring then promotion, under
    `skai/changes/<change-id>/design-specs/`, drafts whole-file under `proposed-design-specs/`,
-   typed change items (`S<n>`, add/modify/retire/move × file, item, sub-item, index line, glossary
-   entry, known-difference note) showing changed text inline for changes inside an existing file,
-   each identity a link to the draft; a new file is one item whose identity links the whole draft
-   and whose description summarizes it (clarified 2026-10-14, round 8).
-   Packages are decoupled; the one link that may cross is a cited draft requirement. Promotion
+   typed change items (`S<n>`, add/modify/retire/move × file, item, rule, index line, glossary
+   entry, known-difference note), each identity a link to the draft, with no inlined text since
+   2026-10-18 (the rendered page shows the diff; spec-format-design decision 15), maintained as the
+   drafts change rather than written after the gate, since the page takes each change's reason from it
+   (2026-10-18, target 3); a new file is one item whose identity links the whole draft
+   (clarified 2026-10-14, round 8; the description field went with inlined text on 2026-10-18).
+   Packages are decoupled; the links that may cross are a cited draft requirement and a change
+   request filed against the product spec package (2026-10-18). Promotion
    runs the ten verification checks, prepares destination links, writes whole files, archives the
    package; a spec promotes on approval and has no concern with implementation or the design
    file's state beyond the drawn-state check.
@@ -119,7 +128,7 @@ UI Map is a technical document downstream of all three and references none of th
 - Every rule sits inside the template it governs. Examples use LumenNotes; the worked example is
   SalesPro's and stays outside the guides.
 - The guides cite the Figma guide and the design process guides for drawing conventions and change
-  pages rather than restating them, and cite the requirements guides for the package lifecycle they
+  pages rather than restating them, and cite the product spec guides for the package lifecycle they
   mirror.
 - Gates and advance intent follow skai's standard model: one planned gate in authoring (Discussion
   complete), one in promotion (Promotion Checks); `auto` never bypasses the Discussion blocked gate.
@@ -152,7 +161,7 @@ UI Map is a technical document downstream of all three and references none of th
 `Templates/skills/skai-design-specs-authoring/SKILL.md` and
 `skai-design-specs-promotion/SKILL.md`.
 
-**Not the target:** the requirements guides (their lifecycle is inherited, not reviewed here); the
+**Not the target:** the product spec guides (their lifecycle is inherited, not reviewed here); the
 design process and Figma guides; artifact location and the addendum boilerplate (settled by their
 own passes); the SalesPro worked example and its package.
 
@@ -169,10 +178,52 @@ own passes); the SalesPro worked example and its package.
 ## Settled Dispositions
 
 - Acceptance criteria is not a fourth artifact: the package's item list is the AC.
-- No design change request artifact (tried, withdrawn).
-- Spec and requirements packages stay decoupled; a requirements gap seeds a sibling package and
-  stops; the spec cites the draft ID and waits for its promotion.
+- ~~No design change request artifact (tried, withdrawn).~~ Superseded 2026-10-18: change
+  requests are a cross-type artifact any consumer files against a package or a catalog.
+- ~~Spec and requirements packages stay decoupled; a requirements gap seeds a sibling package and
+  stops.~~ Superseded 2026-10-18: a requirements gap files a change request against the open
+  product spec package (or the catalog); the spec cites the draft ID once it is incorporated and
+  waits for its promotion. Packages remain decoupled otherwise.
 - Platform deviations use the known-difference blockquote; a shared deviation form is parked.
 - Static-copy drift between design and specs is parked.
 - `move` for requirements is parked.
-- Title Case alignment of the requirements catalog and the older guides is a separate change.
+- Title Case alignment of the product specs catalog and the older guides rides the 2026-10-18
+  migration to the shared shape.
+
+## Amendments — 2026-10-18
+
+From the Offers retrospective (SalesPro checkout, `working-docs/requirements-process/planning.md`,
+ephemeral). Product specs adopt this guide set's item shape, and the shape becomes a shared guide
+with its own standard, [`spec-format-design.md`](spec-format-design.md), which both guide sets cite
+instead of restating. Changes to this guide set:
+
+- Rule IDs use dashes (`UI-NOTES-01-03`); nesting is capped one level below a rule.
+- Glossary entries are `###` headings; every occurrence of a glossary term is linked.
+- The spec tool validates shape, IDs, links and glossary links before the ten checks, at authoring's
+  gate and at promotion; `references` lists citing locations before a modify or retire.
+- A requirements gap is a change request, not a seeded sibling package.
+- The size budget is re-measured after the shape rules move to the shared guide; 60,000 bytes stays
+  the reference point until the supervisor re-sets it.
+- Refinement order: the shared shape guide and tool first, then product specs, then this guide set,
+  then one consistency pass across all three.
+
+## Size Budgets — 2026-10-18
+
+Set by the supervisor from four efficiency reviews (SalesPro checkout, `working-docs/requirements-process/reviews/`), as today's size less measured obsolete content, less the reviewed trim on what remains, plus known growth. Whole-file bytes by `wc -c`, managed header and addendum footer included. They bind every repair per the refinement guide's size-budget rule.
+
+These replace the 60,000-byte budget above.
+
+| Target | File | Cap |
+| --- | --- | --- |
+| 2. Content | design-specs.md | 15,000 |
+| 2. Content | design-specs-artifacts.md | 5,000 |
+| 3. Authoring | design-specs-authoring.md | 17,000 (raised 2026-10-18 from 15,500 after the decided additions exceeded the growth estimate; confirmed by the supervisor) |
+| 3. Authoring | skai-design-specs-authoring skill | 450 |
+| 4. Promotion | design-specs-promotion.md | 12,800 |
+| 4. Promotion | skai-design-specs-promotion skill | 450 |
+
+Group caps across both spec types and the design process guides: content 37,000; authoring 54,900 (raised 2026-10-18 with design-specs-authoring); promotion 42,700.
+
+**Rendered page, prominently linked (supervisor, 2026-10-18).** The authoring and promotion artifacts each link the package's rendered review page (`design-specs-review.html`) at the top, directly under the title; a change request's `request.md` links `request-review.html` the same way.
+
+**Live render (supervisor, 2026-10-18).** The rendered page is the primary way the supervisor views a change package while it is being iterated on. Any time the package materially changes — a draft edited, a discussion item resolved, a change item added, a request triaged — the agent validates and re-renders before anything else, in every workflow that writes a package. The gate and promotion renders are not the only ones; they are the last of many. Validation and rendering take milliseconds, so there is no cost argument for deferring them.

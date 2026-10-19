@@ -54,7 +54,7 @@ When creating/updating the Integration doc:
    Integration doc still carries a `requirements` or `design-specs` managed block from an earlier
    skai, propose removing it (see *Legacy cleanup*); before removal, confirm the README links the
    artifact the block named, or propose adding the link — a project-owned edit with its own approval.
-5. If required project-specific constants6. If required project-specific constants/mappings cannot be inferred:
+5. If required project-specific constants/mappings cannot be inferred:
    - restore/leave 🟡 markers + instruction lines in the `required-values` block
    - STOP and ask the supervisor the minimum questions needed
 

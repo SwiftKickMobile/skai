@@ -15,19 +15,19 @@ Runtime instructions remain usable by a fresh operator: maintainer references ma
 Related work must be easy to find by change ID while package types can coexist and promote independently:
 
 ```text
-skai/changes/<change-id>/requirements/
+skai/changes/<change-id>/product-specs/
 skai/changes/<change-id>/ui-map/
-skai/promoted/<change-id>/requirements/
+skai/promoted/<change-id>/product-specs/
 skai/promoted/<change-id>/ui-map/
 ```
 
-The change-ID directory groups related work. Each type directory is independently owned and contains that package's proposal and collateral. Requirements and UI Map must both conform to the shared house style; supporting creation, discovery, artifact formats and callers must be consistent.
+The change-ID directory groups related work. Each type directory is independently owned and contains that package's proposal and collateral. Product specs and UI Map must both conform to the shared house style; supporting creation, discovery, artifact formats and callers must be consistent.
 
 Promotion moves the relevant type folder after its canonical promotion succeeds. It must not move an unpromoted sibling. Completed packages remain available as durable history, and affected live references must remain usable. Existing canonical artifact ownership, authoring/promotion approval boundaries, and UI Map Plan versus Build semantics are preserved. Moving a Plan package must not lose its pending downstream work.
 
 ## Migration and recovery
 
-The changelog must explain how existing host artifacts adopt the layout, including mixed legacy folders, type-owned evidence and references, completed versus active proposals, and derived previews. Preserve canonical content, proposals, IDs, decisions, history and pending implementation work. Do not overwrite a conflicting destination or fabricate historical execution evidence.
+The release document must explain how existing host artifacts adopt the layout, including mixed legacy folders, type-owned evidence and references, completed versus active proposals, and derived previews. Preserve canonical content, proposals, IDs, decisions, history and pending implementation work. Do not overwrite a conflicting destination or fabricate historical execution evidence.
 
 Canonical promotion and archival may be interrupted separately. Operators must be able to finish the remaining work without treating a completed proposal as an unpromoted draft or repeating a successful canonical write solely to complete a move. The specific completion markers and recovery mechanics in the implementation are reviewable choices, not requirements prescribed here.
 
@@ -37,7 +37,7 @@ Conformance work with no proposed canonical change must be distinguishable from 
 
 - This change concerns maintenance routing and change package ownership/lifecycle; it does not redesign requirement prose, ID semantics, catalogs, UI Map schema, rendering behavior, or the process-refinement workflow.
 - Existing gate, Discussion and marker semantics are retained except where archival necessarily affects completion. A new gate, duplicate state field, proof burden or substantial checklist expansion needs an explicit tradeoff, not an automatic acceptance as a review fix.
-- The requirements system's existing 11,000-word cap across catalog, authoring, promotion and artifact guides has not been raised by this request. Report current size and any repair cost against that constraint; do not silently waive it.
+- The product specs system's existing 11,000-word cap across catalog, authoring, promotion and artifact guides has not been raised by this request. Report current size and any repair cost against that constraint; do not silently waive it.
 - No new numerical size budget is prescribed for the maintainer reference set. Its organization is judged against selective loading and keeping the main guide concise.
 - No commits, release cut, host migration or GitHub issue state change is requested by this review.
 
@@ -45,7 +45,18 @@ Conformance work with no proposed canonical change must be distinguishable from 
 
 1. Can an agent find the relevant maintenance rules without loading unrelated specialist documents?
 2. Did extraction preserve and route the common and specialized rules coherently?
-3. Can same-ID requirements and UI Map packages coexist and promote in either order without crossing ownership?
+3. Can same-ID product specs and UI Map packages coexist and promote in either order without crossing ownership?
 4. Can creation, discovery, reopening, promotion, recovery and downstream consumption operate from the documents without prior chat context?
 5. Are existing installations given a usable and nondestructive migration path, with proposals and historical records preserved?
 6. Does the implementation keep its added process weight and document size proportionate to the requested behavior?
+
+## Amendment — 2026-10-18
+
+- The `requirements/` type folder becomes `product-specs/` under both `skai/changes/<change-id>/`
+  and `skai/promoted/<change-id>/`.
+- Change requests are folders, `change-requests/<nnn>/`, holding `request.md` (status, reviewer
+  response, title, Goal, Requested Changes in the typed change-item format) and optionally the
+  request's own drafts in the spec file shape. They may be filed by any downstream consumer against
+  an open package or the canonical artifact, for product specs and design specs alike; the owning
+  authoring workflow triages them. Promotion still cannot move a type folder while a request in it is
+  `Proposed`.

@@ -12,19 +12,19 @@ Use these paths, relative to the canonical repository:
 skai/
   changes/
     <change-id>/
-      requirements/
+      product-specs/
       ui-map/
       design/
       design-specs/
   promoted/
     <change-id>/
-      requirements/
+      product-specs/
       ui-map/
       design/
       design-specs/
 ```
 
-`<change-id>` groups related work. Each `<type>` folder is one independent package; the parent is a grouping directory, not a package. Current types are `requirements`, `ui-map`, `design` and `design-specs`. Add future types here when defining their workflows. Each type owns all its drafts, review and execution artifacts, change requests, and evidence under its folder. Do not share evidence or requests at the grouping-directory level.
+`<change-id>` groups related work. Each `<type>` folder is one independent package; the parent is a grouping directory, not a package. Current types are `product-specs`, `ui-map`, `design` and `design-specs`. Add future types here when defining their workflows. Each type owns all its drafts, review and execution artifacts, change requests, and evidence under its folder. Do not share evidence or requests at the grouping-directory level.
 
 Use a short, stable kebab-case change ID. Use a supplied ID; if it is unclear, propose one and obtain supervisor resolution before creation. When deriving a proposal from a branch, use its final component (`work/billing-ui` → `billing-ui`). Reuse the ID for related types, including in different canonical repositories, and link their resolved locations. Do not reuse a promoted ID/type pair for a new proposal.
 
@@ -69,20 +69,20 @@ If archival fails after canon was written, report canon as promoted and archival
 
 ### Example: independently promoted related work
 
-LumenNotes has active requirements and UI Map packages for `reminder-expiry`:
+LumenNotes has active product specs and UI Map packages for `reminder-expiry`:
 
 ```text
-skai/changes/reminder-expiry/requirements/
+skai/changes/reminder-expiry/product-specs/
 skai/changes/reminder-expiry/ui-map/
 ```
 
-Requirements promotion writes and verifies the catalog, then moves only the requirements package to `skai/promoted/reminder-expiry/requirements/`. The UI Map package remains active, with its links to the requirements package updated. Later, UI Map promotion writes and renders the official map, moves only its own package to `skai/promoted/reminder-expiry/ui-map/`, repairs references and re-renders its preview. With no active types left, the empty `skai/changes/reminder-expiry/` grouping directory is removed.
+Product specs promotion writes and verifies the catalog, then moves only the product specs package to `skai/promoted/reminder-expiry/product-specs/`. The UI Map package remains active, with its links to the product specs package updated. Later, UI Map promotion writes and renders the official map, moves only its own package to `skai/promoted/reminder-expiry/ui-map/`, repairs references and re-renders its preview. With no active types left, the empty `skai/changes/reminder-expiry/` grouping directory is removed.
 
-A requirements-only or UI-Map-only change follows the same decision procedure: promote the selected type, never the group. If the UI Map run is Plan, its unchecked implementation items remain in the promoted package for the receiving workflow.
+A product-specs-only or UI-Map-only change follows the same decision procedure: promote the selected type, never the group. If the UI Map run is Plan, its unchecked implementation items remain in the promoted package for the receiving workflow.
 
 ## Existing installations
 
-A path change requires migration instructions in `CHANGELOG.md`, not just new examples. Discover legacy packages in each canonical repository, determine type ownership and promotion state from their artifacts, and move each type independently. Preserve canonical content, decisions, IDs, evidence and pending implementation work. Unknown ownership, shared evidence, or destination collisions require resolution before moving; never guess or overwrite. Untyped UI Map conformance artifacts without a proposal are working documents.
+A path change requires migration instructions in the release document (`Releases/unreleased.md`), not just new examples. Discover legacy packages in each canonical repository, determine type ownership and promotion state from their artifacts, and move each type independently. Preserve canonical content, decisions, IDs, evidence and pending implementation work. Unknown ownership, shared evidence, or destination collisions require resolution before moving; never guess or overwrite. Untyped UI Map conformance artifacts without a proposal are working documents.
 
 After a move, repair live incoming/outgoing references and regenerate location-dependent previews. Preserve historical evidence commands/results and annotate old paths. Verify that a second discovery pass finds no unmigrated packages except explicitly blocked cases. Do not fabricate new execution checkmarks on historical artifacts; record migration separately.
 
@@ -91,7 +91,7 @@ After a move, repair live incoming/outgoing references and regenerate location-d
 For every affected authoring, promotion and caller guide, record the applicable checks:
 
 - Path formulas, examples, request paths and evidence paths use the type folder and the artifact's repository; no discovery globs.
-- Same-ID requirements and UI Map packages coexist; either can promote first without moving or consuming its sibling.
+- Same-ID product specs and UI Map packages coexist; either can promote first without moving or consuming its sibling.
 - Reopen finds active work; a review-ready package stays active; a promoted package is not redrafted or re-promoted.
 - Promotion verifies canon before moving, repairs links/previews, records archived evidence, and only then marks completion.
 - A collision blocks before the write; a failure after the write resumes archival only, even if the package has already moved.

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-creation
 Managed-Source: Guides/Spec/work-spec-creation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-18
 
 # Work Spec Design
 
@@ -267,13 +267,13 @@ Invoke sibling workflows only when their owned artifact is needed:
   route, or domain. If no official map exists, invoke the sibling only when the supervisor approves a
   material `D#` adopting one; otherwise describe the UI design in this document. Its completed package
   becomes an input.
-- When the project has a requirements catalog, invoke
-  [`../Requirements/requirements-authoring.md`](../Requirements/requirements-authoring.md) if existing
+- When the project has a product specs catalog, invoke
+  [`../ProductSpecs/product-specs-authoring.md`](../ProductSpecs/product-specs-authoring.md) if existing
   shipping behavior needed by this work is absent. It owns the backfill package and its gates. The
   backfill runs here only when an open `D#` or the current slice's API Sketch cannot be resolved
   without it. Otherwise record the need for separate supervisor orchestration and continue. If the
   project keeps no catalog, record the missing behavior as an assumption. New behavior being planned
-  does not automatically trigger requirements authoring.
+  does not automatically trigger product specs authoring.
 
 Siblings keep their artifacts and gates; link their results instead of duplicating them. Work Spec
 Design writes only its design document and treats sibling packages, canonical requirements, and

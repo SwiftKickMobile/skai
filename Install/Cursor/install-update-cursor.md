@@ -86,6 +86,7 @@ If updating the submodule, include an "update review" section:
 - Summarize changes between the old SHA and new SHA for relevant paths:
   - `Guides/`, `Policies/`, `Templates/`, `Install/`, `assets.manifest.json`, `README.md`
 - If you cannot compute the diff yourself, STOP and ask the supervisor to provide the diff output.
+- State what the release documents require of this adapter (`Releases/release-<n>.md` after the host's release, and `Releases/unreleased.md` for a commit target); when the update-installation guide has already reported them at its release-documents gate, cite that report rather than re-reading.
 
 ### 5) Execute (safe order)
 
@@ -170,8 +171,10 @@ During discovery compare actual managed skills with that resolved set. Deselecte
 outputs are reconciliation removals under the shared contract; verify marker/id/adapter before
 removing their managed file, retain custom resources, and remove directories only if empty.
 Retired `skill.skai-ui-map-planning` is a managed retirement removal after plan approval or Save;
-its template/guide no longer exist. Verify managed markers before removal and preserve project
-addenda/artifacts. Other unmarked lookalikes and obsolete artifacts remain separate
+its template/guide no longer exist. Every ID in the manifest's `retiredComponents` is the same kind
+of removal; when a retired component has a replacement, the release document that retired it says
+how a host carries its selection and component history to the new ID. Verify managed markers before
+removal and preserve project addenda/artifacts. Other unmarked lookalikes and obsolete artifacts remain separate
 permission-gated legacy candidates. Never remove project addenda or canonical data.
 
 ## Install state file
@@ -196,7 +199,7 @@ Format:
   "managedBy": "skai",
   "submodulePath": "Submodules/skai",
   "lastSHA": "<current submodule HEAD SHA>",
-  "lastRelease": "<v<N> release tag at submodule HEAD, or null if not on a release>",
+  "lastRelease": "<latest v<N> release tag that is an ancestor of submodule HEAD>",
   "lastUpdatedAt": "<yyyy-mm-dd>",
   "installedAdapters": [
     {
@@ -213,8 +216,8 @@ Rules:
 - Resolve the state path under `Install/component-history.md`. If local state is new, seed from
   shared state before merging; never overwrite shared state with local effective choices.
 - If the file does not exist, create it with this adapter's entry.
-- If the file already exists, **merge**: update `lastSHA`, `lastRelease`, `lastUpdatedAt`, and upsert this adapter's entry in `installedAdapters` (preserve entries from other adapters).
-- Determine `lastRelease` from the submodule's current HEAD: `git -C <submodulePath> tag --points-at HEAD --list 'v*'` -- if a `v<N>` tag points at HEAD, use the highest; otherwise set `lastRelease` to null.
+- If the file already exists, **merge**: upsert this adapter's entry in `installedAdapters` and its component history (preserve entries from other adapters). Do not advance the top-level `lastSHA`, `lastRelease` or `lastUpdatedAt`: the update-installation guide writes them in its step 7 after every adapter has completed, so a retry after a partial multi-adapter update reports the same release range.
+- When creating the file, determine `lastRelease` from the submodule's current HEAD: `git -C <submodulePath> tag --list 'v[0-9]*' --merged HEAD --sort=-v:refname | head -1` — the latest `v<N>` tag that is an ancestor of HEAD. Never write null; omit the field when no tag is an ancestor.
 - The adapter ID for this runbook is `cursor`; the runbook path is `Install/Cursor/install-update-cursor.md`.
 
 Follow `Install/component-history.md` for configuration fingerprints, retained component records,

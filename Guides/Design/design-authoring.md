@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-authoring
 Managed-Source: Guides/Design/design-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-18
 
 # Design Authoring
 
@@ -14,13 +14,10 @@ Take a design change from an idea to approved mockups in a **change package**: s
 it raises with the supervisor, draw it on a change page in the design file, and leave the package
 ready to promote.
 
-Authoring edits the change page and the package; the production designs stay unchanged. This guide
-is tool-agnostic. The conventions the designs must meet live in the design tool's own guide: load
-[`figma-designer-guide.md`](figma-designer-guide.md) for Figma. Read the tool guide before drawing
-anything.
-
-The input is whatever the supervisor brings: an idea, sketches, a product brief, a requirements
-package, screenshots of an existing app.
+Authoring edits the change page and the package; the production designs stay unchanged, and so does
+the change's product spec package: a decision that changes what the product promises is filed as a
+change request against it (*Resolution*). The conventions the designs must meet live in the design
+tool's own guide: load [`figma-designer-guide.md`](figma-designer-guide.md) for Figma.
 
 ## The change package
 
@@ -32,40 +29,36 @@ A package lives at `skai/changes/<change-id>/design/` and holds:
 | `design-promotion.md` | promotion's artifact; may be absent |
 | `evidence/` | check output promotion persisted; may be absent |
 
-The drafts themselves live in the design file, on a **change page** named `<change-id>`. Every
-design tool SKAI supports has named pages; the tool guide says what a page is in its tool. Other
-types for the same change share its `<change-id>`; promotion archives each type independently to
+The drafts themselves live in the design file, on a **change page** named `<change-id>`; the tool
+guide says what a page is in its tool. Other types for the same change share its `<change-id>` and
+update freely while the change is open; promotion archives each type independently to
 `skai/promoted/<change-id>/<type>/`.
 
-If the change ID is clear from the input, use it. If not, do not create the artifact yet: propose a
-short kebab-case default and stop at the blocked gate rather than guessing. Once the ID is resolved,
-create the artifact, then write `## Goal` and `## Inputs` before anything else.
+Use the input's change ID; otherwise propose a short kebab-case default and block before
+creating the artifact. Once the ID is resolved, create the artifact, then write `## Goal` and
+`## Inputs` before anything else.
 
 ### Artifact skeleton
 
 ```
 # Design — <name>
 ## Goal                   one or two sentences; no motivation essay
-## Inputs                 the sources this artifact was drafted from
-## Discussion             the open questions and resolved decisions
+## Inputs                 draft sources
+## Discussion             open questions and decisions
 ## Design Changes         the inventory of screens, written after approval
-## Assumptions and TODOs  what the designs assume; gaps that need no decision; may be empty
-## Out of scope           boundaries this package deliberately doesn't address; may be empty
+## Assumptions and TODOs  what the designs assume; gaps needing no decision; filed requests
+## Out of scope           excluded work; may be empty
 ```
 
 ## Phases
 
-Authoring alternates between two phases and never runs both at once:
+Authoring alternates between two phases, never both at once:
 
 1. **Discussion.** Items are raised and resolved. Nothing is drawn.
 2. **Mockups.** The agent draws or adjusts on the change page; the supervisor reviews the designs.
 
-The mockup is new work to review, so it arrives only once the supervisor has finished considering
-proposals. Feedback on mockups goes into the designs, except what needs a recorded decision, which
-is parked and opens the next discussion phase (the sequence is under *Mockups*). The phases
-alternate until the supervisor approves the mockups.
-
-Don't mock up to answer what discussion can settle; don't discuss what a mockup settles faster.
+Feedback on mockups follows the sequence under *Mockups*: into the designs, or parked as the next
+discussion phase. The phases alternate until the supervisor approves the mockups.
 
 ## Gates
 
@@ -97,9 +90,9 @@ Workflow-specific gate notes:
   that advances to Mockups.
   - Blocked: `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to Mockups.`
   - Planned: `⏳ GATE: Next: Discussion complete. Say "next" to draw the mockups on <change-id>.`
-- The Mockup review gate is non-standard. The supervisor reviews the change page, not the artifact.
-  Feedback is handled in the sequence under *Mockups*: the round ends either back at this gate or
-  at the Discussion gate with the parked items; the word "approved" advances to Design Changes.
+- The Mockup review gate is non-standard. The supervisor reviews the change page, not the artifact;
+  the trace pass under *Mockups* runs before the gate is emitted. Feedback follows the sequence
+  under *Mockups*; the word "approved" advances to Design Changes.
   - `⏳ GATE: Next: Review the mockups on <change-id>. Say "approved" to write Design Changes, or give feedback.`
 
 Planned gates for this workflow:
@@ -140,46 +133,43 @@ Discussion gate does not clear them; by the time that gate is reached they are a
 
 **Workflow-specific `auto` behavior.** `auto` never bypasses the Discussion blocked gate (unresolved
 items are supervisor decisions) and never bypasses the Mockup review gate: mockups are reviewed by
-looking at them, and nothing substitutes for that.
+looking at them.
 
 ## Initiation
 
-The workflow starts on an explicit signal — "design X", "mock up X", "backfill the designs", or
-equivalent. Whatever came before is context the agent digests.
+The workflow starts on an explicit signal — "design X", "mock up X", "backfill the designs".
+Whatever came before is context the agent digests.
 
 On the signal:
 
 1. Read the tool guide.
-2. If a package for this work is named or already in context and promotion has not taken it up —
-   no `design-promotion.md`, or one that returned it to authoring — reopen it rather than creating
-   a second. A package promotion holds is promotion's to continue; a closed one, and new work on
-   its subject, opens a new package.
+2. If a package for this work is named or in context and promotion has not taken it up — no
+   `design-promotion.md`, or one that returned it to authoring — reopen it rather than creating a
+   second. A package promotion holds is promotion's; a closed one opens a new package.
 3. Otherwise resolve the change ID, create the artifact, and record `## Goal` and `## Inputs`.
 4. Open the first Discussion phase.
 
-On reopen, resolved decisions are never disturbed: a resolved
-`- [x] D<n>` is not removed, rewritten, or renumbered; new items continue the numbering. A reopen
-that changes the designs removes `## Design Changes`, since it recorded an approval that no longer
-covers them; it is rewritten after the next approval.
+On reopen, resolved decisions are never disturbed: a resolved `- [x] D<n>` is not removed,
+rewritten or renumbered; new items continue the numbering. A reopen that changes the designs
+removes `## Design Changes`, since it recorded an approval that no longer covers them; it is
+rewritten after the next approval.
 
-**A backfill** (designs drawn from an existing app) is a change like any other: it goes through a
-change page, and its items are the deviations from the app and the suspected defects the agent
-finds. The tool guide's *Working a backfill* says what to draw.
+**A backfill** (designs drawn from an existing app) is a change like any other; its items are the
+deviations from the app and the suspected defects the agent finds, and the tool guide's *Working a
+backfill* says what to draw.
 
 ## Discussion
 
-`## Discussion` holds the decisions this package needs from the supervisor. Topics are `###`
-subsections with their items inline. Do not create aggregator sections (`## Questions`,
-`## Open Items`) that pull items out of their topics.
+`## Discussion` holds the decisions this package needs from the supervisor, grouped under `###`
+topics, never in aggregator sections (`## Questions`, `## Open Items`).
 
 Item line: `- [ ] D<n> [Kind] <summary>`, where `[Kind]` is `[Question]`, `[Proposal]`, or
 `[Tradeoff]`. Sub-bullet labels are bold with no separator: **Concern** (always), **Proposal**,
 **Question**, **Options**, **Detail**, **Why**, and **Decision** on resolution.
 
-**Every item carries a recommendation**, in words. Nothing is drawn to make a proposal; the mockup
-phase applies the decisions. An item that can only be judged visually says so, and the supervisor
-resolves it by approving the recommended option as a trial (`- **Decision** Try it; judge in the
-mockup.`); the mockup then shows it, and feedback on the mockup settles it.
+**Every item carries a recommendation**, in words. An item that can only be judged visually says
+so, and the supervisor resolves it by approving the recommended option as a trial
+(`- **Decision** Try it; judge in the mockup.`); the mockup then shows it, and feedback settles it.
 
 ### What earns an item
 
@@ -187,12 +177,11 @@ An item is a decision the agent needs from the supervisor: a departure from the 
 existing design that the agent proposes, behavior that looks like a defect ("the app does X, which
 looks like a defect; the design will show Y"), a product question the inputs leave open, a scope
 call that could go either way. Design iteration itself (layout, spacing, copy, the look) is
-informal, in the file and in conversation, and earns no items. A change the supervisor asks for
-during a mockup review needs no item; the design is the record.
+informal and earns no items; a change the supervisor asks for during a mockup review needs no item,
+the design is the record.
 
-If a phase produces no items, leave `## Discussion` as one plain paragraph: "The listed Inputs
-determine the designs; review them on `<change-id>`." Omit that sentence whenever the section holds
-any item.
+With no items, leave `## Discussion` as: "The listed Inputs determine the designs; review them on
+`<change-id>`." Omit it when items exist.
 
 **Example** (LumenNotes):
 
@@ -203,63 +192,59 @@ any item.
   - **Concern** The brief says "pinned notes are easy to find" but not where they go. The current
     app sorts them first with a pin glyph, which is easy to miss.
   - **Proposal** A `Pinned` group with its own header above the rest of the list.
-  - **Why** It matches how notes apps users already know do it, and the header makes the state
-    visible without a glyph.
-
-- [ ] D2 [Proposal] The empty-list illustration is cut off at the top — a defect, not a design
-  - **Concern** On the current app the illustration's top 12px are clipped by the header.
-  - **Proposal** Draw it whole.
-  - **Why** The source illustration is complete; nothing suggests the crop is intended.
+  - **Why** It matches other notes apps, and the header makes the state visible without a glyph.
 ```
 
 ### Resolution
 
 On the supervisor's explicit approval of an item: check the box and append
-`- **Decision** <resolution>.` as the last sub-bullet. The original stays visible — the decision is
-appended, never substituted.
+`- **Decision** <resolution>.` as the last sub-bullet; preserve the original.
+
+A decision that changes or adds a product spec is filed as a **change request** against the
+change's open product spec package, or the catalog when there is none, in the form of
+[`product-specs-artifacts.md` § Change Requests](../ProductSpecs/product-specs-artifacts.md#change-requests),
+optionally with proposed drafts; the designer never edits that package. This holds in any phase —
+a Discussion decision, direct feedback, the trace pass — and every request is listed under
+`## Assumptions and TODOs` until triaged; a Decision that produced one names it.
 
 ## Mockups
 
 When the Discussion gate advances, draw the whole change on the change page: everything the Goal
 and Inputs call for, as the decisions and any later feedback currently stand. A decision that
 feedback has since changed is history, not an instruction; Discussion holds decisions, not the
-scope. Follow the tool guide's conventions throughout, then stop at the Mockup review gate.
+scope. Follow the tool guide's conventions throughout.
+
+Before the Mockup review gate, run the **trace pass** over the change page: every drawn state
+traces to a product spec, in the catalog or the change's package, and every spec in that package is
+served by a drawing or recorded under `## Out of scope`. A gap either way is a change request, filed
+as under *Resolution*. Then stop at the Mockup review gate.
 
 On feedback, in this order: apply everything that needs no further decision; park what does, as
 new Discussion items, together with any drawing that depends on their answers; then, if nothing was
-parked, re-emit the Mockup review gate, otherwise end at the Discussion gate (blocked). On
-"approved", write Design Changes.
+parked, run the trace pass and re-emit the Mockup review gate, otherwise end at the Discussion gate
+(blocked). On "approved", write Design Changes.
 
 ## Design Changes
 
 Written after approval, and it records that approval: promotion takes its presence as evidence
 the mockups were approved. An inventory, not a specification: one line per screen the package adds
-or changes, with a link to its draft on the change page, from which promotion knows what
-production must absorb.
+or changes, linking its draft on the change page.
 
 ```markdown
 ## Design Changes
 
 - `notes` — changed: pinned group above the list ([draft](<link>))
-- `notes — empty` — changed: illustration drawn whole ([draft](<link>))
 - `note editor — pin menu` — new ([draft](<link>))
 ```
 
-After writing the section, bring `## Assumptions and TODOs` and `## Out of scope` up to date, and
-the package is ready to promote. End with `🏁 Complete. Let me know if anything needs adjustment.`
-Promotion is invoked separately.
+Then bring `## Assumptions and TODOs` and `## Out of scope` up to date and end with
+`🏁 Complete. Let me know if anything needs adjustment.` Promotion is invoked separately; name any
+change request still `Proposed`, since promotion waits for its triage.
 
 ## Artifact maintenance
 
-Through every phase, update the artifact before speaking: revise `design-authoring.md`, then end
-the response at whichever gate *Gates* prescribes. Do not describe intended changes without applying
-them.
-
-## Cross-references
-
-- The tool guide for the project's design tool ([`figma-designer-guide.md`](figma-designer-guide.md)
-  for Figma) — the conventions the designs must meet
-- [`design-promotion.md`](design-promotion.md) — promoting an approved package
+Through every phase, update `design-authoring.md` before speaking and end the response at
+whichever gate *Gates* prescribes. Apply changes, never merely describe them.
 
 ## Project Addendum
 

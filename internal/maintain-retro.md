@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.maintain-retro
 Managed-Source: internal/maintain-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-18
 
 # Maintenance retro checklist (agent + supervisor)
 
@@ -17,7 +17,7 @@ This retro is a **backstop for completeness**, not a git/diff report.
 - Scope: the retro covers **everything that changed since the previous retro** (if any). If no prior retro was performed, cover everything changed in the current session.
 - Do **not** do a detailed "what changed" writeup unless explicitly asked.
 - Prefer scanning docs/templates/runbooks for **consistency and missing updates**.
-- If you find a straightforward miss **inside this repo** (e.g., a stale path in `README.md`, a missing `CHANGELOG.md` bullet, a missing manifest entry), **fix it immediately** and continue scanning.
+- If you find a straightforward miss **inside this repo** (e.g., a stale path in `README.md`, a missing release-document or `CHANGELOG.md` entry, a missing manifest entry), **fix it immediately** and continue scanning.
 - The expected output is either:
   - a short list of **misses / follow-ups**, or
   - **"Retro complete; no misses found."**
@@ -29,8 +29,9 @@ This retro is a **backstop for completeness**, not a git/diff report.
 
 ## 2) Required bookkeeping
 
-- For each host-install-affecting change since the last retro, verify `CHANGELOG.md` meets `internal/maintain-skai.md`'s `Required bookkeeping` migration contract: it tells the upgrading agent how to handle existing artifacts, not only what future outputs will look like. Fix missing or unusable migration instructions; pure-internal changes with no host effect need no entry.
-  - Changelog is release notes: prefer multiple short bullets over a single mega-entry.
+- For each host-install-affecting change since the last retro, verify both documents exist and agree: a technical entry in `Releases/unreleased.md` that meets `internal/maintain-skai.md`'s `Required bookkeeping` migration contract (it tells the upgrading agent how to handle existing artifacts, not only what future outputs will look like, and its steps are safe to re-run), and a human line under `## Unreleased` in `CHANGELOG.md` that describes the same change. Fix a missing half or unusable migration instructions; pure-internal changes with no host effect need neither.
+  - Prefer multiple short bullets over a single mega-entry.
+- If the update-installation guide or an adapter runbook changed, verify the guide still reads every `Releases/release-<n>.md` between the host's release and the target in ascending order (not only the latest), records the list read, and never writes `lastRelease` as null.
 - Ensure `assets.manifest.json` is updated if you added/moved/renamed any installable asset or installer dependency (templates/sections/runbooks/policies).
 - Ensure every managed file edited since the last retro carries a `Managed-Updated-At` no earlier than that edit.
 - Ensure `README.md` is updated if needed:

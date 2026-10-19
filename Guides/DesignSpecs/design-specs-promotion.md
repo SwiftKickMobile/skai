@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-promotion
 Managed-Source: Guides/DesignSpecs/design-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-18
 
 # Design Specs Promotion
 
@@ -11,23 +11,25 @@ Print `📖 SKAI guide: design-specs-promotion` now, as a line of its own. Read 
 ## Purpose
 
 Write approved specs and archive the package. Promotion owns canonical writes except verified
-work-spec known-difference cleanup. Validate and prepare destination links; never change prose,
-IDs, notes or drafts. Return package defects to authoring; handle canonical defects under
+work-spec known-difference cleanup; it validates and prepares destination links, never changing
+prose, IDs, notes or drafts. Package defects return to authoring; canonical defects follow
 *Raising a Change Request*.
 
-Supervisor approval permits promotion regardless of implementation or design state beyond `V5`.
-Use [content rules/checks](design-specs.md) and [artifact formats](design-specs-artifacts.md).
+Supervisor approval permits promotion whatever the implementation or design state past `V5`.
+Use [content rules/checks](design-specs.md), [artifact formats](design-specs-artifacts.md) and
+[shape guide and tool](../Core/spec-file-shape.md).
 
 ## The Promotion Artifact
 
-Promotion writes `skai/changes/<change-id>/design-specs/design-specs-promotion.md`, beside the
+Promotion writes `skai/changes/<change-id>/design-specs/design-specs-promotion.md` beside the
 authoring artifact:
 
 ```
 # Design Specs Promotion — <name>
+[Review page](design-specs-review.html)
 ## Inputs               the package being promoted; the specs it targets
 ## Promotion Checks     - [ ] C<n> items, unchecked until executed
-## Change Requests      links to any request this run raised; may be absent
+## Change Requests      links to any request this run filed; may be absent
 ## Evidence             the verification trail
 ```
 
@@ -55,11 +57,10 @@ In the planned gate line, `<what happens after your response>` should describe w
 If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
 Workflow-specific gate notes:
-- Promotion Checks is the single review point: after the readiness screen and the unchecked
-  checklist, before the specs change. `next` executes the checks, writes the specs and archives the
-  package. Summarize the destination files and **every item in those whole-file writes**, carried-
-  forward items included, not the checklist or the change-item count. Requested draft edits return
-  to authoring.
+- Promotion Checks is the single review point, before the specs change; `next` executes the
+  checks, writes the specs and archives the package.
+  Summarize the destination files and **every item in those whole-file writes**, carried-forward
+  items included, not the checklist or change-item count.
   - `⏳ GATE: Next: Promote <N> items to <paths>. Say "next" or what to change.`
 
 Workflow-specific blocked gates:
@@ -68,9 +69,7 @@ Workflow-specific blocked gates:
   cause and use:
   `⏳ GATE: Blocked: <V# | readiness condition | requested wording | spec contradiction> failed — <what failed>. The package returns to authoring; re-run promotion once it is resolved.`
 - An archive collision, inaccessible references, the design file unreachable for `V5`, or an
-  archival failure use the standard blocked gate. Mechanical faults after
-  `C3`'s write are repaired in place, without rewording; archival recovery follows *Archive the
-  Package*.
+  archival failure use the standard blocked gate; recovery follows *Archive the Package*.
 
 ## Advance Intent
 
@@ -93,131 +92,125 @@ Progress tracking:
 - At a planned gate, advance intent is the approval signal for clearing the guide-owned progress markers completed by the phase that just finished.
 - Ordering rule: the agent first stops and waits at the gate, then clears the approved markers only after the supervisor gives advance intent.
 
-**Workflow-specific marker lifecycle.** This workflow owns the `- [ ] C<n>` items in
-`## Promotion Checks`. For a fresh or changed-draft run, write every `C<n>` unchecked for review.
-After advance intent, execute in order, record evidence and check each success. A failure in `C1`
+**Workflow-specific marker lifecycle.** This workflow's markers are the `- [ ] C<n>` items in
+`## Promotion Checks`, written unchecked; after advance intent, execute in order,
+record evidence and check each success. A failure in `C1`
 leaves it and everything after unchecked; a mechanical fault after `C3`'s write is repaired in place,
-never reworded. Record writes honestly; prose defects return to authoring. Canon carries no markers.
+never reworded. Canon carries no markers.
 
 After changed drafts, reset all checks, retain prior evidence under `### Run <n>` and restart at
-`C1`. Archival-only recovery is separate: retain `C1`–`C3` and their evidence; never repeat a
-successful write to finish `C4`. Check `C4` only after the move, link repair and archived
-verification succeed.
+`C1`. Archival-only recovery retains `C1`–`C3` and their evidence; never repeat a successful write
+to finish `C4`.
 
 **Workflow-specific `auto` behavior.** `auto` skips the review only for already-reviewed drafts;
-verification failures and the other blockers still stop it.
+blockers still stop it.
 
 ## Initiation
 
-Begin only on explicit promotion intent, never automatically after authoring. Target the named
-or contextual package, not siblings or promoted history.
+Begin only on explicit promotion intent, never automatically after authoring, on the named or
+contextual package, not its siblings or history. Inspect Evidence first: a recorded `C3`
+write awaiting confirmation/repair resumes there (retain `C1`–`C2`, repair without rewording,
+verify, check `C3`, archive); checked `C3` resumes incomplete archival only; changed drafts,
+intervening canon or uncertain outcomes block; never assume an unrecorded write. An archived
+package is never reopened or promoted.
 
-Before fresh readiness, inspect Evidence. A recorded `C3` write awaiting confirmation/repair
-resumes there: retain `C1`–`C2`, repair without rewording, verify, check `C3`, archive.
-Changed drafts, intervening canon or uncertain outcomes block; never assume an unrecorded write.
-Checked `C3` resumes incomplete archival only. Fully archived packages never re-promote.
-
-Before writing, ensure `skai/promoted/<change-id>/design-specs/` is absent. Identify live incoming
-references from specs/app repositories and related packages/work specs. Collisions or inaccessible
-required references block; never overwrite or merge a destination.
+Before writing, ensure `skai/promoted/<change-id>/design-specs/` is absent and identify live
+incoming references from specs/app repositories, related packages and work specs; a collision or
+inaccessible required reference blocks; never overwrite or merge a destination.
 
 ### Readiness Screen
 
-Prerequisite: every cited requirement's contract is canonical, even if its link still targets a
-draft (`C2` repoints it). Otherwise record it in Evidence and wait at the standard blocked gate
-naming it; do not return the package. Then, before creating Promotion Checks, verify:
+Prerequisite: every cited requirement's contract is canonical (`C2` repoints a draft link);
+otherwise record it in Evidence and wait at the standard blocked gate naming it, without
+returning the package.
+
+Run `validate <specs root> <drafts>`, `check-changes` and `render` first, so the supervisor reviews
+the current page, then verify before writing Promotion Checks:
 
 1. Discussion has no unresolved items.
-2. Current canon/draft diff by prose and resolved targets matches Spec Changes exactly; moves
-   preserve identity and text before any separately declared modify.
-3. No request remains `Proposed`.
+2. `validate` reports no fault in a held file and no conflict the projection introduces; a fault
+   noted in an untouched canonical file never blocks and becomes a change request (*Raising a
+   Change Request*).
+3. `check-changes` passes: every change has a `## Spec Changes` entry, or rides in one's Touches,
+   at the artifact formats' granularity, with the right operation; no entry names an unchanged or
+   absent target.
+4. Every modified or retired ID or glossary entry has its sweep under the authoring artifact's
+   `## Verification`.
+5. No request filed before this run remains `Proposed`, whoever filed it.
 
-Record failures in Evidence, not Promotion Checks; each returns the package to authoring.
+Failures go in Evidence, not Promotion Checks, and return the package to authoring.
 
 ## Promotion Checks
 
 Write unchecked `- [ ] C<n> <identity>` items in execution order. Check projected canonical
-locations over changed items and whole touched files; unrelated untouched canonical defects do not block. Contradictions making the write inconsistent
-follow *Raising a Change Request*.
-Known-difference notes are observations, not obligations or markers.
+locations over changed items and whole touched files; untouched canonical files never block.
+Where the tool covers a check, its readiness output is the evidence; the rest is inspection.
 
 - `C1 Verification` — run [`V1`–`V10`](design-specs.md#verification-checks) with evidence per
-  check. Open the design for `V5`; unavailable access blocks. Failures return to authoring.
-- `C2 Prepare destination links` — map package draft targets to canonical destinations,
-  including now-canonical requirements; retain untouched dependency targets. For moves or retired
-  headings, repoint incoming spec links in prepared files and annotate external references
-  (packages/work specs) with new locations.
-  Preserve prose, IDs, notes and target identities; do not edit drafts. Record adjusted definitions
-  or that none needed changes.
-- `C3 Write the specs` — write prepared whole files to the resolved root, creating it if absent;
-  leave other files untouched. Record write outcome before confirmation. Confirm intended link
-  targets and absence of Discussion citations, checkboxes and `🟡`; only retirement marks and
-  labeled known differences accompany contracts. Repair mechanically, never reword. Add confirmation
-  evidence and check `C3` only on success.
-- `C4 Archive the package` — follow *Archive the Package*. Only verified write and archival
-  complete promotion.
+  check; cite the readiness `validate` output where it covers one (`V6` definitions, `V8`
+  duplicates, `V9` term links).
+- `C2 Prepare destination links` — map package draft targets, now-canonical requirements
+  included, to canonical destinations; untouched dependencies keep their targets. For moves or
+  retired headings, repoint incoming spec links in prepared files and annotate external
+  references. Preserve prose, IDs, notes and target identities; never edit drafts; record adjusted
+  definitions or that none needed it.
+- `C3 Write the specs` — write prepared whole files to the resolved root, creating it if absent,
+  leaving other files untouched. Record the write outcome; confirm by read-back and
+  `validate <specs root>` (a fault readiness did not note is `C3`'s, wherever reported):
+  intended link targets; no Discussion citations, checkboxes or `🟡`; only retirement marks and
+  labeled known differences beside contracts. No render after the write: the page keeps the
+  approved diff. Repair mechanically, never reword; check `C3` only on confirmed success.
+- `C4 Archive the package` — *Archive the Package* below; promotion completes only after verified
+  write and archival.
 
-**Excerpt** (LumenNotes: `C1/V5` failed; later checks did not run):
+**Excerpt** (`C1/V5` failed: every check unchecked):
 
 ```markdown
-## Promotion Checks
-
-- [ ] C1 Verification
-- [ ] C2 Prepare destination links
-- [ ] C3 Write the specs
-- [ ] C4 Archive the package
-
 ## Evidence
 
-[evidence: C1/V1; UI-NOTES-01.02, UI-NOTES-05 compared with cited contracts; each adds a screen binding]
-[evidence: C1/V3; all touched-file text checked for design-tool, platform, mechanism and code terms; platform name only in UI-NOTES-03's known-difference note]
-[evidence: C1/V5; Production › Notes: `notes`, `notes — empty`, `notes — stale` found; `notes — acknowledged reminder` named by UI-NOTES-02.02 NOT FOUND on Production or any approved change page; FAILED]
+[evidence: C1/V5; Production › Notes: `notes`, `notes — empty`, `notes — stale` found; `notes — acknowledged reminder` (UI-NOTES-02-02) NOT FOUND on Production or any approved change page; FAILED]
 ```
 
 ## Evidence
 
-Use one bracket per check, including each `V` within `C1`:
+One bracket per check, each `V` in `C1` its own:
 
 ```
 [evidence: C<n>; <command or inspection>; <outcome>; output: <path when persisted>]
-[evidence: C1/V<n>; <command or inspection>; <outcome>; output: <path when persisted>]
 ```
 
-Preserve reruns under `### Run <n>`. Persist/link full failure output at unique run/check paths;
-success includes output only if persisted. Inspections name repeatable inputs and observations.
-Unresolved paths fail; empty subjects need reasons. Compare IDs per rewritten file and retired
-IDs across specs; strip path prefixes (`grep -rhoE`) before comparison.
+Persist/link full failure output at unique run/check paths; `output` on success only if persisted.
+Inspections name repeatable inputs. Silence is not a pass: unresolved paths fail; an empty subject
+records why.
 
 ## Raising a Change Request
 
-For existing-spec contradictions/inconsistencies, raise and link a request under Change Requests
-using [artifact formats](design-specs-artifacts.md). Block if the write would leave inconsistent
-specs; otherwise continue, checking the passing check with its linked request. Report any
-still-Proposed request at completion; its defect needs a new package.
+For a contradiction or inconsistency in the existing specs — a fault `validate` notes in an
+untouched file included — file a request as [artifact formats](design-specs-artifacts.md) § Change
+Requests says, linked under Change Requests. Block only if the write itself would contradict the
+specs; otherwise continue, checking the passing check with its linked request. A request filed
+here rides to completion still `Proposed`.
 
 ## Archive the Package
 
 After verified `C3`, execute `C4`:
 
-1. Move `skai/changes/<change-id>/design-specs/` intact to
-   `skai/promoted/<change-id>/design-specs/` in the specs repository. Preserve sibling types;
-   remove the active grouping directory only if empty.
-2. Repair live incoming links across resolved repositories/packages/work specs and relative links
-   inside moved files. Preserve target identities, prose, IDs, decisions, commands and results;
-   annotate historical paths with current locations. Inaccessible/unrepaired required links block.
-3. Verify archived files/links, absent active type path and preserved siblings. Record move/link
-   evidence; check `C4` in the archived promotion artifact.
+1. Move `skai/changes/<change-id>/design-specs/` intact, rendered pages included, to
+   `skai/promoted/<change-id>/design-specs/` in the specs repository. Preserve siblings; remove
+   an emptied grouping directory.
+2. Repair live incoming links (repositories, packages, work specs) and relative links inside moved
+   files, preserving target identities, prose, IDs, decisions and recorded results; annotate
+   historical paths with current locations. Inaccessible or unrepaired required links block.
+3. Verify archived files/links, the absent active path and preserved siblings; record move/link
+   evidence; check `C4` in the archived artifact.
 
-On failure report “specs promoted, archival incomplete” with the standard blocked gate.
-Resume at either package path; finish archival only, never repeat `C3`.
+On failure report “specs promoted, archival incomplete” with the standard blocked gate; resume at
+either path, finishing archival only, never repeating `C3`.
 
 ## Completion
 
-With `C3` and `C4` evidenced, link the archived artifact and any still-Proposed requests (new
-scoped packages own their defects). Emit
-`🏁 Complete. Let me know if anything needs adjustment.`
-
-Never reopen or re-promote archived drafts.
+With `C3` and `C4` evidenced, link the archived artifact and any still-Proposed requests (defects
+take new packages). Emit `🏁 Complete. Let me know if anything needs adjustment.`
 
 ## Project Addendum
 

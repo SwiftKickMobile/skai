@@ -1,0 +1,135 @@
+Managed-By: skai
+Managed-Id: guide.product-specs-artifacts
+Managed-Source: Guides/ProductSpecs/product-specs-artifacts.md
+Managed-Adapter: repo-source
+Managed-Updated-At: 2026-10-18
+
+# Product Specs Artifact Formats
+
+Print `📖 SKAI guide: product-specs-artifacts` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+
+The typed formats the product spec workflows produce and consume, readable without
+[`product-specs-authoring.md`](product-specs-authoring.md). Content rules:
+[`product-specs-catalog.md`](product-specs-catalog.md). File shape and the spec tool:
+[`spec-file-shape.md`](../Core/spec-file-shape.md).
+
+## The Package
+
+In the repository holding the catalog, `skai/changes/<change-id>/product-specs/`; after promotion,
+`skai/promoted/<change-id>/product-specs/`. A promoted package is closed; new work takes a new
+ID/type pair. A sibling package of another type is independent.
+
+```
+product-specs-authoring.md          authoring's artifact; ## Requirement Changes
+proposed-product-specs/**           drafts mirroring the catalog: touched files only, each whole
+product-specs-review.html          the rendered review page
+change-requests/<nnn>/request.md   a request; optional drafts beside it, proposed-product-specs/**
+change-requests/<nnn>/request-review.html
+product-specs-promotion.md          promotion's artifact; may be absent
+evidence/                          persisted check output; may be absent
+```
+
+**The review page is how the supervisor reads the package.** The tool renders it to
+`product-specs-review.html`, and a request to `request-review.html` beside `request.md`; both are
+committed. When the package materially changes — a draft edited, a discussion item resolved, a
+change item added, a request triaged — validate and re-render before anything else; the authoring
+gate and promotion's readiness screen are the last renders of many. The authoring and promotion
+artifacts link the page directly under their title; `request.md` links its page the same way.
+
+In the promotion artifact, checked `C7` means the catalog is written; checked `C8`, the package
+archived.
+
+## Requirement Change Items
+
+`## Requirement Changes` lists exactly the differences between the catalog and the drafts the
+package holds, one typed entry per difference, compared by prose and resolved target identity (a
+draft's longer path to `NOTE-04` is not a change; retargeting the citation is). The rendered page
+shows each difference under its justification; an entry carries no text of its own.
+
+```
+- R<n> <type>: <identity>
+  - **Justification** <Source>: <reference or rationale>
+  - **Touches** catalog-relative paths of the files this entry changes
+```
+
+- **ID** `R1`, `R2`, …: never renumbered or reused. Entries run in catalog order and carry no
+  checkbox.
+- **Type** `add folder` | `add file` | `add requirement` | `modify requirement` |
+  `retire requirement` | `add glossary entry` | `modify glossary entry` | `retire glossary entry`.
+  *Modify vs. retire* in the catalog guide decides between the two; a note-only change is
+  `modify requirement`; a retired glossary entry is removed.
+- **Identity** the requirement ID linked to its draft, the glossary term, or the catalog-relative
+  path. An index line or intro is an entry or a `Touches` line.
+- **Source** `Design` | `Implementation` | `Supervisor input` | `Resolved decision` |
+  `Agent inference` | `Change request` | `Catalog`. `Design` names the screen or state by
+  product name, never a design-tool link; for a spec or request the Justification is the
+  citation; `Resolved decision: D#` cites a Discussion item;
+  `Agent inference` carries a real rationale and draws first scrutiny.
+
+The tool's `check-changes` confirms the list matches the projection: every changed requirement
+and glossary entry is named by an entry, every changed index line, intro or added file by an
+entry or a `Touches` line, and nothing unchanged is.
+
+**Naming the source is the check on leaked detail.** ❌ `Implementation: the list is rebuilt
+whenever either stream emits` describes code — the requirement is wrong, not the Justification.
+✅ `Implementation: the list reorders itself whenever either source changes, and no design covers
+what the user sees while that happens`.
+
+**Granularity follows the file.** A file the catalog does not have is one entry, its folder and
+index line riding in `Touches` — as is the package creating the catalog root, with the root index
+and glossary. Inside a file the catalog has, each requirement or glossary entry added, changed or
+retired is its own entry.
+
+```markdown
+- R1 modify requirement: [REMIND-04]
+  - **Justification** Resolved decision: [D2]
+  - **Touches** features/reminders.md
+
+- R2 add file: features/sharing.md
+  - **Justification** Design: the share sheet screens.
+  - **Touches** features/sharing.md, features/_features.md
+
+[D2]: #missed-reminders
+[REMIND-04]: proposed-product-specs/features/reminders.md#remind-04
+```
+
+## Change Requests
+
+Any downstream consumer — design authoring, design specs, work specs, tests, promotion — files a
+change request for any reason, against the open package for the subject or, failing one, against
+the catalog, which opens a new package. Promotion's own failed check is not a request: it blocks.
+The proposer never edits the package.
+
+`change-requests/<nnn>/request.md`, numbered by filing order:
+
+```markdown
+Change Request Status: Proposed
+Reviewer Response:
+
+# Reminder Expiry On Shared Notes
+
+[Review page](request-review.html)
+
+## Goal
+
+A shared note's reminder must expire for the recipient too.
+
+## Requested Changes
+
+- R1 modify requirement: [REMIND-04]
+  …
+```
+
+Its optional drafts, in the spec shape, are diffed on its page against the package's drafts,
+falling back to the catalog; without drafts the page lists each requested change.
+
+Lifecycle: filed `Proposed`; authoring triages on the request, filling `Reviewer Response` and
+setting `Incorporated` (once the drafts and Requirement Changes reflect it), `Rejected` or
+`Superseded`. `Proposed` blocks promotion's readiness; one filed on promotion's continue branch
+rides to completion still `Proposed`, its defect carried by a new package.
+
+## Project Addendum
+
+If `<active-project-root>/skai/addenda/product-specs-artifacts-addendum.md` exists, read it and immediately print
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
+guide and win any conflict.

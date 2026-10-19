@@ -74,7 +74,7 @@ at which a component was disabled. Returning to defaults does not erase existing
    intact. A later failure must not erase the only record of a now-removed component.
 2. **Find component migration work.** For every enabled applicable component, compare its own
    `lastAppliedSHA` with the target checkout, even if the global SHA/fingerprint is unchanged or its
-   wrapper is missing. Read changelog upgrade instructions across that range and the affected guides;
+   wrapper is missing. Read the release documents (`Releases/release-<n>.md`, and `Releases/unreleased.md` for a commit target) across that range and the affected guides;
    discover their existing artifacts in the host and any shared repositories. Apply relevant changes
    to existing artifacts, not just wrapper updates. Respect recorded completion evidence and verify
    already-applied transformations instead of repeating them. Unknown versions require an artifact
@@ -117,7 +117,7 @@ python3 "<skai-root>/Bin/skai-configuration.py" --project-root "<host-root>" --p
 With `tracking: true`, `migrations` names enabled components with a version gap or unknown baseline.
 With `tracking: false`, unchanged defaults use adapter-level provenance and the list is empty;
 it does not establish that no artifact migration is needed. Still check the adapter’s prior version
-against the target changelog and apply its relevant artifact migrations before recording success.
+against the release documents up to the target and apply their relevant artifact migrations before recording success.
 `baselineAdapterState` captures prior evidence; merge it before removals when new history is seeded.
 `nextAdapterState` is a proposal, not evidence that migration happened. Merge it only after step 4;
 preserve all other state fields/adapters. Without Python, apply the same schema/procedure directly.

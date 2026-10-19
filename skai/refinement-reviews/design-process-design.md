@@ -11,7 +11,7 @@ is not something an operator reads at runtime.
 - [`Guides/Design/design-promotion.md`](../../Guides/Design/design-promotion.md) — move an approved
   package's designs into production and close the package.
 
-The process mirrors SKAI's requirements process (authoring and promotion around a change package)
+The process mirrors SKAI's product specs process (authoring and promotion around a change package)
 and the UI Map process (architecture and implementation). It is **tool-agnostic**: the conventions
 a design must meet live in a design tool's own guide (for Figma,
 [`figma-designer-guide.md`](../../Guides/Design/figma-designer-guide.md)); each process guide
@@ -28,8 +28,8 @@ Written 2026-10-12 from the planning discussion with the supervisor
 - [`Guides/Core/process-flow.md`](../../Guides/Core/process-flow.md) for gates, advance intent,
   markers, and structured discussion items; the gate and advance-intent blocks are inlined
   verbatim in each guide.
-- [`Guides/Requirements/requirements-authoring.md`](../../Guides/Requirements/requirements-authoring.md)
-  and [`requirements-promotion.md`](../../Guides/Requirements/requirements-promotion.md) — the
+- [`Guides/ProductSpecs/product-specs-authoring.md`](../../Guides/ProductSpecs/product-specs-authoring.md)
+  and [`product-specs-promotion.md`](../../Guides/ProductSpecs/product-specs-promotion.md) — the
   parallel the design guides follow in shape, not in content.
 
 ## Requirements
@@ -45,14 +45,14 @@ Written 2026-10-12 from the planning discussion with the supervisor
    later as its own guides).
 4. **Shape of the other SKAI workflows.** Change package at `skai/changes/<change-id>/`;
    discussion items in the canonical format; gates and advance intent inlined; `🏁 Complete.` at
-   the end. A reader of the requirements guides should find nothing surprising in form.
+   the end. A reader of the product spec guides should find nothing surprising in form.
 5. **Lean.** Each guide holds what an operator needs at the point of use, and nothing it can read
    elsewhere. No session-specific mistakes codified; no defensive checklists.
 
 ## Settled decisions
 
 - **Package**: `skai/changes/<change-id>/design/` holding `design-authoring.md` and (after
-  promotion) `design-promotion.md`, beside any `requirements/` or `ui-map/` type for the same
+  promotion) `design-promotion.md`, beside any `product-specs/` or `ui-map/` type for the same
   change (SKAI Release 11's typed layout). The drafts live in the design file on a **change page**
   named `<change-id>`. Promotion archives the type to `skai/promoted/<change-id>/design/`.
 - **Authoring artifact**: Goal · Inputs · Discussion · Design Changes · Assumptions and TODOs · Out
@@ -84,8 +84,15 @@ Written 2026-10-12 from the planning discussion with the supervisor
   itself is archived to `skai/promoted/` like every SKAI package.
 - **No Concept pages**; the change page is where iteration happens.
 - **Humans follow the same process**; no special case for hand edits.
-- **Requirements impact is not the guides' concern**; an agent that sees a conflict says so, and the
-  supervisor decides whether to run the requirements skill.
+- ~~**Requirements impact is not the guides' concern.**~~ Superseded 2026-10-18: a mockup decision
+  that changes or adds a product spec is filed as a **change request** against the change's open
+  product spec package (or the catalog), in the request format the product specs artifacts guide
+  defines, optionally with proposed drafts; the designer never edits that package. Before the
+  approval gate, one pass over the change page checks that every drawn state traces to a product
+  spec and every package spec is served or recorded as out of scope, filing requests for the gaps.
+  Design promotion waits until the package's requests are triaged. Reason: on Offers the concepts
+  changed refresh scope, card content and an unseen model, and those decisions lived in a working
+  document instead of the specs.
 
 ## Size budget
 
@@ -93,11 +100,37 @@ Written 2026-10-12 from the planning discussion with the supervisor
 (`wc -c`, managed headers included; the inlined gate, advance-intent and Project addendum blocks
 count). Raised 2026-10-12 from 16,000 / 12,000 when SKAI Release 11's mandatory addendum footer
 (about 750 bytes) and the package-archive step were added. This keeps each well under its
-requirements counterpart (24,000 and 20,800). Every repair states its net size
+product specs counterpart (24,000 and 20,800). Every repair states its net size
 cost; additions over the cap are paired with trims, and a fix that cannot fit is a supervisor
 decision.
 
 ## Boundaries
 
-The guides do not cover the tool's conventions, requirements, the UI Map, bug tracking, or
+The guides do not cover the tool's conventions, product specs, the UI Map, bug tracking, or
 implementing designs in code.
+
+## Amendments — 2026-10-18
+
+- Design authoring files change requests for mockup-driven product spec changes and runs the
+  whole-change trace pass before its approval gate (see the superseded decision above).
+- The route depends only on the change-request format, cited from the product specs artifacts
+  guide; requirement 2 (no dependencies) is otherwise unchanged.
+- The additions cost budget; the caps are re-set by the supervisor at the next refinement, with
+  16,500 / 13,500 bytes as the reference point.
+
+## Size Budgets — 2026-10-18
+
+Set by the supervisor from four efficiency reviews (SalesPro checkout, `working-docs/requirements-process/reviews/`), as today's size less measured obsolete content, less the reviewed trim on what remains, plus known growth. Whole-file bytes by `wc -c`, managed header and addendum footer included. They bind every repair per the refinement guide's size-budget rule.
+
+These replace the 16,500 / 13,500 caps above.
+
+| Target | File | Cap |
+| --- | --- | --- |
+| 3. Authoring | design-authoring.md | 14,400 |
+| 3. Authoring | skai-design-authoring skill | 550 |
+| 4. Promotion | design-promotion.md | 11,500 |
+| 4. Promotion | skai-design-promotion skill | 500 |
+
+Group caps across both spec types and the design process guides: authoring 54,900 (raised 2026-10-18 with design-specs-authoring); promotion 42,700.
+
+**Live render (supervisor, 2026-10-18).** The rendered page is the primary way the supervisor views a change package while it is being iterated on. Any time the package materially changes — a draft edited, a discussion item resolved, a change item added, a request triaged — the agent validates and re-renders before anything else, in every workflow that writes a package. The gate and promotion renders are not the only ones; they are the last of many. Validation and rendering take milliseconds, so there is no cost argument for deferring them. A design package has no rendered artifact of its own, since its drafts live on the change page; the rule reaches it through the change requests it files, each of which has a page (settled 2026-10-18, target 3).

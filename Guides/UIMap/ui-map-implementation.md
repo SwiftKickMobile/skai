@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation
 Managed-Source: Guides/UIMap/ui-map-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-18
 
 # UI Map Implementation
 
@@ -72,7 +72,7 @@ promoted again. If the app codebase is not present, STOP with a blocked gate.
 
 For a new change-package run, create the implementation artifact parallel to the architecture
 artifact: `skai/changes/<change-id>/ui-map/ui-map-implementation.md`. Use the package's ID. The
-`ui-map/` folder owns this artifact, its requests and evidence; related requirements work is separate.
+`ui-map/` folder owns this artifact, its requests and evidence; related product specs work is separate.
 On resume reuse the existing artifact and its Mode, IDs, decisions, Evidence and valid completion states. After promotion the same artifact is at `skai/promoted/<change-id>/ui-map/ui-map-implementation.md`.
 Receiving workflows execute and check any pending Plan work there without reopening or re-promoting
 the map proposal. When this skill is invoked on an already-promoted Plan, retain the recorded Mode,
@@ -409,7 +409,7 @@ After recording successful official-map write/render evidence in the terminal pr
 1. Move the entire `skai/changes/<change-id>/ui-map/` folder to
    `skai/promoted/<change-id>/ui-map/` in the map repository. Keep architecture, implementation,
    proposed YAML, render, requests and evidence together, including unchecked Plan work. Leave
-   `requirements/` and all other siblings untouched; remove the active grouping directory only if empty.
+   `product-specs/` and all other siblings untouched; remove the active grouping directory only if empty.
 2. Repair live incoming links across those resolved repositories, including work specs and related
    packages. Check relative links inside the moved files and preserve their intended targets. Keep
    decisions, item IDs, YAML and recorded commands/results intact; annotate historical paths with
@@ -428,7 +428,7 @@ operations, without repeating the official write/render. Never overwrite a desti
 
 **Example** — promote `skai/changes/reminder-expiry/ui-map/` to
 `skai/promoted/reminder-expiry/ui-map/` while a related
-`skai/changes/reminder-expiry/requirements/` remains active. Repair its incoming links and regenerate
+`skai/changes/reminder-expiry/product-specs/` remains active. Repair its incoming links and regenerate
 the moved preview before checking the terminal item. In Plan, unchecked code work stays in the
 promoted artifact; the receiving workflow continues there.
 

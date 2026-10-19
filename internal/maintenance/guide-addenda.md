@@ -26,7 +26,7 @@ If `<active-project-root>/skai/addenda/<guide-name>-addendum.md` exists, read it
 guide and win any conflict.
 ```
 
-Initially use the guide filename stem, e.g. `requirements-promotion`. Treat the published name as a compatibility interface: preserve it on a future guide rename, or document an explicit host-addendum path migration without overwriting user content. Names must be unique; lookup never depends on an unannounced rename.
+Initially use the guide filename stem, e.g. `product-specs-promotion`. Treat the published name as a compatibility interface: preserve it on a future guide rename, or document an explicit host-addendum path migration without overwriting user content. Names must be unique; lookup never depends on an unannounced rename.
 
 ## Shared context
 
@@ -51,4 +51,4 @@ Use the installed instruction-block exception for supported guide overrides; do 
 - Footer copies differ only in lookup name; neither gate placement nor the guide's no-addendum behavior changes.
 - Wrappers remain thin and have no competing guide-default instructions; base dependencies still exist in the guide.
 - Reference/handoff cases load the relevant guide's own addendum; no addendum user schema or new global workflow is introduced.
-- Header/manifest identity, published-name compatibility, requirements size budget and installed instruction refresh are accounted for. Preserve all user addenda during upgrade.
+- Header/manifest identity, published-name compatibility, product specs size budget and installed instruction refresh are accounted for. Preserve all user addenda during upgrade.

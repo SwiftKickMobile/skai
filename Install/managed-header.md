@@ -69,4 +69,4 @@ the source) and an `END` marker closes the managed content.
 
 ## Determining today's date
 
-Whenever a date is needed (for `Managed-Updated-At`, CHANGELOG entries, `install-state.json`, or any other purpose), **always run `date +%Y-%m-%d` in the terminal** to get the current date. Do not rely on dates from the system prompt or conversation context -- they may be stale or in a different timezone than the supervisor.
+Whenever a date is needed (for `Managed-Updated-At`, release-document and CHANGELOG entries, `install-state.json`, or any other purpose), **always run `date +%Y-%m-%d` in the terminal** to get the current date. Do not rely on dates from the system prompt or conversation context -- they may be stale or in a different timezone than the supervisor.

@@ -77,13 +77,13 @@ multiple-sizes guide).
 The two guides together are capped at **19,000 bytes** (`wc -c`, managed headers included; raised
 2026-10-12 from 17,500 when SKAI Release 11's mandatory Project addendum footer, about 750 bytes
 per guide, was added). That is
-in line with `Guides/Requirements/requirements-catalog.md`, which plays the same role (content rules)
-for requirements. Every repair states its net size cost; additions over the cap are paired with
+in line with `Guides/ProductSpecs/product-specs-catalog.md`, which plays the same role (content rules)
+for product specs. Every repair states its net size cost; additions over the cap are paired with
 trims, and a fix that cannot fit is a supervisor decision.
 
 ## Boundaries
 
-The guides do not cover the UI Map (`Guides/UIMap/`), requirements, the code's implementation of the
+The guides do not cover the UI Map (`Guides/UIMap/`), product specs, the code's implementation of the
 design system, or the Figma MCP's own documentation. They are conventions, not a workflow: design
 authoring and promotion are tool-agnostic process guides that assume every design tool has named
 pages and read this guide only for the conventions drafts must meet.

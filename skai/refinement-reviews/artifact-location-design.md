@@ -18,7 +18,7 @@ from the presence of a submodule.
 1. **skai artifacts live under `skai/`** in whichever repository the supervisor names for each:
    the app repository, or a context repository pulled in as a submodule. Artifacts need not share
    a repository (supervisor, 2026-10-13, replacing the earlier "one repository per product"). Fixed
-   roots: `skai/requirements/`, `skai/design-specs/`, `skai/ui-map/`; change packages at
+   roots: `skai/product-specs/`, `skai/design-specs/`, `skai/ui-map/`; change packages at
    `skai/changes/<change-id>/<type>/`, promoted at `skai/promoted/<change-id>/<type>/`, in the
    artifact's repository.
 2. **The README links the project's resources.** The agent instruction block opens with: read
@@ -80,7 +80,7 @@ from the presence of a submodule.
 
 ## Scope
 
-**Target:** the guides that locate or create artifacts — `Guides/Requirements/*.md`,
+**Target:** the guides that locate or create artifacts — `Guides/ProductSpecs/*.md`,
 `Guides/DesignSpecs/*.md`, `Guides/UIMap/ui-map-architecture.md` and `ui-map-implementation.md`,
 `Guides/Design/design-authoring.md`, `design-promotion.md` and `figma-designer-guide.md`,
 `Guides/Spec/work-spec-creation.md` and `work-spec-implementation.md`, `Guides/Process/dev-retro.md`,
@@ -105,3 +105,10 @@ and its paths; the content rules of any artifact (format, IDs, writing style).
 - Temporary README links to change packages: rejected.
 - Enumerating artifacts or README structure in the instruction line: rejected ("myopic").
 - A required repository column in the link entry: rejected; the link path is what the agent follows.
+
+## Amendment — 2026-10-18
+
+Requirements are renamed *product specs*: the root becomes `skai/product-specs/`, the README row
+"Product requirements" becomes "Product specs", and change packages use the `product-specs/` type
+folder. Discovery is unchanged in mechanism; the migration moves the folder and rewrites the README
+row and every relative link in one pass, instructed by the release document.

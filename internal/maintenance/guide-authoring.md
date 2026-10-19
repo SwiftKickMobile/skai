@@ -13,7 +13,7 @@ All runtime guides live under a topical subdirectory within `Guides/`. Do not pl
 | `Test/` | Unit testing (planning, infrastructure, writing) |
 | `Process/` | Retro, process problem reporting, ticket creation |
 | `UIMap/` | UI Map system: YAML format, platform references, architecture/implementation methods |
-| `Requirements/` | Requirements system: catalog content rules, authoring, promotion, artifact formats |
+| `ProductSpecs/` | Product specs system: catalog content rules, authoring, promotion, artifact formats |
 | `Design/` | Figma design file conventions |
 | `DesignSpecs/` | Design specs system: content rules, authoring, promotion |
 

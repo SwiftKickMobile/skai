@@ -1,0 +1,23 @@
+# Update installation findings
+
+Target: `Guides/Core/update-installation-guide.md` and its wrapper. Standard: `maintainer-migration-design.md` § Release Documents — 2026-10-18. Seeded from `maintainer-migration-findings.md` where a disposition bears on this guide.
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-10-03 r1 (seed) | F3: unsupported claim that the installer cannot use migration instructions from the release notes | logged | Carried over from maintainer-migration-findings.md: no demonstrated missing installer capability; the update guide reads the instructions and the adapters execute them. |
+| 2026-10-03 r2 (seed) | F1: operator could skip explicit migration instructions | logged | Carried over: past-a-rule noncompliance; step 6 now says each document is applied whole, in order. |
+| 2026-10-18 r1 | F1: target checkout older than `Releases/` (v13 today) cannot supply the documents the guide reads from it | still open (supervisor decision) | Live only until v14 is cut or on a downgrade; options: transitional note only, or a source/blocked line in step 5 (over the cap without a trim). |
+| 2026-10-18 r1 | F2: release-documents gate line and `auto` skipped step 5b | closed | Gate line, `auto` rule and progress note now name the same sequence: gate → new components (5b) → runbooks. |
+| 2026-10-18 r1 | F3: "each document applied whole" re-included unreleased entries excluded by the date cutoff; empty selection vs no document ambiguous | closed | Step 6 applies "the scope step 5 reported: release documents whole, then the selected unreleased entries"; 5.4 "no document or entry applies". |
+| 2026-10-18 r1 | F4: configuration tool/app treat newness host-wide while the guide collects it per adapter | routed | Outside the binding target (`Bin/skai-configuration.py` decline loop, `Configuration.swift` newComponentIDs); owner: configuration tool. |
+| 2026-10-18 r1 | F5: commit target with no `lastUpdatedAt` has no cutoff | logged | Single observation; strands at the generic blocked gate; codify on recurrence. |
+| 2026-10-18 r1 ruling | F1: source of the release documents | closed (supervisor ruling: both) | Step 5 states the target checkout as the source and names the older-target blocked case (also listed under blocked gates); the Release 14 human notes open with a bridge line for agents on the older guide. |
+| 2026-10-18 r2 | F1: delegated stops (runbook confirm, release-document stops) had no stated gate authority under "No fabricated gates"/`auto` | closed | `## Gates`: stops owned by active inputs are that input's gates, emitted with its line or the blocked line; `auto` never bypasses them. |
+| 2026-10-18 r2 | F2: return from the configure app at step 5b undefined (double reconcile / premature completion / continue after cancel) | closed | Step 5b: verify the result per `configure-skai.md` § Reconcile after Save; a verified Save returns here and step 6 reconciles once; cancelled/unresolved keeps that guide's stop. |
+| 2026-10-18 r2 | F3: `auto to runbooks` named no planned gate | closed | Defined as STOP at the release-documents gate. |
+| 2026-10-18 r2 | Open question: release-documents report is not the final inventory of component-specific catch-up | open question (not a finding) | Component-history catch-up is that contract's work; no guide change proposed; not pre-settled. |
+| 2026-10-18 r3 | F1: adapter runbooks advance the top-level `lastSHA`/`lastRelease`/`lastUpdatedAt` per adapter, so a retry after a partial multi-adapter update reports a shorter release range | closed | Step 6: runbooks record their own adapter entry and component history; the top-level fields advance only at step 7, after every adapter. |
+| 2026-10-18 r3 | Open question: tag commands match `v*`, broader than `v<N>` | logged | Conditional on tags that do not exist (v1–v13 only); no change. |
+| 2026-10-18 r4 | Clean round: no findings in the binding surfaces; runbook/guide state-write contract confirmed | terminal (clean round) | Stop rule (a); series 1 scores 11.25 → 6.25 → 1.875 → 0. |
+| 2026-10-18 r4 ruling | Tag pattern narrowed to `v[0-9]*` in the guide's two commands (and the runbooks) | closed (supervisor ruling) | Post-terminal mechanical edit, commands re-verified; guide at 12487 bytes. |
+| 2026-10-18 close | Pass closed by the supervisor at 12,487 bytes after clean round 4; post-terminal tag-pattern edit stands without a confirming round | closed | Supervisor closure; working document `skai/working-docs/main/update-installation/update-installation-guide-refinement.md` holds the matrices, scores and closure table. |

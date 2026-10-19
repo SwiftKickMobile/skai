@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture
 Managed-Source: Guides/UIMap/ui-map-architecture.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-18
 
 # UI Map Architecture
 
@@ -30,7 +30,7 @@ One document. Create it at `skai/changes/<change-id>/ui-map/ui-map-architecture.
 If the change ID is clear from the user's input, use it. If not, do not create the artifact yet. Ask inline for the change ID, propose a short kebab-case default when possible, and wait. When deriving a proposal from the current branch, use only the final path component, not the full branch path; for example, `work/billing-ui` proposes `billing-ui`. Once the change ID is resolved, create the artifact at its final path.
 
 The `ui-map/` type folder owns its architecture and implementation artifacts, proposed map,
-render, requests and evidence. A related `requirements/` sibling shares the change ID but promotes
+render, requests and evidence. A related `product-specs/` sibling shares the change ID but promotes
 independently. After map promotion this folder lives at `skai/promoted/<change-id>/ui-map/`.
 
 Skeleton:
@@ -147,7 +147,7 @@ yet. Such a seed uses the same package and ID, not a second folder; reuse it rat
 second. Check `skai/promoted/<change-id>/ui-map/` before creation too: a promoted ID/type pair
 cannot be reused. A checked terminal promote item or recorded official YAML write closes the proposal to authoring;
 an incomplete render/archive follows implementation's restart procedure rather than reopening these drafts; new map changes need a new ID. Related
-requirements packages do not count as map-package candidates. Re-read the current official map on
+product spec packages do not count as map-package candidates. Re-read the current official map on
 reopen and refresh the comparison while preserving resolved decisions, IDs and prior evidence.
 
 If new map-relevant input arrives after the architecture package is ready but before the official YAML write — including a **change request** raised by downstream implementation — reopen the same architecture artifact in Discussion. Treat the new input as additional context and continue the normal Discussion loop, keeping the package's existing kind. Do not create a separate response artifact or replace the existing architecture artifact with a narrow response artifact. Proceed to Map Changes only after the discussion-complete gate advances.

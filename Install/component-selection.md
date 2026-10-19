@@ -130,7 +130,7 @@ to satisfy the template's default path.
 3. Present the reconciliation plan. The Mac app's **Save and Apply** authorizes reconciliation
    of its selected components, including deselected SKAI-managed collateral; it does not authorize
    deleting unmarked lookalikes, custom content, project addenda, Integration values, canonical
-   requirements/maps, or whole project-owned instruction files. Report conflicts and obtain their
+   product specs/maps, or whole project-owned instruction files. Report conflicts and obtain their
    separate resolution. For a verified agent Save and Apply or explicit request to apply saved configuration, proceed
    with component reconciliation; do not ask the supervisor to approve that same work again. Reuse the established project stack if repo
    signals agree. Ordinary install/update requests retain their existing plan approval.
