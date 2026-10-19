@@ -168,6 +168,9 @@ does not restate it.
     artifact file is not edited (render convention 8). Two defects fixed on the way: `check-changes`
     matched a glossary term, an index line and a section sharing a name as one thing (now matched by
     kind); `link-terms` re-wrapped a term inside a longer term's link (now treated as linked).
+20. **Absorbed items stay in place (supervisor, 2026-10-19).** A dropped item renders where the
+    base had it, after its nearest surviving predecessor, never at the end of the section; the
+    collapsed card is the page's record of the absorption.
 
 ## Open
 

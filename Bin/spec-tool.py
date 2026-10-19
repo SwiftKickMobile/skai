@@ -183,7 +183,8 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     white too. Section headings and descriptive text are normal weight and color; section
     headings are uppercase. Rule numbers and tables are body size.
  7. Whole deletions (retired items, removed rows, rules, entries) are gray strikethrough with no
-    tint, including the ID. A retired or missing item's collapsed card holds its whole old body
+    tint, including the ID. A retired or missing item's collapsed card holds its whole old body,
+    placed where the base had the item (after the nearest surviving predecessor),
     (statement, tables, rules, known differences) struck through, with no squares inside, then
     the retirement statement. Inside a modified block, removed words carry a light red tint with
     strikethrough and added words a light green tint, at normal weight.
@@ -1605,11 +1606,24 @@ def render_tree(bases, drafts, gloss, changes, prefix=""):
 
 def render_spec(old: Spec, new: Spec, gloss, changes, prefix, rel):
     """Entries for a spec file: intro, section headings with their lines, items in file order,
-    then items the base has that the draft lacks. A changed intro or section line carries the
+    items the base has that the draft lacks placed where the base had them. A changed intro or section line carries the
     reason of the entry whose Touches names the file."""
     o = {it.id: it for it in old.items} if old else {}
     old_sections = ({it.section for it in old.items} | set(old.sections)) if old else set()
     out = intro_entries(old, new, gloss, changes, rel)
+    # an item the draft dropped stays where the base had it: after the nearest surviving item
+    # that preceded it in the base (before the first item when none did)
+    kept = {it.id for it in new.items}
+    after, prev = {}, None
+    for it in (old.items if old else []):
+        if it.id in kept:
+            prev = it.id
+        else:
+            after.setdefault(prev, []).append(it)
+    def missing_after(key):
+        for mit in after.pop(key, []):
+            out.append(Entry(render_item(mit, None, gloss, why_for(changes, {anchor(mit.id)}))[1], "item", mit.id, {anchor(mit.id)}, "missing", mit.line))
+    missing_after(None)
     section = None
     for it in new.items:
         if it.section != section:
@@ -1627,9 +1641,9 @@ def render_spec(old: Spec, new: Spec, gloss, changes, prefix, rel):
         if prefix:
             h = h.replace(' id="', f' id="{prefix}', 1)
         out.append(Entry(h, "item", it.id, {anchor(it.id)}, status, it.line))
-    for k, it in o.items():
-        if k not in {it.id for it in new.items}:
-            out.append(Entry(render_item(it, None, gloss, why_for(changes, {anchor(k)}))[1], "item", k, {anchor(k)}, "missing", it.line))
+        missing_after(it.id)
+    for key in list(after):  # a base item whose predecessor is itself gone was queued behind it
+        missing_after(key)
     return out
 
 
