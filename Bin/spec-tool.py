@@ -59,6 +59,9 @@ Usage:
         `validate ROOT...` would; exit status 1 when that has blocking issues.
 
     python3 spec-tool.py render --catalog DIR --drafts DIR [--authoring FILE | --no-authoring] [--out FILE.html]
+        --base DIR (repeatable) layers another open package's drafts over the catalog, each later
+        --base winning, so a package drafted on top of an unpromoted package diffs against that
+        package's drafts; check-changes takes the same flag.
         A change package's review page. The authoring artifact is found beside the drafts
         folder: product-specs-authoring.md (or the legacy requirements-authoring.md, accepted like
         the other legacy names for one release after the rename; the new name wins when both exist), or
@@ -1719,8 +1722,11 @@ def package_id(drafts):
     return parent.parent.name if parent.name in ("product-specs", "design-specs", "requirements") else parent.name
 
 
-def render(catalog, drafts, authoring, out, no_authoring=False):
-    catalog, drafts = Path(catalog), Path(drafts)
+def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
+    """bases: further base roots layered over the catalog in order, each overlaying the last, so a
+    package can be drafted on another open package's drafts (the drafts diff against the top layer
+    that holds each file)."""
+    catalog, drafts, bases = Path(catalog), Path(drafts), [Path(b) for b in bases]
     design = drafts.name == "proposed-design-specs"
     out = Path(out) if out else drafts.parent / ("design-specs-review.html" if design else "product-specs-review.html")
     if not authoring and not no_authoring:
@@ -1729,7 +1735,7 @@ def render(catalog, drafts, authoring, out, no_authoring=False):
         if not authoring:
             sys.exit(f"no authoring artifact ({' or '.join(names)}) in {drafts.parent}; pass --authoring FILE, or --no-authoring for a bare comparison")
     title, goal, disc, changes, linkdefs, situations = parse_authoring(authoring, drafts)
-    gloss = prepare(catalog, [], drafts, out)
+    gloss = prepare(catalog, bases, drafts, out)
     # everything from the authoring artifact resolves its links through the artifact's own
     # definitions, so it is rendered before the drafts (whose loop re-sets the resolver per file)
     if authoring:
@@ -1751,7 +1757,7 @@ def render(catalog, drafts, authoring, out, no_authoring=False):
         discussion = "<h2>Discussion</h2>" + "".join(
             (f'<h3 class="section">{html.escape(topic)}</h3>' if topic else "") + "".join(render_discussion_item(it, gloss) for it in items)
             for topic, items in disc)
-    sections, toc, totals, _ = render_tree([catalog], drafts, gloss, changes)
+    sections, toc, totals, _ = render_tree([*reversed(bases), catalog], drafts, gloss, changes)
     head += toc_html(toc) + discussion
     page = page_shell(f"Change Package: {package_id(drafts)}", totals, head, sections, gloss)
     out.write_text(page, encoding="utf-8")
@@ -1827,15 +1833,15 @@ def kind_matches(change_type, what):
     return what == "item"
 
 
-def check_changes(catalog, drafts, authoring):
+def check_changes(catalog, drafts, authoring, bases=()):
     """Every added, modified, retired or missing item, glossary entry or index line in the
     projection has a change-list entry naming it; every added file has one naming it or its path
     in Touches (its contents ride on it); intro, section and index lines may also ride in Touches;
     no entry names something unchanged or absent."""
-    catalog, drafts, authoring = Path(catalog), Path(drafts), Path(authoring)
+    catalog, drafts, authoring, bases = Path(catalog), Path(drafts), Path(authoring), [Path(b) for b in bases]
     _, _, _, changes, _, _ = parse_authoring(authoring, drafts)
-    gloss = prepare(catalog, [], drafts, drafts.parent / "product-specs-review.html")
-    _, _, _, entries = render_tree([catalog], drafts, gloss, changes)
+    gloss = prepare(catalog, bases, drafts, drafts.parent / "product-specs-review.html")
+    _, _, _, entries = render_tree([*reversed(bases), catalog], drafts, gloss, changes)
     added_files = {e.name for e in entries if e.what == "file" and e.status == "added"}
     rules = {rid for d in drafts.rglob("*.md") for rid in rule_ids(parse(d))}
     bad_rules = [c for c in changes if c.rule and c.rule not in rules]
@@ -1947,11 +1953,12 @@ def main(argv):
     lt = sub.add_parser("link-terms"); lt.add_argument("roots", nargs="+")
     cv = sub.add_parser("convert"); cv.add_argument("roots", nargs="+")
     d = sub.add_parser("render"); d.add_argument("--catalog", required=True); d.add_argument("--drafts", required=True)
+    d.add_argument("--base", action="append", default=[], help="a further base root layered over the catalog (repeatable, later wins)")
     d.add_argument("--authoring"); d.add_argument("--no-authoring", action="store_true"); d.add_argument("--out")
     q = sub.add_parser("render-request"); q.add_argument("--catalog", required=True); q.add_argument("--package-drafts", required=True)
     q.add_argument("--request", required=True); q.add_argument("--out")
     c = sub.add_parser("check-changes"); c.add_argument("--catalog", required=True); c.add_argument("--drafts", required=True)
-    c.add_argument("--authoring", required=True)
+    c.add_argument("--authoring", required=True); c.add_argument("--base", action="append", default=[], help="a further base root layered over the catalog (repeatable, later wins)")
     a = ap.parse_args(argv)
     if a.cmd == "validate":
         specs, issues = validate(a.roots)
@@ -1961,7 +1968,7 @@ def main(argv):
         print(f"{len(specs)} files, {len(blocking)} issues" + (f", {len(issues) - len(blocking)} notes outside the projection" if len(blocking) < len(issues) else ""))
         return 1 if blocking else 0
     if a.cmd == "check-changes":
-        issues = check_changes(a.catalog, a.drafts, a.authoring)
+        issues = check_changes(a.catalog, a.drafts, a.authoring, a.base)
         for i in sorted(issues, key=lambda x: (str(x.path), x.line)):
             print(i)
         print(f"{len(issues)} issues")
@@ -1978,7 +1985,7 @@ def main(argv):
     if a.cmd == "render":
         if a.authoring and a.no_authoring:
             ap.error("--authoring and --no-authoring exclude each other")
-        render(a.catalog, a.drafts, a.authoring, a.out, a.no_authoring)
+        render(a.catalog, a.drafts, a.authoring, a.out, a.no_authoring, a.base)
         return 0
     if a.cmd == "render-request":
         render_request(a.catalog, a.package_drafts, a.request, a.out)
