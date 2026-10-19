@@ -207,6 +207,26 @@ instead of restating. Changes to this guide set:
 - Refinement order: the shared shape guide and tool first, then product specs, then this guide set,
   then one consistency pass across all three.
 
+## Decisions — 2026-10-19 (change request triage)
+
+Supervisor decisions after the catalog rework, where the agent proposed rejecting a request the
+product owner had made. Shared by product specs, design specs and UI Map architecture.
+
+1. **The supervisor rules; the agent applies.** A change request is read and decided by the
+   supervisor, who tells the agent what to do with it ("incorporate 001", "reject 001, it belongs
+   with the sync work"). The agent then applies that: for an incorporation the drafts and the
+   change list, then `Incorporated`; otherwise the status and the supervisor's reason in
+   `Reviewer Response`; then re-render. Until told, the agent leaves a `Proposed` request alone;
+   it summarizes open requests when asked. `Proposed` keeps blocking promotion. The agent never
+   rejects or supersedes on its own, and does not raise Discussion items to drive the ruling.
+2. **A change request exists only against an open package.** It is the trace of someone other than
+   the package's author asking for its drafts to change, without editing them. With no package
+   open for the subject, whoever finds the defect opens a change package through authoring; the
+   supervisor reviews it like any other. There is no request against the catalog, and supervisor
+   input during authoring is a decision, never a request.
+
+Design specs adopt both decisions of [`product-specs-system-design.md`](product-specs-system-design.md) § Decisions — 2026-10-19 unchanged; UI Map architecture adopts decision 1 (its requests come only from implementation).
+
 ## Size Budgets — 2026-10-18
 
 Set by the supervisor from four efficiency reviews (SalesPro checkout, `working-docs/requirements-process/reviews/`), as today's size less measured obsolete content, less the reviewed trim on what remains, plus known growth. Whole-file bytes by `wc -c`, managed header and addendum footer included. They bind every repair per the refinement guide's size-budget rule.

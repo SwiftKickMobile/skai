@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture-artifacts
 Managed-Source: Guides/UIMap/ui-map-architecture-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-19
 
 # UI Map Architecture Artifact Formats
 
@@ -48,10 +48,10 @@ It carries two fields as inline `Label: value` lines — a `Change Request Statu
 
 ```
 Change Request Status: Proposed
-Reviewer Response: <filled by architecture on reopen>
+Reviewer Response: <the supervisor's ruling, written by architecture on reopen>
 ```
 
-Lifecycle: the request opens `Proposed`; architecture's reviewer fills `Reviewer Response` and moves the status to `Incorporated` (only once the adjustment is applied in the proposed map in Map Changes), `Rejected`, or `Superseded`.
+Lifecycle: the request opens `Proposed`; only the supervisor's instruction moves the status, applied by architecture on reopen ([`ui-map-architecture.md`](ui-map-architecture.md) § Initiation): `Incorporated` once the adjustment is applied in the proposed map in Map Changes, `Rejected` or `Superseded` with the supervisor's reason in `Reviewer Response`.
 
 ## Project Addendum
 

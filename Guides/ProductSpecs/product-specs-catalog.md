@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-catalog
 Managed-Source: Guides/ProductSpecs/product-specs-catalog.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-19
 
 # Product Specs Catalog
 
@@ -20,9 +20,9 @@ a workflow.
 
 [`product-specs-authoring.md`](product-specs-authoring.md) drafts into a change package;
 [`product-specs-promotion.md`](product-specs-promotion.md) writes the catalog. Work-spec implementation
-may update or remove known-difference notes after verified fixes; requirement text and IDs are
-otherwise read-only. Rules apply to new or changed content: a defect in an untouched canonical
-file never blocks a package but becomes a change request; release migrations are separate.
+may update or remove known-difference notes after verified fixes; other text and IDs are
+read-only. Rules apply to new or changed content: a defect in an untouched canonical
+file never blocks a package but is for the artifacts guide § Change Requests; release migrations are separate.
 
 The catalog holds behavior that survives a future rewrite. A constraint that exists only for the
 duration of one change — migration steps, refactor decisions, intermediate constructs — belongs in

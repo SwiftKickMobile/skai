@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-authoring
 Managed-Source: Guides/ProductSpecs/product-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-19
 
 # Product Specs Authoring
 
@@ -27,12 +27,12 @@ this workflow's artifact `product-specs-authoring.md`, the drafts under `propose
 the rendered page `product-specs-review.html`, and what change requests and promotion add.
 
 Use a supplied change ID; otherwise propose a short kebab-case ID and block before creation (from a
-branch, its final component: `work/billing-ui` → `billing-ui`). Check the active and promoted paths:
+branch, its final component). Check the active and promoted paths:
 reopen unpromoted work; a recorded `C7` write with repair or archival pending returns to promotion,
 not drafting; a closed `C7` ID/type pair needs a new ID. Create the artifact with Goal and Inputs
 before drafting.
 
-Sibling types for the same change (`design/`, `design-specs/`, `ui-map/`) are independent: each in
+Sibling types for the same change are independent: each in
 its canonical repository, linked by resolved paths, archived on its own, updating freely while the
 change is open. A consumer wanting this package changed files a change request (*Reopening*), never
 edits it.
@@ -64,8 +64,6 @@ is a blocked gate.
 ## Assumptions and TODOs  what the drafts assume; gaps needing no decision; may be empty
 ## Out of scope           excluded work; may be empty
 ```
-
-The page link sits directly under the title, here and in every request's `request.md`.
 
 ## Modes
 
@@ -160,8 +158,7 @@ awaiting confirmation included — are supervisor decisions.
 ## Initiation
 
 The workflow starts on an explicit signal — "write", "backfill" or "update the requirements for X".
-Whatever came before — designs, an implementation, a brief, a seeded package, a change request — is
-context the agent digests; there is no declared entry point or mode.
+Whatever came before is context the agent digests; there is no declared entry point or mode.
 
 1. When the catalog does not exist yet, follow [`artifact-hosting.md`](../Core/artifact-hosting.md)
    to settle where it lives and link it from the README.
@@ -187,11 +184,13 @@ catalog, not from the artifact.
 **Resolved decisions are never disturbed.** A resolved `- [x] D<n>` is not removed, rewritten or
 renumbered; new items continue the numbering. Keep its draft links current without changing it.
 
-**Change requests** arrive as input on reopen, filed by any downstream consumer against this
-package or the catalog, in the form and lifecycle of [`product-specs-artifacts.md`](product-specs-artifacts.md)
-§ Change Requests. Triage each on the request itself to `Incorporated`, `Rejected` (naming the new
-package a valid request belongs to) or `Superseded`, and re-render its page; `Incorporated` only
-once the drafts *and* `## Requirement Changes` reflect it. `Proposed` blocks promotion.
+**Change requests** arrive as input on reopen, in the form and lifecycle of
+[`product-specs-artifacts.md`](product-specs-artifacts.md) § Change Requests. The supervisor reads
+each and says what to do with it; the agent applies that — for an incorporation the drafts and
+`## Requirement Changes`, then `Incorporated`; otherwise the status and the supervisor's reason in
+`Reviewer Response` — and re-renders its page. Until told, leave a `Proposed` request alone,
+summarizing open requests when asked; never reject or supersede one on its own, and raise no
+Discussion item to drive the ruling.
 
 ## Drafting
 
@@ -203,11 +202,11 @@ into a draft.
 
 Before any app behavior, list the concepts the change touches and check each against the company's
 own vocabulary, the catalog's `domains/` and the glossary. A concept that is absent, or whose
-meaning changes, is drafted first, in `domains/` and the glossary (a changed entry gets the sweep in
-*Working a scoped change*), and brought to `## Discussion` as
-one `[Proposal]` item naming the new and changed concepts; app behavior on them waits for that
-item's resolution, so the response ends at the blocked gate. An inventory that finds every concept
-canonical says so under `## Assumptions and TODOs`, and drafting continues. ❌ sharing requirements
+meaning changes, is drafted first, in `domains/` and the glossary, and brought to `## Discussion` as
+one `[Proposal]` item naming the new and changed concepts: an open item holds behavior depending
+on them at the blocked gate, `auto` included; one the supervisor has already settled is recorded
+as *Resolution*'s checked item and drafting continues. An inventory that finds every concept
+canonical says so under `## Assumptions and TODOs`. ❌ sharing requirements
 drafted before the catalog had a Collaborator, each rewritten once it landed · ✅ Collaborator
 and its roles confirmed, then the sharing behavior on them.
 
@@ -236,10 +235,10 @@ changed contract retires it and adds a new one. **Before modifying or retiring a
 entry, run the tool's `references`** (the ID, or the term for every linked occurrence) over the
 catalog, the design specs and the active packages and decide per citation whether it still holds: a
 catalog citation that does not is re-pointed by drafting its file into the package; one in the
-design specs by a change request against them; one in a work spec or another package is not the
-author's to edit — name it in the sweep for that artifact's owner. Record the sweep under
-`## Verification`
-(`[evidence: references REMIND-04; 3 citations; 2 hold, NOTE-07 re-pointed]`). A call that could
+design specs by a change request against their open package, else as input for design specs
+authoring ([§ Change Requests](../DesignSpecs/design-specs-artifacts.md#change-requests)); one in
+a work spec or another package is not the author's to edit — name it in the sweep for that
+artifact's owner. Record the sweep under `## Verification`. A call that could
 go either way is a Discussion item: it burns an ID and re-points every work spec citing it.
 
 ## Discussion
@@ -291,7 +290,8 @@ inline, or verified file/line links where the host supports them.
 ### Resolution
 
 On the supervisor's explicit approval of an item: check the box and append
-`- **Decision** <resolution>.` last; the original stays visible, never substituted. Apply a decision
+`- **Decision** <resolution>.` last; the original stays visible, never substituted. A decision the
+supervisor supplies without an item is recorded as a checked item with its Decision line. Apply a decision
 that differs from the recommendation before continuing; an approved contract that differs from
 confirmed implementation behavior gets the known-difference note under the draft requirement. Keep
 the item's links aligned with the drafts.
@@ -322,9 +322,9 @@ behavior waits until it ships. Say which applies at completion.
 
 On each response through drafting and Discussion, update the artifact before speaking: revise
 `product-specs-authoring.md` with `## Requirement Changes`, bring `proposed-product-specs/` into line,
-run `validate` then `render` — on every material change: a draft edited, an item resolved, a change
-item added, a request triaged — and end at whichever gate *Gates* prescribes. The pre-gate pass runs
-once, where the planned gate would be emitted. Apply changes, never merely describe them.
+run `validate` then `render` on every material change (the artifacts guide lists them), and end at
+whichever gate *Gates* prescribes. The pre-gate pass runs once, where the planned gate would be
+emitted. Apply changes, never merely describe them.
 
 ## Project Addendum
 

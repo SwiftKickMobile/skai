@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-promotion
 Managed-Source: Guides/ProductSpecs/product-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-19
 
 # Product Specs Promotion
 
@@ -28,7 +28,7 @@ shape and the spec tool: [`spec-file-shape.md`](../Core/spec-file-shape.md).
 
 Promote shipping behavior on supervisor approval, and approved intended behavior whose confirmed
 known-difference notes name the affected implementations. Other future behavior waits until
-shipment. Timing keys on the behavior, not the mode.
+shipment.
 
 ## The promotion artifact
 
@@ -146,7 +146,8 @@ reviews the current page, then verify before writing `## Promotion Checks`:
    unchanged or absent target.
 4. Every modified or retired ID or glossary entry has its sweep under the authoring artifact's
    `## Verification`.
-5. No request filed before this run remains `Proposed`, whoever filed it.
+5. No request remains `Proposed`, except one this run filed under *Raising a change request*;
+   this still holds when the write begins.
 
 On failure, record the condition in `## Evidence`, not a checks section, and return to authoring.
 
@@ -179,7 +180,8 @@ the rest is inspection.
   location: package draft targets map to their canonical destinations; untouched dependencies keep
   their catalog targets. Preserve prose, IDs, notes and target identities; leave the drafts
   unchanged. Record adjusted definitions, or that none needed it.
-- `C7 Write the catalog` — write the prepared whole files to the resolved catalog root, creating it
+- `C7 Write the catalog` — condition 5 still holding by current statuses, write the
+  prepared whole files to the resolved catalog root, creating it
   when absent, leaving files outside the package untouched. Confirm destination links reach their
   targets and no Discussion citations, checkboxes or `🟡` remain; only retirement marks and
   known-difference notes accompany the contract: read the written text back and run
@@ -224,11 +226,10 @@ subject records why.
 ## Raising a change request
 
 A contradiction or inconsistency in the existing product specs — a fault `validate` notes in an
-untouched file included — needs a change request, not draft edits. File it as
-[`product-specs-artifacts.md`](product-specs-artifacts.md) § Change Requests says
-(`change-requests/<nnn>/request.md`), link it under
-`## Change Requests`, and block only if the write itself would contradict canon. Otherwise continue and
-check the passing check with its linked request; the artifact never denies a write it performed.
+untouched file included — needs a change request, not draft edits. File it in this package's
+`change-requests/<nnn>/` as [`product-specs-artifacts.md`](product-specs-artifacts.md) § Change
+Requests says, link it under `## Change Requests`, and block only if the write itself would
+contradict canon. Otherwise continue and check the passing check with its linked request.
 A request filed here rides to completion still `Proposed`.
 
 ## Archive the package
@@ -263,7 +264,7 @@ repeating `C7`.
 
 `C7` alone closes the proposal to authoring; a migrated historical `C7`-only package needs its
 separately recorded relocation instead of `C8`. Promoted drafts are never reopened or re-promoted.
-Name any still-Proposed request with its archived link; its defect takes a new package.
+Name any still-Proposed request with its archived link.
 
 ## Project Addendum
 

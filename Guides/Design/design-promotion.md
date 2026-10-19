@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-promotion
 Managed-Source: Guides/Design/design-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-19
 
 # Design Promotion
 
@@ -16,8 +16,7 @@ confirm the result, delete the change page, and archive the package.
 Promotion refactors production to absorb the drafts; it does not redesign them. A design that needs
 changing returns the package to authoring. The tool guide owns what "page", "production" and
 "component library" mean and the conventions the designs must meet: load
-[`figma-designer-guide.md`](figma-designer-guide.md) for Figma. Implementing designs in code is
-outside this workflow.
+[`figma-designer-guide.md`](figma-designer-guide.md) for Figma.
 
 ## The promotion artifact
 
@@ -64,11 +63,11 @@ Workflow-specific gate notes:
   - `⏳ GATE: Next: Review production in the design file. Say "next" to confirm it and delete the change page <change-id>, or what to change.`
 
 Workflow-specific blocked gates:
-- A readiness failure (conditions 1–3), a `C1` or `C2` failure, or a design change the supervisor
-  asks for at either gate: only authoring resolves them, so each takes this line:
+- A readiness failure (conditions 1–3, or 5 when a ruling invalidates mockups), a `C1` or `C2`
+  failure, or a design change the supervisor asks for at either gate: only authoring resolves them; each takes:
   `⏳ GATE: Blocked: <C1 | C2 | readiness condition | requested design change> — <what failed>. The package returns to authoring; re-run promotion once it is resolved.`
 - A promoted path already present (condition 4) or a `Proposed` change request (condition 5)
-  waits at the standard blocked gate naming it; a request's triage is the product spec package's.
+  waits at the standard blocked gate naming it; the ruling is the product spec supervisor's.
 - A `C3` (production) or `C4` (links) fault is a promotion mistake repaired in place, never by
   redesigning; one needing access or a library the agent lacks takes the standard blocked line.
 
@@ -109,8 +108,8 @@ Production review gate: the supervisor looks at production before the drafts are
 Begin only on an explicit signal ("promote the designs"), never automatically after authoring.
 
 Read the tool guide. The package is the one named or already in context; one already holding an
-unfinished `design-promotion.md` continues (*Advance intent*); the readiness screen is for a new
-run.
+unfinished `design-promotion.md` continues (*Advance intent*), `C3` re-checking condition 5; the
+readiness screen is for a new run.
 
 ### Readiness screen
 
@@ -121,9 +120,11 @@ Before writing `## Promotion Checks`, verify:
 3. The change page exists and every Design Changes entry links a draft on it.
 4. `skai/promoted/<change-id>/design/` does not exist.
 5. Every change request the package filed against the product spec package (listed under the
-   authoring artifact's `## Assumptions and TODOs` until triaged) is `Incorporated`, `Rejected`
+   authoring artifact's `## Assumptions and TODOs`) is `Incorporated`, `Rejected`
    or `Superseded` per [`product-specs-artifacts.md`](../ProductSpecs/product-specs-artifacts.md)
-   § Change Requests; a `Proposed` one blocks.
+   § Change Requests, with the ruling's effect on the approved mockups applied: one invalidating
+   behavior the drawings assumed returns the package to authoring; one leaving them valid needs
+   nothing. A `Proposed` one blocks, now and when the production write begins.
 
 A failure is a blocked gate (*Gates*), recorded in `## Evidence` instead of a checks section.
 
@@ -131,12 +132,12 @@ A failure is a blocked gate (*Gates*), recorded in `## Evidence` instead of a ch
 
 Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution order.
 
-- `C1 Drafts meet the conventions` — every draft on the change page follows the tool guide (frames,
-  styles and variables, dimensions, components). A script, where one exists, covers the rules it
-  tests; inspect the rest.
+- `C1 Drafts meet the conventions` — every draft on the change page follows the tool guide. A
+  script, where one exists, covers the rules it tests; inspect the rest.
 - `C2 Inventory matches the page` — every `## Design Changes` entry has its draft, and every screen
   draft on the change page has an entry. Components a draft needs are not screens; no entry.
-- `C3 Production absorbs the change page` — per entry: a changed screen's production design is
+- `C3 Production absorbs the change page` — condition 5 still holding by current statuses, per
+  entry: a changed screen's production design is
   updated to the draft, keeping its identity; a new screen is placed where the tool guide's layout
   rules put it; the components a draft needs are integrated as the tool guide says. Designs outside
   the inventory change only by the placement and relocation the tool guide's rules need to absorb
@@ -156,7 +157,6 @@ Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution or
 
 [evidence: C1; script over page `pinned-notes` (bindings, names) passed, output: skai/changes/pinned-notes/design/evidence/promotion-run1-c1.txt; inspection of the remaining rules (components in context, sample data) — no finding]
 [evidence: C2; inspection — 3 entries, 3 frames on `pinned-notes`, each entry links one frame; none extra]
-[evidence: C3; `notes` and `notes — empty` updated in place on Production; `note editor — pin menu` added below `note editor — date picker`; `Pinned Header` moved to Components → Controls]
 ```
 
 ## Evidence

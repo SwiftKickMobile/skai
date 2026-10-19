@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-promotion
 Managed-Source: Guides/DesignSpecs/design-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-19
 
 # Design Specs Promotion
 
@@ -15,7 +15,6 @@ work-spec known-difference cleanup; it validates and prepares destination links,
 prose, IDs, notes or drafts. Package defects return to authoring; canonical defects follow
 *Raising a Change Request*.
 
-Supervisor approval permits promotion whatever the implementation or design state past `V5`.
 Use [content rules/checks](design-specs.md), [artifact formats](design-specs-artifacts.md) and
 [shape guide and tool](../Core/spec-file-shape.md).
 
@@ -129,14 +128,14 @@ the current page, then verify before writing Promotion Checks:
 
 1. Discussion has no unresolved items.
 2. `validate` reports no fault in a held file and no conflict the projection introduces; a fault
-   noted in an untouched canonical file never blocks and becomes a change request (*Raising a
-   Change Request*).
+   noted in an untouched canonical file never blocks (*Raising a Change Request*).
 3. `check-changes` passes: every change has a `## Spec Changes` entry, or rides in one's Touches,
    at the artifact formats' granularity, with the right operation; no entry names an unchanged or
    absent target.
 4. Every modified or retired ID or glossary entry has its sweep under the authoring artifact's
    `## Verification`.
-5. No request filed before this run remains `Proposed`, whoever filed it.
+5. No request remains `Proposed`, except one this run filed under *Raising a Change Request*;
+   this still holds when the write begins.
 
 Failures go in Evidence, not Promotion Checks, and return the package to authoring.
 
@@ -154,7 +153,8 @@ Where the tool covers a check, its readiness output is the evidence; the rest is
   retired headings, repoint incoming spec links in prepared files and annotate external
   references. Preserve prose, IDs, notes and target identities; never edit drafts; record adjusted
   definitions or that none needed it.
-- `C3 Write the specs` — write prepared whole files to the resolved root, creating it if absent,
+- `C3 Write the specs` — condition 5 still holding by current statuses, write prepared
+  whole files to the resolved root, creating it if absent,
   leaving other files untouched. Record the write outcome; confirm by read-back and
   `validate <specs root>` (a fault readiness did not note is `C3`'s, wherever reported):
   intended link targets; no Discussion citations, checkboxes or `🟡`; only retirement marks and
@@ -186,8 +186,8 @@ records why.
 ## Raising a Change Request
 
 For a contradiction or inconsistency in the existing specs — a fault `validate` notes in an
-untouched file included — file a request as [artifact formats](design-specs-artifacts.md) § Change
-Requests says, linked under Change Requests. Block only if the write itself would contradict the
+untouched file included — file a request in this package's `change-requests/<nnn>/` as
+[artifact formats](design-specs-artifacts.md) § Change Requests says, linked under Change Requests. Block only if the write itself would contradict the
 specs; otherwise continue, checking the passing check with its linked request. A request filed
 here rides to completion still `Proposed`.
 
@@ -196,7 +196,7 @@ here rides to completion still `Proposed`.
 After verified `C3`, execute `C4`:
 
 1. Move `skai/changes/<change-id>/design-specs/` intact, rendered pages included, to
-   `skai/promoted/<change-id>/design-specs/` in the specs repository. Preserve siblings; remove
+   `skai/promoted/<change-id>/design-specs/`. Preserve siblings; remove
    an emptied grouping directory.
 2. Repair live incoming links (repositories, packages, work specs) and relative links inside moved
    files, preserving target identities, prose, IDs, decisions and recorded results; annotate
@@ -209,8 +209,7 @@ either path, finishing archival only, never repeating `C3`.
 
 ## Completion
 
-With `C3` and `C4` evidenced, link the archived artifact and any still-Proposed requests (defects
-take new packages). Emit `🏁 Complete. Let me know if anything needs adjustment.`
+With `C3` and `C4` evidenced, link the archived artifact and any still-Proposed requests. Emit `🏁 Complete. Let me know if anything needs adjustment.`
 
 ## Project Addendum
 

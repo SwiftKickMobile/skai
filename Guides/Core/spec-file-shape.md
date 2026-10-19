@@ -109,7 +109,7 @@ File lines carry prefixes in backticks; folder lines none. An app's index also l
 
 | Command | What it does |
 | --- | --- |
-| `validate ROOT...` | Every file under the roots against the shape. A later root overlays an earlier one: `validate <catalog> <drafts>` checks a package as its projection. A fault in a file the package holds, or a conflict the projection introduces, blocks; a fault in an untouched canonical file is a note and becomes a change request. |
+| `validate ROOT...` | Every file under the roots against the shape. A later root overlays an earlier one: `validate <catalog> <drafts>` checks a package as its projection. A fault in a file the package holds, or a conflict the projection introduces, blocks; a fault in an untouched canonical file is a note. |
 | `references ID-OR-TERM ROOT...` | Every file and line citing an ID or one of its rules (bold-number pointers too), or linking a glossary term. Run before modifying or retiring either; decide per citation whether it still holds. |
 | `link-terms ROOT...` | Links every glossary term occurrence in files under the last root, reading terms from every root: `link-terms <catalog> <drafts>` writes only the drafts. Run while drafting. |
 | `convert ROOT...` | Rewrites old-shape files (`## ID` items, dotted rule citations, `**Term** — text` glossary entries) into this shape in place, then links terms; idempotent. |

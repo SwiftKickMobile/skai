@@ -152,7 +152,7 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     product-specs/ or design-specs/ (a legacy requirements/ parent is accepted too; else the drafts'
     parent); a legend
     row of counts (added, modified, retired or removed, unchanged, added files), each with its
-    colored square; a card with the package's status (open item count, or "ready for promotion"),
+    colored square; a card with the package's status (open item count, or "discussion complete"),
     title, goal and discussion count; a "Documents" box with one linked line per file (square,
     name, changed count); the discussion items in full, in their "###" topic groups in artifact
     order, each a card with its square (green approved, amber open), ID, kind, title and its
@@ -1796,7 +1796,7 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
         items = [it for _, its in disc for it in its]
         n_open = sum(1 for it in items if not it["done"])
         n_done = len(items) - n_open
-        state = "ready for promotion" if items and not n_open else (f"{n_open} open" if n_open else "no discussion items")
+        state = "discussion complete" if items and not n_open else (f"{n_open} open" if n_open else "no discussion items")
         foot = f"Discussion: {n_done} approved, {n_open} open" if items else "No discussion items"
         head += (f'<div class="item request"><div class="head"><span class="status">{html.escape(state)}</span>'
                  f'<span class="title">{html.escape(title)}</span></div>'

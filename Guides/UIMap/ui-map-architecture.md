@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture
 Managed-Source: Guides/UIMap/ui-map-architecture.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-19
 
 # UI Map Architecture
 
@@ -152,7 +152,7 @@ reopen and refresh the comparison while preserving resolved decisions, IDs and p
 
 If new map-relevant input arrives after the architecture package is ready but before the official YAML write — including a **change request** raised by downstream implementation — reopen the same architecture artifact in Discussion. Treat the new input as additional context and continue the normal Discussion loop, keeping the package's existing kind. Do not create a separate response artifact or replace the existing architecture artifact with a narrow response artifact. Proceed to Map Changes only after the discussion-complete gate advances.
 
-When the new input is a change request artifact in the input set, either incorporate the requested map adjustment, reject it, or supersede it with a different map decision, and record the outcome on the artifact: update its `Reviewer Response` and set its `Change Request Status` (values per [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md)) — use `Incorporated` only once the adjustment is applied in the proposed map in Map Changes, and leave it `Proposed` until then.
+When the new input is a change request artifact in the input set, the supervisor reads it and says what to do with it; the agent applies that — for an incorporation the proposed map, with `Incorporated` once Map Changes carries it; otherwise the status and the supervisor's reason in `Reviewer Response` (lifecycle in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md) § Change requests) — and re-renders. Until told, leave a `Proposed` request alone, summarizing open requests when asked; never reject or supersede one on its own, and raise no Discussion item to drive the ruling.
 
 ## Discussion
 
@@ -187,7 +187,7 @@ Use `###` subsections only for actual Discussion topics: one or more `D#` items,
 
 - *Baseline map* — summarize the Goal and Inputs, then encode the map the inputs describe, seeding Discussion only for the choices that meet the bar above. If the input directly names the app structure, feature areas, screens, and route relationships, encode that structure without asking the supervisor to approve the straightforward translation; the rendered preview is the review surface for feedback.
 - *Scoped map change* — summarize the active scope and current map context, then seed Discussion only for decisions needed to express that map change.
-- *Reopen (including a change request)* — summarize the new input and its evidence in Goal/Inputs. If the requested adjustment is coherent and fully specified, update the provisional preview and draft no *new* discussion items — but retain the artifact's existing resolved items that still explain the current map. Never replace `## Discussion` with the empty state on a reopened artifact, especially when map change items still cite those decisions (`D#`). Seed Discussion only when incorporation, rejection, supersession, or map representation requires a real decision.
+- *Reopen* — summarize the new input and its evidence in Goal/Inputs. Input that is coherent and fully specified — a change request the supervisor has said to incorporate included — updates the provisional preview and drafts no *new* discussion items; seed one only when map representation requires a real decision. Retain the artifact's existing resolved items that still explain the current map, and never replace `## Discussion` with the empty state on a reopened artifact, especially when map change items still cite those decisions (`D#`).
 - If the inputs fully specify the map, draft no new items. Use the empty Discussion state only when the section has no retained resolved items.
 - If the request drifts into app-code tasks, file moves, build steps, or implementation sequencing, record only the map fact that matters; leave execution details out of this artifact.
 
@@ -204,7 +204,7 @@ skai/changes/<change-id>/ui-map/proposed-ui-map.yaml
 skai/changes/<change-id>/ui-map/proposed-ui-map.html
 ```
 
-Seed the proposed map from the current official map; for a baseline, where no official map exists yet, start from empty. Edit the proposed map here — the official map stays frozen.
+When no proposed map exists yet, seed it from the current official map; for a baseline, where no official map exists yet, start from empty. On reopen the existing proposed map is the starting point, the official map re-read only for comparison. Edit the proposed map here — the official map stays frozen.
 
 Add or update `## Provisional preview` in `ui-map-architecture.md` with paths to the proposed map and render and a status line saying they are provisional until Discussion resolves and Map Changes completes.
 

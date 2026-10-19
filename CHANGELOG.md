@@ -9,7 +9,8 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
-- **Spec tool.** `check-changes` accepts a retire entry for an item a rework absorbs without leaving a retired stub, and matches each entry only to things of its own kind, so a glossary term and a same-named index line or section no longer collide; `render` and `check-changes` can layer another open package's drafts over the catalog with `--base`; `link-terms` no longer nests a link inside a longer term's link; the review page links bare IDs and glossary terms in Discussion, Situations and justifications.
+- **Change requests.** The supervisor rules on a change request and the agent applies the ruling; a request is always against an open package, never the catalog.
+- **Spec tool.** `check-changes` accepts a retire entry for an item a rework absorbs without leaving a retired stub, and matches each entry only to things of its own kind, so a glossary term and a same-named index line or section no longer collide; `render` and `check-changes` can layer another open package's drafts over the catalog with `--base`; `link-terms` no longer nests a link inside a longer term's link; the review page links bare IDs and glossary terms in Discussion, Situations and justifications, and its package card says "discussion complete" rather than claiming promotion readiness.
 
 ## Release 14 — 2026-10-18
 

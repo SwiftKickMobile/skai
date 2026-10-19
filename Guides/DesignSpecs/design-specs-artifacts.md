@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-artifacts
 Managed-Source: Guides/DesignSpecs/design-specs-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-19
 
 # Design Spec Artifact Formats
 
@@ -16,9 +16,10 @@ The package mirrors the product spec package
 ## The Package
 
 `skai/changes/<change-id>/design-specs/`; after promotion, `skai/promoted/<change-id>/design-specs/`.
-Packages are independent — never link another package — except a draft requirement cited from an
-active product spec package until promotion repoints it, and a change request filed against that
-package.
+Packages are independent: never depend on another package's lifecycle or drafts — except a draft
+requirement cited from an active product spec package until promotion repoints it, and a change
+request filed against that package. Citing where input came from, such as a request in another
+package, is not a dependency.
 
 The layout is the product spec package's, with `design-specs-authoring.md` (`## Spec Changes`),
 `proposed-design-specs/**` (touched files only, each whole),
@@ -72,16 +73,14 @@ known-difference note is its own entry.
 ## Change Requests
 
 Any downstream consumer — work specs, tests, promotion — files a change request for any reason,
-against the open package for the screen or, failing one, against the specs, which opens a new
-package. Promotion's own failed check is not a request: it blocks and returns the
+against the open package for the subject — with none open, a change package is opened through
+authoring instead. Promotion's own failed check is not a request: it blocks and returns the
 package to authoring. The proposer never edits the package.
 
 `change-requests/<nnn>/request.md` takes the product spec guide's form — status, response, title,
 Goal, Requested Changes as `S<n>` entries, optional drafts beside it diffed on its page — and its
-lifecycle: `Proposed` on filing; triaged on the request by authoring to `Incorporated` (once
-drafts and Spec Changes reflect it), `Rejected` or `Superseded`; `Proposed` blocks readiness; one
-filed on promotion's continue branch rides to completion still `Proposed`, its defect carried by
-a new package.
+lifecycle — only the supervisor's instruction moves the status, `Incorporated` once drafts and
+Spec Changes reflect it.
 
 ## Project Addendum
 

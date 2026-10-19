@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs
 Managed-Source: Guides/DesignSpecs/design-specs.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-19
 
 # Design Specs
 
@@ -22,8 +22,8 @@ never restated. [`design-specs-authoring.md`](design-specs-authoring.md) drafts;
 [`design-specs-promotion.md`](design-specs-promotion.md) promotes.
 
 **Check changed items and every touched file whole.** Do not re-examine untouched canonical files;
-an unrelated defect found there is a change request
-([`design-specs-artifacts.md`](design-specs-artifacts.md) § Change Requests); only a contradiction
+an unrelated defect found there is routed as
+[`design-specs-artifacts.md`](design-specs-artifacts.md) § Change Requests says; only a contradiction
 that would make the write inconsistent blocks. Work-spec implementation may update or remove
 known-difference notes after verified fixes; spec text and IDs are otherwise read-only.
 
@@ -34,8 +34,8 @@ One home per fact. **Requirements** own screen-independent promises and threshol
 present promises — conditions and states, formatting constants (rounding, a `1 min` floor),
 variable copy, controls by function, destinations. Cite requirements without restating them
 (*Restatement*). A spec that narrows a requirement, such as hiding a notice in an unmentioned
-case, is a requirements gap: file a change request against the open product spec package or the
-catalog, never specify it quietly.
+case, is a requirements gap, routed as authoring § Requirements Gaps says, never
+specified quietly.
 
 The package's item list is its acceptance criteria, not a fourth artifact. Work specs cite spec IDs.
 Specs apply to every app in the catalog's `apps/` index.
@@ -210,8 +210,8 @@ spec must survive the change's memory.
 
 Before authoring's Discussion gate advances and before promotion writes, run the spec tool's
 `validate` over the drafts projected on canon: a fault in a file the package holds, or a conflict
-the projection introduces, blocks; a fault in an untouched canonical file is reported and becomes
-a change request. Then these ten checks, enumerated only here, over the scope in *Purpose*.
+the projection introduces, blocks; a fault in an untouched canonical file is reported and routed
+as § Change Requests says. Then these ten checks, enumerated only here, over the scope in *Purpose*.
 
 - `V1 Restatement` — requirement-citing binding prose adds a screen binding beyond the cited
   requirement. Nonbinding orientation and routing are `V9`'s.

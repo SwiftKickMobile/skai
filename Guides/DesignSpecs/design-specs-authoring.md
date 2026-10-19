@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-authoring
 Managed-Source: Guides/DesignSpecs/design-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-19
 
 # Design Specs Authoring
 
@@ -54,8 +54,7 @@ The page link sits directly under the title, here and in every request's `reques
 ## Modes
 
 Infer from the specs, never declaration: **Baseline** if nothing exists for the touched screens (all
-additions); otherwise **Scoped change**. In doubt, use Scoped change. A change request is input on
-reopen, not a mode.
+additions); otherwise **Scoped change**. In doubt, use Scoped change.
 
 ## Gates
 
@@ -96,8 +95,8 @@ Workflow-specific gate notes:
   looking at the design file; a drawing not found is a Discussion item, not a failed gate. The gate
   presents what the supervisor reviews; fix the artifact before gating.
 - An item resolved by a drawing (*Undrawn States*, *Design vs. App Differences*) stays open until
-  the drawing exists and the agent has seen it; one resolved by a change request's triage
-  (*Requirements Gaps*) until it is triaged. The gate stays blocked that long.
+  the drawing exists and the agent has seen it; one holding a requirements gap (*Requirements
+  Gaps*) until the product spec outcome is applied to the draft. The gate stays blocked that long.
 
 Planned gates for this workflow:
 - After every screen is drafted and every Discussion item is resolved, before Completion.
@@ -160,11 +159,9 @@ write returns to promotion; resolved `D<n>` items are never disturbed.
 **Audit:** on an audit request or changed guides, before any edit run `V1`–`V10` over every
 draft. Record each failure with a proposed fix in Discussion; block until resolved, then fix.
 
-**Change requests** arrive as input on reopen, filed by any downstream consumer against this
-package or the specs, in the form and lifecycle of
-[artifact formats § Change Requests](design-specs-artifacts.md#change-requests). Triage each on the
-request itself — `Rejected` names the new package a valid request belongs to — and re-render its
-page. `Proposed` blocks readiness.
+**Change requests** arrive as input on reopen
+([artifact formats § Change Requests](design-specs-artifacts.md#change-requests)), handled as that
+§ Reopening says.
 
 ## Drafting
 
@@ -194,7 +191,7 @@ burn IDs and repoint citations. **Before modifying or retiring an ID or a glossa
 tool's `references`** (the ID, or the term for every linked occurrence) over the specs, the product
 catalog and the active packages and decide per citation whether it still holds: a spec citation
 that does not is repaired by drafting its file (in Touches, as the artifact formats say); one in
-the product specs by a change request against them (*Requirements Gaps*); one in a work spec or
+the product specs by *Requirements Gaps*; one in a work spec or
 another package is not the author's to edit — name it in the sweep for its owner. Record the sweep
 under `## Verification`. Moves preserve text; classify edits by that test.
 
@@ -216,12 +213,16 @@ above.
 
 ### Requirements Gaps
 
-Never quietly specify a screen-independent promise or narrowed requirement. File a change request
-against the change's open product spec package, or the catalog when there is none, in the form of
+Never quietly specify a screen-independent promise or narrowed requirement. With a product spec
+package open for the subject, file a change request against it in the form of
 [`product-specs-artifacts.md` § Change Requests](../ProductSpecs/product-specs-artifacts.md#change-requests),
-optionally with proposed drafts; never edit that package. The gap is a Discussion item linking the
-request, drafted under the recommended reading and resolved on triage; once incorporated, the spec
-cites the requirement's draft ID, and spec promotion waits for that requirement's promotion.
+optionally with proposed drafts, never editing that package; the gap is a Discussion item linking
+the request, drafted under the recommended reading and resolved when the supervisor's outcome is
+applied to the draft: on `Incorporated` the spec cites the requirement's draft ID and spec
+promotion waits for its promotion; otherwise the supervisor's reason and the resulting coverage
+decide whether that draft behavior is kept, revised, removed or still waits for its
+source. With none open, the gap is input for product specs authoring, resolved the same way from
+its drafts.
 
 ## Discussion
 
@@ -237,8 +238,9 @@ Concerns must make sense without ID links. Package prose may name frames, nodes 
 ### What Earns an Item
 
 Only supervisor-dependent spec changes: design/app differences, undrawn states, requirements gaps
-awaiting triage, ambiguous modify/retire or placement calls, unresolved product intent, and audit
-failures. Draft determined behavior directly; record givens as assumptions.
+awaiting a ruling, ambiguous modify/retire or placement calls, unresolved product intent, and audit
+failures. Draft determined behavior directly; record givens as assumptions. A decision the
+supervisor supplies without an item is recorded as a checked item with its Decision line.
 
 With no items use: “The listed Inputs determine the proposed specs; review the drafts on the
 review page before they are finalized.” Omit when items exist. An undrawn-state item proposes
@@ -272,8 +274,7 @@ Promotion is invoked separately; implementation and design state beyond `V5` are
 ## Artifact Maintenance
 
 Before responding, update the authoring artifact with `## Spec Changes`, align drafts, run
-`validate` then `render` — on every material change: a draft edited, an item resolved, a change
-item added, a request triaged — then emit the prescribed gate. Apply changes, never merely describe
+`validate` then `render` on every material change, then emit the prescribed gate. Apply changes, never merely describe
 them. The pre-gate pass runs once, where the planned gate would be emitted.
 
 ## Project Addendum

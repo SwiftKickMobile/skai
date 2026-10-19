@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-authoring
 Managed-Source: Guides/Design/design-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-19
 
 # Design Authoring
 
@@ -201,11 +201,11 @@ On the supervisor's explicit approval of an item: check the box and append
 `- **Decision** <resolution>.` as the last sub-bullet; preserve the original.
 
 A decision that changes or adds a product spec is filed as a **change request** against the
-change's open product spec package, or the catalog when there is none, in the form of
+change's open product spec package (with none, one is opened through its authoring), in the form of
 [`product-specs-artifacts.md` § Change Requests](../ProductSpecs/product-specs-artifacts.md#change-requests),
-optionally with proposed drafts; the designer never edits that package. This holds in any phase —
-a Discussion decision, direct feedback, the trace pass — and every request is listed under
-`## Assumptions and TODOs` until triaged; a Decision that produced one names it.
+optionally with proposed drafts; the designer never edits that package. This holds in any phase,
+and every request the package filed stays listed under `## Assumptions and TODOs`, with its
+status, through promotion; a Decision that produced one names it.
 
 ## Mockups
 
@@ -239,7 +239,7 @@ or changes, linking its draft on the change page.
 
 Then bring `## Assumptions and TODOs` and `## Out of scope` up to date and end with
 `🏁 Complete. Let me know if anything needs adjustment.` Promotion is invoked separately; name any
-change request still `Proposed`, since promotion waits for its triage.
+change request still `Proposed`.
 
 ## Artifact maintenance
 
