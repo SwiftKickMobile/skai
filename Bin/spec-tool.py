@@ -1813,6 +1813,20 @@ def render_markdown(text, gloss):
 
 # ---------------------------------------------------------------- list-matches-diff
 
+def kind_matches(change_type, what):
+    """A change entry names only things of its own kind, so a glossary term, an item and an index
+    line that share a name never collide: a glossary-typed entry names glossary entries, an
+    index-line entry names index lines, a file or folder entry names files (an index line rides on
+    it through Touches, never as its identity), and every other type names items."""
+    if "glossary" in change_type:
+        return what == "glossary entry"
+    if "index" in change_type:
+        return what == "index line"
+    if re.search(r"file|folder", change_type):
+        return what == "file"
+    return what == "item"
+
+
 def check_changes(catalog, drafts, authoring):
     """Every added, modified, retired or missing item, glossary entry or index line in the
     projection has a change-list entry naming it; every added file has one naming it or its path
@@ -1832,7 +1846,7 @@ def check_changes(catalog, drafts, authoring):
         if e.what == "section":
             continue
         # a file-typed entry names the file itself, never that file's index line
-        hits = [c for c in changes if c.keys & e.keys and not (e.what == "index line" and re.search(r"file|folder", c.type))]
+        hits = [c for c in changes if c.keys & e.keys and kind_matches(c.type, e.what)]
         if e.status == "unchanged":
             issues += [Issue(authoring, c.line, f"{c.cid} names {describe(e.what, e.name)}, which is unchanged") for c in hits]
             matched |= {c.cid for c in hits}
