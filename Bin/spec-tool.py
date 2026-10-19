@@ -188,7 +188,9 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     the retirement statement. Inside a modified block, removed words carry a light red tint with
     strikethrough and added words a light green tint, at normal weight.
  8. Every citation and glossary term that resolves is a link: citations as chips, glossary terms
-    as dotted text, both with the link pointer. Hovering opens a popover card with the full cited
+    as dotted text, both with the link pointer. In artifact prose (Discussion, Situations,
+    justifications, a request's head) a bare ID and every glossary term are linked the same way at
+    render time, outside links and code. Hovering opens a popover card with the full cited
     item (statement, tables, rules; a cited rule outlined) or the glossary entry; an item cited
     from outside the roots gets its popover too when its link definition finds the file on disk. Citations that
     cannot resolve are plain muted text, never styled as links. The browser's own tooltip is not
@@ -994,7 +996,11 @@ def href_for(name):
     return target or None
 
 
-def inline(s, gloss=None):
+def inline(s, gloss=None, auto=False):
+    """Markdown inline to HTML: strike, bold, code, and `[label][ref]` / `[ID]` links as chips with
+    popovers. With `auto` (artifact prose: Discussion, Situations, justifications, a request's
+    head), a bare requirement ID and every glossary term outside a link or code span are linked
+    the same way, so the page reads uniformly without the artifact carrying the links."""
     s = html.escape(s)
     s = re.sub(r"~~(.+?)~~", r"<del>\1</del>", s, flags=re.S)
     s = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s)
@@ -1012,7 +1018,50 @@ def inline(s, gloss=None):
         tip = f' data-tip="tip-{anchor(m2.group(1))}" data-rule="{m2.group(2).lstrip("-")}"' if m2 and m2.group(1) in RESOLVER.get("items", {}) else ""
         return f'<a class="ref" href="{href}"{tip}>{label}</a>' if href else f'<span class="ref"{tip}>{label}</span>'
     s = LINK_USE_RE.sub(link, s)
-    return s
+    return autolink(s, gloss) if auto else s
+
+
+def autolink(h, gloss):
+    """Link bare IDs and glossary terms in the text runs of an HTML fragment, leaving tags,
+    anchors and code spans alone; longer terms first so a term inside another never splits it."""
+    terms = sorted(((t, k) for k, (t, _) in (gloss or {}).items()), key=lambda x: -len(x[0]))
+    out = []
+    for seg in re.split(r"(<a\b.*?</a>|<code>.*?</code>|<[^>]+>)", h, flags=re.S):
+        if not seg or seg.startswith("<"):
+            out.append(seg)
+            continue
+        runs = [(seg, False)]
+        def apply(pattern, make):
+            nonlocal runs
+            nxt = []
+            for text, locked in runs:
+                if locked:
+                    nxt.append((text, True)); continue
+                pos = 0
+                for m in pattern.finditer(text):
+                    made = make(m)
+                    if made is None:
+                        continue
+                    nxt += [(text[pos:m.start()], False), (made, True)]
+                    pos = m.end()
+                nxt.append((text[pos:], False))
+            runs = nxt
+        def make_id(m):
+            base, rule = m.group(1), m.group(2)
+            if base not in RESOLVER.get("items", {}):
+                return None
+            href = href_for(base + rule)
+            tip = f' data-tip="tip-{anchor(base)}" data-rule="{rule.lstrip("-")}"'
+            return f'<a class="ref" href="{href}"{tip}>{m.group(0)}</a>' if href else f'<span class="ref"{tip}>{m.group(0)}</span>'
+        apply(re.compile(rf"(?<![\w-])({ID_RE})((?:-\d{{2}})*)(?![\w-])"), make_id)
+        for term, key in terms:
+            def make_term(m, key=key):
+                href = href_for(key)
+                tip = f' data-tip="tip-{key}"'
+                return f'<a class="term" href="{href}"{tip}>{m.group(0)}</a>' if href else f'<span class="term"{tip}>{m.group(0)}</span>'
+            apply(term_pattern(term), make_term)
+        out.append("".join(t for t, _ in runs))
+    return "".join(out)
 
 
 GLOSS_LINK_RE = re.compile(r"\[([^\]]+)\]\[g-[^\]]+\]")
@@ -1237,7 +1286,7 @@ def render_item(old: Item, new: Item, gloss, why):
 def card(status, aid, name, body, why="", gloss=None):
     """A card: expanded for added and modified, collapsed (details) for everything else, with the
     change's justification under it."""
-    w = f'<div class="why"><b>Why</b> {inline(why, gloss)}</div>' if why else ""
+    w = f'<div class="why"><b>Why</b> {inline(why, gloss, auto=True)}</div>' if why else ""
     label = f'<span class="id">{html.escape(name)}</span>'
     ident = f' id="{aid}"' if aid else ""
     if status in ("added", "modified"):
@@ -1546,7 +1595,7 @@ def render_tree(bases, drafts, gloss, changes, prefix=""):
         body = f'<h2 id="{fid}"><span class="badge {kind}">{kind}</span> {html.escape(rel)}</h2>'
         why = why_for(changes, {rel, Path(rel).name})
         if why:
-            body += f'<p class="file-why"><b>Why</b> {inline(why, gloss)}</p>'
+            body += f'<p class="file-why"><b>Why</b> {inline(why, gloss, auto=True)}</p>'
         if new.issues:
             body += '<p class="file-why">Validation: ' + "; ".join(html.escape(str(i)) for i in new.issues) + "</p>"
         body += "".join(e.html for e in entries)
@@ -1599,7 +1648,7 @@ def intro_entries(old, new, gloss, changes, rel):
 def prose_card(body, modified=False, why="", gloss=None):
     if not modified:
         return f'<p class="intro">{body}</p>'
-    w = f'<div class="why"><b>Why</b> {inline(why, gloss)}</div>' if why else ""
+    w = f'<div class="why"><b>Why</b> {inline(why, gloss, auto=True)}</div>' if why else ""
     return f'<p class="intro modified"><span class="badge modified"></span>{body}</p>{w}'
 
 
@@ -1701,8 +1750,8 @@ def render_request(catalog, package_drafts, request_dir, out):
     response = fields.get("Reviewer Response", "")
     head = (f'<div class="item request"><div class="head"><span class="status">{html.escape(status)}</span>'
             f'<span class="title">{html.escape(title)}</span></div>'
-            + (f"<p>{inline(goal, gloss)}</p>" if goal else ""))
-    head += f'<div class="why"><b>Reviewer response</b> {inline(response, gloss) if response else "<i>none yet</i>"}</div></div>'
+            + (f"<p>{inline(goal, gloss, auto=True)}</p>" if goal else ""))
+    head += f'<div class="why"><b>Reviewer response</b> {inline(response, gloss, auto=True) if response else "<i>none yet</i>"}</div></div>'
     sections, toc, totals = [], [], {"added files": 0, "added": 0, "modified": 0, "retired": 0, "unchanged": 0}
     if cr_drafts:
         sections, toc, totals, _ = render_tree([package_drafts, catalog], cr_drafts, gloss, changes)
@@ -1710,7 +1759,7 @@ def render_request(catalog, package_drafts, request_dir, out):
         # no drafts: one card per requested change, so the page still says what is asked
         sections = [f'<div class="item request"><div class="head"><span class="status">{html.escape(c.type)}</span>'
                     f'<span class="id">{inline(c.identity, gloss)}</span></div>'
-                    f'<div class="why"><b>Why</b> {inline(c.why, gloss) if c.why else "<i>none given</i>"}</div></div>' for c in changes]
+                    f'<div class="why"><b>Why</b> {inline(c.why, gloss, auto=True) if c.why else "<i>none given</i>"}</div></div>' for c in changes]
     page = page_shell(f"Change Request: {request_dir.name}", totals, head + toc_html(toc), sections, gloss,
                       subtitle=f"Change Package: {package_id(package_drafts)}")
     out.write_text(page, encoding="utf-8")
@@ -1751,7 +1800,7 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
         foot = f"Discussion: {n_done} approved, {n_open} open" if items else "No discussion items"
         head += (f'<div class="item request"><div class="head"><span class="status">{html.escape(state)}</span>'
                  f'<span class="title">{html.escape(title)}</span></div>'
-                 + (f"<p>{inline(goal, gloss)}</p>" if goal else "")
+                 + (f"<p>{inline(goal, gloss, auto=True)}</p>" if goal else "")
                  + f'<div class="why"><b>{foot}</b></div></div>')
     if situations:
         head += f'<h2>Situations</h2><div class="item request">{render_markdown(situations, gloss)}</div>'
@@ -1770,9 +1819,9 @@ def render_discussion_item(it, gloss):
     """A discussion item in full: square, ID, kind, title, then its sub-bullets as written."""
     status = "added" if it["done"] else "modified"
     head = (f'<div class="head"><span class="badge {status}"></span><span class="id">{it["id"]}</span>'
-            f'<span class="status">{html.escape(it["kind"])}</span><span class="title">{inline(it["title"], gloss)}</span></div>')
+            f'<span class="status">{html.escape(it["kind"])}</span><span class="title">{inline(it["title"], gloss, auto=True)}</span></div>')
     bullets = "".join(
-        f"<li>{inline(text, gloss)}" + (f"<ul>{''.join(f'<li>{inline(c, gloss)}</li>' for c in kids)}</ul>" if kids else "") + "</li>"
+        f"<li>{inline(text, gloss, auto=True)}" + (f"<ul>{''.join(f'<li>{inline(c, gloss, auto=True)}</li>' for c in kids)}</ul>" if kids else "") + "</li>"
         for text, kids in it["bullets"])
     return f'<div class="item request" id="{it["id"].lower()}">{head}{f"<ul>{bullets}</ul>" if bullets else ""}</div>'
 
@@ -1790,7 +1839,7 @@ def render_markdown(text, gloss):
     def flush():
         nonlocal para
         if para:
-            out.append(f"<p>{inline(' '.join(para), gloss)}</p>")
+            out.append(f"<p>{inline(' '.join(para), gloss, auto=True)}</p>")
             para = []
 
     for line in text.splitlines():
