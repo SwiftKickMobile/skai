@@ -804,7 +804,9 @@ def unlinked_uses(body, term, gloss_refs, start=0):
     out = []
     for m in term_pattern(term).finditer(body, start):
         before, after = body[: m.start()], body[m.end():]
-        lm = re.match(r"\]\[([^\]]+)\]", after)
+        # linked when the match sits anywhere inside a glossary link's label: "[Appointments
+        # stage][g-appointments-stage]" links the shorter term "appointment" too
+        lm = re.match(r"[^\]\[]*\]\[([^\]]+)\]", after)
         if before.rfind("[") > before.rfind("]") and lm and lm.group(1) in gloss_refs:
             continue
         out.append(m)
