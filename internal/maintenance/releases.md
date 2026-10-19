@@ -11,11 +11,11 @@ This is a maintainer reference, read only when the routing table in [`../maintai
 
 ## Cutting release `<N>`
 
-Releases are cut only when the supervisor asks. A request to cut a release authorizes the agent to prepare and create the release commit and its `v<N>` tag using normal git release mechanisms; pushing still requires a separate request.
+Releases are cut only when the supervisor asks. A request to cut a release authorizes the agent to prepare and create the release commit and its `v<N>` tag using normal git release mechanisms and to push `main` and the tag to origin; pushing is part of cutting.
 
 1. **Consolidate** `Releases/unreleased.md` into clean instructions for the installing agent — merge related entries, drop superseded intermediate steps, group by theme, keep every migration step safe to re-run. Cross-check `git log` since the previous release so nothing host-affecting is missed.
 2. **Rename** `Releases/unreleased.md` to `Releases/release-<N>.md` with the title `# Release <N> — <YYYY-MM-DD>`; its contents are now frozen (fix an outright error, never rewrite shipped scope). Open a fresh `Releases/unreleased.md` holding only the title `# Unreleased`.
 3. **Write the human notes**: in `CHANGELOG.md`, convert `## Unreleased` to `## Release <N> — <YYYY-MM-DD>`, rewrite its lines as a short themed summary that agrees with the technical document, and keep its single link, now to `Releases/release-<N>.md`. Open a fresh empty `## Unreleased` at the top with a link to `Releases/unreleased.md`. For Release 14 only, the section's opening bold line (the instruction to hosts whose update guide still reads this changelog) is retargeted to `Releases/release-14.md` and kept.
-4. **Verify and cut**: both documents exist and agree; stage the complete release scope, create the release commit, and tag that commit `v<N>`. Do not push unless the supervisor also asks.
+4. **Verify and cut**: both documents exist and agree; stage the complete release scope, create the release commit, tag that commit `v<N>`, and push `main` and the tag to origin.
 
 The tag is the anchor the update workflow targets by default; the `## Release <N>` heading, the `v<N>` tag and `release-<N>.md` name the same release. The update workflow reads every `release-<n>.md` after the host's installed release in ascending order, so a release document must stand on its own and must not assume the host applied the previous unreleased staging.
