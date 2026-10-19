@@ -153,25 +153,17 @@ does not restate it.
 5. `references` finds rule citations as well as item citations.
 6. The converter run over a catalog produces a validating catalog with no prose change.
 
-17. **Absorbed items — a one-off exception (supervisor, 2026-10-18).** For the first rework of a
-    catalog into this shape, made while the catalog was still at its baseline, an item whose whole
-    content became a row or rule of another item dropped its heading with no `(retired)` stub; the
-    ID stays burned. This was granted once for that rework, not as a rule: the catalog guide's
-    retire-with-stub rule governs every later retirement. The tool keeps accepting the case (a
-    `missing` item with a `retire` entry, shown in its base position) so that package renders.
-18. **Layered bases (supervisor, 2026-10-18).** `render` and `check-changes` take `--base DIR`
+
+17. **Layered bases (supervisor, 2026-10-18).** `render` and `check-changes` take `--base DIR`
     (repeatable): further roots layered over the catalog, later ones winning, so a package can be
     drafted on top of another open package's drafts and diff against them, as `validate` already
     projects several roots. Promotion order is the packages' own concern.
-19. **Artifact prose on the page (supervisor, 2026-10-19).** Discussion items, Situations,
+18. **Artifact prose on the page (supervisor, 2026-10-19).** Discussion items, Situations,
     change-item justifications and a request's head get the same chips and dotted terms as spec
     prose: a bare ID and every glossary term are linked at render time, outside links and code; the
     artifact file is not edited (render convention 8). Two defects fixed on the way: `check-changes`
     matched a glossary term, an index line and a section sharing a name as one thing (now matched by
     kind); `link-terms` re-wrapped a term inside a longer term's link (now treated as linked).
-20. **Absorbed items stay in place (supervisor, 2026-10-19).** A dropped item renders where the
-    base had it, after its nearest surviving predecessor, never at the end of the section; the
-    collapsed card is the page's record of the absorption.
 
 ## Open
 
