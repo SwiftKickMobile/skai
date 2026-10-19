@@ -165,6 +165,12 @@ does not restate it.
     matched a glossary term, an index line and a section sharing a name as one thing (now matched by
     kind); `link-terms` re-wrapped a term inside a longer term's link (now treated as linked).
 
+19. **Discussion items on the page (supervisor, 2026-10-19).** Each item is a collapsible card
+    whose summary line carries its state: the square (green resolved, amber open), the ID, the
+    kind, the title, and the word "resolved" or "open" at the end; resolved items start collapsed,
+    open items start expanded. The body (Concern, Options, Proposal, Why, Decision) shows on
+    expand. Reason: the list grows long and the state was hard to see.
+
 ## Open
 
 - Whether the judgment half of the catalog guide's layout section (topic-file sizing, index lines

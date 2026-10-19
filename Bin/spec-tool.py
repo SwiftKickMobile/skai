@@ -154,7 +154,7 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     row of counts (added, modified, retired or removed, unchanged, added files), each with its
     colored square; a card with the package's status (open item count, or "discussion complete"),
     title, goal and discussion count; a "Documents" box with one linked line per file (square,
-    name, changed count); the discussion items in full, in their "###" topic groups in artifact
+    name, changed count); the discussion items as collapsible cards (summary: square, ID, kind, title, "open" or "resolved"; resolved start collapsed, open expanded), in their "###" topic groups in artifact
     order, each a card with its square (green approved, amber open), ID, kind, title and its
     sub-bullets as written (Concern, Proposal, Options with their lettered choices, Detail, Why,
     Decision), citations linked and popovers as elsewhere, so an item can be resolved from the
@@ -1552,6 +1552,7 @@ ul{padding-left:18px;margin:6px 0}li{margin:2px 0}
 table.t{border-collapse:collapse;width:100%;margin:8px 0}table.t td,table.t th{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;vertical-align:top}
 table.t td .badge,table.t th .badge{margin-right:6px}li>.badge{margin-right:4px}
 .file-why{font-size:13px;color:var(--muted);margin:0 0 8px}
+details.discussion summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:center;flex-wrap:wrap}details.discussion summary::-webkit-details-marker{display:none}details.discussion .state{margin-left:auto;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}details.discussion>ul{margin-top:8px}
 .item.request .status{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;border:1px solid var(--line);border-radius:999px;padding:1px 8px}.item.request .title{font-weight:600}
 p.intro{margin:4px 0 10px}p.intro .badge{margin-right:8px}
 #pop{position:absolute;z-index:10;max-width:560px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:10px 14px;font-size:14px;display:none}
@@ -1816,14 +1817,18 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
 
 
 def render_discussion_item(it, gloss):
-    """A discussion item in full: square, ID, kind, title, then its sub-bullets as written."""
-    status = "added" if it["done"] else "modified"
-    head = (f'<div class="head"><span class="badge {status}"></span><span class="id">{it["id"]}</span>'
-            f'<span class="status">{html.escape(it["kind"])}</span><span class="title">{inline(it["title"], gloss, auto=True)}</span></div>')
+    """A discussion item as a collapsible card: the summary line carries the square (green
+    resolved, amber open), ID, kind, title and the state word; resolved items start collapsed,
+    open ones expanded; the sub-bullets as written show on expand."""
+    done = it["done"]
+    state, status = ("resolved", "added") if done else ("open", "modified")
+    head = (f'<summary><span class="badge {status}"></span><span class="id">{it["id"]}</span>'
+            f'<span class="status">{html.escape(it["kind"])}</span><span class="title">{inline(it["title"], gloss, auto=True)}</span>'
+            f'<span class="state">{state}</span></summary>')
     bullets = "".join(
         f"<li>{inline(text, gloss, auto=True)}" + (f"<ul>{''.join(f'<li>{inline(c, gloss, auto=True)}</li>' for c in kids)}</ul>" if kids else "") + "</li>"
         for text, kids in it["bullets"])
-    return f'<div class="item request" id="{it["id"].lower()}">{head}{f"<ul>{bullets}</ul>" if bullets else ""}</div>'
+    return f'<details class="item request discussion {state}" id="{it["id"].lower()}"{"" if done else " open"}>{head}{f"<ul>{bullets}</ul>" if bullets else ""}</details>'
 
 
 def render_markdown(text, gloss):
