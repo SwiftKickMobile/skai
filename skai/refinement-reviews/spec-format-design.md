@@ -153,6 +153,22 @@ does not restate it.
 5. `references` finds rule citations as well as item citations.
 6. The converter run over a catalog produces a validating catalog with no prose change.
 
+17. **Absorbed items (supervisor, 2026-10-18).** A package reorganizing the catalog may fold an
+    item whose whole content becomes a row or rule of another item and drop its heading with no
+    `(retired)` stub; the ID stays burned. The projection shows it as `missing`; `check-changes`
+    accepts a `retire` entry for it (tool, 2026-10-18). The catalog guide's retire-with-stub rule
+    still governs a contract change.
+18. **Layered bases (supervisor, 2026-10-18).** `render` and `check-changes` take `--base DIR`
+    (repeatable): further roots layered over the catalog, later ones winning, so a package can be
+    drafted on top of another open package's drafts and diff against them, as `validate` already
+    projects several roots. Promotion order is the packages' own concern.
+19. **Artifact prose on the page (supervisor, 2026-10-19).** Discussion items, Situations,
+    change-item justifications and a request's head get the same chips and dotted terms as spec
+    prose: a bare ID and every glossary term are linked at render time, outside links and code; the
+    artifact file is not edited (render convention 8). Two defects fixed on the way: `check-changes`
+    matched a glossary term, an index line and a section sharing a name as one thing (now matched by
+    kind); `link-terms` re-wrapped a term inside a longer term's link (now treated as linked).
+
 ## Open
 
 - Whether the judgment half of the catalog guide's layout section (topic-file sizing, index lines
