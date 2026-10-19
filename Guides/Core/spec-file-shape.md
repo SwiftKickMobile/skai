@@ -121,7 +121,7 @@ Whenever a package materially changes, validate, then render, before anything el
 
 ## Change Items
 
-The package's typed change list (`R<n>` product, `S<n>` design: ID, type, identity, justification, touched files) is defined by the spec type's artifacts guide; the renderer reads it only for justifications.
+The package's typed change list (`R<n>` product, `S<n>` design: ID, type, identity, justification, touched files) is the spec type's artifacts guide's; the renderer reads it only for justifications.
 
 ## What The Validator Rejects
 
