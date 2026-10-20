@@ -8,9 +8,11 @@ If the guide you're writing or editing includes a discussion phase (a phase wher
 
 - the item-line shape (`- [ ] <ID> [Kind] <summary>`)
 - the Kind taxonomy (`[Question]` / `[Proposal]` / `[Tradeoff]`)
-- the sub-bullet labels (`Concern` / `Proposal` / `Options` / `Detail` / `Why` / `Decision`)
-- the resolution mechanic (check the box + append `- **Decision** <resolution>.`)
-- the discussion-phase gate cycle (blocked while items remain, planned the moment they're all resolved — the *first planned gate* of a discussion-based workflow)
+- the sub-bullet labels (`Concern` / `Proposal` / `Options` / `Detail` / `Why` / `Gap` / `Decision`)
+- the resolution mechanic (check the box + append `- **Decision** <resolution>.`; at most one Decision line, removed on reopen)
+- gaps: an item that cannot be resolved because something outside the work is not yet known stays open with a `- **Gap** <placeholder, or "none; waiting on <what>">` line, does not count toward the blocked gate, and blocks promotion; the one pointer sentence every Discussion-phase guide inlines verbatim next to its Discussion rules (copy it from process-flow § Sub-bullet labels — it sends the agent to `Guides/Core/known-gaps.md` for the workflow, which is never inlined)
+- `## Decision Log`: the artifact's last section, one `- <ID> <state> — <one line>` per state change (`decided` / `gap` / `reopened`), append-only, no dates; put it in the guide's artifact skeleton
+- the discussion-phase gate cycle (blocked while non-gap items remain, planned the moment they're all resolved — the *first planned gate* of a discussion-based workflow — naming any open gaps carried)
 
 Treat it as an authoring input, not a runtime read. Once the discussion phase is drafted per the canonical, the standardized gates template (below) still applies to the workflow's gate behavior overall.
 

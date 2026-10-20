@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.process-flow
 Managed-Source: Guides/Core/process-flow.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-20
 
 # Process flow (house style reference)
 
@@ -248,27 +248,36 @@ Sub-bullet labels are **bold** with no separator after the label — the bold we
 - **Options** (for `[Tradeoff]`) — the considered alternatives.
 - **Detail** (when needed) — elaboration on the concern.
 - **Why** — the rationale.
+- **Gap** — for an item awaiting knowledge from outside this work; keep it unchecked, with `- **Gap** <placeholder: what stands in until it is answered, or "none; waiting on <what>">` last. Gaps block promotion.
 - **Decision** (added on resolution) — see below.
+
+Inlined verbatim beside each Discussion-phase guide's Discussion rules; the sanity scan checks it:
+
+> A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 
 ### Resolution
 
 On the supervisor's explicit approval of an item:
 1. Check the box (`- [x]`).
-2. Append `- **Decision** <succinct resolution>.` as the last sub-bullet.
+2. Append `- **Decision** <succinct resolution>.` as the last sub-bullet. For a gap, remove its **Gap** line and say which: answered, placeholder adopted, or omitted.
 
-The original question/proposal/tradeoff stays visible. The decision is appended, not substituted — the why-this-was-discussed trail is preserved for later review.
+The original question/proposal/tradeoff stays visible. The decision is appended, not substituted — the why-this-was-discussed trail is preserved for later review. Keep at most one **Decision** line; on reopening, remove it and uncheck the box (the log retains it).
+
+### Decision Log
+
+Each Discussion-based artifact has one append-only `## Decision Log`, the last `##` section before trailing link definitions, empty until a state change. Append `- <ID> <state> — <one line>` per change: `decided`, `gap`, or `reopened`; order is history, no dates. The item shows only its current state. Tools check each item's last entry: checked ⇔ `decided`; **Gap** line ⇔ `gap`; otherwise no entry or `reopened`.
 
 ### Discussion-phase gate behavior
 
 A discussion phase is gated by the state of its items, not by a separate phase-completion checkpoint:
 
-- **While one or more `- [ ]` items remain unresolved**, the agent emits a **blocked** gate at the end of each response. The blocker *is* the unresolved items; the supervisor unblocks by resolving them one at a time.
+- **While one or more non-gap `- [ ]` items remain unresolved**, the agent emits a **blocked** gate at the end of each response. The blocker *is* the unresolved items; the supervisor unblocks by resolving them one at a time.
 
   `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to <next phase>.`
 
-- **The moment every item is resolved** (all `- [x]`, or the discussion produced zero items because inputs fully specify the work), the agent emits the **planned** gate that advances out of the discussion phase. This is the *first planned gate* of a discussion-based workflow.
+- **The moment every non-gap item is resolved** (all non-gap items `- [x]`, or the discussion produced zero items because inputs fully specify the work), the agent emits the **planned** gate that advances out of the discussion phase, listing open gaps. This is the *first planned gate* of a discussion-based workflow.
 
-  `⏳ GATE: Next: Discussion complete. Say "next" to advance to <next phase>.`
+  `⏳ GATE: Next: Discussion complete<; N open gaps carried>. Say "next" to advance to <next phase>.`
 
 The discussion-resolution gate is itself the first planned gate — there is no separate "draft is ready, please review" gate before the discussion begins. The drafting response ends with either the blocked gate (typical) or the planned gate (when the draft produced zero items).
 
@@ -311,6 +320,20 @@ After resolution:
   - **Proposal** A (modal) — sharing is a transient side-task, not a destination in the note's flow.
   - **Why** A sheet dismisses back to where you were; a push implies a place in the navigation.
   - **Decision** A — modal sheet. Aligns with the agent's recommended pick.
+```
+
+A gap and the log after D01 was decided:
+
+```
+- [ ] D02 [Proposal] Which formats share a note?
+  - **Concern** Product must choose PDF or text before export ships.
+  - **Proposal** PDF: all target apps open it.
+  - **Gap** PDF until product decides.
+
+## Decision Log
+
+- D01 decided — A, modal sheet.
+- D02 gap — PDF until product decides.
 ```
 
 ## Project Addendum

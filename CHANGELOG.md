@@ -9,6 +9,8 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **Known gaps, part one.** A new reference guide says how to carry a question that must be decided before shipping as a placeholder, and the Discussion schema gains a Gap line and a per-artifact Decision Log. Nothing changes in installed workflows until the guides adopt it in a later release.
+
 ## Release 15 — 2026-10-19
 
 Technical document: [`Releases/release-15.md`](Releases/release-15.md).

@@ -66,6 +66,8 @@ Checks:
 - Discussion items missing the `[Kind]` label (`[Question]` / `[Proposal]` / `[Tradeoff]`) — every item should declare its shape.
 - Discussion phases that do not use the canonical gate pattern: blocked gate while `- [ ]` items remain, planned gate the moment they're all resolved (the *first planned gate* of the workflow). See `Guides/Core/process-flow.md` "Discussion-phase gate behavior".
 - Discussion phases with a separate "draft is ready, please review" planned gate before the discussion begins — this duplicates the blocked/planned gate cycle. The drafting response itself should end with the blocked or planned gate per item state.
+- A Discussion-phase guide missing the gap pointer sentence (grep `known-gaps.md`; the sentence is verbatim from `Guides/Core/process-flow.md` § Sub-bullet labels) or whose artifact skeleton lacks `## Decision Log` as its last section.
+- Gap workflow text inlined in a guide (what to do with an inherited gap, the three resolutions, catch-up) — that belongs only in `Guides/Core/known-gaps.md`; the guide keeps the pointer.
 
 **Flow control integrity:**
 - Any place where the guide says the agent waits for the supervisor but does not end with a `⏳ GATE:` line in the described runtime behavior.

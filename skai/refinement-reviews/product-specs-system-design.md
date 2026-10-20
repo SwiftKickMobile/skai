@@ -399,6 +399,43 @@ product owner had made. Shared by product specs, design specs and UI Map archite
    the drafts cannot be written from what they know. Observed 2026-10-19: a request filed from a
    fully stated model as a bare list, because the guide called drafts "optional".
 
+## Decisions — 2026-10-20 (known gaps: format definitions)
+
+From the known-gaps planning (SwiftKickMobile/skai#82). These are the house-style definitions in
+`process-flow.md` § Structured discussion items; the workflow that uses them is the shared
+[`known-gaps.md`](../../Guides/Core/known-gaps.md) guide (its own design spec:
+[`known-gaps-design.md`](known-gaps-design.md)). Propagation into the family guides and the
+promotion readiness rule are a later slice and amend this spec again.
+
+1. **A gap item stays open with a Gap line.** An item that cannot be resolved because something
+   outside the work is not yet known carries `- **Gap** <placeholder: what stands where until it is
+   answered, or "none; waiting on <what>">` as its last sub-bullet and keeps its box unchecked
+   (supervisor, 2026-10-20: a gap without a placeholder says so in the same field; free text, no
+   new field). An open gap item does not count
+   toward the discussion-phase blocked gate: with only gap items open the planned gate is emitted,
+   naming them (`⏳ GATE: Next: Discussion complete; <n> open gaps carried. Say "next" …`). It
+   does block promotion (zero open gaps), which the later slice applies to the promotion guides.
+2. **A gap resolves like any item** — box checked, `- **Decision**` appended, and the Decision says
+   which of the three it was: answered, placeholder adopted, or omitted.
+3. **`## Decision Log`, one per artifact, append-only.** The last `##` section before any
+   trailing link definitions. One line per state change, naming the item: `- <ID> <state> —
+   <one line>` with state one of `decided`, `gap`, `reopened`. Order is the history; no dates. An
+   item carries only its current state: one Decision line at most, removed when the item is
+   reopened (the log keeps what it said). Every Discussion-based artifact has the section, empty
+   when nothing has changed state. The tool checks that the last log entry for each item agrees
+   with the item (checked ⇔ `decided`; Gap line ⇔ `gap`; otherwise none or `reopened`).
+4. **One pointer sentence, inlined.** Every Discussion-phase guide carries, next to its Discussion
+   rules, the sentence process-flow gives verbatim, naming both triggers (a gap on an input the
+   agent relies on; an item of its own that cannot be resolved because something outside the work
+   is not yet known) and sending the agent to the known-gaps guide. The sanity scan checks for it.
+5. **Why house style, not the shared guide.** The Gap line and the log are written every time an
+   item changes state, in every Discussion workflow, so they are inlined with the schema; the gap
+   workflow is conditional and lives in the shared guide (two-bucket rule, supervisor 2026-10-20).
+
+Size cap for `process-flow.md`: **21,000 bytes** (supervisor, 2026-10-20), the unreviewed baseline of
+19,424 plus the addition after Astra's compression review (1,889 drafted, 1,482 compressed). The
+baseline itself has never been compressed; SwiftKickMobile/skai#89 is the pass that will reset it.
+
 ## Size Budgets — 2026-10-18
 
 Set by the supervisor from four efficiency reviews (SalesPro checkout, `working-docs/requirements-process/reviews/`), as today's size less measured obsolete content, less the reviewed trim on what remains, plus known growth. Whole-file bytes by `wc -c`, managed header and addendum footer included. They bind every repair per the refinement guide's size-budget rule.
