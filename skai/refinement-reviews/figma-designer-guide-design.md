@@ -90,3 +90,17 @@ pages and read this guide only for the conventions drafts must meet.
 
 Addendum 2026-10-12: the guide records file conventions only. How colours (including Dark values)
 are chosen is the designer's methodology and no concern of the guide.
+
+## Amendment — 2026-10-21 (known gaps on change pages)
+
+Requirement 8, from the known-gaps decision G01 (skai#82): **the change page mirrors each open design
+gap.** The design package's artifact is the source: a design gap is an open Discussion item whose
+**Gap** line names the drawn state that stands as the placeholder. The guide states the mirror and
+nothing more: one Dev Mode annotation per open gap, on the node that draws the placeholder; its text
+the gap line as the artifact writes it (`D<n> — <placeholder>`); added once the item has its Gap line
+and the placeholder is drawn, updated when the placeholder changes, removed when the item closes;
+never on `Production`; written through the Plugin API's node `annotations` (the Figma connector has
+no comment tool), keeping the node's other annotations. Annotations show on the canvas outside Dev
+Mode too (tested 2026-10-20). This is the one change-page convention the guide owns; the design
+process guides say only to mirror each open gap as this guide says. After the compression review (754 drafted, 512 proposed, 599
+applied) the pair is 17,292 bytes; cap **17,300 bytes**, set by the supervisor 2026-10-21, replacing the 19,000 above.

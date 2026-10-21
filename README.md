@@ -353,7 +353,7 @@ Take a design change from an idea to approved mockups in a change package under 
 **Phases** (alternating; never both at once):
 
 1. **Discussion.** Agent seeds topic-organized `- [ ]` items for the decisions it needs -- a proposed departure from the current app, something that looks like a defect, an open product question -- each with a written recommendation. Nothing is drawn. A decision that changes or adds a product spec is filed as a change request against the change's product spec package, never by editing it. Gate: supervisor resolves each item.
-2. **Mockups.** Agent draws the resolved items on the change page and, before the review gate, traces every drawn state to a product spec and every package spec to a drawing, filing change requests for the gaps; supervisor reviews the designs there. Feedback goes into the designs; anything needing a decision is parked and opens the next Discussion phase. Gate: supervisor says "approved", after which the agent writes the Design Changes inventory. Ends with `🏁 Complete.`, naming any request still awaiting triage.
+2. **Mockups.** Agent draws the resolved items on the change page and, before the review gate, traces every drawn state to a product spec and every package spec to a drawing, filing change requests for the mismatches; supervisor reviews the designs there. Feedback goes into the designs; anything needing a decision is parked and opens the next Discussion phase. Gate: supervisor says "approved", after which the agent writes the Design Changes inventory. Ends with `🏁 Complete.`, naming any request still awaiting triage.
 
 ### Design promotion (skill `skai-design-promotion`)
 
@@ -562,7 +562,7 @@ Update `skai` to the latest release (or a target you name), review what changed,
 
 ### Figma designs
 
-- A project's Figma design file follows [`Guides/Design/figma-designer-guide.md`](Guides/Design/figma-designer-guide.md): page roles, conventions, canvas layout, frames, color and dimension variables, components, copy, and backfilling; a file with several target sizes also follows [`figma-designer-guide-multiple-sizes.md`](Guides/Design/figma-designer-guide-multiple-sizes.md).
+- A project's Figma design file follows [`Guides/Design/figma-designer-guide.md`](Guides/Design/figma-designer-guide.md): page roles, conventions, canvas layout, frames, color and dimension variables, components, copy, gaps on change pages, and backfilling; a file with several target sizes also follows [`figma-designer-guide-multiple-sizes.md`](Guides/Design/figma-designer-guide-multiple-sizes.md).
 - The project README links each main page of the file (`Production`, `Components`, `Design System`).
 - Changing the designs follows [Design authoring](#design-authoring-skill-skai-design-authoring) and [Design promotion](#design-promotion-skill-skai-design-promotion).
 

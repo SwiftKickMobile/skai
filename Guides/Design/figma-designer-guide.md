@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.designer-guide
 Managed-Source: Guides/Design/figma-designer-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-21
 
 # Figma Designer Guide
 
@@ -222,6 +222,15 @@ designer makes them; the guide does not.
 
 3. **Text is shown as the design handles it**: wrapped, truncated with an ellipsis, or scrolled.
    Never cut off by a container that is simply too small.
+
+## Gaps
+
+A design gap is an open Discussion item in the design package's artifact; its **Gap** line names the
+drawn state that stands as the placeholder. Mirror each on the change page: one Dev Mode annotation on
+the node that draws that state, its text `D<n> — <placeholder>`: the item's ID, then its Gap line's value unchanged.
+Add it once the line and the drawing exist, update it when the placeholder changes, remove it when the
+item closes; `Production` never carries one. Write it through the node's Plugin API `annotations`
+property (the connector has no comment tool), keeping the node's other annotations.
 
 ## Working a backfill
 

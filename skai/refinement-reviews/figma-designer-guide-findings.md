@@ -104,3 +104,6 @@ the properties inside those instances held.
 
 Series 3: s3r1 2.5 → s3r2 2.5 → s3r3 0; converged by a clean round. Size 17,872 → 18,007 bytes
 for both guides against the 19,000 cap; 16,674 after merging the shorter Project Addendum footer.
+| 2026-10-21 gaps r1 | F1 § Gaps said "the artifact's gap line verbatim", but the Gap sub-bullet carries no item ID (lost in compression) | closed | text is `D<n> — <placeholder>`: the item's ID, then its Gap line's value unchanged |
+| 2026-10-21 gaps r2 | F1 one placeholder drawn in several drawings has no deterministic annotation host | logged | no occurrence; blocked-gate route covers it; worked example on the placement sentence if it recurs, guide and amendment together |
+| 2026-10-21 gaps r2 | Terminal round: no new live findings | converged | stop rule (a) |

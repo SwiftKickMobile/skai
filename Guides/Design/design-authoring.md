@@ -169,6 +169,8 @@ Item line: `- [ ] D<n> [Kind] <summary>`, where `[Kind]` is `[Question]`, `[Prop
 **Question**, **Options**, **Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "none; waiting on <what>"), and **Decision** on resolution.
 
 A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
+Once a gap's placeholder is drawn, mirror the gap on the change page as the tool guide says; remove
+the mirror when the item closes.
 
 **Every item carries a recommendation**, in words. An item that can only be judged visually says
 so, and the supervisor resolves it by approving the recommended option as a trial
@@ -214,7 +216,7 @@ status, through promotion; a Decision that produced one names it.
 When the Discussion gate advances, draw the whole change on the change page: everything the Goal
 and Inputs call for, as the decisions and any later feedback currently stand. A decision feedback has
 changed is updated through *Resolution*, its old outcome in the log; Discussion holds decisions,
-not the scope. Follow the tool guide's conventions throughout.
+not the scope.
 
 Before the Mockup review gate, run the **trace pass** over the change page: every drawn state
 traces to a product spec, in the catalog or the change's package, and every spec in that package is
@@ -228,8 +230,8 @@ parked, run the trace pass and re-emit the Mockup review gate, otherwise end at 
 
 ## Design Changes
 
-Written after approval, and it records that approval: promotion takes its presence as evidence
-the mockups were approved. An inventory, not a specification: one line per screen the package adds
+Written after approval; promotion takes its presence as evidence of that approval. An inventory,
+not a specification: one line per screen the package adds
 or changes, linking its draft on the change page.
 
 ```markdown
@@ -245,8 +247,8 @@ change request still `Proposed`.
 
 ## Artifact maintenance
 
-Through every phase, update `design-authoring.md` before speaking and end the response at
-whichever gate *Gates* prescribes. Apply changes, never merely describe them.
+Through every phase, update `design-authoring.md` before speaking. Apply changes, never merely
+describe them.
 
 ## Project Addendum
 

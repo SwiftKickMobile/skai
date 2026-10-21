@@ -148,3 +148,12 @@ Caps (supervisor, 2026-10-20, a little under the compressed sizes): `design-auth
 ## Adopts — 2026-10-21 (working docs placement)
 
 Working documents serving a package live in its `working-docs/` folder and archive with it at promotion (`design-authoring.md` package table, `design-promotion.md` C6; caps held; skai#92, `Guides/Core/working-doc-conventions.md`); build and test output goes to the scratch root, never the package.
+
+## Adopts — 2026-10-21 (gaps on the change page)
+
+Design authoring mirrors each open gap on the change page as the tool guide says, once its
+placeholder is drawn, and removes the mirror when the item closes (one sentence beside the gap
+pointer in *Discussion*); design promotion's `C1` confirms no draft still mirrors a gap. The mirror's
+form is the tool guide's (for Figma, [`figma-designer-guide-design.md`](figma-designer-guide-design.md)
+§ Amendment — 2026-10-21). Caps held (15,100 / 11,500), each sentence paid for by trims in the same
+guide (see `design-process-refinement.md` § Slice 5).

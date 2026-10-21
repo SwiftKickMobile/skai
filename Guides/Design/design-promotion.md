@@ -132,8 +132,8 @@ A failure is a blocked gate (*Gates*), recorded in `## Evidence` instead of a ch
 
 Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution order.
 
-- `C1 Drafts meet the conventions` — every draft on the change page follows the tool guide. A
-  script, where one exists, covers the rules it tests; inspect the rest.
+- `C1 Drafts meet the conventions` — every draft on the change page follows the tool guide, and
+  none still mirrors a gap. A script, where one exists, covers the rules it tests; inspect the rest.
 - `C2 Inventory matches the page` — every `## Design Changes` entry has its draft, and every screen
   draft on the change page has an entry. Components a draft needs are not screens; no entry.
 - `C3 Production absorbs the change page` — condition 5 still holding by current statuses, per
@@ -174,7 +174,7 @@ it; silence is not a pass: name what was compared and found.
 
 When `C6` is checked, production holds the designs, the change page is gone and the package is
 archived at `skai/promoted/<change-id>/design/`; link its artifact and end with
-`🏁 Complete. Let me know if anything needs adjustment.` An archived package is not promoted again.
+`🏁 Complete. Let me know if anything needs adjustment.`
 If archival fails after `C5`, report production promoted but archival incomplete, use the standard
 blocked gate and later resume only the archival.
 
