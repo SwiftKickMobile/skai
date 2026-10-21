@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.unit-test-writing
 Managed-Source: Guides/Test/unit-test-writing-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-21
 
 # Unit Test Writing & Execution Guide
 
@@ -158,10 +158,10 @@ If work stops due to ambiguity, missing evidence, test-execution failure, or a p
    - **Session name**: `<session-name>` (the parent unit-testing workflow's session name)
    - **Subpath**: `testing/<suite-name>`
    - **File name**: `<section-name>-writing.md`
-   - **Full path**: `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-writing.md`
+   - **Full path**: `skai/working-docs/<session-name>/testing/<suite-name>/<section-name>-writing.md`
    - `<suite-name>` = test file name without "Tests.swift" (e.g., `TemplateRenderer` from `TemplateRendererTests.swift`)
    - `<section-name>` = section name in kebab-case (e.g., `success-tests`, `error-handling`)
-   - **Example**: `skai/working-docs/work/feature-branch/login-tests/testing/TemplateRenderer/success-tests-writing.md`
+   - **Example**: `skai/working-docs/login-tests/testing/TemplateRenderer/success-tests-writing.md`
    - **Structure**:
      ```markdown
      # [Suite Name] - [Section Name] Tests - Writing & Execution
@@ -456,14 +456,14 @@ struct MyComponentTests {
 
 1. **Run the tests** using standard process (see "Running Tests" section below)
    - Use the project's test command from `skai/integration.md`
-   - Save full output to `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
+   - Save full output to `/tmp/skai/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
 
 **CRITICAL VALIDATION - DO NOT SKIP:**
 
 2. **Verify the test actually ran** - IMMEDIATELY after running the command:
-   - **Check output file size**: `ls -lh skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
+   - **Check output file size**: `ls -lh /tmp/skai/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
      - If file is 0 bytes or very small (< 1KB): **TESTS DID NOT RUN**
-   - **Read the output file**: `cat skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
+   - **Read the output file**: `cat /tmp/skai/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
      - Look for test execution indicators (✔, ✘, Test Suite, etc.)
      - If you see no test execution output: **TESTS DID NOT RUN**
    - Confirm any additional expected artifacts described in `skai/integration.md` were produced.
@@ -522,20 +522,20 @@ See `skai/integration.md` for project-specific test execution commands.
 
 1. **Create output directory** (per `Guides/Core/working-doc-conventions.md`):
 ```bash
-   mkdir -p skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>
+   mkdir -p /tmp/skai/<session-name>/testing/<suite-name>
    ```
 
 2. **Run tests with full output logging**:
    - **CRITICAL: Run ONLY the tests in the current section** - Do NOT run the entire test file (noise from unimplemented tests).
    - Use the project's test command from `skai/integration.md` and follow its recommended way to scope to specific tests.
-   - Persist full output to `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`.
+   - Persist full output to `/tmp/skai/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`.
    - Persist any additional artifacts described in `skai/integration.md`.
 
 3. **Analyze failures**:
    - **Primary**: Extract structured assertion failure details using the process in `skai/integration.md`
    - **Secondary**: Search output file for additional context:
 ```bash
-     grep -A 10 "failed\|error" skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt
+     grep -A 10 "failed\|error" /tmp/skai/<session-name>/testing/<suite-name>/<section-name>-test-output.txt
 ```
 
 4. **Next test run** overwrites the same files (keep paths stable per section)
@@ -577,7 +577,7 @@ When resolving test failures, follow the project's Debugging / Problem-Resolutio
    
 3. **Search test output file** for additional context:
    ```bash
-   grep -A 10 "failed\|error" skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt
+   grep -A 10 "failed\|error" /tmp/skai/<session-name>/testing/<suite-name>/<section-name>-test-output.txt
    ```
    
 4. **Document the failure** in work document:
@@ -804,7 +804,7 @@ See `skai/integration.md` for:
 
 **Work Document Structure:**
 
-Full path: `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-writing.md` (per `Guides/Core/working-doc-conventions.md`)
+Full path: `skai/working-docs/<session-name>/testing/<suite-name>/<section-name>-writing.md` (per `Guides/Core/working-doc-conventions.md`)
 
 ```markdown
 # [Suite Name] - [Section Name] Tests - Writing & Execution
@@ -872,7 +872,7 @@ This document tracks the writing and execution work for implementing unit tests.
 See `skai/integration.md` for project-specific test execution commands.
 
 **Standard process:**
-- Create suite output directory: `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/` (per `Guides/Core/working-doc-conventions.md`, e.g., `skai/working-docs/work/step-refactor/login-tests/testing/TemplateRenderer/`)
+- Create suite output directory: `/tmp/skai/<session-name>/testing/<suite-name>/` (per `Guides/Core/working-doc-conventions.md`, e.g., `/tmp/skai/login-tests/testing/TemplateRenderer/`)
 - Run tests scoped to ONLY the current section's tests (per `skai/integration.md`)
 - Persist artifacts/logs as described in `skai/integration.md`
 - **Extract structured assertion failures** - CRITICAL first step (see `skai/integration.md`)

@@ -1,8 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 task_root="$(cd "$(dirname "$0")/../../.." && pwd)"
-task_branch="$(git -C "$task_root" symbolic-ref --short HEAD 2>/dev/null || printf '%s' detached)"
-task_build="$task_root/skai/working-docs/$task_branch/component-configuration/build"
+task_build="/tmp/skai/component-configuration/build"
 task_app="$task_root/Bin/SKAIConfigure.app"
 mkdir -p "$task_build/module-cache" "$task_app/Contents/MacOS" "$task_app/Contents/Resources"
 # Icon Composer source: actool emits Assets.car (the system-drawn icon, macOS 26+) and an ICNS fallback

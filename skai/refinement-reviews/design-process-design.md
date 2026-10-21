@@ -134,3 +134,17 @@ These replace the 16,500 / 13,500 caps above.
 Group caps across both spec types and the design process guides: authoring 54,900 (raised 2026-10-18 with design-specs-authoring); promotion 42,700.
 
 **Live render (supervisor, 2026-10-18).** The rendered page is the primary way the supervisor views a change package while it is being iterated on. Any time the package materially changes — a draft edited, a discussion item resolved, a change item added, a request triaged — the agent validates and re-renders before anything else, in every workflow that writes a package. The gate and promotion renders are not the only ones; they are the last of many. Validation and rendering take milliseconds, so there is no cost argument for deferring them. A design package has no rendered artifact of its own, since its drafts live on the change page; the rule reaches it through the change requests it files, each of which has a page (settled 2026-10-18, target 3).
+
+## Adopts — 2026-10-20 (known gaps)
+
+Design authoring and promotion adopt [`product-specs-system-design.md`](product-specs-system-design.md)
+§ Decisions — 2026-10-20 (format definitions and propagation) unchanged, with no tool: the **Gap**
+sub-bullet, one Decision line, `## Decision Log` as the artifact's last section, the pointer
+sentence to `known-gaps.md`, gap items carried past the Discussion gate, readiness item 1 failing on
+an open gap. The Figma mirror of a gap (an annotation on the placeholder node) is a later slice.
+Caps (supervisor, 2026-10-20, a little under the compressed sizes): `design-authoring.md` 15,100;
+`design-promotion.md` 11,500 (unchanged). These supersede the 2026-10-18 rows.
+
+## Adopts — 2026-10-21 (working docs placement)
+
+Working documents serving a package live in its `working-docs/` folder and archive with it at promotion (`design-authoring.md` package table, `design-promotion.md` C6; caps held; skai#92, `Guides/Core/working-doc-conventions.md`); build and test output goes to the scratch root, never the package.

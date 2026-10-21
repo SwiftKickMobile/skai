@@ -49,7 +49,7 @@ Invalid/unreadable local config blocks, just like project config. Local settings
 shared collateral; that is the user's chosen configuration, with existing ownership/collision rules.
 
 All adapters put `/skai/config.local.json` and `/skai/install-state.local.json` in their SKAI-managed
-`.gitignore` block. Configure ensures these entries before launch so local files stay ignored even
+`.gitignore` block, and only those: working documents under `skai/working-docs/` are committed. Configure ensures these entries before launch so local files stay ignored even
 if installation after Save fails. Preserve surrounding ignore content; don't add local files to
 agent-ignore files (the installer must read them). Existing accidentally tracked local files need
 an explicit untracking decision; ignore rules alone cannot untrack a file.

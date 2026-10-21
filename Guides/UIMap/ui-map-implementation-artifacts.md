@@ -2,18 +2,18 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation-artifacts
 Managed-Source: Guides/UIMap/ui-map-implementation-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-21
 
 # UI Map Implementation Artifact Formats
 
 Print `📖 SKAI guide: ui-map-implementation-artifacts` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
-The typed formats the implementation skill produces. Read an artifact with [`ui-map-implementation.md`](ui-map-implementation.md) for Mode and control flow, the platform guide named in its `## Inputs`, and [`ui-map-guide.md`](ui-map-guide.md) for the YAML map. The architecture-side formats the implementation skill *consumes* (map change items) and *raises* (change requests) live in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md).
+The typed formats the implementation skill produces. Read an artifact with [`ui-map-implementation.md`](ui-map-implementation.md) for Mode and control flow, the platform guide named in its `## Inputs`, and [`ui-map-guide.md`](ui-map-guide.md) for the YAML map. The architecture-side formats it *consumes* (map change items) and *raises* (change requests) live in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md).
 
-The implementation artifact (`ui-map-implementation.md`) sits in the change package at `skai/changes/<change-id>/ui-map/` in the repo that holds the official map, parallel to the architecture artifact. After promotion it lives at `skai/promoted/<change-id>/ui-map/`; pending Plan work is recorded there.
+The implementation artifact (`ui-map-implementation.md`) sits in the change package at `skai/changes/<change-id>/ui-map/` in the official map's repo, beside the architecture artifact. After promotion it lives at `skai/promoted/<change-id>/ui-map/`, pending Plan work and `working-docs/` included.
 A conformance run without a proposal instead uses
-`skai/working-docs/<branch-path>/<session-name>/ui-map-implementation.md` in the map repository,
-with its requests and evidence beside it. Its `## Code Changes` section lists **code change items**; its `## Evidence` section holds **verification evidence**.
+`skai/working-docs/<session-name>/ui-map-implementation.md` in the map repository,
+with its requests beside it. `## Code Changes` lists **code change items**; `## Evidence` holds **verification evidence**; `## Decision Log` ends it (`- <ID> decided|gap|reopened — <one line>`, append-only).
 
 ## Code change items
 
@@ -58,10 +58,10 @@ artifact. Older checked items retain their meaning; migration fabricates no new 
 `## Evidence` records the verification trail: build checks at chunk boundaries and completion, plus the official render performed by a terminal promote item. One bracket per check:
 
 ```
-[evidence: <command>; exit <code>; output: <path when persisted>]
+[evidence: <command>; exit <code>; output: <scratch path, if captured>]
 ```
 
-On failure, persist and link the full output, so `output` is required. On success, `output` is optional when no output was persisted. The evidence brackets are the durable record that conformance and promotion were verified, not asserted.
+Captured output stays in the scratch root ([`working-doc-conventions.md`](../Core/working-doc-conventions.md)), never the repository. The evidence brackets are the durable record that conformance and promotion were verified, not asserted.
 
 ## Project Addendum
 

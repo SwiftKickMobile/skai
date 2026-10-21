@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-authoring
 Managed-Source: Guides/DesignSpecs/design-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-20
 
 # Design Specs Authoring
 
@@ -45,8 +45,9 @@ content.
 ## Discussion             open questions and decisions
 ## Verification           one evidence line per check and per reference sweep
 ## Spec Changes           typed change items, kept current as the drafts change
-## Assumptions and TODOs  what the drafts assume; gaps needing no decision; may be empty
+## Assumptions and TODOs  what the drafts assume; notes needing no decision; may be empty
 ## Out of scope           excluded work; may be empty
+## Decision Log
 ```
 
 The page link sits directly under the title, here and in every request's `request.md`.
@@ -80,13 +81,13 @@ In the planned gate line, `<what happens after your response>` should describe w
 If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
 Workflow-specific gate notes:
-- The Discussion gate uses the canonical discussion-phase behavior: while any `- [ ]` item remains
+- The Discussion gate uses the canonical discussion-phase behavior: while any non-gap `- [ ]` item remains
   in `## Discussion`, every response ends with the blocked gate citing the remaining count; the
-  moment every screen this package covers is drafted and every item is resolved — or drafting
+  moment every screen this package covers is drafted and every non-gap item is resolved — or drafting
   produced no items because the inputs fully specify the specs — the agent emits the planned gate
   that advances to Completion; there is no separate "draft is ready" gate.
   - Blocked: `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to Completion.`
-  - Planned: `⏳ GATE: Next: Discussion complete. Say "next" to advance to Completion.`
+  - Planned: `⏳ GATE: Next: Discussion complete<; N open gaps carried>. Say "next" to advance to Completion.`
   Before emitting the planned gate, run the **pre-gate pass** once (under `auto` too, which bypasses
   the gate, not the pass): the tool's `validate` over the drafts projected on canon (what blocks is
   the content guide's), then `V1`–`V10` in [`design-specs.md`](design-specs.md) § Verification
@@ -96,10 +97,11 @@ Workflow-specific gate notes:
   presents what the supervisor reviews; fix the artifact before gating.
 - An item resolved by a drawing (*Undrawn States*, *Design vs. App Differences*) stays open until
   the drawing exists and the agent has seen it; one holding a requirements gap (*Requirements
-  Gaps*) until the product spec outcome is applied to the draft. The gate stays blocked that long.
+  Gaps*) until the product spec outcome is applied to the draft, unless it carries a **Gap** line; the
+  gate stays blocked otherwise.
 
 Planned gates for this workflow:
-- After every screen is drafted and every Discussion item is resolved, before Completion.
+- After every screen is drafted and every non-gap Discussion item is resolved, before Completion.
 
 Workflow-specific blocked gates:
 - Inputs are too contradictory or incomplete to draft a screen.
@@ -131,10 +133,10 @@ Progress tracking:
 **Workflow-specific marker lifecycle.** This workflow owns exactly one marker: the `- [ ] D<n>` items
 in `## Discussion`. Each is resolved individually, on the supervisor's explicit approval of *that
 item*, by checking its box and appending `- **Decision** <resolution>.` Advance intent at the
-Discussion gate does not clear them; by the time that gate is reached they are already clear.
+Discussion gate does not clear them; by the time that gate is reached they are already clear. Gaps stay unchecked and block promotion.
 `## Spec Changes` items carry no checkbox, and nothing under `proposed-design-specs/**` carries a
-marker of any kind — those files are drafts of canon and must already read as canon. Discussion
-links to drafts; specs carry no Discussion citations.
+progress marker — those files are drafts of canon and must read as canon. Discussion
+links to drafts; specs carry no Discussion citations but a gap footnote's `D#`.
 
 **Workflow-specific `auto` behavior.** `auto` suits a baseline whose inputs fully specify the specs.
 It never bypasses the Discussion blocked gate: unresolved items are supervisor decisions.
@@ -170,7 +172,9 @@ Work screen by screen: open the drawings, requirements and, for backfills, the a
 record uncertainties; continue. Seek decisions only after the last screen.
 
 Answer app-behavior questions from code and requirements; ask only about product intent. Draft
-even uncertain items under the recommended reading, linked from Discussion's Concern or Proposal.
+even uncertain items under the recommended reading or a gap's placeholder, footnoted with the item ID per the shape guide even when none exists
+and the dependent text is left out,
+linked from Discussion's Concern or Proposal.
 
 Unobserved platform/service differences are package Assumptions; write specs for every app.
 Only observed differences become known-difference notes.
@@ -214,16 +218,12 @@ above.
 
 ### Requirements Gaps
 
-Never quietly specify a screen-independent promise or narrowed requirement. With a product spec
+Never quietly specify a screen-independent promise or narrow a requirement. With a product spec
 package open for the subject, file a change request against it in the form of
 [`product-specs-artifacts.md` § Change Requests](../ProductSpecs/product-specs-artifacts.md#change-requests),
-with drafts as that section says, never editing that package; the gap is a Discussion item linking
-the request, drafted under the recommended reading and resolved when the supervisor's outcome is
-applied to the draft: on `Incorporated` the spec cites the requirement's draft ID and spec
-promotion waits for its promotion; otherwise the supervisor's reason and the resulting coverage
-decide whether that draft behavior is kept, revised, removed or still waits for its
-source. With none open, the gap is input for product specs authoring, resolved the same way from
-its drafts.
+with drafts, never editing that package; the gap is a Discussion item linking the request (a **Gap** line to carry it), drafted per *Drafting* and resolved when the outcome is applied to the draft: on `Incorporated` the spec cites the
+requirement's draft ID and promotion waits for its promotion; otherwise the supervisor's reason decides whether that draft behavior is kept, revised,
+removed or still waits. With none open, the gap is input for product specs authoring, resolved the same way.
 
 ## Discussion
 
@@ -231,10 +231,12 @@ Group items under `###` topics, never in aggregator sections.
 
 Use `- [ ] D<n> [Kind] <summary>`, with Kind `[Question]`, `[Proposal]` or `[Tradeoff]`.
 Bold sub-bullet labels, without separators: **Concern** (required), **Proposal**, **Question**,
-**Options**, **Detail**, **Why**, **Decision**. Recommend whenever possible; Tradeoffs name
-the preferred option and why. Reserve Questions for cases with no basis to recommend.
+**Options**, **Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "none; waiting on <what>"), **Decision**. Recommend when possible; Tradeoffs name
+the preferred option and why. Reserve Questions for cases with no basis.
 
-Concerns must make sense without ID links. Package prose may name frames, nodes and code files.
+A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
+
+Concerns must make sense without ID links. Package prose may name frames, nodes and files.
 
 ### What Earns an Item
 
@@ -244,13 +246,12 @@ failures. Draft determined behavior directly; record givens as assumptions. A de
 supervisor supplies without an item is recorded as a checked item with its Decision line.
 
 With no items use: “The listed Inputs determine the proposed specs; review the drafts on the
-review page before they are finalized.” Omit when items exist. An undrawn-state item proposes
-the drawing by product name (“Draw `notes — acknowledged reminder`”).
+review page.” Omit when items exist. An undrawn-state item proposes
+the drawing by product name.
 
 ### Resolution
 
-Follow the item approval/marker lifecycle in *Advance Intent*. Append Decision last, never into
-Concern. For drawings, name the product-language drawing in Decision.
+Follow the marker lifecycle in *Advance Intent*. Append Decision last, never into Concern. Remove a resolved item nothing current cites or needs. For gaps, remove **Gap**; Decision says answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep entries after item removal. Tools check log and items agree. For drawings, name the product-language drawing in Decision.
 Apply decisions differing from recommendations before continuing. If design stands, add the item's
 known-difference note. Maintain draft links.
 

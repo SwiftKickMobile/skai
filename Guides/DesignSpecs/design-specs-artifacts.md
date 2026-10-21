@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-artifacts
 Managed-Source: Guides/DesignSpecs/design-specs-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-21
 
 # Design Spec Artifact Formats
 
@@ -24,7 +24,7 @@ package, is not a dependency.
 The layout is the product spec package's, with `design-specs-authoring.md` (`## Spec Changes`),
 `proposed-design-specs/**` (touched files only, each whole),
 `design-specs-review.html`, `change-requests/<nnn>/request.md` with its
-`proposed-design-specs/**` beside it, and `design-specs-promotion.md`. The review page and each
+`proposed-design-specs/**` beside it, `design-specs-promotion.md`, and `working-docs/`. The review page and each
 request's `request-review.html` follow the product spec guide's render and link rules. Checked
 `C3` in the promotion artifact means the specs are written, `C4` the package archived.
 

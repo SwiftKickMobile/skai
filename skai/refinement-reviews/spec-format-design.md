@@ -177,6 +177,25 @@ does not restate it.
     once; hiding stays immediate. Chips and terms inside an open popover open nothing (no nested
     popovers) and do not close it.
 
+21. **Gap footnotes (supervisor, 2026-10-20; skai#82 slice 3).** A placeholder in a draft is marked
+    with a Markdown footnote: `[^n]` at the end of the sentence, rule or table cell, and
+    `[^n]: **Gap:** D<n> — <question>. Placeholder: <one line>` under the item after its rules and
+    tables, before known differences, naming the open Discussion item (G12: the pairing is
+    explicit). Labels are unique per file; a definition with no marker is a marker-less note on
+    the nearest requirement; no Placeholder clause means nothing to proceed on. Canon carries
+    none. `validate` pairs markers with definitions, rejects duplicates, definitions outside an
+    item or off the shape, and any footnote in canon (a single root, or the first root of a
+    projection; a note when the package does not hold the file). `check-changes` pairs footnotes
+    with open gap items both ways. The page renders a marker as a superscript link to the
+    footnote's Gap line under the item, which links the Discussion item; an item carrying a
+    footnote counts as modified; a "Gaps (n)" list sits between Documents and the Discussion.
+    Placement (supervisor, 2026-10-20, G13): the form, its edge cases, the example and the tool's
+    checks live in a companion guide, `Guides/Core/spec-file-gaps.md`, read when a gap is raised;
+    the shape guide keeps only what every author needs (the element's place in an item, one
+    validator clause, the command rows' pointers). Always-read guides carry no gap material; each
+    format family gets such a companion. Caps (supervisor, 2026-10-20, a little under the compressed
+    sizes): `spec-file-shape.md` 8,350 (was 8,200); `spec-file-gaps.md` 1,850.
+
 ## Open
 
 - Whether the judgment half of the catalog guide's layout section (topic-file sizing, index lines
@@ -189,6 +208,7 @@ Set by the supervisor from four efficiency reviews (SalesPro checkout, `working-
 
 | Target 1 | Cap |
 | --- | --- |
-| Guides/Core/spec-file-shape.md | 8,200 |
+| Guides/Core/spec-file-shape.md | 8,350 (2026-10-20, slice 3: gap-footnote pointers; was 8,200) |
+| Guides/Core/spec-file-gaps.md | 1,850 (2026-10-20, slice 3) |
 
 **Live render (supervisor, 2026-10-18).** The rendered page is the primary way the supervisor views a change package while it is being iterated on. Any time the package materially changes — a draft edited, a discussion item resolved, a change item added, a request triaged — the agent validates and re-renders before anything else, in every workflow that writes a package. The gate and promotion renders are not the only ones; they are the last of many. Validation and rendering take milliseconds, so there is no cost argument for deferring them.

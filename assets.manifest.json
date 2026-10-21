@@ -151,9 +151,21 @@
       "tags": ["core"]
     },
     {
+      "id": "guide.spec-file-gaps",
+      "type": "guide",
+      "sourcePath": "Guides/Core/spec-file-gaps.md",
+      "tags": ["core"]
+    },
+    {
       "id": "guide.artifact-hosting",
       "type": "guide",
       "sourcePath": "Guides/Core/artifact-hosting.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.known-gaps",
+      "type": "guide",
+      "sourcePath": "Guides/Core/known-gaps.md",
       "tags": ["core"]
     },
     {

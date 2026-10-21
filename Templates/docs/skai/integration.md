@@ -68,13 +68,15 @@ Do not store secrets here.
 
 Purpose: define the project-specific "evidence contract" so agents can debug deterministically when they cannot directly observe runtime behavior.
 
+- **Scratch root** (output captured to verify a build or test: command captures, result bundles, extracted results, screenshots; outside the repository, never in a working document; a build's deliverable is not captured output): `/tmp/skai/<session-name>/`
+
 - 🟡 **Where command output is captured**
   {supervisor response}
-  - INSTRUCTION: Provide the canonical paths/naming (and whether the supervisor should paste full content vs paste the path to the captured file).
+  - INSTRUCTION: Provide the file naming under the scratch root (and whether the supervisor should paste full content vs paste the path to the captured file).
 
 - 🟡 **Test artifacts** (if applicable)
   {supervisor response}
-  - INSTRUCTION: Provide artifact path conventions for structured test results (stack-specific). Examples: Xcode `.xcresult` + extracted JSON; Android JUnit XML under `**/build/test-results/**` and HTML reports under `**/build/reports/tests/**`.
+  - INSTRUCTION: Provide artifact path conventions for structured test results (stack-specific). Examples: Xcode `.xcresult` + extracted JSON; Android JUnit XML and HTML reports. Every one is written under the scratch root (point the build's output options there), never under the repository's `build/`.
 
 - 🟡 **Runtime/UI evidence**
   {supervisor response}

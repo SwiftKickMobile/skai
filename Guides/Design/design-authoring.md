@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-authoring
 Managed-Source: Guides/Design/design-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-21
 
 # Design Authoring
 
@@ -27,12 +27,12 @@ A package lives at `skai/changes/<change-id>/design/` and holds:
 | --- | --- |
 | `design-authoring.md` | this workflow's artifact |
 | `design-promotion.md` | promotion's artifact; may be absent |
-| `evidence/` | check output promotion persisted; may be absent |
+| `evidence/` | promotion's check output; may be absent |
+| `working-docs/` | working documents |
 
 The drafts themselves live in the design file, on a **change page** named `<change-id>`; the tool
 guide says what a page is in its tool. Other types for the same change share its `<change-id>` and
-update freely while the change is open; promotion archives each type independently to
-`skai/promoted/<change-id>/<type>/`.
+update freely while the change is open; promotion archives each type independently.
 
 Use the input's change ID; otherwise propose a short kebab-case default and block before
 creating the artifact. Once the ID is resolved, create the artifact, then write `## Goal` and
@@ -46,8 +46,9 @@ creating the artifact. Once the ID is resolved, create the artifact, then write 
 ## Inputs                 draft sources
 ## Discussion             open questions and decisions
 ## Design Changes         the inventory of screens, written after approval
-## Assumptions and TODOs  what the designs assume; gaps needing no decision; filed requests
+## Assumptions and TODOs  what the designs assume; notes needing no decision; filed requests
 ## Out of scope           excluded work; may be empty
+## Decision Log
 ```
 
 ## Phases
@@ -84,19 +85,19 @@ In the planned gate line, `<what happens after your response>` should describe w
 If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
 Workflow-specific gate notes:
-- The Discussion gate uses the canonical discussion-phase behavior: while any `- [ ]` item remains
+- The Discussion gate uses the canonical discussion-phase behavior: while any non-gap `- [ ]` item remains
   in `## Discussion`, every response ends with the blocked gate citing the remaining count; the
-  moment every item is resolved — or the phase produced none — the agent emits the planned gate
+  moment every non-gap item is resolved — or the phase produced none — the agent emits the planned gate
   that advances to Mockups.
   - Blocked: `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to Mockups.`
-  - Planned: `⏳ GATE: Next: Discussion complete. Say "next" to draw the mockups on <change-id>.`
+  - Planned: `⏳ GATE: Next: Discussion complete<; N open gaps carried>. Say "next" to draw the mockups on <change-id>.`
 - The Mockup review gate is non-standard. The supervisor reviews the change page, not the artifact;
   the trace pass under *Mockups* runs before the gate is emitted. Feedback follows the sequence
   under *Mockups*; the word "approved" advances to Design Changes.
   - `⏳ GATE: Next: Review the mockups on <change-id>. Say "approved" to write Design Changes, or give feedback.`
 
 Planned gates for this workflow:
-- After every Discussion item is resolved, before anything is drawn.
+- After every non-gap Discussion item is resolved, before anything is drawn.
 - After each mockup round, before Design Changes are written.
 
 Workflow-specific blocked gates:
@@ -128,7 +129,7 @@ Progress tracking:
 **Workflow-specific marker lifecycle.** This workflow owns exactly one marker: the `- [ ] D<n>` items
 in `## Discussion`. Each is resolved individually, on the supervisor's explicit approval of *that
 item*, by checking its box and appending `- **Decision** <resolution>.` Advance intent at the
-Discussion gate does not clear them; by the time that gate is reached they are already clear.
+Discussion gate does not clear them; by the time that gate is reached they are already clear. Gaps stay unchecked; they block promotion.
 `## Design Changes` entries carry no checkbox; the designs on the change page are the change.
 
 **Workflow-specific `auto` behavior.** `auto` never bypasses the Discussion blocked gate (unresolved
@@ -149,10 +150,10 @@ On the signal:
 3. Otherwise resolve the change ID, create the artifact, and record `## Goal` and `## Inputs`.
 4. Open the first Discussion phase.
 
-On reopen, resolved decisions are never disturbed: a resolved `- [x] D<n>` is not removed,
-rewritten or renumbered; new items continue the numbering. A reopen that changes the designs
-removes `## Design Changes`, since it recorded an approval that no longer covers them; it is
-rewritten after the next approval.
+On reopen, a resolved `- [x] D<n>` keeps its number, Concern, Options and Proposal; *Resolution*
+governs its state; new items continue the numbering. A reopen that changes the designs
+removes `## Design Changes` (its approval no longer covers them); it is rewritten after the next
+approval.
 
 **A backfill** (designs drawn from an existing app) is a change like any other; its items are the
 deviations from the app and the suspected defects the agent finds, and the tool guide's *Working a
@@ -161,11 +162,13 @@ backfill* says what to draw.
 ## Discussion
 
 `## Discussion` holds the decisions this package needs from the supervisor, grouped under `###`
-topics, never in aggregator sections (`## Questions`, `## Open Items`).
+topics, never in aggregator sections.
 
 Item line: `- [ ] D<n> [Kind] <summary>`, where `[Kind]` is `[Question]`, `[Proposal]`, or
 `[Tradeoff]`. Sub-bullet labels are bold with no separator: **Concern** (always), **Proposal**,
-**Question**, **Options**, **Detail**, **Why**, and **Decision** on resolution.
+**Question**, **Options**, **Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "none; waiting on <what>"), and **Decision** on resolution.
+
+A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 
 **Every item carries a recommendation**, in words. An item that can only be judged visually says
 so, and the supervisor resolves it by approving the recommended option as a trial
@@ -174,11 +177,10 @@ so, and the supervisor resolves it by approving the recommended option as a tria
 ### What earns an item
 
 An item is a decision the agent needs from the supervisor: a departure from the current app or an
-existing design that the agent proposes, behavior that looks like a defect ("the app does X, which
-looks like a defect; the design will show Y"), a product question the inputs leave open, a scope
-call that could go either way. Design iteration itself (layout, spacing, copy, the look) is
-informal and earns no items; a change the supervisor asks for during a mockup review needs no item,
-the design is the record.
+existing design that the agent proposes, behavior that looks like a defect, a product question the inputs leave open, a scope
+call that could go either way. Design iteration (layout, spacing, copy, the look) earns no
+items; a change the supervisor asks for during a mockup review needs no new item (one that changes
+an existing decision updates it through *Resolution*); the design is the record.
 
 With no items, leave `## Discussion` as: "The listed Inputs determine the designs; review them on
 `<change-id>`." Omit it when items exist.
@@ -198,7 +200,7 @@ With no items, leave `## Discussion` as: "The listed Inputs determine the design
 ### Resolution
 
 On the supervisor's explicit approval of an item: check the box and append
-`- **Decision** <resolution>.` as the last sub-bullet; preserve the original.
+`- **Decision** <resolution>.` as the last sub-bullet; the original is kept. Remove a resolved item nothing current cites or needs. For gaps, remove **Gap**; Decision says answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep entries after item removal.
 
 A decision that changes or adds a product spec is filed as a **change request** against the
 change's open product spec package (with none, one is opened through its authoring), in the form of
@@ -210,19 +212,19 @@ status, through promotion; a Decision that produced one names it.
 ## Mockups
 
 When the Discussion gate advances, draw the whole change on the change page: everything the Goal
-and Inputs call for, as the decisions and any later feedback currently stand. A decision that
-feedback has since changed is history, not an instruction; Discussion holds decisions, not the
-scope. Follow the tool guide's conventions throughout.
+and Inputs call for, as the decisions and any later feedback currently stand. A decision feedback has
+changed is updated through *Resolution*, its old outcome in the log; Discussion holds decisions,
+not the scope. Follow the tool guide's conventions throughout.
 
 Before the Mockup review gate, run the **trace pass** over the change page: every drawn state
 traces to a product spec, in the catalog or the change's package, and every spec in that package is
-served by a drawing or recorded under `## Out of scope`. A gap either way is a change request, filed
+served by a drawing or recorded under `## Out of scope`. A mismatch either way is a change request, filed
 as under *Resolution*. Then stop at the Mockup review gate.
 
 On feedback, in this order: apply everything that needs no further decision; park what does, as
 new Discussion items, together with any drawing that depends on their answers; then, if nothing was
-parked, run the trace pass and re-emit the Mockup review gate, otherwise end at the Discussion gate
-(blocked). On "approved", write Design Changes.
+parked, run the trace pass and re-emit the Mockup review gate, otherwise end at the Discussion gate. On
+"approved", write Design Changes.
 
 ## Design Changes
 

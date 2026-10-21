@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-authoring
 Managed-Source: Guides/ProductSpecs/product-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-20
 
 # Product Specs Authoring
 
@@ -61,8 +61,9 @@ is a blocked gate.
 ## Discussion             open questions and decisions
 ## Verification           one evidence line per check and per reference sweep
 ## Requirement Changes    typed change items, kept current as the drafts change
-## Assumptions and TODOs  what the drafts assume; gaps needing no decision; may be empty
+## Assumptions and TODOs  what the drafts assume; notes needing no decision; may be empty
 ## Out of scope           excluded work; may be empty
+## Decision Log
 ```
 
 ## Modes
@@ -98,13 +99,13 @@ In the planned gate line, `<what happens after your response>` should describe w
 If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
 Workflow-specific gate notes:
-- The Discussion gate uses the canonical discussion-phase behavior: while any `- [ ]` item remains
+- The Discussion gate uses the canonical discussion-phase behavior: while any non-gap `- [ ]` item remains
   in `## Discussion`, every response ends with the blocked gate citing the remaining count; the
-  moment every subject this package covers is drafted and every item is resolved — or drafting
+  moment every subject this package covers is drafted and every non-gap item is resolved — or drafting
   produced no items because the inputs fully specify the requirements — the agent emits the planned
   gate that advances to Completion; there is no separate "draft is ready" gate.
   - Blocked: `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to Completion.`
-  - Planned: `⏳ GATE: Next: Discussion complete. Say "next" to advance to Completion.`
+  - Planned: `⏳ GATE: Next: Discussion complete<; N open gaps carried>. Say "next" to advance to Completion.`
   Before emitting the planned gate, run the **pre-gate pass** once (under `auto` too, which bypasses
   the gate, not the pass): the tool's `validate` over the drafts projected on the catalog (what
   blocks is the catalog guide's), then `check-changes` on `## Requirement Changes`, then promotion's
@@ -114,7 +115,7 @@ Workflow-specific gate notes:
   promotion's. The gate presents what the supervisor reviews; fix the artifact before gating.
 
 Planned gates for this workflow:
-- After every subject is drafted and every Discussion item is resolved, before Completion.
+- After every subject is drafted and every non-gap Discussion item is resolved, before Completion.
 
 Workflow-specific blocked gates:
 - Inputs are too contradictory or incomplete to draft a subject.
@@ -146,10 +147,10 @@ Progress tracking:
 **Workflow-specific marker lifecycle.** This workflow owns exactly one marker: the `- [ ] D<n>` items
 in `## Discussion`. Each is resolved individually, on the supervisor's explicit approval of *that
 item*, by checking its box and appending `- **Decision** <resolution>.` Advance intent at the
-Discussion gate does not clear them; by then they are already clear. `## Requirement Changes` items
+Discussion gate does not clear them; by then they are already clear. Gaps stay unchecked; they block promotion. `## Requirement Changes` items
 carry no checkbox — the drafts realize the change — and nothing under `proposed-product-specs/**`
 carries a progress marker: those files are drafts of canon and must read as canon. Discussion
-links to drafts; requirements carry no Discussion citations.
+links to drafts; requirements carry no Discussion citations but a gap footnote's `D#`.
 
 **Workflow-specific `auto` behavior.** `auto` suits a baseline whose inputs fully specify the
 requirements. It never bypasses the Discussion blocked gate: unresolved items — a concept inventory
@@ -181,8 +182,9 @@ Discussion item unless the fix is itself a decision.
 **Re-read the catalog on every reopen.** Re-derive the mode and the change list from the current
 catalog, not from the artifact.
 
-**Resolved decisions are never disturbed.** A resolved `- [x] D<n>` is not removed, rewritten or
-renumbered; new items continue the numbering. Keep its draft links current without changing it.
+**Resolved decisions keep their history.** A resolved `- [x] D<n>` keeps its number, Concern,
+Options and Proposal; *Resolution* governs its state; new items continue the numbering. Keep its
+draft links current.
 
 **Change requests** arrive as input on reopen, in the form and lifecycle of
 [`product-specs-artifacts.md`](product-specs-artifacts.md) § Change Requests. The supervisor reads
@@ -202,9 +204,9 @@ into a draft.
 
 Before any app behavior, list the concepts the change touches and check each against the company's
 own vocabulary, the catalog's `domains/` and the glossary. A concept that is absent, or whose
-meaning changes, is drafted first, in `domains/` and the glossary, and brought to `## Discussion` as
-one `[Proposal]` item naming the new and changed concepts: an open item holds behavior depending
-on them at the blocked gate, `auto` included; one the supervisor has already settled is recorded
+meaning changes, is drafted first, in `domains/` and the glossary, and brought to `## Discussion` as one
+`[Proposal]` item naming them: an open non-gap item holds behavior depending on them at the
+blocked gate, `auto` included; one the supervisor has already settled is recorded
 as *Resolution*'s checked item and drafting continues. An inventory that finds every concept
 canonical says so under `## Assumptions and TODOs`. ❌ sharing requirements
 drafted before the catalog had a Collaborator, each rewritten once it landed · ✅ Collaborator
@@ -243,12 +245,14 @@ go either way is a Discussion item: it burns an ID and re-points every work spec
 
 ## Discussion
 
-Group items under `###` topics, never in aggregator sections (`## Questions`, `## Open Items`).
+Group items under `###` topics, never in aggregator sections.
 
 Item line: `- [ ] D<n> [Kind] <summary>`, with Kind `[Question]`, `[Proposal]` or `[Tradeoff]`.
 Bold sub-bullet labels, no separator: **Concern** (always), **Proposal**, **Question**, **Options**,
-**Detail**, **Why**, **Decision** on resolution. Recommend when possible; Tradeoffs name the
+**Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "none; waiting on <what>"), **Decision** on resolution. Recommend when possible; Tradeoffs name the
 preferred option and why; reserve Questions for cases with no basis to recommend.
+
+A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 
 ### What earns an item
 
@@ -258,19 +262,20 @@ inventory's new or changed concepts. Draft fully specified behavior directly; as
 what is taken as given.
 
 With no items, leave Discussion as: "The listed Inputs determine the proposed requirements; review
-the drafts on the review page before they are finalized." Omit this sentence when items exist.
+the drafts on the review page." Omit it when items exist.
 
 ### Draft the requirement anyway
 
 An open item never leaves a hole in the drafts: write the requirement under the recommended reading
-and, in the item's Concern or Proposal, link every affected draft requirement by ID. The item
-explains uncertainty and decisions; the draft reads as a complete catalog.
+or, for a gap, its placeholder, footnoted with the item ID per the shape guide even when none
+exists and the dependent text is left out, and, in the
+item's Concern or Proposal, link every affected draft requirement by ID. The item explains the
+uncertainty; the draft reads as complete.
 
-Cite an item by a stable anchor the host supports, or the topic anchor plus the item ID — checkbox
-IDs create none. Stored links are reference-style, defined at the bottom; conversation links are
-inline, or verified file/line links where the host supports them.
+Cite an item by a stable anchor, or the topic anchor plus the item ID (checkbox IDs create none). Stored links are reference-style, defined at the bottom; conversation links are inline or file/line
+links.
 
-**Example** (LumenNotes — a Tradeoff):
+**Example** (a Tradeoff):
 
 ```markdown
 ### Where sync boundaries fall
@@ -290,7 +295,7 @@ inline, or verified file/line links where the host supports them.
 ### Resolution
 
 On the supervisor's explicit approval of an item: check the box and append
-`- **Decision** <resolution>.` last; the original stays visible, never substituted. A decision the
+`- **Decision** <resolution>.` last; the original is kept. Remove a resolved item nothing current cites or needs. For gaps, remove **Gap**; Decision says answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep entries after item removal. The tool checks they agree. A decision the
 supervisor supplies without an item is recorded as a checked item with its Decision line. Apply a decision
 that differs from the recommendation before continuing; an approved contract that differs from
 confirmed implementation behavior gets the known-difference note under the draft requirement. Keep

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.spec-file-shape
 Managed-Source: Guides/Core/spec-file-shape.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-20
 
 # Spec File Shape
 
@@ -54,15 +54,15 @@ In file order.
 
 **Section.** A `##` heading with a Title Case name and no ID; optional; may open with one orientation line. Never cited or diffed.
 
-**Item.** A `###` heading carrying only the ID, optionally ` (retired)`. Up to the next heading, in this order: a statement, any mix of tables and rules, any known differences.
+**Item.** A `###` heading carrying only the ID, optionally ` (retired)`. Up to the next heading, in this order: a statement, any mix of tables and rules, [gap footnotes](spec-file-gaps.md), any known differences.
 
-**Statement.** The paragraph(s) under the item heading. Required, even when the detail is all in a table; a retired item's says what superseded it.
+**Statement.** The paragraph(s) under the item heading. Required even when a table holds the detail; a retired item's says what superseded it.
 
 **Rule.** A bullet `- **NN**`, two digits zero-padded, numbered from `01` in order. Rules nest one level by two-space indentation, numbered `01` again within the parent. Cited as `ID-NN`, nested `ID-NN-NN`. Append-only: a withdrawn rule keeps its number and reads `- **NN** (retired) <explanation>`. A rule or table cell points at a top-level rule of its item by the bare bold number, at a nested one as `01-01`.
 
 **Table.** A pipe table with header and separator rows. The first column is the key, nonempty and unique within the table. Rows have no IDs and are not cited; the item owns the claim. Row order binds only when the statement says so. A table follows the statement, or a rule it supports, indented under that rule.
 
-**Known difference.** A blockquote `> **Known difference — <app or platform>:** ...` after the rules: an observed gap, never a requirement.
+**Known difference.** A blockquote `> **Known difference — <app or platform>:** ...` after the rules: observed, never a requirement.
 
 **Link definitions.** All `[name]: target` lines, grouped at the file's end; every `[name]` used is defined and every definition used. Item citations use the ID as the name; rule citations use the parent item's anchor, `[REMIND-01-01]: reminders.md#remind-01`; glossary citations link the entry's heading, `[overdue reminder][g-overdue-reminder]` with `[g-overdue-reminder]: glossary.md#overdue-reminder`.
 
@@ -113,9 +113,9 @@ File lines carry prefixes in backticks; folder lines none. An app's index also l
 | `references ID-OR-TERM ROOT...` | Every file and line citing an ID or one of its rules (bold-number pointers too), or linking a glossary term. Run before modifying or retiring either; decide per citation whether it still holds. |
 | `link-terms ROOT...` | Links every glossary term occurrence in files under the last root, reading terms from every root: `link-terms <catalog> <drafts>` writes only the drafts. Run while drafting. |
 | `convert ROOT...` | Rewrites old-shape files (`## ID` items, dotted rule citations, `**Term** — text` glossary entries) into this shape in place, then links terms; idempotent. |
-| `render --catalog DIR [--base DIR]... --drafts DIR [--authoring FILE] [--out FILE]` | The change package's review page, with the card, discussion and justifications of the package's authoring artifact; `--authoring` only points elsewhere; `--no-authoring` gives a bare comparison, never the committed page. `--base` layers another open package's drafts over the catalog. |
+| `render --catalog DIR [--base DIR]... --drafts DIR [--authoring FILE] [--out FILE]` | The change package's review page, with the card, discussion, log, justifications of the package's authoring artifact; `--authoring` only points elsewhere; `--no-authoring` gives a bare comparison, never the committed page. `--base` layers another open package's drafts over the catalog. Gap footnotes: [spec-file-gaps.md](spec-file-gaps.md). |
 | `render-request --catalog DIR --package-drafts DIR --request DIR [--out FILE]` | A change request's page, diffed against the package it targets. |
-| `check-changes --catalog DIR [--base DIR]... --drafts DIR --authoring FILE` | Every change in the projection has a change-list entry with the right operation; no entry names an unchanged or absent target. |
+| `check-changes --catalog DIR [--base DIR]... --drafts DIR --authoring FILE` | Every change in the projection has a change-list entry with the right operation; no entry names an unchanged or absent target; the log matches Discussion; gap footnotes pair with gap items. |
 
 Whenever a package materially changes, validate, then render, before anything else; the gate and promotion renders are the last of many.
 
@@ -125,7 +125,7 @@ The package's typed change list (`R<n>` product, `S<n>` design: ID, type, identi
 
 ## What The Validator Rejects
 
-Every departure from the shapes above a parser can see, with file and line: headings; a missing statement, or prose after rules or tables; duplicate IDs across the catalog; a retired item or rule revived; rule numbering and nesting; table header, separator and keys; link definitions unused, undefined, duplicated or not at the end; progress markers (`- [ ]`, `🟡`); glossary entries not `###` headings, out of order, duplicated or not in sentence case; an index bullet off its shape; a glossary term unlinked outside its governing items.
+Every departure from the shapes above a parser can see, with file and line: headings; a missing statement, or prose after rules or tables; duplicate IDs across the catalog; a retired item or rule revived; rule numbering and nesting; table header, separator and keys; link definitions unused, undefined, duplicated or not at the end; progress markers (`- [ ]`, `🟡`); invalid footnotes or any in canon; glossary entries not `###` headings, out of order, duplicated or not in sentence case; an index bullet off its shape; a glossary term unlinked outside its governing items.
 
 ## How The Renderer Diffs
 

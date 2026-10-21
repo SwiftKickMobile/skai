@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture
 Managed-Source: Guides/UIMap/ui-map-architecture.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-20
 
 # UI Map Architecture
 
@@ -12,7 +12,7 @@ The architecture method for the UI Map system. Use [`ui-map-guide.md`](ui-map-gu
 
 ## Purpose
 
-The **official map** (`skai/ui-map/ui-map.yaml`) is the frozen architecture authority a change is proposed against, and this guide does not change it. Code should conform to it; any approved gap is tracked by the implementation artifact's unchecked Code Changes items. This guide produces a **change package** at `skai/changes/<change-id>/ui-map/`: the **proposed map** (`proposed-ui-map.yaml`), its render (`proposed-ui-map.html`), and the change artifact (decisions + change list).
+The **official map** (`skai/ui-map/ui-map.yaml`) is the frozen architecture authority a change is proposed against, and this guide does not change it. Code should conform to it; any approved deviation is tracked by the implementation artifact's unchecked Code Changes items. This guide produces a **change package** at `skai/changes/<change-id>/ui-map/`: the **proposed map** (`proposed-ui-map.yaml`), its render (`proposed-ui-map.html`), and the change artifact (decisions + change list).
 
 Two things are the source of truth for the change. The **proposed map** is the architecture the change moves toward. The **change list** (`## Map Changes`) describes exactly the differences between the official map and the proposed map — downstream implementation scopes its work and its audit from it, so a missing, stale, or wrong map change item is a failure, not polish.
 
@@ -44,8 +44,9 @@ Skeleton:
 ## Discussion           the design decisions and open items
 ## Map Changes          typed map change items from resolved decisions
 ## Deferrals            approved map deferrals with TODO pointers; may be empty
-## Assumptions and TODOs map assumptions, unresolved design gaps, and map TODOs
+## Assumptions and TODOs map assumptions, nonblocking design notes, and map TODOs
 ## Out of scope         scope boundaries the artifact deliberately doesn't address; may be empty
+## Decision Log
 ```
 
 ## Modes
@@ -85,13 +86,13 @@ At a planned gate: summarize what you did, include the current map-preview statu
 
 **Planned gates** — emitted when ready to advance. `next` moves to the next stage.
 
-- Discussion complete — emitted when every `- [ ]` item in Discussion has been resolved (`- [x]`).
+- Discussion complete — emitted when every non-gap `- [ ]` item in Discussion has been resolved (`- [x]`).
 
 **Completion** — Map Changes has no planned gate. Once the map change items, Deferrals, proposed map, render, and Assumptions and TODOs are in place, declare completion directly.
 
 **Blocked gates** — emitted when the agent cannot advance. Common reasons:
 
-- Discussion in progress: one or more `- [ ]` items remain unresolved.
+- Discussion in progress: one or more non-gap `- [ ]` items remain unresolved.
 - Which repo holds the official map is unknown or ambiguous.
 - Inputs are too contradictory or incomplete to draft a stage.
 - A Discussion decision proves unworkable when realized in Map Changes; for example, the proposed map cannot be made valid without revisiting a decision.
@@ -187,7 +188,7 @@ Use `###` subsections only for actual Discussion topics: one or more `D#` items,
 
 - *Baseline map* — summarize the Goal and Inputs, then encode the map the inputs describe, seeding Discussion only for the choices that meet the bar above. If the input directly names the app structure, feature areas, screens, and route relationships, encode that structure without asking the supervisor to approve the straightforward translation; the rendered preview is the review surface for feedback.
 - *Scoped map change* — summarize the active scope and current map context, then seed Discussion only for decisions needed to express that map change.
-- *Reopen* — summarize the new input and its evidence in Goal/Inputs. Input that is coherent and fully specified — a change request the supervisor has said to incorporate included — updates the provisional preview and drafts no *new* discussion items; seed one only when map representation requires a real decision. Retain the artifact's existing resolved items that still explain the current map, and never replace `## Discussion` with the empty state on a reopened artifact, especially when map change items still cite those decisions (`D#`).
+- *Reopen* — summarize the new input and its evidence in Goal/Inputs. Input that is coherent and fully specified — a change request the supervisor has said to incorporate included — updates the provisional preview and drafts no *new* discussion items; seed one only when map representation requires a real decision. Retain the artifact's existing resolved items that still explain the current map or that a map change item cites (`D#`).
 - If the inputs fully specify the map, draft no new items. Use the empty Discussion state only when the section has no retained resolved items.
 - If the request drifts into app-code tasks, file moves, build steps, or implementation sequencing, record only the map fact that matters; leave execution details out of this artifact.
 
@@ -267,27 +268,29 @@ A note needs a way to share its contents. Today it has no outgoing share route.
 The listed Inputs determine the proposed map; review the provisional preview before it is finalized in Map Changes.
 ```
 
-Each discussion item is its own `- [ ]` item under the appropriate `###` subsection. The title is `<id> [Kind] <plain-language summary>` — the id is `D01`, `D02`, ... (letter-led so renderers don't misparse it as a list; continuous across subsections, no per-group reset), `[Kind]` is `Proposal` / `Tradeoff` / `Question`, and the title itself carries no bold. Sub-bullet labels are **bold** with no separator after: `Concern` always, then either a `Proposal` (the recommended action — a `Tradeoff` adds `Options`) or, for a `Question`, a `Question` line (what you need decided and why you can't recommend yet); `Detail` when the concern needs elaboration; `Why` for the rationale. On approval, check the box and append a `- **Decision** <succinct resolution>.` line as the last sub-bullet.
+Each discussion item is its own `- [ ]` item under the appropriate `###` subsection. The title is `<id> [Kind] <plain-language summary>` — the id is `D01`, `D02`, ... (letter-led so renderers don't misparse it as a list; continuous across subsections, no per-group reset), `[Kind]` is `Proposal` / `Tradeoff` / `Question`, and the title itself carries no bold. Sub-bullet labels are **bold** with no separator after: `Concern` always, then either a `Proposal` (the recommended action — a `Tradeoff` adds `Options`) or, for a `Question`, a `Question` line (what you need decided and why you can't recommend yet); `Detail` when the concern needs elaboration; `Why` for the rationale; `Gap` last for unchecked gaps (placeholder or "none; waiting on <what>"). On approval, check the box and append a `- **Decision** <succinct resolution>.` line as the last sub-bullet.
+
+A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 
 **Keep discussion items tight:** where two or more `- [ ]` items sit under the same heading, leave no blank line between them. A blank line makes the list "loose," which pushes the checkbox onto its own line in some renderers; a tight list keeps the checkbox inline with the title. This applies to discussion items and map change items alike.
 
-After drafting, and after each subsequent response, update the artifact before speaking: revise `ui-map-architecture.md`, update the provisional preview to match it, then STOP at a gate. Emit a **Blocked** gate if any `- [ ]` items remain, or the advancing **Planned** gate if none do — every item `- [x]`, or drafting produced no items at all because the inputs fully specify the map. Do not describe intended artifact changes without applying them.
+After drafting, and after each subsequent response, update the artifact before speaking: revise `ui-map-architecture.md`, update the provisional preview to match it, then STOP at a gate. Emit a **Blocked** gate if any non-gap `- [ ]` items remain, or the advancing **Planned** gate if none do — every non-gap item `- [x]`, or drafting produced no items at all because the inputs fully specify the map. Do not describe intended artifact changes without applying them.
 
 `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to Map Changes.`
-`⏳ GATE: Next: Discussion complete. Say "next" to write Map Changes.`
+`⏳ GATE: Next: Discussion complete<; N open gaps carried>. Say "next" to write Map Changes.`
 
-**Discussion loop:** the agent proposes, the supervisor refines or redirects. Discussion items are live working topics until resolved, not a frozen first draft.
+**Discussion loop:** the agent proposes, the supervisor refines or redirects. Discussion items are live until resolved, not a frozen first draft.
 
 As the conversation evolves:
 - Revise an unresolved item when the supervisor clarifies or redirects its proposal.
-- Split an unresolved item when one topic becomes multiple map decisions. Keep the original ID on the first resulting item and assign new IDs to the others.
-- Add a follow-up item when a decision exposes a new map decision that was not visible before.
-- Remove an unresolved item when the direction changes so it no longer applies. The architecture artifact should stay focused on the current map, not preserve every abandoned branch.
+- Split an unresolved item when one topic becomes multiple map decisions. The first resulting item keeps the ID; the others get new ones.
+- Add a follow-up item when a decision exposes a new map decision.
+- Remove an unresolved non-gap item when the direction changes so it no longer applies (a gap is resolved as omitted first, per *Resolution*). The artifact stays focused on the current map, not every abandoned branch.
 - Do not add follow-up items for unknowns that can be represented as assumptions, TODOs, or non-blocking notes without changing scene/route architecture.
 
-Keep IDs stable and never renumber existing items. Each `- [ ]` item resolves on the supervisor's explicit approval — check the box (`- [x]`) and append a `- **Decision** <succinct resolution>.` line as the last sub-bullet of the item. Keep resolved decisions only when they still explain the current map. If a later direction subsumes, contradicts, or makes a resolved item misleading, collapse the topic around the current decision: revise the surviving item and remove stale items rather than carrying redundant history forward. Resolved items are not meeting minutes, but they must not erase why the decision existed: when the supervisor changes or rejects a recommendation, keep enough of the original options, proposal, and rationale to show what was changed, then use the Decision line for the current outcome. Keep the Kind label (`Question` / `Proposal` / `Tradeoff`) in the title so the original shape of the decision stays visible. No separate "Decisions" section — decisions stay inline next to their topic.
+Keep IDs stable and never renumber existing items. Each `- [ ]` item resolves on the supervisor's explicit approval — check the box (`- [x]`) and append a `- **Decision** <succinct resolution>.` line as the last sub-bullet of the item. For gaps, remove **Gap**; Decision says answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep entries of removed items. Keep resolved decisions only while a map change cites them or they explain the current map. If a later direction subsumes, contradicts, or makes a resolved item misleading, collapse the topic around the current decision: revise the surviving item and remove stale items rather than carrying redundant history forward. Resolved items are not meeting minutes, but they must not erase why the decision existed: when the supervisor changes or rejects a recommendation, keep enough of the original options, proposal, and rationale to show what was changed, then use the Decision line for the current outcome. Keep the Kind label (`Question` / `Proposal` / `Tradeoff`) in the title so the original shape of the decision stays visible. No separate "Decisions" section — decisions stay inline next to their topic.
 
-**Completeness:** Discussion is done when every `- [ ]` item has been checked off (`- [x]`). STOP at the advancing gate; `next` here advances to Map Changes.
+**Completeness:** Discussion is done when every non-gap `- [ ]` item has been checked off (`- [x]`). STOP at the advancing gate; `next` here advances to Map Changes.
 
 ### Writing style
 
@@ -320,7 +323,7 @@ Produce these together before completing:
 2. The Deferrals section in `skai/changes/<change-id>/ui-map/ui-map-architecture.md` — one entry per approved map deferral, with TODO pointer and brief rationale. Omit the section if no deferrals were approved.
 3. The proposed map — `skai/changes/<change-id>/ui-map/proposed-ui-map.yaml`. The official map stays frozen. Consult [`ui-map-guide.md`](ui-map-guide.md) for the YAML format and its *Authoring a UI Map* conventions.
 4. The render — run the project-specific render override when one exists; otherwise use the default SKAI renderer from [`ui-map-guide.md`](ui-map-guide.md) to produce `skai/changes/<change-id>/ui-map/proposed-ui-map.html`. The render also validates schema and semantic checks: dangling refs, duplicate canonical homes, `primary_parent`, required modal styles and their vocabulary, and related map constraints. Fix until valid; never present an invalid map. The HTML page is the review surface.
-5. The Assumptions and TODOs section — map assumptions, unresolved design gaps that do not block the map, and any map TODOs added or updated.
+5. The Assumptions and TODOs section — map assumptions, design notes that do not block the map, and any map TODOs added or updated.
 
 Before completion, update `## Provisional preview` so it no longer reads as an active Discussion status: the proposed map and render in the package are now the finished change package, pending review.
 

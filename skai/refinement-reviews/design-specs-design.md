@@ -254,3 +254,19 @@ Group caps across both spec types and the design process guides: content 37,000;
 **Rendered page, prominently linked (supervisor, 2026-10-18).** The authoring and promotion artifacts each link the package's rendered review page (`design-specs-review.html`) at the top, directly under the title; a change request's `request.md` links `request-review.html` the same way.
 
 **Live render (supervisor, 2026-10-18).** The rendered page is the primary way the supervisor views a change package while it is being iterated on. Any time the package materially changes — a draft edited, a discussion item resolved, a change item added, a request triaged — the agent validates and re-renders before anything else, in every workflow that writes a package. The gate and promotion renders are not the only ones; they are the last of many. Validation and rendering take milliseconds, so there is no cost argument for deferring them.
+
+## Adopts — 2026-10-20 (known gaps)
+
+Design specs authoring, its artifact reference and promotion adopt
+[`product-specs-system-design.md`](product-specs-system-design.md) § Decisions — 2026-10-20 (format
+definitions and propagation) unchanged: the **Gap** sub-bullet, one Decision line, `## Decision Log`
+as the artifact's last section, the pointer sentence to `known-gaps.md`, gap items carried past the
+Discussion gate, readiness item 1 failing on an open gap. Caps (supervisor, 2026-10-20, a little
+under the compressed sizes): `design-specs-authoring.md` 17,800; `design-specs-artifacts.md` 5,000
+(unchanged); `design-specs-promotion.md` 12,800 (unchanged). These supersede the 2026-10-18 rows.
+
+Slice 3 (2026-10-20): design specs authoring's *Drafting* adopts the gap footnote the same way (`product-specs-system-design.md` § Decisions — 2026-10-20 (known gaps: spec files)); cap 17,800 held (supervisor, 2026-10-20).
+
+## Adopts — 2026-10-21 (working docs placement)
+
+Working documents serving a package live in its `working-docs/` folder and archive with it at promotion (`design-specs-artifacts.md` layout, `design-specs-promotion.md` § Archive the Package; caps held; skai#92, `Guides/Core/working-doc-conventions.md`); build and test output goes to the scratch root, never the package.

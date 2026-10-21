@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ticket-filing
 Managed-Source: Guides/Process/ticket-filing.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-21
 
 # Ticket filing
 
@@ -39,7 +39,7 @@ Workflow-specific gate notes:
 
 Planned gates for this workflow:
 - After Phase 1 understanding is complete, but before drafting ticket(s).
-- After Phase 1 drafts are written or updated in `skai/working-docs/<branch-path>/<session-name>/process-tickets.md` and presented for review, but before deciding whether to file them now or leave them for later.
+- After Phase 1 drafts are written or updated in `skai/working-docs/<session-name>/process-tickets.md` and presented for review, but before deciding whether to file them now or leave them for later.
 
 Workflow-specific blocked gates:
 - GitHub MCP access is unavailable or misconfigured, so filing cannot proceed.
@@ -60,7 +60,7 @@ Rules:
 Progress tracking:
 - Default marker convention: `- [ ]` / `- [x]` in the process-tickets file (process artifact). See `Guides/Core/process-flow.md`, "Progress markers".
 - Default rule: a `- [ ]` ticket item means pending draft / pending filing. Do not check it without supervisor approval.
-- The workflow-owned artifact is `skai/working-docs/<branch-path>/<session-name>/process-tickets.md`.
+- The workflow-owned artifact is `skai/working-docs/<session-name>/process-tickets.md`.
 - In that artifact, each ticket is a `- [ ] T<n> Ticket: <summary>` list item (stable letter-led ID — `T01`, `T02`, …) with body fields as sub-bullets.
 - The Phase 1 understanding gate does not require its own workflow artifact or marker; it is a supervisor approval stop before drafting begins.
 - At the Phase 1 draft-review gate, STOP with the ticket items still unchecked.
@@ -87,7 +87,7 @@ The supervisor reviews all issue content before creation at the draft-review gat
 
 ## Phase 1: Draft
 
-Goal: produce one or more ticket drafts in `skai/working-docs/<branch-path>/<session-name>/process-tickets.md`.
+Goal: produce one or more ticket drafts in `skai/working-docs/<session-name>/process-tickets.md`.
 
 Before writing the working file, choose a `session-name` for this suggestion-filing effort so multiple draft sessions on the same branch stay separate.
 
@@ -114,7 +114,7 @@ At this gate:
 
 ### 2. Write drafts to the working file
 
-Write a ticket draft entry to `process-tickets.md` at `skai/working-docs/<branch-path>/<session-name>/process-tickets.md`. If the file already exists for this session, append to it. If it doesn't exist, create it.
+Write a ticket draft entry to `process-tickets.md` at `skai/working-docs/<session-name>/process-tickets.md`. If the file already exists for this session, append to it. If it doesn't exist, create it.
 
 Draft inputs:
 - **Ad-hoc path**: use the understanding developed in step 1.
@@ -196,7 +196,7 @@ Do not proceed until GitHub MCP access is confirmed.
 
 ### 2. Read the approved drafts
 
-Locate the `process-tickets.md` working file at `skai/working-docs/<branch-path>/<session-name>/process-tickets.md`. Read the unchecked `- [ ] T<n> Ticket: …` entries under `## Drafts` that the draft-review gate left in place.
+Locate the `process-tickets.md` working file at `skai/working-docs/<session-name>/process-tickets.md`. Read the unchecked `- [ ] T<n> Ticket: …` entries under `## Drafts` that the draft-review gate left in place.
 
 To skip an entry before filing: move it to the `## Skipped` subsection, apply strikethrough to the title text (`~~T<n> Ticket: <summary>~~`), and append `— skipped during review (<short reason>).` to the title line. Leave the checkbox unchecked.
 

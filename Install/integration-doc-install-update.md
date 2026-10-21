@@ -32,6 +32,7 @@ Installers may only create/update/remove content inside managed blocks.
 The `required-values` block is a managed "form" the project owner fills in:
 - The project owner replaces each `{supervisor response}` placeholder with the value, and should remove 🟡 markers and delete any `INSTRUCTION:` lines once they fill a value.
 - Installers must preserve filled values and must only restore 🟡 + instruction lines when required information is missing.
+- A field the template has and the host's form lacks is added in the template's position with the template's text; a field with a default value (such as the scratch root) is added with that default.
 
 Standard instruction format:
 - `INSTRUCTION: <what is needed>`

@@ -32,7 +32,13 @@ Usage:
         line when the catalog resolves it and the projection does not: the drafts retired the
         cited item or rule (its anchor became "-retired"), moved the item to another file, or
         removed the glossary entry, a conflict the projection introduces that the package must
-        settle (hold the file, or a change request). With a single root everything counts. Exit
+        settle (hold the file, or a change request). Gap footnotes: a "[^n]" marker in an item's
+        text pairs with a "[^n]: **Gap:** D<n> — <question>. Placeholder: <one line>" definition
+        under that item (after its rules and tables, before known differences); a marker with no
+        definition, a duplicate label in a file, a definition outside an item or off its shape is
+        rejected; a definition with no marker is a marker-less note. Canon carries none: a
+        footnote in a single root, or in the first root of a projection, is reported (a note
+        when the package does not hold the file). With a single root everything counts. Exit
         status 1 when there are blocking failures.
 
     python3 spec-tool.py references ID ROOT [ROOT ...]
@@ -97,8 +103,16 @@ Usage:
         name) or a known-difference note names an item that shows as modified. A moved item may
         change on the way: then a modify entry rides on the move and both are accepted, and a
         move whose item changed without a modify entry fails, as does a modify entry on a moved
-        item whose text is the same. One line per failure as path:line: message; exit
-        status 1 when there are any.
+        item whose text is the same. The authoring artifact's "## Decision Log" is checked
+        against its Discussion: the section exists once the Discussion has an item and is the
+        artifact's last; each line is "- <ID> decided|gap|reopened — <one line>"; an entry may
+        name an item since removed (the log outlives its items); an item's last entry agrees with
+        it (checked ⇔ decided, a "**Gap**" sub-bullet ⇔ gap, otherwise reopened or none); an item
+        carries at most one Decision line and is never both checked and a gap; every D# a change
+        entry's justification cites is in the Discussion. Every gap footnote in the drafts names
+        an open gap item (unchecked, with a Gap line), and every open gap item is marked by at
+        least one footnote (a marker-less note counts). One line per failure as
+        path:line: message; exit status 1 when there are any.
 
 GLOSSARY TERMS (what "every occurrence in spec prose" covers, for validate and link-terms)
 
@@ -152,13 +166,20 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     product-specs/ or design-specs/ (a legacy requirements/ parent is accepted too; else the drafts'
     parent); a legend
     row of counts (added, modified, retired or removed, unchanged, added files), each with its
-    colored square; a card with the package's status (open item count, or "discussion complete"),
+    colored square; a card with the package's status (open item count, or "discussion complete",
+    either with the count of gaps carried — open items whose last sub-bullet is a Gap line),
     title, goal and discussion count; a "Documents" box with one linked line per file (square,
-    name, changed count); the discussion items as collapsible cards (summary: square, ID, kind, title, "open" or "resolved"; resolved start collapsed, open expanded), in their "###" topic groups in artifact
-    order, each a card with its square (green approved, amber open), ID, kind, title and its
+    name, changed count); the discussion items as collapsible cards (summary: square, ID, kind, title, "open", "gap" or "resolved"; resolved start collapsed, open and gap expanded), in their "###" topic groups in artifact
+    order, each a card with its square (green approved, amber open or gap), ID, kind, title and its
     sub-bullets as written (Concern, Proposal, Options with their lettered choices, Detail, Why,
-    Decision), citations linked and popovers as elsewhere, so an item can be resolved from the
-    page; then each file in order. When the artifact has a "## Situations" section it is
+    Gap, Decision), citations linked and popovers as elsewhere, so an item can be resolved from the
+    page; then the artifact's "## Decision Log" as a numbered list (ID, state, text; "No entries."
+    when empty) whenever the section exists; then each file in order. Between the Documents box
+    and the Discussion, a "Gaps (n)" list when any draft carries a gap footnote: one line per
+    footnote with the item, the file, the Discussion item it names, the question and the
+    placeholder (or "No placeholder."). Within an item, a "[^n]" marker renders as a superscript
+    link to the footnote's "Gap" line under the item, which names and links the Discussion item;
+    an item carrying a gap footnote counts as modified. When the artifact has a "## Situations" section it is
     rendered after the card, as written (headings, bullets, paragraphs), citations linked. The
     card, Situations and Discussion resolve their links through the authoring artifact's own
     definitions, never a draft's.
@@ -217,6 +238,9 @@ H1_RE = re.compile(r"^# (.*)$")
 RULE_RE = re.compile(r"^(?P<indent> *)- \*\*(?P<num>\d+)\*\*(?P<retired> \(retired\))?(?P<text>.*)$")
 KNOWN_RE = re.compile(r"^> \*\*Known difference — (?P<app>[^:]+):\*\*(?P<text>.*)$")
 LINKDEF_RE = re.compile(r"^\[(?P<name>[^\]]+)\]:\s+(?P<target>\S.*)$")
+FOOT_DEF_RE = re.compile(r"^\[\^(?P<label>[A-Za-z0-9-]+)\]:\s*(?P<text>.*)$")
+GAP_NOTE_RE = re.compile(r"^\*\*Gap:\*\*\s*(?P<did>D\d+)\s*—\s*(?P<q>.+?)(?:\s+Placeholder:\s*(?P<ph>.+))?$")
+FOOT_MARK_RE = re.compile(r"\[\^(?P<label>[A-Za-z0-9-]+)\](?!:)")
 TABLE_ROW_RE = re.compile(r"^( *)\|(.*)\|\s*$")
 TABLE_SEP_RE = re.compile(r"^ *\|(\s*:?-+:?\s*\|)+\s*$")
 INDEX_LINE_RE = re.compile(r"^- \[(?P<name>[^\]]+)\] -- (?:`(?P<prefixes>[^`]+)` -- )?(?P<text>.*)$")
@@ -263,6 +287,17 @@ class Known:
 
 
 @dataclass
+class Gap:
+    """A gap footnote under an item: its label, the Discussion item it names, the question, the
+    placeholder (empty when there is nothing to proceed on) and its line."""
+    label: str
+    did: str
+    question: str
+    placeholder: str
+    line: int
+
+
+@dataclass
 class Item:
     id: str
     line: int
@@ -272,6 +307,8 @@ class Item:
     tables: list = field(default_factory=list)
     rules: list = field(default_factory=list)
     knowns: list = field(default_factory=list)
+    gaps: list = field(default_factory=list)  # Gap footnotes defined under the item
+    markers: list = field(default_factory=list)  # (label, line) of [^label] markers in the item's text
 
 
 @dataclass
@@ -308,7 +345,7 @@ def parse(path: Path) -> Spec:
     # link definitions: anywhere, but must be after the last content line
     content_end = 0
     for i, line in enumerate(lines):
-        m = LINKDEF_RE.match(line)
+        m = LINKDEF_RE.match(line) if not FOOT_DEF_RE.match(line) else None
         if m:
             if m.group("name") in spec.linkdefs:
                 err(i, f"duplicate link definition [{m.group('name')}]")
@@ -320,7 +357,7 @@ def parse(path: Path) -> Spec:
         if ln - 1 < content_end:
             err(ln - 1, f"link definition [{name}] is not at the end of the file")
 
-    body = [(i, l) for i, l in enumerate(lines) if not LINKDEF_RE.match(l)]
+    body = [(i, l) for i, l in enumerate(lines) if not LINKDEF_RE.match(l) or FOOT_DEF_RE.match(l)]
 
     if spec.kind == "glossary":
         _parse_glossary(spec, body, err)
@@ -332,7 +369,31 @@ def parse(path: Path) -> Spec:
     for i, line in enumerate(lines):
         if MARKER_RE.search(line):
             err(i, "progress marker in spec prose")
+    if spec.kind == "spec":
+        _gap_markers(spec, lines, err)
     return spec
+
+
+def _gap_markers(spec, lines, err):
+    """Pair every [^label] marker in an item's text with a definition under that item; labels are
+    unique per file; a definition with no marker is a marker-less note and is fine."""
+    seen = {}
+    for it in spec.items:
+        for g in it.gaps:
+            if g.label in seen:
+                err(g.line - 1, f"duplicate gap footnote label [^{g.label}]; also at line {seen[g.label]}")
+            seen[g.label] = g.line
+    bounds = [it.line for it in spec.items] + [len(lines) + 1]
+    for it, end in zip(spec.items, bounds[1:]):
+        defined = {g.label for g in it.gaps}
+        for ln in range(it.line, end - 1):
+            line = lines[ln]
+            if FOOT_DEF_RE.match(line) or LINKDEF_RE.match(line):
+                continue
+            for m in FOOT_MARK_RE.finditer(line):
+                it.markers.append((m.group("label"), ln + 1))
+                if m.group("label") not in defined:
+                    err(ln, f"gap marker [^{m.group('label')}] has no definition under {it.id}")
 
 
 def _title(spec, body, err):
@@ -407,6 +468,22 @@ def _parse_spec(spec, body, err):
             mode = "statement"
             k += 1
             continue
+        mf = FOOT_DEF_RE.match(line)
+        if mf:
+            flush_para()
+            if item is None:
+                err(i, "gap footnote outside an item; it goes under the requirement it belongs to")
+            else:
+                mode = "detail"
+                mg = GAP_NOTE_RE.match(mf.group("text").strip())
+                if not mg:
+                    err(i, "gap footnote must read `[^n]: **Gap:** D<n> — <question>. Placeholder: <one line>`")
+                else:
+                    if item.knowns:
+                        err(i, "gap footnote after a known-difference note; known differences come last in an item")
+                    item.gaps.append(Gap(mf.group("label"), mg.group("did"), mg.group("q").strip(), (mg.group("ph") or "").strip(), i + 1))
+            k += 1
+            continue
         if item is None:
             if mode == "intro" or mode == "section":
                 if not para:
@@ -422,6 +499,8 @@ def _parse_spec(spec, body, err):
             mode = "detail"
             if (mr or mt) and item.knowns:
                 err(i, "table or rule after a known-difference note; known differences come last in an item")
+            if (mr or mt) and item.gaps:
+                err(i, "table or rule after a gap footnote; footnotes come after rules and tables")
             if mt:
                 k, table = _parse_table(body, k, err)
                 indent = len(mt.group(1))
@@ -598,6 +677,8 @@ def link_uses(text):
     names = []
     for m in LINK_USE_RE.finditer(text):
         label, ref = m.group(1), m.group(2)
+        if label.startswith("^") and ref is None:
+            continue  # a gap footnote marker
         if ref is not None:
             names.append(ref if ref else label)
         else:
@@ -632,6 +713,9 @@ def validate(roots):
                 if len(roots) > 1:
                     canonical.add(id(s))
     shape = [i for s in specs for i in s.issues]  # per-file checks: notes outside the drafts
+    for s in specs:  # canon carries no gap: a single root is canon; under a projection, the first root is
+        if s.kind == "spec" and (len(roots) == 1 or id(s) in canonical):
+            shape += [Issue(s.path, g.line, f"gap footnote [^{g.label}] in a canonical file; canon carries none") for it in s.items for g in it.gaps]
     cross = []  # whole-projection checks: block unless both sides are untouched canonical files
     projected = set(id(s) for s in by_rel.values())
     canon = {s.path for s in specs if id(s) in canonical}
@@ -1002,6 +1086,7 @@ def inline(s, gloss=None, auto=False):
     head), a bare requirement ID and every glossary term outside a link or code span are linked
     the same way, so the page reads uniformly without the artifact carrying the links."""
     s = html.escape(s)
+    s = FOOT_MARK_RE.sub(lambda m: f'<sup class="fn"><a href="#gap-{RESOLVER.get("item", "")}-{m.group("label")}">{m.group("label")}</a></sup>', s)
     s = re.sub(r"~~(.+?)~~", r"<del>\1</del>", s, flags=re.S)
     s = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s)
     s = re.sub(r"`([^`]+)`", r"<code>\1</code>", s)
@@ -1229,8 +1314,17 @@ def render_rules(old_rules, new_rules, parent, gloss, tag=True):
     return "".join(out), changed
 
 
+def render_gaps(it, aid, gloss):
+    return "".join(
+        f'<div class="gap" id="gap-{aid}-{g.label}"><sup class="fn">{html.escape(g.label)}</sup> <b>Gap</b> '
+        f'<a class="ref" href="#{g.did.lower()}">{g.did}</a> — {inline(g.question, gloss, auto=True)}'
+        + (f" <b>Placeholder:</b> {inline(g.placeholder, gloss, auto=True)}" if g.placeholder else " <i>No placeholder.</i>") + "</div>"
+        for g in it.gaps)
+
+
 def render_item(old: Item, new: Item, gloss, why):
     status, parts = "", []
+    RESOLVER["item"] = anchor(new.id if new else old.id)
     if old is None:
         status = "added"
         parts.append("".join(f"<p>{inline(p, gloss)}</p>" for p in new.statement))
@@ -1277,9 +1371,12 @@ def render_item(old: Item, new: Item, gloss, why):
                     changed = True
                     body = word_diff(a.text if a else "", b.text if b else "", gloss)
                     parts.append(f'<blockquote class="mod"><b>Known difference — {html.escape(app)}:</b> {body}</blockquote>')
+            changed = changed or bool(new.gaps)
             status = "modified" if changed else "unchanged"
     iid = new.id if new else old.id
     aid = anchor(iid) + ("-retired" if (new and new.retired) else "")
+    if new and new.gaps:
+        parts.append(render_gaps(new, anchor(iid), gloss))
     return status, card(status, aid, iid, "".join(parts), why, gloss)
 
 
@@ -1486,7 +1583,8 @@ def parse_discussion(text):
     if not m:
         return []
     topics, item = [], None
-    for line in m.group(1).splitlines():
+    first = text[:m.start(1)].count("\n") + 1
+    for n, line in enumerate(m.group(1).splitlines(), first):
         if not line.strip():
             continue
         h = ANY_H3_RE.match(line)
@@ -1498,12 +1596,15 @@ def parse_discussion(text):
         elif it:
             if not topics:
                 topics.append(("", []))
-            item = {"done": it.group("done") == "x", "id": it.group("did"), "kind": it.group("kind"), "title": it.group("title"), "bullets": []}
+            item = {"done": it.group("done") == "x", "id": it.group("did"), "kind": it.group("kind"), "title": it.group("title"),
+                    "bullets": [], "line": n, "gap": False, "decisions": 0}
             topics[-1][1].append(item)
         elif item is None:
             continue
         elif line.lstrip().startswith("- ") and indent <= 2:
             item["bullets"].append([line.lstrip()[2:].strip(), []])
+            item["gap"] = item["gap"] or line.lstrip()[2:].startswith("**Gap**")
+            item["decisions"] += line.lstrip()[2:].startswith("**Decision**")
         elif line.lstrip().startswith("- ") and item["bullets"]:
             item["bullets"][-1][1].append(line.lstrip()[2:].strip())
         elif item["bullets"]:  # continuation line
@@ -1513,6 +1614,56 @@ def parse_discussion(text):
             else:
                 tail[0] += " " + line.strip()
     return topics
+
+
+LOG_ENTRY_RE = re.compile(r"^- (?P<id>[A-Z]+\d+) (?P<state>decided|gap|reopened) — (?P<text>.+?)\s*$")
+
+
+def parse_decision_log(text):
+    """The '## Decision Log' section: (present, entries, bad) with entries [(id, state, text, line)]
+    in artifact order and bad the lines (line, text) that are not entries; present is None when
+    the section is missing, else the line of a '## ' heading that follows it (the log must be the
+    artifact's last section) or 0."""
+    m = re.search(r"^## Decision Log\s*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
+    if not m:
+        return None, [], []
+    first = text[:m.start(1)].count("\n") + 1
+    entries, bad = [], []
+    for n, line in enumerate(m.group(1).splitlines(), first):
+        if not line.strip() or LINKDEF_RE.match(line):
+            continue
+        e = LOG_ENTRY_RE.match(line)
+        (entries.append((e.group("id"), e.group("state"), e.group("text"), n)) if e else bad.append((n, line)))
+    after = re.search(r"^## ", text[m.end():], re.M)
+    return (text[:m.end() + after.start()].count("\n") + 1 if after else 0), entries, bad
+
+
+def check_decision_log(path, text):
+    """The log and the items agree: every item's last entry matches its state (checked ⇔ decided,
+    a Gap line ⇔ gap, otherwise none or reopened); an entry may name an item since removed (the
+    log outlives its items); the log is the last section; an item carries at most one Decision line and is never both
+    checked and a gap. The section is required once the Discussion has any item."""
+    items = {it["id"]: it for _, its in parse_discussion(text) for it in its}
+    present, entries, bad = parse_decision_log(text)
+    issues = []
+    if present is None:
+        return [Issue(path, 1, "no ## Decision Log section; every Discussion artifact ends with one")] if items else []
+    if present:
+        issues.append(Issue(path, present, "a section follows ## Decision Log, which must be the artifact's last"))
+    issues += [Issue(path, n, f"not a Decision Log entry (`- <ID> decided|gap|reopened — <one line>`): {line.strip()}") for n, line in bad]
+    last = {did: state for did, state, _, _ in entries}  # an entry may outlive its item: the log is the history
+    for did, it in items.items():
+        if it["decisions"] > 1:
+            issues.append(Issue(path, it["line"], f"{did} carries {it['decisions']} Decision lines; at most one"))
+        if it["done"] and it["gap"]:
+            issues.append(Issue(path, it["line"], f"{did} is checked and still carries a Gap line"))
+        want = "decided" if it["done"] else "gap" if it["gap"] else None
+        got = last.get(did)
+        if want and got != want:
+            issues.append(Issue(path, it["line"], f"{did} is {'checked' if it['done'] else 'a gap'} but its last Decision Log entry is {got or 'missing'} (expected {want})"))
+        elif not want and got not in (None, "reopened"):
+            issues.append(Issue(path, it["line"], f"{did} is open but its last Decision Log entry is {got} (expected reopened or none)"))
+    return issues
 
 
 CSS = """
@@ -1552,7 +1703,8 @@ ul{padding-left:18px;margin:6px 0}li{margin:2px 0}
 table.t{border-collapse:collapse;width:100%;margin:8px 0}table.t td,table.t th{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;vertical-align:top}
 table.t td .badge,table.t th .badge{margin-right:6px}li>.badge{margin-right:4px}
 .file-why{font-size:13px;color:var(--muted);margin:0 0 8px}
-details.discussion summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:center;flex-wrap:wrap}details.discussion summary::-webkit-details-marker{display:none}details.discussion .state{margin-left:auto;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}details.discussion>ul{margin-top:8px}
+details.discussion summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:center;flex-wrap:wrap}details.discussion summary::-webkit-details-marker{display:none}details.discussion .state{margin-left:auto;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}details.discussion>ul{margin-top:8px}details.discussion.gap .state{color:var(--tag-mod)}ol.log{margin:0;padding-left:22px}ol.log li{margin:2px 0}ol.log .status{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.gap{font-size:13px;border-top:1px dashed var(--line);margin-top:8px;padding-top:6px}sup.fn{font-size:11px;font-weight:700;color:var(--tag-mod)}sup.fn a{color:var(--tag-mod);text-decoration:none}ol.gaps{margin:0;padding-left:22px}ol.gaps li{margin:3px 0}ol.gaps .n{color:var(--muted);font-size:13px}
 .item.request .status{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;border:1px solid var(--line);border-radius:999px;padding:1px 8px}.item.request .title{font-weight:600}
 p.intro{margin:4px 0 10px}p.intro .badge{margin-right:8px}
 #pop{position:absolute;z-index:10;max-width:560px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:10px 14px;font-size:14px;display:none}
@@ -1798,10 +1950,13 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
     head, discussion = "", ""
     if title or goal:
         items = [it for _, its in disc for it in its]
-        n_open = sum(1 for it in items if not it["done"])
-        n_done = len(items) - n_open
-        state = "discussion complete" if items and not n_open else (f"{n_open} open" if n_open else "no discussion items")
-        foot = f"Discussion: {n_done} approved, {n_open} open" if items else "No discussion items"
+        n_gap = sum(1 for it in items if not it["done"] and it["gap"])
+        n_open = sum(1 for it in items if not it["done"]) - n_gap
+        n_done = len(items) - n_open - n_gap
+        gaps = f"{n_gap} gap{'s' if n_gap != 1 else ''}"
+        state = ((f"discussion complete; {gaps} carried" if n_gap else "discussion complete") if items and not n_open
+                 else (f"{n_open} open" + (f", {gaps}" if n_gap else "") if n_open else "no discussion items"))
+        foot = f"Discussion: {n_done} approved, {n_open} open, {gaps}" if items else "No discussion items"
         head += (f'<div class="item request"><div class="head"><span class="status">{html.escape(state)}</span>'
                  f'<span class="title">{html.escape(title)}</span></div>'
                  + (f"<p>{inline(goal, gloss, auto=True)}</p>" if goal else "")
@@ -1812,8 +1967,19 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
         discussion = "<h2>Discussion</h2>" + "".join(
             (f'<h3 class="section">{html.escape(topic)}</h3>' if topic else "") + "".join(render_discussion_item(it, gloss) for it in items)
             for topic, items in disc)
+    present, entries, _ = parse_decision_log(Path(authoring).read_text(encoding="utf-8")) if authoring else (None, [], [])
+    if present is not None:
+        discussion += "<h2>Decision Log</h2><div class=\"item request\">" + (
+            "<ol class=\"log\">" + "".join(f'<li><span class="id">{html.escape(i)}</span> <span class="status">{st}</span> {inline(t, gloss, auto=True)}</li>' for i, st, t, _ in entries) + "</ol>"
+            if entries else "<p>No entries.</p>") + "</div>"
     sections, toc, totals, _ = render_tree([*reversed(bases), catalog], drafts, gloss, changes)
-    head += toc_html(toc) + discussion
+    gaps = [(d.relative_to(drafts).as_posix(), it, g) for d in sorted(drafts.rglob("*.md")) for sp in [parse(d)] if sp.kind == "spec" for it in sp.items for g in it.gaps]
+    gap_list = (f'<h2>Gaps ({len(gaps)})</h2><div class="item request"><ol class="gaps">' + "".join(
+        f'<li><a class="ref" href="#{anchor(it.id)}{"-retired" if it.retired else ""}">{it.id}</a> <span class="n">{html.escape(rel)}</span> · '
+        f'<a class="ref" href="#{g.did.lower()}">{g.did}</a> — {inline(g.question, gloss, auto=True)}'
+        + (f" <b>Placeholder:</b> {inline(g.placeholder, gloss, auto=True)}" if g.placeholder else " <i>No placeholder.</i>") + "</li>"
+        for rel, it, g in gaps) + "</ol></div>") if gaps else ""
+    head += toc_html(toc) + gap_list + discussion
     page = page_shell(f"Change Package: {package_id(drafts)}", totals, head, sections, gloss)
     out.write_text(page, encoding="utf-8")
     print(f"wrote {out}: {totals}")
@@ -1824,7 +1990,7 @@ def render_discussion_item(it, gloss):
     resolved, amber open), ID, kind, title and the state word; resolved items start collapsed,
     open ones expanded; the sub-bullets as written show on expand."""
     done = it["done"]
-    state, status = ("resolved", "added") if done else ("open", "modified")
+    state, status = ("resolved", "added") if done else ("gap", "modified") if it["gap"] else ("open", "modified")
     head = (f'<summary><span class="badge {status}"></span><span class="id">{it["id"]}</span>'
             f'<span class="status">{html.escape(it["kind"])}</span><span class="title">{inline(it["title"], gloss, auto=True)}</span>'
             f'<span class="state">{state}</span></summary>')
@@ -1899,6 +2065,23 @@ def check_changes(catalog, drafts, authoring, bases=()):
     no entry names something unchanged or absent."""
     catalog, drafts, authoring, bases = Path(catalog), Path(drafts), Path(authoring), [Path(b) for b in bases]
     _, _, _, changes, _, _ = parse_authoring(authoring, drafts)
+    text = authoring.read_text(encoding="utf-8")
+    log_issues = check_decision_log(authoring, text)
+    disc_items = {it["id"]: it for _, its in parse_discussion(text) for it in its}
+    known = set(disc_items)
+    log_issues += [Issue(authoring, c.line, f"{c.cid} cites {did}, which is not in ## Discussion")
+                   for c in changes for did in sorted(set(re.findall(r"\bD\d+\b", c.why))) if did not in known]
+    # every gap footnote in the drafts names an open gap item, and every open gap item is marked
+    open_gaps = {d for d, it in disc_items.items() if it["gap"] and not it["done"]}
+    marked = set()
+    for d in sorted(drafts.rglob("*.md")):
+        sp = parse(d)
+        for it in (sp.items if sp.kind == "spec" else []):
+            for g in it.gaps:
+                marked.add(g.did)
+                if g.did not in open_gaps:
+                    log_issues.append(Issue(d, g.line, f"gap footnote [^{g.label}] names {g.did}, which is not an open gap item in ## Discussion"))
+    log_issues += [Issue(authoring, disc_items[d]["line"], f"{d} is a gap but no draft marks it with a gap footnote") for d in sorted(open_gaps - marked)]
     gloss = prepare(catalog, bases, drafts, drafts.parent / "product-specs-review.html")
     _, _, _, entries = render_tree([*reversed(bases), catalog], drafts, gloss, changes)
     added_files = {e.name for e in entries if e.what == "file" and e.status == "added"}
@@ -1956,7 +2139,7 @@ def check_changes(catalog, drafts, authoring, bases=()):
                 issues.append(Issue(authoring, m.line, f"{m.cid} declares move but {what} {name} also changed; a modify entry is needed"))
             for c in modifies if status == "unchanged" else []:
                 issues.append(Issue(authoring, c.line, f"{c.cid} declares modify but moved {what} {name} is unchanged"))
-    return issues
+    return issues + log_issues
 
 
 def describe(what, name):

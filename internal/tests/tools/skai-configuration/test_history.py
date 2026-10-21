@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[4]
 spec = importlib.util.spec_from_file_location("selection", ROOT / "Bin/skai-configuration.py")
 selection = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(selection)

@@ -256,3 +256,22 @@ no-package run seeds the package before filing. Its repairs (r1 F3, r5 F1) are i
 - Top-level `todos:` are not rendered.
 - May 2026 H3 deferred; the scope-expansion rule and L1 / L3 / L6 logged pending recurrence.
 - The lost spec's *Skills* section may have held host-adapter rules beyond P1; nothing survives.
+
+## Adopts — 2026-10-20 (known gaps)
+
+UI Map implementation and both artifact references adopt
+[`product-specs-system-design.md`](product-specs-system-design.md) § Decisions — 2026-10-20 (format
+definitions and propagation): the **Gap** sub-bullet, one Decision line, `## Decision Log` as the
+artifact's last section, the pointer sentence, gap items carried past the Discussion gate, and zero
+open gaps in either artifact before the official-map write. The architecture guide adopts the same,
+keeping its lean Discussion (collapse a topic around the current decision, remove stale items): the
+supervisor ruled 2026-10-20 that the house style follows UI Map here, the log outliving its items.
+Caps (supervisor, 2026-10-20), set a little under the compressed sizes after the known-gaps
+additions; the guides' extensive refinement history counts as compression, so these are not interim:
+`ui-map-architecture.md` 35,700; `ui-map-architecture-artifacts.md` 5,500;
+`ui-map-implementation.md` 50,900; `ui-map-implementation-artifacts.md` 6,500. Whole-file bytes by
+`wc -c`; they bind every repair per the refinement guide's size-budget rule.
+
+## Adopts — 2026-10-21 (working docs placement)
+
+Working documents serving a package live in its `working-docs/` folder and archive with it at promotion (`ui-map-architecture-artifacts.md`, `ui-map-implementation-artifacts.md`, `ui-map-implementation.md` § Archive the package; caps held; skai#92, `Guides/Core/working-doc-conventions.md`); build and test output goes to the scratch root, never the package. The layout above is superseded on two lines: build and render output is no longer persisted under `evidence/` (the Evidence bracket names the scratch path), and a no-proposal conformance run lives at `skai/working-docs/<session>/ui-map-implementation.md`, with no branch segment.

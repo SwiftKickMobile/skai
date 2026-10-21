@@ -36,7 +36,7 @@ Run this scan after *each* guide edit, not just at the end of a batch. Deferring
 
 **Record the result of every check, even when clean.** For each check below, write down either `0 occurrences` (with the search / inspection used — file paths, `grep` / `rg` pattern, or "visual review of section X") or a list of occurrences classified per-check (e.g., `<path>:<line>` → `false positive (intentional per …)` / `to fix` / `to revisit`). Reading the check and self-certifying "done" without a recorded result is the failure mode this rule prevents — a `0 occurrences` line with the search used is the minimum evidence. This matches the recording discipline already required for flow-reflection simulations (see [`gated-workflows.md`](gated-workflows.md#flow-reflection-required-for-guides-with-gates)).
 
-Apply the gated-workflow checks only to workflows with gates; use the change-package checks in [`change-packages.md`](change-packages.md#verification) when packages are involved. For ephemeral working documents use the working-doc path formula; change packages use their own type paths.
+Apply the gated-workflow checks only to workflows with gates; use the change-package checks in [`change-packages.md`](change-packages.md#verification) when packages are involved. For working documents use the working-doc placement rule (a package's `working-docs/` folder, otherwise the session path formula); change packages use their own type paths.
 
 Checks:
 
@@ -49,7 +49,7 @@ Checks:
 - A gated guide whose `## Gates` lacks the one-sentence supervisor definition
 - Mixed gate terminology ("checkpoint" and "gate" used interchangeably without a workflow-specific reason)
 - Stack-mismatched references (e.g., Xcode terms in Android-only sections)
-- If the guide creates ephemeral working docs, stale path layouts that skip the required `session-name` folder
+- If the guide creates working docs, stale path layouts (a `<branch-path>` segment, or a missing `session-name` folder), or build/test output written into a working doc or the repository instead of the scratch root
 
 **Process-flow template compliance:**
 - Gate controls missing shared approval, persistence or blocked-stop invariants; assess an explicitly declared compact control model against those invariants rather than requiring default text verbatim
@@ -66,6 +66,8 @@ Checks:
 - Discussion items missing the `[Kind]` label (`[Question]` / `[Proposal]` / `[Tradeoff]`) — every item should declare its shape.
 - Discussion phases that do not use the canonical gate pattern: blocked gate while `- [ ]` items remain, planned gate the moment they're all resolved (the *first planned gate* of the workflow). See `Guides/Core/process-flow.md` "Discussion-phase gate behavior".
 - Discussion phases with a separate "draft is ready, please review" planned gate before the discussion begins — this duplicates the blocked/planned gate cycle. The drafting response itself should end with the blocked or planned gate per item state.
+- A Discussion-phase guide missing the gap pointer sentence (grep `known-gaps.md`; the sentence is verbatim from `Guides/Core/process-flow.md` § Sub-bullet labels) or whose artifact skeleton lacks `## Decision Log` as its last section.
+- Gap workflow text inlined in a guide (what to do with an inherited gap, the three resolutions, catch-up) — that belongs only in `Guides/Core/known-gaps.md`; the guide keeps the pointer.
 
 **Flow control integrity:**
 - Any place where the guide says the agent waits for the supervisor but does not end with a `⏳ GATE:` line in the described runtime behavior.
@@ -78,7 +80,7 @@ Checks:
 - Examples or walkthroughs that show markers cleared without a preceding gate + advance intent step, unless the guide explicitly documents a narrower exception (for example, inline discussion items resolved during supervisor-approved discussion).
 - `auto` sections that list gates bypassed by `auto` without labeling which gates are hard (not bypassed). If a guide has both soft and hard gates, the `## Gates` section should label the hard ones.
 - Inline "Gate:" signposts that add mechanics not present in the `## Gates` section (acceptable to say "Gate: STOP"; not acceptable to add new rules about what happens at the gate unless they are already defined in the gate model).
-- If the guide defines working-doc paths, any examples or artifact paths that place files directly under `skai/working-docs/<branch-path>/...` instead of `skai/working-docs/<branch-path>/<session-name>/...`.
+- If the guide defines working-doc paths, any examples or artifact paths that place files directly under `skai/working-docs/` instead of `skai/working-docs/<session-name>/...` or a package's `working-docs/` folder.
 
 ## README Usage section conventions
 

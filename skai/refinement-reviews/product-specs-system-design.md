@@ -399,6 +399,96 @@ product owner had made. Shared by product specs, design specs and UI Map archite
    the drafts cannot be written from what they know. Observed 2026-10-19: a request filed from a
    fully stated model as a bare list, because the guide called drafts "optional".
 
+## Decisions — 2026-10-20 (known gaps: format definitions)
+
+From the known-gaps planning (SwiftKickMobile/skai#82). These are the house-style definitions in
+`process-flow.md` § Structured discussion items; the workflow that uses them is the shared
+[`known-gaps.md`](../../Guides/Core/known-gaps.md) guide (its own design spec:
+[`known-gaps-design.md`](known-gaps-design.md)). Propagation into the family guides and the
+promotion readiness rule are a later slice and amend this spec again.
+
+1. **A gap item stays open with a Gap line.** An item that cannot be resolved because something
+   outside the work is not yet known carries `- **Gap** <placeholder: what stands where until it is
+   answered, or "none; waiting on <what>">` as its last sub-bullet and keeps its box unchecked
+   (supervisor, 2026-10-20: a gap without a placeholder says so in the same field; free text, no
+   new field). An open gap item does not count
+   toward the discussion-phase blocked gate: with only gap items open the planned gate is emitted,
+   naming them (`⏳ GATE: Next: Discussion complete; <n> open gaps carried. Say "next" …`). It
+   does block promotion (zero open gaps), which the later slice applies to the promotion guides.
+2. **A gap resolves like any item** — box checked, `- **Decision**` appended, and the Decision says
+   which of the three it was: answered, placeholder adopted, or omitted. Transitions (added
+   2026-10-20 after a supervisor finding; the first text listed states only): open → decided
+   (Decision appended, log `decided`); open → gap (Gap line, log `gap`); gap → decided (Gap line
+   removed, Decision says answered / adopted / omitted, log `decided`); decided → decided (the
+   decision changes: Decision line replaced, log `decided` again); decided → open (withdrawn with
+   no replacement: Decision line removed, box unchecked, log `reopened`). A gap's placeholder
+   changing while it stays a gap is not a state change and logs nothing.
+3. **`## Decision Log`, one per artifact, append-only.** The last `##` section before any
+   trailing link definitions. One line per state change, naming the item: `- <ID> <state> —
+   <one line>` with state one of `decided`, `gap`, `reopened`. Order is the history; no dates. An
+   item carries only its current state: one Decision line at most, removed when the item is
+   reopened (the log keeps what it said). Every Discussion-based artifact has the section, empty
+   when nothing has changed state. The tool checks that the last log entry for each item agrees
+   with the item (checked ⇔ `decided`; Gap line ⇔ `gap`; otherwise none or `reopened`).
+4. **One pointer sentence, inlined.** Every Discussion-phase guide carries, next to its Discussion
+   rules, the sentence process-flow gives verbatim, naming both triggers (a gap on an input the
+   agent relies on; an item of its own that cannot be resolved because something outside the work
+   is not yet known) and sending the agent to the known-gaps guide. The sanity scan checks for it.
+5. **Why house style, not the shared guide.** The Gap line and the log are written every time an
+   item changes state, in every Discussion workflow, so they are inlined with the schema; the gap
+   workflow is conditional and lives in the shared guide (two-bucket rule, supervisor 2026-10-20).
+
+Size cap for `process-flow.md`: **21,200 bytes** (supervisor, 2026-10-20; was 21,000 after slice 1), set
+just under the compressed size after slice 2's additions (21,220). The baseline itself has never been
+compressed; SwiftKickMobile/skai#89 is the pass that will reset it.
+
+## Decisions — 2026-10-20 (known gaps: propagation)
+
+Slice 2 of the known-gaps effort. The format definitions above are inlined into every
+Discussion-phase guide; these are the rules that go beyond the format.
+
+1. **Promotion readiness requires zero open gaps.** Readiness item 1 ("every Discussion item is
+   resolved") now says gap items included: an open gap fails readiness, is recorded in Evidence,
+   and the package returns to authoring to resolve it per the known-gaps guide. Promotion never
+   resolves a gap. The same rule sits before the UI Map official write.
+2. **Authoring's gate carries gaps.** The Discussion blocked gate counts non-gap items only; the
+   planned gate names the open gaps carried (`Discussion complete<; N open gaps carried>`). The
+   marker lifecycle's "by then they are already clear" gains the gap exception.
+3. **The tool enforces the log.** `check-changes` fails when the authoring artifact's
+   `## Decision Log` disagrees with its Discussion (section missing once items exist, not last,
+   malformed entry, last entry not matching the item's state, two Decision lines, checked with a Gap
+   line, a change entry citing a `D#` the Discussion lacks; an entry whose item was removed is allowed); `render` shows gap items with state "gap", counts gaps on the
+   card, and renders the log after the Discussion. The artifact reference says so.
+4. **Caps (supervisor, 2026-10-20).** Set a little under each file's compressed size, so the next
+   round earns its bytes (not old cap plus addition): `product-specs-authoring.md` 21,300;
+   `product-specs-artifacts.md` 6,800; `product-specs-promotion.md` 17,000 (unchanged);
+   `spec-file-shape.md` 8,200 (unchanged; recorded in `spec-format-design.md`). These supersede the
+   2026-10-18 table rows for those files.
+5. **Lean Discussion, from UI Map (supervisor, 2026-10-20).** A resolved item stays while
+   something current cites it (a change item's justification, a map change, a known-difference
+   note) or it still explains the current drafts; otherwise it is removed. The Decision Log keeps
+   its record, so an entry may outlive its item; the tool tolerates that and instead checks that
+   every `D#` a change entry cites is in the Discussion. The earlier rule that the original stays
+   visible forever is withdrawn.
+
+## Decisions — 2026-10-20 (known gaps: spec files)
+
+Slice 3. The spec-file representation of a gap is `spec-format-design.md` decision 21; these are the
+workflow consequences.
+
+1. **Authoring marks the placeholder.** *Draft the requirement anyway* (product specs) and
+   *Drafting* (design specs) say the placeholder is marked with the shape guide's gap footnote
+   naming the item. Nothing else in the authoring guides changes: the footnote is the shape's.
+2. **The tool pairs footnotes and items (G12, supervisor, 2026-10-20).** `check-changes` fails when
+   a draft's gap footnote names a `D#` that is not an open gap item, or when an open gap item has
+   no footnote in any draft (a marker-less note counts). That is what makes zero open gaps at
+   promotion mean the drafts carry no placeholder.
+3. **The page lists gaps.** The artifact reference says the page lists the drafts' gap footnotes,
+   each linked to its item, beside the gap-item marks and the log.
+4. **Caps** for `product-specs-authoring.md` (21,300) and `product-specs-artifacts.md` (6,800) held
+   (supervisor, 2026-10-20): the one-sentence additions were compressed and the old caps forced the
+   trims.
+
 ## Size Budgets — 2026-10-18
 
 Set by the supervisor from four efficiency reviews (SalesPro checkout, `working-docs/requirements-process/reviews/`), as today's size less measured obsolete content, less the reviewed trim on what remains, plus known growth. Whole-file bytes by `wc -c`, managed header and addendum footer included. They bind every repair per the refinement guide's size-budget rule.
@@ -420,3 +510,7 @@ Group caps across both spec types and the design process guides: content 37,000;
 **Rendered page, prominently linked (supervisor, 2026-10-18).** The authoring artifact and the promotion artifact each link the package's rendered review page (`product-specs-review.html`) at the top, directly under the title, before Goal or Inputs; a change request's `request.md` links `request-review.html` the same way. The link is the first thing a reviewer sees.
 
 **Live render (supervisor, 2026-10-18).** The rendered page is the primary way the supervisor views a change package while it is being iterated on. Any time the package materially changes — a draft edited, a discussion item resolved, a change item added, a request triaged — the agent validates and re-renders before anything else, in every workflow that writes a package. The gate and promotion renders are not the only ones; they are the last of many. Validation and rendering take milliseconds, so there is no cost argument for deferring them.
+
+## Adopts — 2026-10-21 (working docs placement)
+
+Working documents serving a package live in its `working-docs/` folder and archive with it at promotion (`product-specs-artifacts.md` layout, `product-specs-promotion.md` § Archive the package; caps held; skai#92, `Guides/Core/working-doc-conventions.md`); build and test output goes to the scratch root, never the package.
