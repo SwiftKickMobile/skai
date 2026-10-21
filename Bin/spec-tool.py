@@ -97,8 +97,14 @@ Usage:
         name) or a known-difference note names an item that shows as modified. A moved item may
         change on the way: then a modify entry rides on the move and both are accepted, and a
         move whose item changed without a modify entry fails, as does a modify entry on a moved
-        item whose text is the same. One line per failure as path:line: message; exit
-        status 1 when there are any.
+        item whose text is the same. The authoring artifact's "## Decision Log" is checked
+        against its Discussion: the section exists once the Discussion has an item and is the
+        artifact's last; each line is "- <ID> decided|gap|reopened — <one line>"; an entry may
+        name an item since removed (the log outlives its items); an item's last entry agrees with
+        it (checked ⇔ decided, a "**Gap**" sub-bullet ⇔ gap, otherwise reopened or none); an item
+        carries at most one Decision line and is never both checked and a gap; every D# a change
+        entry's justification cites is in the Discussion. One line per failure as
+        path:line: message; exit status 1 when there are any.
 
 GLOSSARY TERMS (what "every occurrence in spec prose" covers, for validate and link-terms)
 
@@ -152,13 +158,15 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     product-specs/ or design-specs/ (a legacy requirements/ parent is accepted too; else the drafts'
     parent); a legend
     row of counts (added, modified, retired or removed, unchanged, added files), each with its
-    colored square; a card with the package's status (open item count, or "discussion complete"),
+    colored square; a card with the package's status (open item count, or "discussion complete",
+    either with the count of gaps carried — open items whose last sub-bullet is a Gap line),
     title, goal and discussion count; a "Documents" box with one linked line per file (square,
-    name, changed count); the discussion items as collapsible cards (summary: square, ID, kind, title, "open" or "resolved"; resolved start collapsed, open expanded), in their "###" topic groups in artifact
-    order, each a card with its square (green approved, amber open), ID, kind, title and its
+    name, changed count); the discussion items as collapsible cards (summary: square, ID, kind, title, "open", "gap" or "resolved"; resolved start collapsed, open and gap expanded), in their "###" topic groups in artifact
+    order, each a card with its square (green approved, amber open or gap), ID, kind, title and its
     sub-bullets as written (Concern, Proposal, Options with their lettered choices, Detail, Why,
-    Decision), citations linked and popovers as elsewhere, so an item can be resolved from the
-    page; then each file in order. When the artifact has a "## Situations" section it is
+    Gap, Decision), citations linked and popovers as elsewhere, so an item can be resolved from the
+    page; then the artifact's "## Decision Log" as a numbered list (ID, state, text; "No entries."
+    when empty) whenever the section exists; then each file in order. When the artifact has a "## Situations" section it is
     rendered after the card, as written (headings, bullets, paragraphs), citations linked. The
     card, Situations and Discussion resolve their links through the authoring artifact's own
     definitions, never a draft's.
@@ -1486,7 +1494,8 @@ def parse_discussion(text):
     if not m:
         return []
     topics, item = [], None
-    for line in m.group(1).splitlines():
+    first = text[:m.start(1)].count("\n") + 1
+    for n, line in enumerate(m.group(1).splitlines(), first):
         if not line.strip():
             continue
         h = ANY_H3_RE.match(line)
@@ -1498,12 +1507,15 @@ def parse_discussion(text):
         elif it:
             if not topics:
                 topics.append(("", []))
-            item = {"done": it.group("done") == "x", "id": it.group("did"), "kind": it.group("kind"), "title": it.group("title"), "bullets": []}
+            item = {"done": it.group("done") == "x", "id": it.group("did"), "kind": it.group("kind"), "title": it.group("title"),
+                    "bullets": [], "line": n, "gap": False, "decisions": 0}
             topics[-1][1].append(item)
         elif item is None:
             continue
         elif line.lstrip().startswith("- ") and indent <= 2:
             item["bullets"].append([line.lstrip()[2:].strip(), []])
+            item["gap"] = item["gap"] or line.lstrip()[2:].startswith("**Gap**")
+            item["decisions"] += line.lstrip()[2:].startswith("**Decision**")
         elif line.lstrip().startswith("- ") and item["bullets"]:
             item["bullets"][-1][1].append(line.lstrip()[2:].strip())
         elif item["bullets"]:  # continuation line
@@ -1513,6 +1525,56 @@ def parse_discussion(text):
             else:
                 tail[0] += " " + line.strip()
     return topics
+
+
+LOG_ENTRY_RE = re.compile(r"^- (?P<id>[A-Z]+\d+) (?P<state>decided|gap|reopened) — (?P<text>.+?)\s*$")
+
+
+def parse_decision_log(text):
+    """The '## Decision Log' section: (present, entries, bad) with entries [(id, state, text, line)]
+    in artifact order and bad the lines (line, text) that are not entries; present is None when
+    the section is missing, else the line of a '## ' heading that follows it (the log must be the
+    artifact's last section) or 0."""
+    m = re.search(r"^## Decision Log\s*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
+    if not m:
+        return None, [], []
+    first = text[:m.start(1)].count("\n") + 1
+    entries, bad = [], []
+    for n, line in enumerate(m.group(1).splitlines(), first):
+        if not line.strip() or LINKDEF_RE.match(line):
+            continue
+        e = LOG_ENTRY_RE.match(line)
+        (entries.append((e.group("id"), e.group("state"), e.group("text"), n)) if e else bad.append((n, line)))
+    after = re.search(r"^## ", text[m.end():], re.M)
+    return (text[:m.end() + after.start()].count("\n") + 1 if after else 0), entries, bad
+
+
+def check_decision_log(path, text):
+    """The log and the items agree: every item's last entry matches its state (checked ⇔ decided,
+    a Gap line ⇔ gap, otherwise none or reopened); an entry may name an item since removed (the
+    log outlives its items); the log is the last section; an item carries at most one Decision line and is never both
+    checked and a gap. The section is required once the Discussion has any item."""
+    items = {it["id"]: it for _, its in parse_discussion(text) for it in its}
+    present, entries, bad = parse_decision_log(text)
+    issues = []
+    if present is None:
+        return [Issue(path, 1, "no ## Decision Log section; every Discussion artifact ends with one")] if items else []
+    if present:
+        issues.append(Issue(path, present, "a section follows ## Decision Log, which must be the artifact's last"))
+    issues += [Issue(path, n, f"not a Decision Log entry (`- <ID> decided|gap|reopened — <one line>`): {line.strip()}") for n, line in bad]
+    last = {did: state for did, state, _, _ in entries}  # an entry may outlive its item: the log is the history
+    for did, it in items.items():
+        if it["decisions"] > 1:
+            issues.append(Issue(path, it["line"], f"{did} carries {it['decisions']} Decision lines; at most one"))
+        if it["done"] and it["gap"]:
+            issues.append(Issue(path, it["line"], f"{did} is checked and still carries a Gap line"))
+        want = "decided" if it["done"] else "gap" if it["gap"] else None
+        got = last.get(did)
+        if want and got != want:
+            issues.append(Issue(path, it["line"], f"{did} is {'checked' if it['done'] else 'a gap'} but its last Decision Log entry is {got or 'missing'} (expected {want})"))
+        elif not want and got not in (None, "reopened"):
+            issues.append(Issue(path, it["line"], f"{did} is open but its last Decision Log entry is {got} (expected reopened or none)"))
+    return issues
 
 
 CSS = """
@@ -1552,7 +1614,7 @@ ul{padding-left:18px;margin:6px 0}li{margin:2px 0}
 table.t{border-collapse:collapse;width:100%;margin:8px 0}table.t td,table.t th{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;vertical-align:top}
 table.t td .badge,table.t th .badge{margin-right:6px}li>.badge{margin-right:4px}
 .file-why{font-size:13px;color:var(--muted);margin:0 0 8px}
-details.discussion summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:center;flex-wrap:wrap}details.discussion summary::-webkit-details-marker{display:none}details.discussion .state{margin-left:auto;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}details.discussion>ul{margin-top:8px}
+details.discussion summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:center;flex-wrap:wrap}details.discussion summary::-webkit-details-marker{display:none}details.discussion .state{margin-left:auto;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}details.discussion>ul{margin-top:8px}details.discussion.gap .state{color:var(--tag-mod)}ol.log{margin:0;padding-left:22px}ol.log li{margin:2px 0}ol.log .status{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
 .item.request .status{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;border:1px solid var(--line);border-radius:999px;padding:1px 8px}.item.request .title{font-weight:600}
 p.intro{margin:4px 0 10px}p.intro .badge{margin-right:8px}
 #pop{position:absolute;z-index:10;max-width:560px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:10px 14px;font-size:14px;display:none}
@@ -1798,10 +1860,13 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
     head, discussion = "", ""
     if title or goal:
         items = [it for _, its in disc for it in its]
-        n_open = sum(1 for it in items if not it["done"])
-        n_done = len(items) - n_open
-        state = "discussion complete" if items and not n_open else (f"{n_open} open" if n_open else "no discussion items")
-        foot = f"Discussion: {n_done} approved, {n_open} open" if items else "No discussion items"
+        n_gap = sum(1 for it in items if not it["done"] and it["gap"])
+        n_open = sum(1 for it in items if not it["done"]) - n_gap
+        n_done = len(items) - n_open - n_gap
+        gaps = f"{n_gap} gap{'s' if n_gap != 1 else ''}"
+        state = ((f"discussion complete; {gaps} carried" if n_gap else "discussion complete") if items and not n_open
+                 else (f"{n_open} open" + (f", {gaps}" if n_gap else "") if n_open else "no discussion items"))
+        foot = f"Discussion: {n_done} approved, {n_open} open, {gaps}" if items else "No discussion items"
         head += (f'<div class="item request"><div class="head"><span class="status">{html.escape(state)}</span>'
                  f'<span class="title">{html.escape(title)}</span></div>'
                  + (f"<p>{inline(goal, gloss, auto=True)}</p>" if goal else "")
@@ -1812,6 +1877,11 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
         discussion = "<h2>Discussion</h2>" + "".join(
             (f'<h3 class="section">{html.escape(topic)}</h3>' if topic else "") + "".join(render_discussion_item(it, gloss) for it in items)
             for topic, items in disc)
+    present, entries, _ = parse_decision_log(Path(authoring).read_text(encoding="utf-8")) if authoring else (None, [], [])
+    if present is not None:
+        discussion += "<h2>Decision Log</h2><div class=\"item request\">" + (
+            "<ol class=\"log\">" + "".join(f'<li><span class="id">{html.escape(i)}</span> <span class="status">{st}</span> {inline(t, gloss, auto=True)}</li>' for i, st, t, _ in entries) + "</ol>"
+            if entries else "<p>No entries.</p>") + "</div>"
     sections, toc, totals, _ = render_tree([*reversed(bases), catalog], drafts, gloss, changes)
     head += toc_html(toc) + discussion
     page = page_shell(f"Change Package: {package_id(drafts)}", totals, head, sections, gloss)
@@ -1824,7 +1894,7 @@ def render_discussion_item(it, gloss):
     resolved, amber open), ID, kind, title and the state word; resolved items start collapsed,
     open ones expanded; the sub-bullets as written show on expand."""
     done = it["done"]
-    state, status = ("resolved", "added") if done else ("open", "modified")
+    state, status = ("resolved", "added") if done else ("gap", "modified") if it["gap"] else ("open", "modified")
     head = (f'<summary><span class="badge {status}"></span><span class="id">{it["id"]}</span>'
             f'<span class="status">{html.escape(it["kind"])}</span><span class="title">{inline(it["title"], gloss, auto=True)}</span>'
             f'<span class="state">{state}</span></summary>')
@@ -1899,6 +1969,11 @@ def check_changes(catalog, drafts, authoring, bases=()):
     no entry names something unchanged or absent."""
     catalog, drafts, authoring, bases = Path(catalog), Path(drafts), Path(authoring), [Path(b) for b in bases]
     _, _, _, changes, _, _ = parse_authoring(authoring, drafts)
+    text = authoring.read_text(encoding="utf-8")
+    log_issues = check_decision_log(authoring, text)
+    known = {it["id"] for _, its in parse_discussion(text) for it in its}
+    log_issues += [Issue(authoring, c.line, f"{c.cid} cites {did}, which is not in ## Discussion")
+                   for c in changes for did in sorted(set(re.findall(r"\bD\d+\b", c.why))) if did not in known]
     gloss = prepare(catalog, bases, drafts, drafts.parent / "product-specs-review.html")
     _, _, _, entries = render_tree([*reversed(bases), catalog], drafts, gloss, changes)
     added_files = {e.name for e in entries if e.what == "file" and e.status == "added"}
@@ -1956,7 +2031,7 @@ def check_changes(catalog, drafts, authoring, bases=()):
                 issues.append(Issue(authoring, m.line, f"{m.cid} declares move but {what} {name} also changed; a modify entry is needed"))
             for c in modifies if status == "unchanged" else []:
                 issues.append(Issue(authoring, c.line, f"{c.cid} declares modify but moved {what} {name} is unchanged"))
-    return issues
+    return issues + log_issues
 
 
 def describe(what, name):

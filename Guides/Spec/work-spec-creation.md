@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-creation
 Managed-Source: Guides/Spec/work-spec-creation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-20
 
 # Work Spec Design
 
@@ -58,12 +58,13 @@ Use this order:
 ## Assumptions and TODOs                     when present
 ## Non-goals                                 when present
 ## Delivery Slices                           only when activated
+## Decision Log
 ```
 
-Goal, Inputs, Discussion, API Sketch, and Implementation Design always appear in a completed design
+Goal, Inputs, Discussion, API Sketch, Implementation Design and Decision Log always appear in a completed design
 with those exact headings and never carry status text. Before the first gate,
-omit `## Implementation Design`; its later presence proves that the gate advanced. When no
-post-approval detail is needed, write: `No additional implementation design is needed beyond the
+omit `## Implementation Design`; its presence proves the gate advanced. When no detail is
+needed, write: `No additional implementation design is needed beyond the
 approved API and decisions.` Do not emit other empty boilerplate. A table of contents is optional for
 a long document.
 
@@ -76,7 +77,7 @@ owns it.
 
 The design is ready when:
 
-- `## Discussion` has no unchecked items.
+- `## Discussion` has no unchecked non-gap items.
 - `## API Sketch` is present.
 - `## Implementation Design` is present.
 - No assumption or TODO blocks implementation planning.
@@ -97,13 +98,13 @@ Unexpected blockers use:
 
 `⏳ GATE: Blocked: <reason>. Resolve and say "next" to continue.`
 
-While Discussion has open items, use:
+While Discussion has open non-gap items, use:
 
 `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to approve the API sketch.`
 
 When none remain, use this skill's only planned gate:
 
-`⏳ GATE: Next: Discussion complete. Review the design decisions and API sketch, then say "next" to approve them and complete the design.`
+`⏳ GATE: Next: Discussion complete<; N open gaps carried>. Review the design decisions and API sketch, then say "next" to approve them and complete the design.`
 
 The supervisor is the human or authorized agent outside this workflow that resolves its discussion
 items and reviews its gates; the executing agent does not resolve or approve its own. This guide
@@ -122,21 +123,22 @@ emits the appropriate gate. Bare advance intent while unresolved re-emits the bl
 
 Discussion uses stable, never-renumbered `D#` checkboxes in tight topic lists. Explicit supervisor
 approval checks one item and appends its Decision; it is not advance intent. The planned gate appears
-only after every item is checked, and advance intent there authorizes `## Implementation Design`.
+only after every non-gap item is checked, and advance intent there authorizes `## Implementation Design`.
 
-"Approve all proposals" resolves every open item at its stated Proposal, including Tradeoffs and
+"Approve all proposals" resolves every open non-gap item at its stated Proposal, including Tradeoffs and
 Questions.
 
 ## Draft and discuss
 
 On initiation, write everything the first gate must review in one pass: the design through
-`## API Sketch` and any additional review section, omitting only `## Implementation Design`. Fill gaps
-with the agent's best proposal so the artifact is coherent and reviewable from the first draft. Update
+`## API Sketch` and any additional review section, omitting only `## Implementation Design`. Fill unknowns
+with the agent's best proposal (a gap with no placeholder stays out) so the artifact is coherent
+and reviewable from the first draft. Update
 the artifact before every response during Discussion; do not merely describe intended edits.
 
 ### Discussion items
 
-Organize Discussion by design topic, not by workflow categories such as Questions or Decisions. Use:
+Organize Discussion by design topic, never by workflow category. Use:
 
 ```markdown
 - [ ] D01 [Proposal] <summary; name the affected API or type when API-specific>
@@ -156,16 +158,17 @@ If drafting produces no items, `## Discussion` contains one sentence: `The liste
 the design; review the API Sketch as the proposed contract.` Omit that sentence whenever an item
 exists.
 
-`[Question]` is reserved for the rare case with no defensible recommendation. Its item uses a
+Keep gaps unchecked with `- **Gap** <placeholder, or "none; waiting on <what>">` last. A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
+
+`[Question]` is for the rare case with no defensible recommendation. Its item uses a
 `**Question**` line to name the needed input and a `**Proposal**` line to state the provisional
-resolution used by the API Sketch. Every other item is a `[Proposal]` or `[Tradeoff]` with a
-recommended answer.
+resolution used by the API Sketch, or a **Gap** line when none exists. Every other item is a
+`[Proposal]` or `[Tradeoff]`.
 
 A choice earns a `D#` only when supervisor review has leverage: it creates a long-lived contract,
 has broad blast radius, is costly to reverse, commits to an external system, or materially constrains
 future work. Clear implications of the inputs, project conventions, or existing architecture are
-encoded directly. Answer a supervisor question directly; make it a `D#` only when the answer itself
-requires a material choice.
+encoded directly. Answer a supervisor question directly; make it a `D#` only when the answer is a material choice.
 
 On explicit approval, preserve the item, check it, and append:
 
@@ -173,17 +176,21 @@ On explicit approval, preserve the item, check it, and append:
   - **Decision** <succinct resolution>.
 ```
 
-A resolved item is never rewritten, unchecked, removed, or renumbered. When a later decision changes
-it, add a new `D#` that names the decision it supersedes; the earlier record stays intact.
+Never renumber resolved items or rewrite their Concern, Options or Proposal. Keep resolved items
+only while cited by current work or explaining the design. For gaps, remove **Gap**; Decision says
+answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on
+change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End
+with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep
+entries after item removal.
 
-If feedback changes the proposal, update the discussion and every affected part of the design,
-including the API Sketch, before responding. Add or split an item only when the new decision meets
+If feedback changes the proposal, update the discussion and every affected part of the design
+before responding. Add or split an item only when the new decision meets
 the same materiality bar. Keep IDs stable.
 
 ### Returning to Discussion
 
-Before reopening, read the existing `## Implementation Design`, then remove that section so readiness
-cannot pass before renewed approval. Preserve resolved items, add the minimum new `D#` under its topic,
+Before reopening, read `## Implementation Design`, then remove it so readiness cannot pass before
+renewed approval. Preserve resolved items still explaining the design; change an affected item through the transitions under *Discussion items* (a new `D#` only for a new decision),
 update the API Sketch, and stop at the Discussion gate. After approval, rewrite Implementation Design,
 deriving it from the approved decisions, API Sketch, inputs, and repository.
 

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-promotion
 Managed-Source: Guides/ProductSpecs/product-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-20
 
 # Product Specs Promotion
 
@@ -137,17 +137,17 @@ collision or an inaccessible required reference blocks; never overwrite or merge
 Run `validate <catalog root> <drafts>`, `check-changes` and `render` first, so the supervisor
 reviews the current page, then verify before writing `## Promotion Checks`:
 
-1. Every `- [ ]` item in the authoring artifact's `## Discussion` is resolved.
+1. Every `- [ ]` item in `## Discussion` is resolved, gaps included
+   ([`known-gaps.md`](../Core/known-gaps.md)).
 2. `validate` reports no fault in a file the package holds and no conflict the projection
    introduces; a fault it notes in an untouched canonical file never blocks and becomes a change
    request (*Raising a change request*).
 3. `check-changes` passes: every change has a `## Requirement Changes` entry, or rides in one's
    Touches, at the artifacts guide's granularity, with the right operation; no entry names an
    unchanged or absent target.
-4. Every modified or retired ID or glossary entry has its sweep under the authoring artifact's
-   `## Verification`.
-5. No request remains `Proposed`, except one this run filed under *Raising a change request*;
-   this still holds when the write begins.
+4. Every modified or retired ID or glossary entry has its sweep under `## Verification`.
+5. No request remains `Proposed`, except one this run filed under *Raising a change request*,
+   now and when the write begins.
 
 On failure, record the condition in `## Evidence`, not a checks section, and return to authoring.
 

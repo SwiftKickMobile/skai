@@ -416,7 +416,13 @@ promotion readiness rule are a later slice and amend this spec again.
    naming them (`⏳ GATE: Next: Discussion complete; <n> open gaps carried. Say "next" …`). It
    does block promotion (zero open gaps), which the later slice applies to the promotion guides.
 2. **A gap resolves like any item** — box checked, `- **Decision**` appended, and the Decision says
-   which of the three it was: answered, placeholder adopted, or omitted.
+   which of the three it was: answered, placeholder adopted, or omitted. Transitions (added
+   2026-10-20 after a supervisor finding; the first text listed states only): open → decided
+   (Decision appended, log `decided`); open → gap (Gap line, log `gap`); gap → decided (Gap line
+   removed, Decision says answered / adopted / omitted, log `decided`); decided → decided (the
+   decision changes: Decision line replaced, log `decided` again); decided → open (withdrawn with
+   no replacement: Decision line removed, box unchecked, log `reopened`). A gap's placeholder
+   changing while it stays a gap is not a state change and logs nothing.
 3. **`## Decision Log`, one per artifact, append-only.** The last `##` section before any
    trailing link definitions. One line per state change, naming the item: `- <ID> <state> —
    <one line>` with state one of `decided`, `gap`, `reopened`. Order is the history; no dates. An
@@ -432,9 +438,38 @@ promotion readiness rule are a later slice and amend this spec again.
    item changes state, in every Discussion workflow, so they are inlined with the schema; the gap
    workflow is conditional and lives in the shared guide (two-bucket rule, supervisor 2026-10-20).
 
-Size cap for `process-flow.md`: **21,000 bytes** (supervisor, 2026-10-20), the unreviewed baseline of
-19,424 plus the addition after Astra's compression review (1,889 drafted, 1,482 compressed). The
-baseline itself has never been compressed; SwiftKickMobile/skai#89 is the pass that will reset it.
+Size cap for `process-flow.md`: **21,200 bytes** (supervisor, 2026-10-20; was 21,000 after slice 1), set
+just under the compressed size after slice 2's additions (21,220). The baseline itself has never been
+compressed; SwiftKickMobile/skai#89 is the pass that will reset it.
+
+## Decisions — 2026-10-20 (known gaps: propagation)
+
+Slice 2 of the known-gaps effort. The format definitions above are inlined into every
+Discussion-phase guide; these are the rules that go beyond the format.
+
+1. **Promotion readiness requires zero open gaps.** Readiness item 1 ("every Discussion item is
+   resolved") now says gap items included: an open gap fails readiness, is recorded in Evidence,
+   and the package returns to authoring to resolve it per the known-gaps guide. Promotion never
+   resolves a gap. The same rule sits before the UI Map official write.
+2. **Authoring's gate carries gaps.** The Discussion blocked gate counts non-gap items only; the
+   planned gate names the open gaps carried (`Discussion complete<; N open gaps carried>`). The
+   marker lifecycle's "by then they are already clear" gains the gap exception.
+3. **The tool enforces the log.** `check-changes` fails when the authoring artifact's
+   `## Decision Log` disagrees with its Discussion (section missing once items exist, not last,
+   malformed entry, last entry not matching the item's state, two Decision lines, checked with a Gap
+   line, a change entry citing a `D#` the Discussion lacks; an entry whose item was removed is allowed); `render` shows gap items with state "gap", counts gaps on the
+   card, and renders the log after the Discussion. The artifact reference says so.
+4. **Caps (supervisor, 2026-10-20).** Set a little under each file's compressed size, so the next
+   round earns its bytes (not old cap plus addition): `product-specs-authoring.md` 21,300;
+   `product-specs-artifacts.md` 6,800; `product-specs-promotion.md` 17,000 (unchanged);
+   `spec-file-shape.md` 8,200 (unchanged; recorded in `spec-format-design.md`). These supersede the
+   2026-10-18 table rows for those files.
+5. **Lean Discussion, from UI Map (supervisor, 2026-10-20).** A resolved item stays while
+   something current cites it (a change item's justification, a map change, a known-difference
+   note) or it still explains the current drafts; otherwise it is removed. The Decision Log keeps
+   its record, so an entry may outlive its item; the tool tolerates that and instead checks that
+   every `D#` a change entry cites is in the Discussion. The earlier rule that the original stays
+   visible forever is withdrawn.
 
 ## Size Budgets — 2026-10-18
 

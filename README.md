@@ -247,6 +247,7 @@ After installation, workflows are available as **skills** that your agent activa
 Turn open-ended feature input into a technical design whose primary review surface is a complete diff of changed production APIs. The agent fills gaps with proposals, keeps the design and API Sketch current through discussion, and invokes UI Map architecture or product specs authoring when their owned artifacts are needed. It does not write the implementation task list or code.
 
 - Guide [`Guides/Spec/work-spec-creation.md`](Guides/Spec/work-spec-creation.md)
+- Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 
 **Prerequisites:** Any useful input: a discussion, design, ticket, requirements, another specification, source code, or a combination.
 
@@ -260,6 +261,7 @@ Turn open-ended feature input into a technical design whose primary review surfa
 Audit an approved work-spec design against the codebase, create its concrete task list, then implement and verify it continuously after one plan approval. Supports plan-only architect/developer handoff and same-agent design-to-build flow.
 
 - Guide [`Guides/Spec/work-spec-implementation.md`](Guides/Spec/work-spec-implementation.md)
+- Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 
 **Prerequisites:** A ready work-spec design and project build/test/runtime commands in [`skai/integration.md`](skai/integration.md).
 
@@ -273,6 +275,7 @@ Audit an approved work-spec design against the codebase, create its concrete tas
 Create or change the app's UI Map as an architecture artifact. Produces a change package under `skai/changes/<change-id>/ui-map/` containing the architecture artifact, `proposed-ui-map.yaml`, and `proposed-ui-map.html`; the official map stays frozen during architecture.
 
 - Guide [`Guides/UIMap/ui-map-architecture.md`](Guides/UIMap/ui-map-architecture.md)
+- Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 - Hosting [`Guides/Core/artifact-hosting.md`](Guides/Core/artifact-hosting.md) — read when the artifact does not exist yet: which repository it goes in, and the README link
 - Example [`Guides/UIMap/ui-map-demo.md`](Guides/UIMap/ui-map-demo.md) -- a complete UI Map in YAML with its rendered diagram
 
@@ -288,6 +291,7 @@ Create or change the app's UI Map as an architecture artifact. Produces a change
 Execute or specify the structural code work needed to conform to the target UI Map. The target is the proposed map when an architecture change package exists, or the official map for a no-package conformance run. The guide covers the audit, alignment discussion, checkbox-tracked code changes and their ownership dispositions, placeholder scaffolding, build verification, change requests back to architecture, and promotion of an approved proposed map.
 
 - Guide [`Guides/UIMap/ui-map-implementation.md`](Guides/UIMap/ui-map-implementation.md)
+- Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 
 **Prerequisites:** The app codebase and an identifiable target map: either a ready change package at `skai/changes/<change-id>/ui-map/` (proposed map + render + architecture artifact) or the official `skai/ui-map/ui-map.yaml` for conformance work. Run mode (Plan vs Build) is inferred from context.
 
@@ -303,6 +307,7 @@ Execute or specify the structural code work needed to conform to the target UI M
 Draft requirements into a change package under `skai/changes/<change-id>/product-specs/` against the product specs, resolve the questions they raise, and leave the package ready to promote. The canonical catalog stays unchanged during authoring; the rendered review page in the package is how the supervisor reads it. Sources are open-ended -- designs, an existing implementation, a product brief, a planning document, or a change request -- and the mode (baseline vs. scoped change) is inferred from the catalog rather than declared.
 
 - Guide [`Guides/ProductSpecs/product-specs-authoring.md`](Guides/ProductSpecs/product-specs-authoring.md)
+- Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 - Baseline [`Guides/ProductSpecs/product-specs-baseline.md`](Guides/ProductSpecs/product-specs-baseline.md) — read when authoring infers Baseline mode
 - Hosting [`Guides/Core/artifact-hosting.md`](Guides/Core/artifact-hosting.md) — read when the artifact does not exist yet: which repository it goes in, and the README link
 - Content rules [`Guides/ProductSpecs/product-specs-catalog.md`](Guides/ProductSpecs/product-specs-catalog.md) -- scopes, layout, indexes and glossary, IDs, writing style
@@ -325,6 +330,7 @@ Work-spec implementation may later update or remove those notes after verifying 
 requirement text and IDs remain unchanged.
 
 - Guide [`Guides/ProductSpecs/product-specs-promotion.md`](Guides/ProductSpecs/product-specs-promotion.md)
+- Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when readiness finds an open gap; the package returns to authoring to resolve it
 
 **Prerequisites:** A change package at `skai/changes/<change-id>/product-specs/` whose discussion is fully resolved and whose requirement change items match its drafts.
 
@@ -338,6 +344,7 @@ requirement text and IDs remain unchanged.
 Take a design change from an idea to approved mockups in a change package under `skai/changes/<change-id>/design/`, drafted on a change page named `<change-id>` in the project's design file. The production designs stay unchanged during authoring. Sources are open-ended -- an idea, sketches, a brief, a product spec package, an existing app to backfill from. The process guide is tool-agnostic and loads the conventions guide for the project's design tool (Figma today).
 
 - Guide [`Guides/Design/design-authoring.md`](Guides/Design/design-authoring.md)
+- Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 - Tool guide, loaded by the process guide: [`Guides/Design/figma-designer-guide.md`](Guides/Design/figma-designer-guide.md) for Figma (and [`figma-designer-guide-multiple-sizes.md`](Guides/Design/figma-designer-guide-multiple-sizes.md) for several target sizes)
 
 **Prerequisites:** The project README links the Figma file. Something to design from.
@@ -352,6 +359,7 @@ Take a design change from an idea to approved mockups in a change package under 
 Move an approved package's drafts from its change page into the production designs, have the supervisor confirm the result, delete the page, and archive the package to `skai/promoted/<change-id>/design/`. Promotion refactors production to absorb the drafts; a draft that needs changing returns the package to authoring. Implementing designs in code is out of scope.
 
 - Guide [`Guides/Design/design-promotion.md`](Guides/Design/design-promotion.md)
+- Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when readiness finds an open gap; the package returns to authoring to resolve it
 
 **Prerequisites:** A change package whose discussion is resolved, whose Design Changes inventory is written, and whose change requests against the product spec package are triaged.
 
@@ -365,6 +373,7 @@ Move an approved package's drafts from its change page into the production desig
 Draft design specs -- the rules joining a screen's design to the requirements: which drawn state shows under which condition, how data is formatted, what each control does, where the screen leads -- into a change package under `skai/changes/<change-id>/design-specs/`, resolve the questions they raise, and leave the package ready to promote. The canonical specs stay unchanged during authoring; the rendered review page in the package is how the supervisor reads it. An existing open package can be audited against the guides, the checks running over every draft before any edit. Sources are open-ended -- a story, a requirements or design change, designer notes, an existing app to backfill from -- and the mode (baseline vs. scoped change) is inferred from the specs rather than declared. Specs speak product language only: no frame, component or node names, no appearance words, no platform names outside a known-difference note.
 
 - Guide [`Guides/DesignSpecs/design-specs-authoring.md`](Guides/DesignSpecs/design-specs-authoring.md)
+- Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 - Shape [`Guides/Core/spec-file-shape.md`](Guides/Core/spec-file-shape.md) — the file shape product specs and design specs share, and the `Bin/spec-tool.py` commands that validate, cross-reference and render it (cited by the content, authoring and promotion guides)
 - Hosting [`Guides/Core/artifact-hosting.md`](Guides/Core/artifact-hosting.md) — read when the artifact does not exist yet: which repository it goes in, and the README link
 - Content rules [`Guides/DesignSpecs/design-specs.md`](Guides/DesignSpecs/design-specs.md) -- layout, items, IDs, writing style, the ten verification checks
@@ -382,6 +391,7 @@ Draft design specs -- the rules joining a screen's design to the requirements: w
 Write an approved design-spec package into the canonical specs and archive it to `skai/promoted/<change-id>/design-specs/`. Promotion verifies; it never rewrites a spec's prose. A spec promotes on the supervisor's approval, whatever the state of the implementation.
 
 - Guide [`Guides/DesignSpecs/design-specs-promotion.md`](Guides/DesignSpecs/design-specs-promotion.md)
+- Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when readiness finds an open gap; the package returns to authoring to resolve it
 
 **Prerequisites:** A package whose Discussion is resolved and whose Spec Changes are written, citing only canonical requirements.
 

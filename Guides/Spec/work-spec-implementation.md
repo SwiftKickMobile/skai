@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-implementation
 Managed-Source: Guides/Spec/work-spec-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-20
 
 # Work Spec Implementation
 
@@ -22,7 +22,7 @@ Start from the exact path to a design created by
 request includes a work spec or implementation, it returns here after completion. A design is ready
 when:
 
-- `## Discussion` has no unchecked items.
+- `## Discussion` has no unchecked non-gap items. A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 - `## API Sketch` and `## Implementation Design` are present.
 - No assumption or TODO blocks implementation planning.
 - Every required sibling architecture artifact is ready.
@@ -293,7 +293,7 @@ non-design blocker, record `[evidence: blocked — needs <result>]` on the task 
 record the supervisor's resolution there before resuming. A
 design/API problem transfers control to Work Spec Design in the same response; do not emit a separate
 implementation-side blocked gate first. Once active, Design reopens the artifact, records the problem
-as a new `D#`, and ends at its Discussion gate. When the design returns ready, re-audit, revise the
+(reopening or adding a `D#`), and ends at its Discussion gate. When the design returns ready, re-audit, revise the
 work spec without renumbering surviving tasks, and stop at the implementation-plan gate again.
 
 Do not remove, weaken, or defer a requirement, completion criterion, test, or design decision to make

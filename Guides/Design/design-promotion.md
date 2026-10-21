@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-promotion
 Managed-Source: Guides/Design/design-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-20
 
 # Design Promotion
 
@@ -115,16 +115,16 @@ readiness screen is for a new run.
 
 Before writing `## Promotion Checks`, verify:
 
-1. Every `- [ ]` item in the authoring artifact's `## Discussion` is resolved.
+1. Every `- [ ]` item in `## Discussion` is resolved, gaps included
+   ([`known-gaps.md`](../Core/known-gaps.md)).
 2. `## Design Changes` is written (the mockups were approved).
 3. The change page exists and every Design Changes entry links a draft on it.
 4. `skai/promoted/<change-id>/design/` does not exist.
-5. Every change request the package filed against the product spec package (listed under the
-   authoring artifact's `## Assumptions and TODOs`) is `Incorporated`, `Rejected`
+5. Every change request the package filed against the product spec package (listed under
+   `## Assumptions and TODOs`) is `Incorporated`, `Rejected`
    or `Superseded` per [`product-specs-artifacts.md`](../ProductSpecs/product-specs-artifacts.md)
-   § Change Requests, with the ruling's effect on the approved mockups applied: one invalidating
-   behavior the drawings assumed returns the package to authoring; one leaving them valid needs
-   nothing. A `Proposed` one blocks, now and when the production write begins.
+   § Change Requests, with the ruling applied to the approved mockups: one invalidating what the drawings
+   assumed returns the package to authoring; one leaving them valid needs nothing. A `Proposed` one blocks, now and when the production write begins.
 
 A failure is a blocked gate (*Gates*), recorded in `## Evidence` instead of a checks section.
 

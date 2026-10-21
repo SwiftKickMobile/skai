@@ -9,6 +9,7 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **Known gaps, part two.** Every Discussion-based guide now carries the Gap line, the Decision Log and the pointer to the gaps guide; promotion refuses a package with an open gap; the spec tool checks the log and shows gaps on the review page. Existing packages get a seeded Decision Log at update.
 - **Known gaps, part one.** A new reference guide says how to carry a question that must be decided before shipping as a placeholder, and the Discussion schema gains a Gap line and a per-artifact Decision Log. Nothing changes in installed workflows until the guides adopt it in a later release.
 
 ## Release 15 — 2026-10-19

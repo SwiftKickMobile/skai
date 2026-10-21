@@ -261,7 +261,7 @@ On the supervisor's explicit approval of an item:
 1. Check the box (`- [x]`).
 2. Append `- **Decision** <succinct resolution>.` as the last sub-bullet. For a gap, remove its **Gap** line and say which: answered, placeholder adopted, or omitted.
 
-The original question/proposal/tradeoff stays visible. The decision is appended, not substituted — the why-this-was-discussed trail is preserved for later review. Keep at most one **Decision** line; on reopening, remove it and uncheck the box (the log retains it).
+The original question/proposal/tradeoff stays visible. The decision is appended, not substituted — the why-this-was-discussed trail is preserved for later review. Keep at most one **Decision** line; on reopening, remove it and uncheck the box (the log retains it). Replace a changed Decision and log `decided` again; `reopened` means withdrawn with no replacement, so the item waits open. Remove a resolved item nothing current cites or needs; its log entries stay.
 
 ### Decision Log
 

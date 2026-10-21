@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-artifacts
 Managed-Source: Guides/DesignSpecs/design-specs-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-20
 
 # Design Spec Artifact Formats
 

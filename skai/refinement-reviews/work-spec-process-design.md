@@ -481,3 +481,15 @@ A cold reviewer should verify:
 
 Findings that would add ceremony must identify a failure the existing principles cannot cover.
 Prefer consolidating or sharpening an existing rule over adding a sibling rule.
+
+## Adopts — 2026-10-20 (known gaps)
+
+The work spec guides adopt [`product-specs-system-design.md`](product-specs-system-design.md)
+§ Decisions — 2026-10-20 once two supervisor rulings land: (1) creation's rule that a resolved item
+is never unchecked or rewritten, superseded by a new `D#`, conflicts with the house style's reopen
+(remove the Decision line, uncheck, log `reopened`); (2) implementation readiness ("Discussion has
+no unchecked items") against gap items, which stay unchecked and are built on through their
+placeholder. Implementation's start condition and creation's Discussion rules change with the
+rulings. Combined cap reset to **32,600 bytes** (supervisor, 2026-10-20), a little under the compressed
+size after the additions (32,626); the rulings landed the same day (house style on reopening; gaps
+never block implementation, skai#91).

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-promotion
 Managed-Source: Guides/DesignSpecs/design-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-20
 
 # Design Specs Promotion
 
@@ -119,25 +119,22 @@ inaccessible required reference blocks; never overwrite or merge a destination.
 
 ### Readiness Screen
 
-Prerequisite: every cited requirement's contract is canonical (`C2` repoints a draft link);
-otherwise record it in Evidence and wait at the standard blocked gate naming it, without
-returning the package.
-
 Run `validate <specs root> <drafts>`, `check-changes` and `render` first, so the supervisor reviews
-the current page, then verify before writing Promotion Checks:
+the current page; then verify:
 
-1. Discussion has no unresolved items.
+1. Discussion has no unresolved items, gaps included ([`known-gaps.md`](../Core/known-gaps.md)).
 2. `validate` reports no fault in a held file and no conflict the projection introduces; a fault
    noted in an untouched canonical file never blocks (*Raising a Change Request*).
 3. `check-changes` passes: every change has a `## Spec Changes` entry, or rides in one's Touches,
    at the artifact formats' granularity, with the right operation; no entry names an unchanged or
    absent target.
-4. Every modified or retired ID or glossary entry has its sweep under the authoring artifact's
-   `## Verification`.
-5. No request remains `Proposed`, except one this run filed under *Raising a Change Request*;
-   this still holds when the write begins.
+4. Every modified or retired ID or glossary entry has its sweep under `## Verification`.
+5. No request remains `Proposed`, except one this run filed under *Raising a Change Request*,
+   now and when the write begins.
 
-Failures go in Evidence, not Promotion Checks, and return the package to authoring.
+Failures go in Evidence, not Promotion Checks, and return the package to authoring. Then, every
+cited requirement's contract is canonical (`C2` repoints a draft link); otherwise record it in
+Evidence and wait at the standard blocked gate naming it, without returning the package.
 
 ## Promotion Checks
 

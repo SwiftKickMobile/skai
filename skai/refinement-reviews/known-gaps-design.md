@@ -39,8 +39,9 @@ Written 2026-10-20 from the known-gaps planning (SwiftKickMobile/skai#82).
    one that thinks it wrong files a change request upstream. A gap with no placeholder gives
    nothing to proceed on.
 3. **Gaps do not block authoring; they block promotion.** A gap item stays open through
-   authoring's completion. Every system's promotion requires zero open gaps in its own package: a
-   planned gate lists them, and "next" returns the package to authoring to resolve them.
+   authoring's completion. Every system's promotion requires zero open gaps in its own package: an
+   open gap fails readiness, the blocked gate lists them, and the package returns to authoring
+   (supervisor, 2026-10-20: a planned gate is for a step "next" advances; this is a block).
 4. **Three resolutions.** Answered (the decision replaces the placeholder); placeholder adopted
    (the provisional text becomes the rule); omitted (the dependent behavior leaves the drafts,
    recorded under Out of scope). A follow-up after adoption is a ticket, not the artifact's
@@ -77,8 +78,8 @@ Written 2026-10-20 from the known-gaps planning (SwiftKickMobile/skai#82).
   state (2026-10-20).
 - The pointer sentence names the use case, not just the location, so it fires when the agent sees
   a footnote on its input or cannot resolve an item of its own.
-- Promotion blocked by open gaps returns the package to authoring; promotion never resolves a gap
-  itself.
+- Promotion blocked by open gaps (a readiness failure, blocked gate) returns the package to
+  authoring; promotion never resolves a gap itself.
 - Offers is not in this effort's scope; it adopts gaps after the release that ships them.
 
 ## Size budget

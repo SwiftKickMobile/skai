@@ -189,6 +189,6 @@ Set by the supervisor from four efficiency reviews (SalesPro checkout, `working-
 
 | Target 1 | Cap |
 | --- | --- |
-| Guides/Core/spec-file-shape.md | 8,200 |
+| Guides/Core/spec-file-shape.md | 8,200 (confirmed 2026-10-20 after the Decision Log clauses; 8,234 compressed, trim due) |
 
 **Live render (supervisor, 2026-10-18).** The rendered page is the primary way the supervisor views a change package while it is being iterated on. Any time the package materially changes — a draft edited, a discussion item resolved, a change item added, a request triaged — the agent validates and re-renders before anything else, in every workflow that writes a package. The gate and promotion renders are not the only ones; they are the last of many. Validation and rendering take milliseconds, so there is no cost argument for deferring them.

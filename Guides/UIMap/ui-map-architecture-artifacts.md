@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture-artifacts
 Managed-Source: Guides/UIMap/ui-map-architecture-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-20
 
 # UI Map Architecture Artifact Formats
 
@@ -14,6 +14,7 @@ A change package lives at `skai/changes/<change-id>/ui-map/` in the repo that ho
 related product specs work stays in its independent sibling folder. After successful map promotion,
 this complete package lives at `skai/promoted/<change-id>/ui-map/`, including any unchecked Plan
 implementation work. Historical citations and downstream plan execution use that promoted path.
+End the architecture artifact with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per Discussion state change. An open **Gap** item marks a placeholder in the proposed map, or that none exists ([`known-gaps.md`](../Core/known-gaps.md)).
 
 Implementation-side artifact formats (code change items, build evidence) live in `ui-map-implementation-artifacts.md`; the architecture skill does not need them. Implementation reads both references — it consumes map change items and raises change requests defined here, and authors its own formats defined there.
 
