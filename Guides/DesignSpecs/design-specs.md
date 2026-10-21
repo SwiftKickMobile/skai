@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs
 Managed-Source: Guides/DesignSpecs/design-specs.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-21
 
 # Design Specs
 
@@ -218,7 +218,7 @@ as § Change Requests says. Then these ten checks, enumerated only here, over th
 - `V2 Appearance` — inspect sentences, including glossary entries, against *Never Appearance*'s
   redesign test. Evidence names inspected sentences, never a word list.
 - `V3 Product language` — no design-tool or code identifier or mechanism anywhere in spec text;
-  platform names only in known-difference notes (*Product Language Only*).
+  platform names only in known-difference and Also called notes (*Product Language Only*).
 - `V4 Static copy` — quoted strings are formats, data-dependent or undrawn copy.
 - `V5 Drawn state` — find every prescribed screen state or component variant by product name in
   production or approved change-page mockups ([Figma](../Design/figma-designer-guide.md)), from

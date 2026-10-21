@@ -14,11 +14,16 @@ The first notebook stage, which also serves as the owner's reminder schedule ([S
 ### Notebook
 A collection of notes together with the collaborators invited to work on it ([NOTEBOOK-01]).
 
+> **Also called:** journal (the import service, its
+> API).
+
 ### Superseded suggestion
 An earlier suggestion that a reissued edit has replaced; reported as Expired ([SUGGESTION-12]).
 
 ### Terminal stage
 Archived or Deleted: a stage the owner is not expected to act on again ([STAGE-03]).
+
+> **Also called:** closed stage (support desk); done (the web app).
 
 ### Workflow entry
 A notebook in one stage of the owner's workflow, carrying the date it reached that stage ([STAGE-04]).

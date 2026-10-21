@@ -38,15 +38,17 @@ Usage:
         definition, a duplicate label in a file, a definition outside an item or off its shape is
         rejected; a definition with no marker is a marker-less note. Canon carries none: a
         footnote in a single root, or in the first root of a projection, is reported (a note
-        when the package does not hold the file). With a single root everything counts. Exit
-        status 1 when there are blocking failures.
+        when the package does not hold the file). A glossary entry's Also called note (see
+        GLOSSARY TERMS) is checked: at most one, last in its entry, on its form. With a single
+        root everything counts. Exit status 1 when there are blocking failures.
 
     python3 spec-tool.py references ID ROOT [ROOT ...]
         List every file:line that cites ID or one of its rules (ID-NN, ID-NN-NN). For a rule,
         also the bold-number pointers to it inside its own item: a cell or rule saying **01**
         points at top-level rule 01, **01-01** at nested rule 01-01 (the rule's own definition
         line is not a pointer). Given a glossary term instead (as written in its heading,
-        case-insensitive), every linked occurrence of it across the roots.
+        case-insensitive), every linked occurrence of it across the roots; an alternate term in
+        an entry's Also called note is not looked up.
 
     python3 spec-tool.py link-terms ROOT [ROOT ...]
         Rewrite spec files in place so every occurrence of a glossary term is linked. Terms are
@@ -97,7 +99,8 @@ Usage:
         as a catalog rework absorbs it), move (design specs) an item missing from
         one file and added in another, or a glossary entry removed from one glossary file and
         added in another (keyed by term across files, so a relocation is one move, never a retire
-        plus an add; a modify entry rides on it when the text changed on the way); a file-typed entry names the file itself (never its index
+        plus an add; a modify entry rides on it when the definition or Also called note changed on
+        the way, compared with the catalog under any --base); a file-typed entry names the file itself (never its index
         line), so "add file" on a file the catalog already has, or "modify file" on a new one,
         fails; an entry about a rule ("sub-item" is accepted as the older
         name) or a known-difference note names an item that shows as modified. A moved item may
@@ -130,6 +133,18 @@ GLOSSARY TERMS (what "every occurrence in spec prose" covers, for validate and l
     else the earlier root's, so the rendered link resolves); popovers
     and diffing key entries by term wherever they sit.
 
+    An entry may end with one Also called note after its definition paragraph: "> **Also
+    called:** <term> (<who uses it>); <term> (<who uses it>)." (it may wrap onto ">"
+    continuation lines). The alternates are names other people use, there so an agent reading
+    inputs recognizes the term; the specs never use them. Every blockquote in a glossary file is
+    read as a note, and one outside an entry is rejected. validate rejects a note with no
+    definition paragraph before it, a second note, one off this form (a link in it, including an
+    address Markdown links on its own: one with "://", "mailto:" or "tel:", one starting "www.",
+    an email address), and any line after it in the entry; a definition that merely contains
+    "Also called" is not the note. Alternates are never terms: link-terms and the unlinked-term
+    check do not look for them, references does not find them, and the note's text is never
+    linked.
+
 CHANGE LISTS (what render, render-request and check-changes read from the authoring artifact)
 
     Entries are "- R<n> <type>: <identity>" (product) or "- S<n> <operation> <object>: <identity>"
@@ -150,7 +165,10 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     statement by word; rule by ID-NN, including the tables under it; table by header cells, then
     row by key column (added, removed, changed cells, moved); known difference by parent and app;
     glossary entry by term, whatever its optional "##" section (the draft's section headings
-    are shown between entries and never diffed); an index file's reminder line is its intro and
+    are shown between entries and never diffed), its Also called note compared apart from the
+    definition, so a changed or added alternate modifies the entry and shows as its own change,
+    the definition left unmarked; an entry that moved to another glossary file shows as added
+    there, its definition and note diffed against its old home, which it names; an index file's reminder line is its intro and
     diffs by text like a spec file's; index line by link name (a wrapped line's indented
     continuation is part of its text, not of the intro), comparing its text and
     the identity of its target (a retargeted line is modified and shows old and new target).
@@ -202,7 +220,9 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     or request-type badge is not a change marker and may be a text pill.
  6. Cards are white on a very light gray page with a soft shadow; popovers and summary boxes are
     white too. Section headings and descriptive text are normal weight and color; section
-    headings are uppercase. Rule numbers and tables are body size.
+    headings are uppercase. Rule numbers and tables are body size. A glossary entry's Also
+    called note is a muted callout under its definition, styled as a known difference is, its
+    text never linked.
  7. Whole deletions (retired items, removed rows, rules, entries) are gray strikethrough with no
     tint, including the ID. A retired or missing item's collapsed card holds its whole old body
     (statement, tables, rules, known differences) struck through, with no squares inside, then
@@ -237,6 +257,11 @@ H2_RE = re.compile(r"^## (.*)$")
 H1_RE = re.compile(r"^# (.*)$")
 RULE_RE = re.compile(r"^(?P<indent> *)- \*\*(?P<num>\d+)\*\*(?P<retired> \(retired\))?(?P<text>.*)$")
 KNOWN_RE = re.compile(r"^> \*\*Known difference — (?P<app>[^:]+):\*\*(?P<text>.*)$")
+BLOCKQUOTE_RE = re.compile(r"^\s*>")  # in a glossary entry every blockquote is its Also called note, judged by ALSO_RE
+ALSO_LABEL_RE = re.compile(r"^\s*>\s*\W*\s*also\s+called\b", re.I)  # a blockquote line opening another note
+ALSO_ALT = r"[^;()\[\]<>\s][^;()\[\]<>]* \([^()\[\]<>]*[^()\[\]<>\s][^()\[\]<>]*\)"  # <term> (<who uses it>), both nonblank, no link
+BARE_ADDRESS_RE = re.compile(r"://|\b(?:mailto|tel):|\bwww\.|\S@\S+\.\w", re.I)  # an address Markdown links on its own
+ALSO_RE = re.compile(rf"^> \*\*Also called:\*\* (?P<text>(?:{ALSO_ALT}; )*{ALSO_ALT}\.)$")
 LINKDEF_RE = re.compile(r"^\[(?P<name>[^\]]+)\]:\s+(?P<target>\S.*)$")
 FOOT_DEF_RE = re.compile(r"^\[\^(?P<label>[A-Za-z0-9-]+)\]:\s*(?P<text>.*)$")
 GAP_NOTE_RE = re.compile(r"^\*\*Gap:\*\*\s*(?P<did>D\d+)\s*—\s*(?P<q>.+?)(?:\s+Placeholder:\s*(?P<ph>.+))?$")
@@ -320,6 +345,7 @@ class Spec:
     items: list = field(default_factory=list)  # Item, or (term, text, line) for glossary, or index lines
     sections: dict = field(default_factory=dict)  # section name -> orientation text
     entry_sections: dict = field(default_factory=dict)  # glossary: term -> section name ("" when none)
+    entry_alts: dict = field(default_factory=dict)  # glossary: term -> (Also called text, line) when the entry has one
     linkdefs: dict = field(default_factory=dict)
     linkdef_lines: dict = field(default_factory=dict)
     issues: list = field(default_factory=list)
@@ -597,33 +623,60 @@ def _parse_glossary(spec, body, err):
     file when there are none; they are keyed by term regardless of section."""
     j = _title(spec, body, err)
     term, para, line_no, section = None, [], 0, ""
-    entries = []
+    entries, alt, prev = [], None, None  # alt: the entry's Also called note lines, [(index, line)]
 
     def flush():
         if term is not None:
             entries.append((term, " ".join(x.strip() for x in para), line_no))
             spec.entry_sections[term] = section
+            if alt:
+                joined = " ".join([alt[0][1].rstrip()] + [l[1:].strip() for _, l in alt[1:]])
+                m = ALSO_RE.match(joined)
+                if m and not BARE_ADDRESS_RE.search(m.group("text")):  # no link, an address Markdown links on its own included
+                    spec.entry_alts[term] = (m.group("text"), alt[0][0] + 1)
+                else:
+                    err(alt[0][0], "an Also called note must read '> **Also called:** <term> (<who uses it>); <term> (<who uses it>).', unlinked")
         elif para:
             spec.intro.append(" ".join(x.strip() for x in para))
 
     for i, line in body[j:]:
         if not line.strip():
+            prev = None
             continue
         m3, m2 = ANY_H3_RE.match(line), H2_RE.match(line)
         if m3:
             flush()
-            term, para, line_no = m3.group(1).strip(), [], i + 1
+            term, para, line_no, alt = m3.group(1).strip(), [], i + 1, None
             if not sentence_case(term):
                 err(i, f"glossary term {term!r} should be sentence case: a capital first letter and no capitalized word after it (all-caps acronyms allowed)")
             continue
         if m2:
             flush()
-            term, para, section = None, [], m2.group(1).strip()
+            term, para, section, alt = None, [], m2.group(1).strip(), None
             if re.search(ID_RE, section):
                 err(i, "a '##' section heading must not carry an ID")
             continue
         if line.startswith("**"):
             err(i, "glossary entry must be a '###' heading, not a bold paragraph")
+            continue
+        if term is None and BLOCKQUOTE_RE.match(line):
+            err(i, "a blockquote outside a glossary entry; an Also called note ends the entry it belongs to")
+            continue
+        if BLOCKQUOTE_RE.match(line):
+            if not alt:
+                if not para:
+                    err(i, "an Also called note follows the entry's definition paragraph")
+                alt, prev = [(i, line)], "alt"
+            elif ALSO_LABEL_RE.match(line):
+                err(i, f"a second Also called note in {term!r}; an entry has at most one")
+                prev = None
+            elif prev == "alt":
+                alt.append((i, line))  # the note wrapped onto a continuation line
+            else:
+                err(i, "prose after the Also called note; it comes last in its entry")
+            continue
+        if alt:
+            err(i, "prose after the Also called note; it comes last in its entry")
             continue
         para.append(line)
     flush()
@@ -1407,7 +1460,7 @@ def render_popovers(gloss):
     out = []
     for ref, (term, text) in sorted(gloss.items()):
         out.append(f'<template id="tip-{ref}"><div class="pop-head"><span class="id">{html.escape(term)}</span>'
-                   f'</div><p>{inline(text, gloss)}</p></template>')
+                   f'</div><p>{inline(text, gloss)}</p>{also_called("", RESOLVER.get("alts", {}).get(ref, ""), "unchanged")}</template>')
     for iid, it in sorted(RESOLVER.get("items", {}).items()):
         out.append(f'<template id="tip-{anchor(iid)}"><div class="pop-head"><span class="id">{html.escape(iid)}</span>'
                    f'{" <span class=\"badge retired\"></span>" if it.retired else ""}</div>{render_plain_item(it, gloss)}</template>')
@@ -1428,8 +1481,11 @@ class Entry:
     file: str = ""  # draft-relative path of the file it belongs to
 
 
-def render_glossary(old: Spec, new: Spec, gloss, changes):
-    """Entries by term in the draft's order, its section headings between them, then removed ones."""
+def render_glossary(old: Spec, new: Spec, gloss, changes, elsewhere=None):
+    """Entries by term in the draft's order, its section headings between them, then removed ones.
+    An entry new to this file whose term sits in another baseline glossary file (`elsewhere`:
+    term -> (definition, note, file, its link definitions)) moved here: it stays added, and its definition and note are
+    diffed against their old home."""
     o = {t: (x, ln) for t, x, ln in (old.items if old else [])}
     n = {t: (x, ln) for t, x, ln in new.items}
     out, section = [], None
@@ -1441,16 +1497,39 @@ def render_glossary(old: Spec, new: Spec, gloss, changes):
             if section:
                 out.append(Entry(f'<h3 class="section">{html.escape(section)}</h3>', "section", section, set(), "unchanged", nt[1]))
         why = why_for(changes, {aid})
+        oa, na = (old.entry_alts.get(term, ("",))[0] if old and ot else ""), (new.entry_alts.get(term, ("",))[0] if nt else "")
+        moved = bool(nt and not ot and term in (elsewhere or {}))
         if ot and nt and same(ot[0], nt[0]):
-            status, body = "unchanged", f"<p>{inline(nt[0], gloss)}</p>"
+            status, body = ("unchanged" if oa == na else "modified"), f"<p>{inline(nt[0], gloss)}</p>"
         elif ot and nt:
             status, body = "modified", f"<p>{word_diff(ot[0], nt[0], gloss)}</p>"
+        elif moved:
+            mt, ma, mrel, mdefs = elsewhere[term]
+            status, here = "added", LINKS["old"]
+            LINKS["old"] = mdefs  # the old text reads with its old home's link definitions
+            body = (f"<p>{inline(nt[0], gloss) if same(mt, nt[0]) else word_diff(mt, nt[0], gloss)}</p>"
+                    + also_called(ma, na, "modified") + f"<p><i>Moved from {html.escape(mrel)}.</i></p>")
+            LINKS["old"] = here
         elif nt:
             status, body = "added", f"<p>{inline(nt[0], gloss)}</p>"
         else:
             status, body = "removed", f"<p><del>{inline(ot[0], gloss)}</del></p>"
+        if not moved:  # a moved entry's note is already diffed against its old home
+            body += also_called(oa if ot else na, na if nt else "", status)
         out.append(Entry(card(status, aid, term, body, why, gloss), "glossary entry", term, {aid}, status, (nt or ot)[1]))
     return out
+
+
+def also_called(old, new, status):
+    """A glossary entry's Also called note as a muted callout under its definition, keyed apart
+    from it: diffed by word when the entry is modified, struck through when removed; never linked."""
+    if not (old or new):
+        return ""
+    if status == "removed":
+        return f"<blockquote><del><b>Also called:</b> {html.escape(old)}</del></blockquote>"
+    if status == "modified" and old != new:
+        return f'<blockquote class="mod"><b>Also called:</b> {word_diff(old, new)}</blockquote>'
+    return f"<blockquote><b>Also called:</b> {html.escape(new)}</blockquote>"
 
 
 def render_index(old: Spec, new: Spec, gloss, changes, rel):
@@ -1728,7 +1807,7 @@ def render_tree(bases, drafts, gloss, changes, prefix=""):
         set_resolver(new.linkdefs, draft.resolve())
         LINKS["old"], LINKS["new"] = (old.linkdefs if old else {}), new.linkdefs
         if new.kind == "glossary":
-            entries = render_glossary(old, new, gloss, changes)
+            entries = render_glossary(old, new, gloss, changes, {t: v for t, v in baseline_entries(bases).items() if v[2] != rel})
         elif new.kind == "index":
             entries = render_index(old, new, gloss, changes, rel)
         else:
@@ -1754,6 +1833,20 @@ def render_tree(bases, drafts, gloss, changes, prefix=""):
         body += "".join(e.html for e in entries)
         sections.append(body)
     return sections, toc, totals, all_entries
+
+
+def baseline_entries(bases):
+    """term -> (definition, Also called note, file, its link definitions) across the baseline's
+    glossary files, each file taken from the first base root that has it."""
+    files, out = {}, {}
+    for b in bases:
+        for g in b.rglob("glossary.md"):
+            files.setdefault(g.relative_to(b).as_posix(), g)
+    for rel, g in sorted(files.items()):
+        sp = parse(g)
+        for t, x, _ in sp.items:
+            out[t] = (x, sp.entry_alts.get(t, ("",))[0], rel, sp.linkdefs)
+    return out
 
 
 def render_spec(old: Spec, new: Spec, gloss, changes, prefix, rel):
@@ -1877,8 +1970,10 @@ def prepare(catalog, bases, drafts, out):
     RESOLVER["out_dir"] = Path(out).resolve().parent
     for root in [catalog] + list(bases) + ([drafts] if drafts else []):
         for g in sorted(root.rglob("glossary.md")):  # every glossary.md under a root is part of the glossary
-            for term, text, _ in parse(g).items:
+            gp = parse(g)
+            for term, text, _ in gp.items:
                 gloss[f"g-{anchor(term)}"] = (term, text)
+                RESOLVER.setdefault("alts", {})[f"g-{anchor(term)}"] = gp.entry_alts.get(term, ("",))[0]
         for d in sorted(root.rglob("*.md")):
             sp = parse(d)
             RESOLVER.setdefault("collected", set()).add(d.resolve())
@@ -2134,7 +2229,7 @@ def check_changes(catalog, drafts, authoring, bases=()):
             continue  # not a move; reported above
         for what, name in {(w, n) for w, n, _ in actual[m.cid] if w in ("item", "glossary entry")}:
             modifies = [c for c in changes if c.type.split()[0] == "modify" and c.keys & m.keys]
-            status = moved_item_status(name, catalog, drafts) if what == "item" else moved_entry_status(name, catalog, drafts)
+            status = moved_item_status(name, catalog, drafts) if what == "item" else moved_entry_status(name, [*reversed(bases), catalog], drafts)
             if status == "modified" and not modifies:
                 issues.append(Issue(authoring, m.line, f"{m.cid} declares move but {what} {name} also changed; a modify entry is needed"))
             for c in modifies if status == "unchanged" else []:
@@ -2147,17 +2242,24 @@ def describe(what, name):
     return what if name == what else f"{what} {name}"
 
 
-def moved_entry_status(term, catalog, drafts):
-    """Whether a glossary entry that left one glossary file for another changed on the way: the
-    catalog's text against the draft's, keyed by term across files."""
-    def find(root):
-        for g in sorted(Path(root).rglob("glossary.md")):
-            for t, text, _ in parse(g).items:
+def moved_entry_status(term, baseline, drafts):
+    """Whether a glossary entry that left one glossary file for another changed on the way: its
+    definition and Also called note in the baseline (the catalog with any --base layered over it,
+    `baseline` listing the roots first-wins as render_tree takes them) against the draft's, keyed
+    by term across files."""
+    def find(*roots):
+        files = {}
+        for root in roots:
+            for g in Path(root).rglob("glossary.md"):
+                files.setdefault(g.relative_to(root).as_posix(), g)
+        for _, g in sorted(files.items()):
+            sp = parse(g)
+            for t, text, _ in sp.items:
                 if t == term:
-                    return text
+                    return text, sp.entry_alts.get(t, ("",))[0]
         return None
-    old, new = find(catalog), find(drafts)
-    return "unchanged" if old is None or new is None or same(old, new) else "modified"
+    old, new = find(*baseline), find(drafts)
+    return "unchanged" if old is None or new is None or (same(old[0], new[0]) and old[1] == new[1]) else "modified"
 
 
 def moved_item_status(iid, catalog, drafts):

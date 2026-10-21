@@ -119,6 +119,10 @@ Scoped change.
   - **Justification** Catalog: defined in terms of the notebook.
   - **Touches** glossary.md
 
+- R17 modify glossary entry: Terminal stage
+  - **Justification** Support input: the web app calls it done.
+  - **Touches** glossary.md
+
 ## Assumptions and TODOs
 
 - D2 is drafted under option A.

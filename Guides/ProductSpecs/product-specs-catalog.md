@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-catalog
 Managed-Source: Guides/ProductSpecs/product-specs-catalog.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-21
 
 # Product Specs Catalog
 
@@ -91,8 +91,8 @@ When a reader who needs a rule would not recognize it from the line, the line is
 
 The folder tree indexes one dimension, subject; questions that cut across subjects — syncing,
 persistence, permissions — are named in no file, and the glossary makes them findable. It is the
-catalog's **second index**, so every entry ends by pointing at the requirements that govern the
-term; an entry without a pointer is a definition, not an index.
+catalog's **second index**, so each entry's paragraph ends by linking the requirements governing
+the term; one without them is a definition, not an index.
 
 Entries: domain entities and concepts, status names, project jargon, every cross-cutting behavior
 term; not scope definitions or general software-engineering terms. The glossary gains each

@@ -52,7 +52,7 @@ parser, one renderer, and both guide sets cite the shape guide instead of each r
    5), alphabetical within each section (settled 2026-10-18, target 2). Every occurrence of a term in spec prose links the
    entry (`[term][g-anchor]`); the link is the signal that a word is a defined term; the governing
    items are exempt. A word used in its ordinary sense is reworded or linked; the validator does not
-   distinguish.
+   distinguish. An entry may end with one Also called note after its paragraph (decision 22).
 5. **Indexes.** `_<folder>.md`: one reminder line, then `- [name] -- \`PREFIX-\` -- questions` per
    file and `- [name] -- questions` per folder. An app's index also lists the feature files it offers.
 6. **IDs and anchors.** `<PREFIX>-<NN>` (design specs: `UI-<PREFIX>-<NN>`), two digits zero-padded,
@@ -196,6 +196,22 @@ does not restate it.
     format family gets such a companion. Caps (supervisor, 2026-10-20, a little under the compressed
     sizes): `spec-file-shape.md` 8,350 (was 8,200); `spec-file-gaps.md` 1,850.
 
+22. **Glossary alternate terms (supervisor, 2026-10-21; skai#93).** A glossary entry may end with one
+    blockquote after its definition paragraph, mirroring the known difference:
+    `> **Also called:** <term> (<who uses it>); <term> (<who uses it>).` Need: product says "offer",
+    Salesforce and the back office say "bid"; an agent reading inputs (Slack, email, Confluence)
+    meets the other name and has no record that the two are one thing. Alternates exist only for
+    that recognition: never linked, never used in spec prose; the entry's term is the only name
+    the specs use. `validate` accepts at most one note per entry, last in the entry, on this form
+    (one or more `<term> (<who uses it>)` separated by semicolons, ending with a period, no link);
+    prose after it is rejected; a definition paragraph that merely contains "Also called" is not
+    the note. `render` shows it as a muted callout under the definition, styled as known
+    differences are; the diff keys it apart from the definition, so a changed or added alternate
+    is its own change to the entry, not a reworded definition (a changed note alone makes the entry
+    modified). `link-terms`, the unlinked-term check and `references` ignore alternates: no
+    linking or sweeping by alternate, decided 2026-10-21 to start without tool-side recognition.
+    The note's text is never term-linked. Migration: none; no canonical glossary carries it.
+
 ## Open
 
 - Whether the judgment half of the catalog guide's layout section (topic-file sizing, index lines
@@ -208,7 +224,7 @@ Set by the supervisor from four efficiency reviews (SalesPro checkout, `working-
 
 | Target 1 | Cap |
 | --- | --- |
-| Guides/Core/spec-file-shape.md | 8,350 (2026-10-20, slice 3: gap-footnote pointers; was 8,200) |
+| Guides/Core/spec-file-shape.md | 8,700 proposed (2026-10-21, slice 6: Also called note; compressed 8,677; awaiting the supervisor) — 8,350 (2026-10-20, slice 3: gap-footnote pointers; was 8,200) |
 | Guides/Core/spec-file-gaps.md | 1,850 (2026-10-20, slice 3) |
 
 **Live render (supervisor, 2026-10-18).** The rendered page is the primary way the supervisor views a change package while it is being iterated on. Any time the package materially changes — a draft edited, a discussion item resolved, a change item added, a request triaged — the agent validates and re-renders before anything else, in every workflow that writes a package. The gate and promotion renders are not the only ones; they are the last of many. Validation and rendering take milliseconds, so there is no cost argument for deferring them.

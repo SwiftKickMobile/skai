@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.spec-file-shape
 Managed-Source: Guides/Core/spec-file-shape.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-20
+Managed-Updated-At: 2026-10-21
 
 # Spec File Shape
 
@@ -68,14 +68,16 @@ In file order.
 
 ## Glossary File
 
-`glossary.md` — every one under the root reads as one glossary — a title, then entries, alphabetical within the file or its optional `##` sections, each a `###` heading carrying the term in sentence case and one paragraph:
+`glossary.md` — every one under the root reads as one glossary — a title, then entries, alphabetical within the file or its optional `##` sections, each a `###` heading carrying the term in sentence case, one paragraph and an optional final Also called note:
 
 ```markdown
 ### Overdue reminder
 A reminder whose time has passed unacknowledged ([REMIND-01]).
+
+> **Also called:** missed reminder (support); late alert (web app).
 ```
 
-The heading is the anchor (`#overdue-reminder`); the paragraph ends by linking the governing items.
+The heading is the anchor (`#overdue-reminder`); the paragraph ends by linking the governing items. The note lists, in the example's form, names others use, so an agent reading inputs recognizes the term; spec prose never links or uses them.
 
 **Linking terms.** Prose links every occurrence of a glossary term — the link is what marks a defined term; the items an entry names as governing it are exempt. Terms stay in sentence case. A term used in its ordinary sense is reworded or linked.
 
@@ -125,11 +127,11 @@ The package's typed change list (`R<n>` product, `S<n>` design: ID, type, identi
 
 ## What The Validator Rejects
 
-Every departure from the shapes above a parser can see, with file and line: headings; a missing statement, or prose after rules or tables; duplicate IDs across the catalog; a retired item or rule revived; rule numbering and nesting; table header, separator and keys; link definitions unused, undefined, duplicated or not at the end; progress markers (`- [ ]`, `🟡`); invalid footnotes or any in canon; glossary entries not `###` headings, out of order, duplicated or not in sentence case; an index bullet off its shape; a glossary term unlinked outside its governing items.
+Every departure from the shapes above a parser can see, with file and line: headings; a missing statement, or prose after rules or tables; duplicate IDs across the catalog; a retired item or rule revived; rule numbering and nesting; table header, separator and keys; link definitions unused, undefined, duplicated or not at the end; progress markers (`- [ ]`, `🟡`); invalid footnotes or any in canon; glossary entries not `###` headings, out of order, duplicated or not in sentence case; an Also called note malformed, repeated or not last; an index bullet off its shape; a glossary term unlinked outside its governing items.
 
 ## How The Renderer Diffs
 
-Drafts are compared with their canonical files by key — file by path, item by ID, rule by `ID-NN`, table row by key, known difference by parent and app, glossary entry by term, index line by link name. Not a change: a term gaining a link, a link definition whose target keeps its identity, an item moving between sections. The tool's docstring is the render spec.
+Drafts are compared with their canonical files by key — file by path, item by ID, rule by `ID-NN`, table row by key, known difference by parent and app, glossary entry by term (its note keyed separately), index line by link name. Not a change: a term gaining a link, a link definition whose target keeps its identity, an item moving between sections. The tool's docstring is the render spec.
 
 ## Project Addendum
 

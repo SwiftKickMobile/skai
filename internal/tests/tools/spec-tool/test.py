@@ -71,7 +71,13 @@ class Validate(unittest.TestCase):
                         "in a canonical file"]:
             self.assertTrue(any(message in g for g in gaps), message)
         self.assertNotIn("broken/terms.md:12:", "\n".join(found), "a table header is a label, not a term use")
-        self.assertEqual(len(found), 45, found)
+        glossary = [i for i in found if i.startswith("broken/glossary.md")]
+        for message, count in [("a second Also called note in 'Delta term'", 1), ("an Also called note must read", 5),
+                               ("prose after the Also called note", 1),
+                               ("follows the entry's definition paragraph", 1), ("a blockquote outside a glossary entry", 1)]:
+            self.assertEqual(sum(message in g for g in glossary), count, message)
+        self.assertFalse(any("Theta term" in g for g in glossary), "a definition saying 'Also called' is not the note")
+        self.assertEqual(len(found), 54, found)
 
     def test_revived_item_and_rule_are_rejected(self):
         code, lines = run("validate", "broken-revive/catalog", "broken-revive/drafts")
@@ -171,6 +177,27 @@ class Writers(unittest.TestCase):
         html = page.read_text()
         self.assertIn("Gaps (1)", html)
         self.assertIn("Decision Log", html)
+        terminal = re.search(r'id="terminal-stage"><div class="head"><span class="badge">(\w+)</span>.*?<div class="why">', html, re.S)
+        self.assertIsNotNone(terminal, "Terminal stage card")
+        self.assertEqual(terminal.group(1), "modified", "a changed Also called note alone modifies the entry")
+        self.assertIn('<blockquote class="mod"><b>Also called:</b>', terminal.group(0))
+        self.assertIn('done (the web app).</ins>', terminal.group(0))
+        self.assertIn("<blockquote><b>Also called:</b> journal (the import service, its API).</blockquote>", html)
+        popover = re.search(r'<template id="tip-g-terminal-stage">.*?</template>', html, re.S).group(0)
+        self.assertIn("<blockquote><b>Also called:</b> closed stage (support desk); done (the web app).</blockquote>", popover)
+
+    def test_render_moved_glossary_entry_diffs_its_note(self):
+        page = self.copy / "glossary-move/page.html"
+        code, lines = run("render", "--catalog", "glossary-move/catalog", "--drafts", "glossary-move/drafts",
+                          "--no-authoring", "--out", str(page), fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        text = page.read_text()
+        end = text.find("Moved from glossary.md")
+        self.assertGreater(end, 0, "the moved entry names its old home")
+        card = text[text.rfind('id="offer">', 0, end):end]
+        self.assertIn('<blockquote class="mod"><b>Also called:</b>', card)
+        self.assertIn("pitch (the web app).</ins>", card)
+        self.assertNotIn("<del", card.split("<blockquote")[0], "the unchanged definition is not marked")
 
     def test_render_design_package_page(self):
         page = self.copy / "design-package/design-specs-review.html"
