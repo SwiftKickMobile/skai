@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.unit-testing
 Managed-Source: Guides/Test/unit-testing-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-21
 
 # Unit Testing Guide
 
@@ -83,8 +83,8 @@ This workflow uses both progress-marker conventions because it produces both kin
 - `🟡` in the **test files** (in-code, where completion is removal of the marker as tests are written and pass).
 
 Orchestration document:
-- This workflow owns an orchestration document at `skai/working-docs/<branch-path>/<session-name>/testing/unit-testing.md`.
-- `session-name` is the required name for this overall testing effort on the current branch.
+- This workflow owns an orchestration document at `skai/working-docs/<session-name>/testing/unit-testing.md`.
+- `session-name` is the required name for this overall testing effort.
 - The orchestration document is the parent workflow artifact and owns these gate/phase items:
   - `- [ ] Planning`
   - `- [ ] Infrastructure`
@@ -134,7 +134,7 @@ Default rule: a progress marker (either `- [ ]` or `🟡`) means TODO or pending
    - **Session name:** `<session-name>`
    - **Subpath:** `testing`
    - **File name:** `unit-testing.md`
-   - **Full path:** `skai/working-docs/<branch-path>/<session-name>/testing/unit-testing.md`
+   - **Full path:** `skai/working-docs/<session-name>/testing/unit-testing.md`
    - Start with `- [ ] Planning` in the checklist.
 2. Execute `Guides/Test/unit-test-planning-guide.md`
 
@@ -193,7 +193,7 @@ Created during implementation, following `Guides/Core/working-doc-conventions.md
 **Orchestration document (owned by this guide):**
 - **Subpath:** `testing`
 - **File name:** `unit-testing.md`
-- **Full path:** `skai/working-docs/<branch-path>/<session-name>/testing/unit-testing.md`
+- **Full path:** `skai/working-docs/<session-name>/testing/unit-testing.md`
 - **Purpose:** Tracks parent-workflow progress across planning, one global infrastructure pass, and overall writing completion.
 - **Structure:**
   ```markdown
@@ -214,8 +214,8 @@ Created during implementation, following `Guides/Core/working-doc-conventions.md
   ```
 
 **Sub-guide documents:**
-- Infrastructure guide: `skai/working-docs/<branch-path>/<session-name>/testing/infrastructure.md`
-- Writing guide: per-section writing/execution document under `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/`
+- Infrastructure guide: `skai/working-docs/<session-name>/testing/infrastructure.md`
+- Writing guide: per-section writing/execution document under `skai/working-docs/<session-name>/testing/<suite-name>/`
 
 ---
 
@@ -226,7 +226,7 @@ Created during implementation, following `Guides/Core/working-doc-conventions.md
 ```
 --- Planning ---
 Supervisor: "begin"
-AI: [Creates `skai/working-docs/<branch-path>/<session-name>/testing/unit-testing.md` with `- [ ] Planning`]
+AI: [Creates `skai/working-docs/<session-name>/testing/unit-testing.md` with `- [ ] Planning`]
 AI: [Creates TemplateRendererTests.swift with sections:
      - Render Success Tests 🟡
      - Error Handling Tests 🟡]
@@ -270,7 +270,7 @@ AI: "🏁 Complete. Let me know if anything needs adjustment."
 ```
 --- Planning (creates ALL test files upfront) ---
 Supervisor: "begin"
-AI: [Creates `skai/working-docs/<branch-path>/<session-name>/testing/unit-testing.md` with `- [ ] Planning`]
+AI: [Creates `skai/working-docs/<session-name>/testing/unit-testing.md` with `- [ ] Planning`]
 AI: [Creates PlaceholderParserTests.swift with sections:
      - Doc Placeholder Tests 🟡
      - Fragment Placeholder Tests 🟡]
@@ -319,7 +319,7 @@ AI: "🏁 Complete. Let me know if anything needs adjustment."
 
 ```
 Supervisor: "next auto"
-AI: [Creates/updates `skai/working-docs/<branch-path>/<session-name>/testing/unit-testing.md`, auto-checks `- [x] Planning`, completes the global infrastructure pass, auto-checks `- [x] Infrastructure`]
+AI: [Creates/updates `skai/working-docs/<session-name>/testing/unit-testing.md`, auto-checks `- [x] Planning`, completes the global infrastructure pass, auto-checks `- [x] Infrastructure`]
 AI: [Completes all Feature B Tests - infrastructure already covered, all pass]
 AI: [Completes all Helper Tests - infrastructure already covered, all pass]
 AI: [Encounters Feature C Tests - missing infrastructure was not identified earlier]
@@ -343,7 +343,7 @@ AI: [At the next planned gate, the supervisor decides to re-enter infrastructure
 - Writing & Execution: `Guides/Test/unit-test-writing-guide.md`
 
 **Parent progress artifact:**
-- `skai/working-docs/<branch-path>/<session-name>/testing/unit-testing.md`
+- `skai/working-docs/<session-name>/testing/unit-testing.md`
 
 ## Project Addendum
 

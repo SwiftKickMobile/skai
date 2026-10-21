@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation
 Managed-Source: Guides/UIMap/ui-map-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-20
+Managed-Updated-At: 2026-10-21
 
 # UI Map Implementation
 
@@ -81,10 +81,10 @@ terminal promote item. If resuming such work, verify current code against the cu
 than assuming the archived preview remains current canon.
 
 Without a proposed map, create no change package. Put the conformance artifact in the map repository
-at `skai/working-docs/<branch-path>/<session-name>/ui-map-implementation.md`, using
-[`working-doc-conventions.md`](../Core/working-doc-conventions.md). Determine the branch in that
-repository and resolve a short session name from the request; if unclear, propose one and wait at a
-blocked gate before creating the artifact. Requests and evidence belong beside that artifact.
+at `skai/working-docs/<session-name>/ui-map-implementation.md`, using
+[`working-doc-conventions.md`](../Core/working-doc-conventions.md). Resolve a short session name from
+the request; if unclear, propose one and wait at a blocked gate before creating the artifact. Requests
+belong beside that artifact.
 
 Skeleton:
 
@@ -374,12 +374,12 @@ On resume, re-audit every unchecked `handoff` item. If external work has made th
 **Chunk boundaries.** At the end of each domain or natural chunk for large change sets, run the project's build command from `skai/integration.md`. Record the result inline in `## Evidence`:
 
 ```
-[evidence: <command>; exit <code>; output: <path if persisted>]
+[evidence: <command>; exit <code>; output: <scratch path, if captured>]
 ```
 
-On success, linked output is optional; still record command + exit code. On failure, persist full
-output under `evidence/` beside the implementation artifact and link it — inside the active or
-promoted UI Map type folder, or the working-doc session for a no-package run. If the failure is a fixable local glitch, fix and rebuild; if it points at a needed change request, requirement conflict, or map flaw, STOP at a blocked gate.
+Captured output goes under the scratch root `skai/integration.md` names (default
+`/tmp/skai/<session-name>/`, the change-id for a package), never in the repository; the line is the
+record. If the failure is a fixable local glitch, fix and rebuild; if it points at a needed change request, requirement conflict, or map flaw, STOP at a blocked gate.
 
 ### Auto-fixes allowed
 
@@ -412,7 +412,7 @@ After recording successful official-map write/render evidence in the terminal pr
 
 1. Move the entire `skai/changes/<change-id>/ui-map/` folder to
    `skai/promoted/<change-id>/ui-map/` in the map repository. Keep architecture, implementation,
-   proposed YAML, render, requests and evidence together, including unchecked Plan work. Leave
+   proposed YAML, render, requests, evidence and `working-docs/` together, including unchecked Plan work. Leave
    `product-specs/` and all other siblings untouched; remove the active grouping directory only if empty.
 2. Repair live incoming links across those resolved repositories, including work specs and related
    packages. Check relative links inside the moved files and preserve their intended targets. Keep

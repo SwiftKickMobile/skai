@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-artifacts
 Managed-Source: Guides/ProductSpecs/product-specs-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-20
+Managed-Updated-At: 2026-10-21
 
 # Product Specs Artifact Formats
 
@@ -19,17 +19,18 @@ In the repository holding the catalog, `skai/changes/<change-id>/product-specs/`
 ID/type pair. A sibling package of another type is independent.
 
 ```
-product-specs-authoring.md          authoring's artifact; ## Requirement Changes
-proposed-product-specs/**           drafts mirroring the catalog: touched files only, each whole
-product-specs-review.html          the rendered review page
-change-requests/<nnn>/request.md   a request; its drafts beside it, proposed-product-specs/**
+product-specs-authoring.md        authoring's artifact; ## Requirement Changes
+proposed-product-specs/**         drafts mirroring the catalog: touched files only, each whole
+product-specs-review.html         the rendered review page
+change-requests/<nnn>/request.md  a request; its drafts beside it, proposed-product-specs/**
 change-requests/<nnn>/request-review.html
-product-specs-promotion.md          promotion's artifact; may be absent
-evidence/                          persisted check output; may be absent
+product-specs-promotion.md        promotion's artifact; may be absent
+evidence/                         persisted check output; may be absent
+working-docs/                     working documents; the tool ignores it
 ```
 
 **The review page is how the supervisor reads the package.** The tool renders it to
-`product-specs-review.html`, and a request to `request-review.html` beside `request.md`; both are
+`product-specs-review.html`, and a request's page beside `request.md`; both are
 committed. When the package materially changes, validate and re-render before anything else. The authoring and promotion artifacts link the page directly
 under their title, as does `request.md`.
 
@@ -97,9 +98,8 @@ retired is its own entry.
 
 ## Change Requests
 
-Any downstream consumer — design authoring, design specs, work specs, tests, promotion — files a
-change request for any reason, against the open package for the subject; with none open, whoever
-finds the defect opens a change package through authoring. The proposer never edits the package.
+Any downstream consumer files a change request for any reason, against the open package for the
+subject; with none open, whoever finds the defect opens a change package through authoring. The proposer never edits the package.
 Supervisor input during authoring is a decision, never a request.
 
 `change-requests/<nnn>/request.md`, numbered by filing order:

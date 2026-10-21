@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.unit-test-infrastructure
 Managed-Source: Guides/Test/unit-test-infrastructure-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-21
 
 # Unit Test Infrastructure Guide
 
@@ -399,8 +399,8 @@ read_file path/to/Mocks/MockService.swift
    - **Session name**: `<session-name>` (the parent unit-testing workflow's session name)
    - **Subpath**: `testing`
    - **File name**: `infrastructure.md`
-   - **Full path**: `skai/working-docs/<branch-path>/<session-name>/testing/infrastructure.md`
-   - **Example**: `skai/working-docs/work/feature-branch/login-tests/testing/infrastructure.md`
+   - **Full path**: `skai/working-docs/<session-name>/testing/infrastructure.md`
+   - **Example**: `skai/working-docs/login-tests/testing/infrastructure.md`
    - **Structure**:
      ```markdown
      # Unit Testing - Infrastructure
@@ -426,8 +426,8 @@ read_file path/to/Mocks/MockService.swift
      ```
 
 **1. Create infrastructure work spec** (if complex, otherwise implement directly):
-   - **Full path**: `skai/working-docs/<branch-path>/<session-name>/testing/infrastructure-spec.md`
-   - **Example**: `skai/working-docs/work/feature-branch/login-tests/testing/infrastructure-spec.md`
+   - **Full path**: `skai/working-docs/<session-name>/testing/infrastructure-spec.md`
+   - **Example**: `skai/working-docs/login-tests/testing/infrastructure-spec.md`
    - **Structure**: Motivation, Functional Requirements, Relevant Files, Task List
    - **Content**: Describe all stubs, mocks, fixtures, and production code changes needed
    - **No code**: Describe what to implement, not how
@@ -624,7 +624,7 @@ let result3 = try await sut.performOperation(params: params3)  // Gets third res
 
 **Work Document Structure** (created in Phase 2 only if infrastructure needed):
 
-Full path: `skai/working-docs/<branch-path>/<session-name>/testing/infrastructure.md` (per `Guides/Core/working-doc-conventions.md`)
+Full path: `skai/working-docs/<session-name>/testing/infrastructure.md` (per `Guides/Core/working-doc-conventions.md`)
 
 ```markdown
 # Unit Testing - Infrastructure

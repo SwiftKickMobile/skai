@@ -271,3 +271,7 @@ additions; the guides' extensive refinement history counts as compression, so th
 `ui-map-architecture.md` 35,700; `ui-map-architecture-artifacts.md` 5,500;
 `ui-map-implementation.md` 50,900; `ui-map-implementation-artifacts.md` 6,500. Whole-file bytes by
 `wc -c`; they bind every repair per the refinement guide's size-budget rule.
+
+## Adopts — 2026-10-21 (working docs placement)
+
+Working documents serving a package live in its `working-docs/` folder and archive with it at promotion (`ui-map-architecture-artifacts.md`, `ui-map-implementation-artifacts.md`, `ui-map-implementation.md` § Archive the package; caps held; skai#92, `Guides/Core/working-doc-conventions.md`); build and test output goes to the scratch root, never the package. The layout above is superseded on two lines: build and render output is no longer persisted under `evidence/` (the Evidence bracket names the scratch path), and a no-proposal conformance run lives at `skai/working-docs/<session>/ui-map-implementation.md`, with no branch segment.

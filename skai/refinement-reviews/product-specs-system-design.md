@@ -510,3 +510,7 @@ Group caps across both spec types and the design process guides: content 37,000;
 **Rendered page, prominently linked (supervisor, 2026-10-18).** The authoring artifact and the promotion artifact each link the package's rendered review page (`product-specs-review.html`) at the top, directly under the title, before Goal or Inputs; a change request's `request.md` links `request-review.html` the same way. The link is the first thing a reviewer sees.
 
 **Live render (supervisor, 2026-10-18).** The rendered page is the primary way the supervisor views a change package while it is being iterated on. Any time the package materially changes — a draft edited, a discussion item resolved, a change item added, a request triaged — the agent validates and re-renders before anything else, in every workflow that writes a package. The gate and promotion renders are not the only ones; they are the last of many. Validation and rendering take milliseconds, so there is no cost argument for deferring them.
+
+## Adopts — 2026-10-21 (working docs placement)
+
+Working documents serving a package live in its `working-docs/` folder and archive with it at promotion (`product-specs-artifacts.md` layout, `product-specs-promotion.md` § Archive the package; caps held; skai#92, `Guides/Core/working-doc-conventions.md`); build and test output goes to the scratch root, never the package.

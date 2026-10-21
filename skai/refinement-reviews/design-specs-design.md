@@ -266,3 +266,7 @@ under the compressed sizes): `design-specs-authoring.md` 17,800; `design-specs-a
 (unchanged); `design-specs-promotion.md` 12,800 (unchanged). These supersede the 2026-10-18 rows.
 
 Slice 3 (2026-10-20): design specs authoring's *Drafting* adopts the gap footnote the same way (`product-specs-system-design.md` § Decisions — 2026-10-20 (known gaps: spec files)); cap 17,800 held (supervisor, 2026-10-20).
+
+## Adopts — 2026-10-21 (working docs placement)
+
+Working documents serving a package live in its `working-docs/` folder and archive with it at promotion (`design-specs-artifacts.md` layout, `design-specs-promotion.md` § Archive the Package; caps held; skai#92, `Guides/Core/working-doc-conventions.md`); build and test output goes to the scratch root, never the package.

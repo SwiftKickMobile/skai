@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.maintain-retro
 Managed-Source: internal/maintain-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-21
 
 # Maintenance retro checklist (agent + supervisor)
 
@@ -72,7 +72,7 @@ This retro is a **backstop for completeness**, not a git/diff report.
   - Verify marker conventions match the canonical rule: `- [ ]` / `- [x]` in process artifacts (markdown workflow docs); `🟡` only in source files (test code, app code) where completion = removal. The canonical in-code case is `Guides/Test/unit-test-planning-guide.md`.
   - Verify `- [ ]` items have stable letter-led IDs on the same line (`D01`, `T01`, `F01`, `S01`, etc.), tight lists under shared headings (no blank lines between sibling checkbox items), and that markers are never on heading lines.
   - Verify discussion-based phases use the Structured discussion items schema (`[Question]`/`[Proposal]`/`[Tradeoff]`, inline-with-topic, no aggregator sections like `## Questions` / `## Decisions`). See `Guides/Core/process-flow.md` "Structured discussion items".
-  - If the guide creates ephemeral working docs, verify its paths use `skai/working-docs/<branch-path>/<session-name>/...` rather than placing files directly under `skai/working-docs/<branch-path>/...`.
+  - If the guide creates working docs, verify a package's documents go in its `working-docs/` folder and the rest use `skai/working-docs/<session-name>/...` rather than files directly under `skai/working-docs/`; build and test output goes to the scratch root, never a working doc.
 - Every manifest `skill` asset has at least one `adapter:` tag and an existing `sourcePath`; runbooks install from those fields. Untagged skills install nowhere.
 - If change-package workflows, artifact formats, or callers changed: run and record the [change package verification](maintenance/change-packages.md#verification), including coexistence, independent promotion, archival recovery, link repair and migration coverage.
 - If guides or wrappers changed: verify the [guide addendum contract](maintenance/guide-addenda.md#verification), including coverage, host-root paths, receipts, thin routing, name compatibility and preserving user files.

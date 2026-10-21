@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-implementation
 Managed-Source: Guides/Spec/work-spec-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-20
+Managed-Updated-At: 2026-10-21
 
 # Work Spec Implementation
 
@@ -57,7 +57,7 @@ returns to Work Spec Design.
 Create beside the design document:
 
 ```text
-skai/working-docs/<branch-path>/<spec-name>/<spec-name>-impl.md
+skai/working-docs/<spec-name>/<spec-name>-impl.md
 ```
 
 For an activated delivery slice, use the design's declared
@@ -261,13 +261,13 @@ Record evidence on the task's Verification line:
 
 ```text
 [evidence: <command>; exit 0]
+[evidence: <command>; exit 65; output: /tmp/skai/<spec-name>/t03.txt]
 [evidence: simulator image-load flow; observed the requested image without a runtime error]
 ```
 
-Always name the command/check and an exit code or observed result. On failure, persist full output under
-`skai/working-docs/<branch-path>/<spec-name>/evidence/` and link it. A success log is
-optional when the inline result is sufficient. Evidence predating the latest relevant mutation is
-stale and must be rerun. When a checked task's evidence becomes stale or a later verification fails,
+Name the command/check, the exit code or observed result, and any captured output's path under the
+scratch root `skai/integration.md` names (default `/tmp/skai/<spec-name>/`); output is not kept, as a
+rerun reproduces it. Evidence predating the latest relevant mutation is stale and must be rerun. When a checked task's evidence becomes stale or a later verification fails,
 uncheck the task. Keep the earlier bracket as history, append fresh evidence after the fix, and check
 the task again only when the rerun passes.
 

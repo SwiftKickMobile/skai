@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-promotion
 Managed-Source: Guides/ProductSpecs/product-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-20
+Managed-Updated-At: 2026-10-21
 
 # Product Specs Promotion
 
@@ -236,9 +236,9 @@ A request filed here rides to completion still `Proposed`.
 
 After verified `C7`, execute `C8`:
 
-1. Move `skai/changes/<change-id>/product-specs/` intact, rendered pages included, to
-   `skai/promoted/<change-id>/product-specs/` in the catalog repository. Leave sibling types
-   untouched; remove the active change-ID grouping directory only if empty.
+1. Move `skai/changes/<change-id>/product-specs/` intact, rendered pages and `working-docs/`
+   included, to `skai/promoted/<change-id>/product-specs/` in the catalog repository. Leave sibling
+   types untouched; remove the change-ID grouping directory only if empty.
 2. Repair live incoming links across those repositories, related packages and work specs, and
    relative links inside moved files, preserving target identities, prose, IDs, decisions and
    recorded results; annotate historical paths with current locations. Inaccessible or unrepaired

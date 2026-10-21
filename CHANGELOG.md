@@ -9,6 +9,7 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **Working documents.** Working documents now live beside what they serve — a change package's notes in that package's `working-docs/` folder, archived with it at promotion, everything else in a session folder with no branch level — and they are committed. Output captured to verify a build or test goes to a scratch folder outside the repository (`/tmp/skai/` by default, set in `skai/integration.md`), and documents record only the command, the result and where the output was. The update asks before moving existing working documents.
 - **Known gaps, part three.** A placeholder in a spec draft is marked with a footnote that names its Discussion item; the tool checks the footnotes against the items, refuses any footnote in canon, and lists the gaps on the review page.
 - **Known gaps, part two.** Every Discussion-based guide now carries the Gap line, the Decision Log and the pointer to the gaps guide; promotion refuses a package with an open gap; the spec tool checks the log and shows gaps on the review page. Existing packages get a seeded Decision Log at update.
 - **Known gaps, part one.** A new reference guide says how to carry a question that must be decided before shipping as a placeholder, and the Discussion schema gains a Gap line and a per-artifact Decision Log. Nothing changes in installed workflows until the guides adopt it in a later release.

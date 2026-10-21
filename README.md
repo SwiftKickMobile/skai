@@ -412,8 +412,8 @@ Plan-first testing workflow. The agent creates an orchestration document for the
 
 **Phases:**
 
-1. **Planning.** Agent chooses a session name for the current testing effort and creates `skai/working-docs/<branch-path>/<session-name>/testing/unit-testing.md` (following [`Guides/Core/working-doc-conventions.md`](Guides/Core/working-doc-conventions.md)) with a checklist of the three phases, Planning, Infrastructure and Writing, in the form the unit-testing guide gives, and creates test files organized into sections with test stubs in each. Test files use `🟡` on section MARKs and `@Test` functions (in-code progress markers). Doc comments on every stub serve as the test plan. At the planning gate, `Planning` remains unchecked until the supervisor approves advancing to infrastructure.
-2. **Infrastructure.** Agent identifies required test infrastructure across all planned tests in the testing session (stubs, fixtures, production code abstractions) and proposes additions. The orchestration document keeps `Infrastructure` unchecked until the supervisor approves advancing to writing. Related infrastructure docs and artifacts live under the same `skai/working-docs/<branch-path>/<session-name>/...` session folder.
+1. **Planning.** Agent chooses a session name for the current testing effort and creates `skai/working-docs/<session-name>/testing/unit-testing.md` (following [`Guides/Core/working-doc-conventions.md`](Guides/Core/working-doc-conventions.md)) with a checklist of the three phases, Planning, Infrastructure and Writing, in the form the unit-testing guide gives, and creates test files organized into sections with test stubs in each. Test files use `🟡` on section MARKs and `@Test` functions (in-code progress markers). Doc comments on every stub serve as the test plan. At the planning gate, `Planning` remains unchecked until the supervisor approves advancing to infrastructure.
+2. **Infrastructure.** Agent identifies required test infrastructure across all planned tests in the testing session (stubs, fixtures, production code abstractions) and proposes additions. The orchestration document keeps `Infrastructure` unchecked until the supervisor approves advancing to writing. Related infrastructure docs and artifacts live under the same `skai/working-docs/<session-name>/...` session folder.
 3. **Writing** (per section, file-by-file). Agent implements tests and then runs them section-by-section, finishing the current file before moving to the next. Gates: agent stops after writing (before running tests), and stops after test results to confirm conclusions and next steps (including any proposed production-code fixes). As tests pass and the supervisor approves, the agent removes `🟡` from those test functions and section MARKs in the test files. The orchestration document keeps `Writing` unchecked until all sections in the testing session are approved complete. If a test requires infrastructure that wasn't identified in Phase 2, it is skipped, the missing infrastructure is documented, and the supervisor can decide at the next planned gate whether to re-enter the infrastructure phase or defer that skipped work.
 
 Phase 3 repeats for each section until none remain.
@@ -473,7 +473,7 @@ The suggestion box for skai itself. A developer has an idea, request, or complai
 
 **Phases:**
 
-1. **Understand and draft.** Agent asks clarifying questions to understand the suggestion (skipped if the developer provides enough detail up front). Once it has enough context, it stops at a ready-to-draft gate. On `next`, it chooses a session name, writes one or more `- [ ] T<n> Ticket: ...` drafts (with bold sub-bullet body fields) to `skai/working-docs/<branch-path>/<session-name>/process-tickets.md`, and presents them for review.
+1. **Understand and draft.** Agent asks clarifying questions to understand the suggestion (skipped if the developer provides enough detail up front). Once it has enough context, it stops at a ready-to-draft gate. On `next`, it chooses a session name, writes one or more `- [ ] T<n> Ticket: ...` drafts (with bold sub-bullet body fields) to `skai/working-docs/<session-name>/process-tickets.md`, and presents them for review.
 2. **Review and file (optional).** The draft-review gate is the main filing gate: the supervisor can revise drafts or move them to a `## Skipped` subsection, or say `next` to file the remaining unchecked `- [ ] T<n> Ticket: ...` entries as GitHub issues on `skai`. On filing, the entry is checked (`- [x]`) and a `- **Filed** #<n>` sub-bullet is appended.
 
 ### Configure SKAI (skill `skai-configure`)
@@ -555,9 +555,9 @@ Update `skai` to the latest release (or a target you name), review what changed,
 
 ### Working documents
 
-- Working documents (plans, specs, progress logs) live under [`skai/working-docs/`](skai/working-docs/) and are organized by your current git branch.
-- `<branch-path>` is the current branch name, with `/` decomposed into nested folders (so `feature/foo` becomes `feature/foo/`).
-- Working docs are ephemeral and typically git-ignored.
+- Working documents (plans, specs, source notes, reviews, progress logs) live beside the artifact they serve and are committed ([`Guides/Core/working-doc-conventions.md`](Guides/Core/working-doc-conventions.md)).
+- A document serving a change package goes in that package's `working-docs/` folder (`skai/changes/<change-id>/<type>/working-docs/`) and is archived with it at promotion; any other goes in a session folder, `skai/working-docs/<session-name>/`.
+- Output captured to verify a build or test (command captures, result bundles, screenshots) goes to a scratch root outside the repository, `/tmp/skai/<session-name>/` unless `skai/integration.md` names another; the working document records the command, the result and the scratch path.
 - One exception: the refinement **findings log** at [`skai/refinement-reviews/`](skai/refinement-reviews/) is committed, one file per refined target. It carries what earlier refinement passes decided, so a later pass does not re-argue settled ground.
 
 ### Figma designs
@@ -588,17 +588,22 @@ This repo is typically maintained with an LLM. When you ask an LLM to make chang
 
 ### App and branding development
 
-Maintainer-only app sources, tests and build tooling live under
-[internal/apps/ConfigureSKAI](internal/apps/ConfigureSKAI). Rebuild the bundled app with
+Maintainer-only app sources and build tooling live under
+[internal/apps/ConfigureSKAI](internal/apps/ConfigureSKAI); build output goes to `/tmp/skai/component-configuration/build`. Rebuild the bundled app with
 `bash internal/apps/ConfigureSKAI/build.sh` from the repository root; the
 [build script](internal/apps/ConfigureSKAI/build.sh) produces the Apple Silicon app bundle in
 [Bin/SKAIConfigure.app](Bin/SKAIConfigure.app). The repo-bundled app uses an ad hoc signature. Developer ID signing/notarization is a separate
 packaging choice, not a prerequisite for the Git-based SKAI release.
 
-Run the [configuration tests](internal/apps/ConfigureSKAI/test.sh) with
-`bash internal/apps/ConfigureSKAI/test.sh`. They cover native config editing/host discovery, migration
+Run the [configuration tests](internal/tests/tools/skai-configuration/test.sh) with
+`bash internal/tests/tools/skai-configuration/test.sh`. They cover native config editing/host discovery, migration
 history and agreement between the packaged Mac resolver and portable Python resolver. Rebuild the
 app before testing changes to its source. UI appearance and interactions are checked manually.
+
+Each tool's automated test lives in [internal/tests/tools](internal/tests/tools), one folder per tool
+([spec-tool](internal/tests/tools/spec-tool/test.py), [ui-map-render](internal/tests/tools/ui-map-render/test.py),
+[skai-configuration](internal/tests/tools/skai-configuration/test.sh)); run it after changing that tool.
+Skill tests used while refining a skill live in [internal/tests/skills](internal/tests/skills/skill-tests.md).
 
 Logo sources, exports and regeneration instructions live under
 [internal/branding](internal/branding/README.md). The main README references those exports directly.

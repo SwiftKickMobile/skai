@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-creation
 Managed-Source: Guides/Spec/work-spec-creation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-20
+Managed-Updated-At: 2026-10-21
 
 # Work Spec Design
 
@@ -31,10 +31,10 @@ possible; if no stable artifact identity can be proposed, stop at a blocked gate
 Choose a concise `<spec-name>` and create:
 
 ```text
-skai/working-docs/<branch-path>/<spec-name>/<spec-name>-design.md
+skai/working-docs/<spec-name>/<spec-name>-design.md
 ```
 
-Follow [`../Core/working-doc-conventions.md`](../Core/working-doc-conventions.md) for `<branch-path>`.
+`<spec-name>` is the [working-doc](../Core/working-doc-conventions.md) session folder.
 Record durable paths or links in `## Inputs`. Restate facts supplied only in conversation under Goal,
 Current Architecture and Constraints, or the relevant `D#`; do not require a transcript. Chat history
 is never a hidden dependency.

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-promotion
 Managed-Source: Guides/DesignSpecs/design-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-20
+Managed-Updated-At: 2026-10-21
 
 # Design Specs Promotion
 
@@ -192,9 +192,9 @@ here rides to completion still `Proposed`.
 
 After verified `C3`, execute `C4`:
 
-1. Move `skai/changes/<change-id>/design-specs/` intact, rendered pages included, to
-   `skai/promoted/<change-id>/design-specs/`. Preserve siblings; remove
-   an emptied grouping directory.
+1. Move `skai/changes/<change-id>/design-specs/` intact, rendered pages and `working-docs/`
+   included, to `skai/promoted/<change-id>/design-specs/`. Preserve siblings; remove an emptied
+   grouping directory.
 2. Repair live incoming links (repositories, packages, work specs) and relative links inside moved
    files, preserving target identities, prose, IDs, decisions and recorded results; annotate
    historical paths with current locations. Inaccessible or unrepaired required links block.

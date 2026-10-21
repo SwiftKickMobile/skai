@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-authoring
 Managed-Source: Guides/Design/design-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-20
+Managed-Updated-At: 2026-10-21
 
 # Design Authoring
 
@@ -27,12 +27,12 @@ A package lives at `skai/changes/<change-id>/design/` and holds:
 | --- | --- |
 | `design-authoring.md` | this workflow's artifact |
 | `design-promotion.md` | promotion's artifact; may be absent |
-| `evidence/` | check output promotion persisted; may be absent |
+| `evidence/` | promotion's check output; may be absent |
+| `working-docs/` | working documents |
 
 The drafts themselves live in the design file, on a **change page** named `<change-id>`; the tool
 guide says what a page is in its tool. Other types for the same change share its `<change-id>` and
-update freely while the change is open; promotion archives each type independently to
-`skai/promoted/<change-id>/<type>/`.
+update freely while the change is open; promotion archives each type independently.
 
 Use the input's change ID; otherwise propose a short kebab-case default and block before
 creating the artifact. Once the ID is resolved, create the artifact, then write `## Goal` and

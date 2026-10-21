@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture-artifacts
 Managed-Source: Guides/UIMap/ui-map-architecture-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-20
+Managed-Updated-At: 2026-10-21
 
 # UI Map Architecture Artifact Formats
 
@@ -10,7 +10,7 @@ Print `📖 SKAI guide: ui-map-architecture-artifacts` now, as a line of its own
 
 The typed formats the architecture skill produces and consumes. This is the consumer-facing layer: a downstream reader resolves any field or value here without reading the authoring method ([`ui-map-architecture.md`](ui-map-architecture.md)). For the YAML map format itself, see [`ui-map-guide.md`](ui-map-guide.md).
 
-A change package lives at `skai/changes/<change-id>/ui-map/` in the repo that holds the official map. It holds the proposed map (`proposed-ui-map.yaml`), its render (`proposed-ui-map.html`), and the architecture artifact (`ui-map-architecture.md`) — whose `## Map Changes` section lists **map change items**. The architecture skill also consumes **change requests** raised by downstream implementation. Both formats are defined below. The type folder owns all map artifacts, requests and evidence;
+A change package lives at `skai/changes/<change-id>/ui-map/` in the repo that holds the official map. It holds the proposed map (`proposed-ui-map.yaml`), its render (`proposed-ui-map.html`), and the architecture artifact (`ui-map-architecture.md`) — whose `## Map Changes` section lists **map change items**. The architecture skill also consumes **change requests** raised by downstream implementation. The type folder owns all map artifacts, requests, evidence and working documents (`working-docs/`);
 related product specs work stays in its independent sibling folder. After successful map promotion,
 this complete package lives at `skai/promoted/<change-id>/ui-map/`, including any unchecked Plan
 implementation work. Historical citations and downstream plan execution use that promoted path.

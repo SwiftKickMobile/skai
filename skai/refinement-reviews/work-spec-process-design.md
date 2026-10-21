@@ -142,7 +142,7 @@ Both default artifacts are working documents under the session folder required b
 [`Guides/Core/working-doc-conventions.md`](../../Guides/Core/working-doc-conventions.md):
 
 ```text
-skai/working-docs/<branch-path>/<spec-name>/
+skai/working-docs/<spec-name>/
   <spec-name>-design.md
   <spec-name>-impl.md
 ```
@@ -493,3 +493,14 @@ placeholder. Implementation's start condition and creation's Discussion rules ch
 rulings. Combined cap reset to **32,600 bytes** (supervisor, 2026-10-20), a little under the compressed
 size after the additions (32,626); the rulings landed the same day (house style on reopening; gaps
 never block implementation, skai#91).
+
+## Decisions — 2026-10-21 (working docs placement and scratch output)
+
+From skai#92, ruled by the supervisor 2026-10-21. A work spec serves no change package, so its two
+documents live in the session folder named by the spec, `skai/working-docs/<spec-name>/`, with no
+branch segment: a spec is found by its name. Working documents are committed. Build and test output
+never lands in the spec folder or the repository: captured output goes under the scratch root
+`skai/integration.md` names (default `/tmp/skai/<spec-name>/`), and the task's evidence bracket names
+the command, the result and the scratch path. The bracket is the record; output is reproducible by
+rerun and need not survive, so the former `evidence/` folder for failure output is gone. The
+combined cap holds at 32,600 (32,594 after the change).

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-promotion
 Managed-Source: Guides/Design/design-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-20
+Managed-Updated-At: 2026-10-21
 
 # Design Promotion
 
@@ -145,10 +145,10 @@ Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution or
 - `C4 Links point at production` — each `## Design Changes` link is repointed from the draft to its
   production design.
 - `C5 Delete the change page` — after the Production review gate advances, delete the page.
-- `C6 Archive the package` — move `skai/changes/<change-id>/design/` intact to
-  `skai/promoted/<change-id>/design/`, leaving sibling types in place and removing an emptied
+- `C6 Archive the package` — move `skai/changes/<change-id>/design/` intact (with `working-docs/`) to
+  `skai/promoted/<change-id>/design/`, leaving siblings in place and removing an emptied
   `<change-id>` folder; repair live links into the moved files and relative links inside them,
-  keeping their targets; verify the move and check `C6` in the archived `design-promotion.md`.
+  keeping their targets; verify the move and check `C6` in the archived artifact.
 
 **Excerpt** (at the Production review gate: `C1`–`C4` checked, `C5`–`C6` unchecked):
 

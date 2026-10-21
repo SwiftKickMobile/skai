@@ -144,3 +144,7 @@ sentence to `known-gaps.md`, gap items carried past the Discussion gate, readine
 an open gap. The Figma mirror of a gap (an annotation on the placeholder node) is a later slice.
 Caps (supervisor, 2026-10-20, a little under the compressed sizes): `design-authoring.md` 15,100;
 `design-promotion.md` 11,500 (unchanged). These supersede the 2026-10-18 rows.
+
+## Adopts — 2026-10-21 (working docs placement)
+
+Working documents serving a package live in its `working-docs/` folder and archive with it at promotion (`design-authoring.md` package table, `design-promotion.md` C6; caps held; skai#92, `Guides/Core/working-doc-conventions.md`); build and test output goes to the scratch root, never the package.

@@ -24,11 +24,11 @@ skai/
       design-specs/
 ```
 
-`<change-id>` groups related work. Each `<type>` folder is one independent package; the parent is a grouping directory, not a package. Current types are `product-specs`, `ui-map`, `design` and `design-specs`. Add future types here when defining their workflows. Each type owns all its drafts, review and execution artifacts, change requests, and evidence under its folder. Do not share evidence or requests at the grouping-directory level.
+`<change-id>` groups related work. Each `<type>` folder is one independent package; the parent is a grouping directory, not a package. Current types are `product-specs`, `ui-map`, `design` and `design-specs`. Add future types here when defining their workflows. Each type owns all its drafts, review and execution artifacts, change requests, evidence and working documents (its `working-docs/` folder, per `Guides/Core/working-doc-conventions.md`) under its folder. Do not share evidence or requests at the grouping-directory level.
 
 Use a short, stable kebab-case change ID. Use a supplied ID; if it is unclear, propose one and obtain supervisor resolution before creation. When deriving a proposal from a branch, use its final component (`work/billing-ui` → `billing-ui`). Reuse the ID for related types, including in different canonical repositories, and link their resolved locations. Do not reuse a promoted ID/type pair for a new proposal.
 
-Ordinary conformance or execution work with no proposed canonical change belongs in `skai/working-docs/<branch-path>/<session-name>/`, following `Guides/Core/working-doc-conventions.md`. It does not create a change package just to record that canon is unchanged.
+Ordinary conformance or execution work with no proposed canonical change belongs in `skai/working-docs/<session-name>/`, following `Guides/Core/working-doc-conventions.md`. It does not create a change package just to record that canon is unchanged.
 
 ## Workflow boundaries and artifact contracts
 
@@ -61,7 +61,7 @@ Define the canonical-write operation, its approval, and its verification in the 
 
 1. Before the canonical write, check that `skai/promoted/<change-id>/<type>/` is available and identify links and derived previews affected by the move in the app/canonical repositories and resolved repositories of linked related packages or callers. An existing destination is not overwritten or merged. If it is the already-moved package on a retry, verify its identity and recorded progress instead.
 2. Perform and verify the canonical write. Record that success independently of archival so recovery never repeats a successful write solely to finish a move.
-3. Move the complete type folder from `skai/changes/<change-id>/<type>/` to `skai/promoted/<change-id>/<type>/`. Leave sibling types untouched. Remove the source grouping directory only if empty; this authorized empty-directory cleanup never removes sibling content.
+3. Move the complete type folder, its `working-docs/` included, from `skai/changes/<change-id>/<type>/` to `skai/promoted/<change-id>/<type>/`. Leave sibling types untouched. Remove the source grouping directory only if empty; this authorized empty-directory cleanup never removes sibling content.
 4. Update live incoming links across those resolved repositories, including related packages and work specs. Reference repair does not authorize moving sibling packages or editing their proposals or decisions. Rebase links inside moved files when their resolved targets change. Preserve prose, IDs, decisions, and recorded commands/results; annotate historical paths rather than rewriting execution history. If a required reference is in a repository the operator cannot access, block with that limitation rather than claim all links were repaired.
 5. Regenerate location-dependent derived output, notably UI Map HTML previews whose viewer paths point at the SKAI checkout. Preserve historical source YAML and evidence. Verify links reach their intended targets, the archived artifacts are intact, the active type path is gone, and sibling types are intact. Record the move, link checks and any render result at the archived location before checking archival completion.
 
@@ -96,4 +96,5 @@ For every affected authoring, promotion and caller guide, record the applicable 
 - Promotion verifies canon before moving, repairs links/previews, records archived evidence, and only then marks completion.
 - A collision blocks before the write; a failure after the write resumes archival only, even if the package has already moved.
 - UI Map Plan retains pending downstream work at the promoted path; no-proposal conformance runs remain working documents.
+- A package's working documents live in its `working-docs/` folder and archive with it; captured build and test output stays in the scratch root, never in the package.
 - Required migration guidance covers existing mixed folders, per-type completion, evidence ownership, links, previews, collisions and repeat-run behavior.

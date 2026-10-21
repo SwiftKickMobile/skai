@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ticket-implementation
 Managed-Source: internal/maintain-tickets.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-21
 
 # Ticket implementation session
 
@@ -46,7 +46,7 @@ Workflow-specific gate notes:
 - The phase-completion gate is non-standard. `Next` there means: approve the implemented phase, check the phase's box in the top-of-document phase checklist, close the tickets covered by that phase, and move on.
 
 Planned gates for this workflow:
-- After creating/updating `skai/working-docs/<branch-path>/<session-name>/ticket-planning.md` with the ready-ticket inventory and proposed phases, and after confirming which phases/tickets will be tackled in this session, but before initializing the first selected phase.
+- After creating/updating `skai/working-docs/<session-name>/ticket-planning.md` with the ready-ticket inventory and proposed phases, and after confirming which phases/tickets will be tackled in this session, but before initializing the first selected phase.
 - Per phase: after every `- [ ]` discussion item in the phase has been resolved (the first planned gate of the phase — emitted on resolution of the last item; advances to the file-change plan).
 - Before making repo changes for a phase, after proposing the concrete file-change plan.
 - After implementing a phase, after reporting what changed and before approving the phase as complete.
@@ -63,7 +63,7 @@ If no issues match, say **"No ready tickets found."** and stop.
 
 Choose a `session-name` for this ticket-maintenance session so multiple planning efforts on the same branch stay separate.
 
-Create or update a working planning document at `skai/working-docs/<branch-path>/<session-name>/ticket-planning.md` (path per `Guides/Core/working-doc-conventions.md`, session name: `<session-name>`, subpath: none, filename: `ticket-planning.md`).
+Create or update a working planning document at `skai/working-docs/<session-name>/ticket-planning.md` (path per `Guides/Core/working-doc-conventions.md`, session name: `<session-name>`, subpath: none, filename: `ticket-planning.md`).
 
 For each ticket, include:
 - A markdown link to the GitHub issue (not just `#123`).
@@ -129,7 +129,7 @@ Rules:
 Progress tracking:
 - Default marker convention: `- [ ]` / `- [x]` in the planning document (process artifact). See `Guides/Core/process-flow.md`, "Progress markers".
 - Default rule: a `- [ ]` item means TODO or pending approval. Do not check it without supervisor approval.
-- The workflow-owned artifact is `skai/working-docs/<branch-path>/<session-name>/ticket-planning.md`.
+- The workflow-owned artifact is `skai/working-docs/<session-name>/ticket-planning.md`.
 - The top-of-document `## Phases` checklist tracks per-phase completion: `- [ ] Phase A: <theme>`, `- [ ] Phase B: <theme>`, etc. These are the durable phase markers.
 - Inside each phase, `- [ ]` discussion items (`PA1`, `PA2`, `PB1`, …) track open planning questions, proposal choices, or unresolved scope details — per the canonical Structured discussion items schema.
 - At the planning-document gate, STOP with all phase items unchecked.
