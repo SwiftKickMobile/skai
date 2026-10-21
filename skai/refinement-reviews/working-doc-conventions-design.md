@@ -47,9 +47,10 @@ Backfilled 2026-10-21 from the existing guide after its rewrite for SwiftKickMob
    upstream one and are linked from the other; sibling packages live in different repositories, so
    there is no shared change-level folder. A work spec serves a change, not a package, so it is a
    session document.
-3. **Working documents are committed.** Nothing in the guide or its derivatives treats them as
-   ephemeral or ignored; skai's own refinement and maintenance working documents follow the same
-   rule in skai's repository.
+3. **Working documents are committed** in host repositories. Nothing in the guide or its derivatives
+   treats them as ephemeral or ignored. skai's own repository is the exception (G15, 2026-10-21): a
+   library every host checks out whole keeps its working documents ignored and tracks only each
+   refinement target's working document, at `skai/refinement-reviews/<target>-refinement.md`.
 4. **Captured verification output never enters the repository.** Command captures, result bundles,
    extracted results and screenshots go under the scratch root the host's `skai/integration.md`
    names, default `/tmp/skai/<session-name>/` (the change ID for package work). The artifact's
