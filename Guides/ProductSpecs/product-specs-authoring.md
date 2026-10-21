@@ -150,7 +150,7 @@ item*, by checking its box and appending `- **Decision** <resolution>.` Advance 
 Discussion gate does not clear them; by then they are already clear. Gaps stay unchecked; they block promotion. `## Requirement Changes` items
 carry no checkbox — the drafts realize the change — and nothing under `proposed-product-specs/**`
 carries a progress marker: those files are drafts of canon and must read as canon. Discussion
-links to drafts; requirements carry no Discussion citations.
+links to drafts; requirements carry no Discussion citations but a gap footnote's `D#`.
 
 **Workflow-specific `auto` behavior.** `auto` suits a baseline whose inputs fully specify the
 requirements. It never bypasses the Discussion blocked gate: unresolved items — a concept inventory
@@ -245,7 +245,7 @@ go either way is a Discussion item: it burns an ID and re-points every work spec
 
 ## Discussion
 
-Group items under `###` topics, never in aggregator sections (`## Questions`, `## Open Items`).
+Group items under `###` topics, never in aggregator sections.
 
 Item line: `- [ ] D<n> [Kind] <summary>`, with Kind `[Question]`, `[Proposal]` or `[Tradeoff]`.
 Bold sub-bullet labels, no separator: **Concern** (always), **Proposal**, **Question**, **Options**,
@@ -262,20 +262,20 @@ inventory's new or changed concepts. Draft fully specified behavior directly; as
 what is taken as given.
 
 With no items, leave Discussion as: "The listed Inputs determine the proposed requirements; review
-the drafts on the review page." Omit this sentence when items exist.
+the drafts on the review page." Omit it when items exist.
 
 ### Draft the requirement anyway
 
 An open item never leaves a hole in the drafts: write the requirement under the recommended reading
-or the gap's placeholder (a gap with none leaves that behavior out until resolved) and, in the
+or, for a gap, its placeholder, footnoted with the item ID per the shape guide even when none
+exists and the dependent text is left out, and, in the
 item's Concern or Proposal, link every affected draft requirement by ID. The item explains the
-uncertainty; the draft reads as a complete catalog.
+uncertainty; the draft reads as complete.
 
-Cite an item by a stable anchor the host supports, or the topic anchor plus the item ID — checkbox
-IDs create none. Stored links are reference-style, defined at the bottom; conversation links are inline or
-verified file/line links.
+Cite an item by a stable anchor, or the topic anchor plus the item ID (checkbox IDs create none). Stored links are reference-style, defined at the bottom; conversation links are inline or file/line
+links.
 
-**Example** (LumenNotes — a Tradeoff):
+**Example** (a Tradeoff):
 
 ```markdown
 ### Where sync boundaries fall

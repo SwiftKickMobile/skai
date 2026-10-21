@@ -135,8 +135,8 @@ in `## Discussion`. Each is resolved individually, on the supervisor's explicit 
 item*, by checking its box and appending `- **Decision** <resolution>.` Advance intent at the
 Discussion gate does not clear them; by the time that gate is reached they are already clear. Gaps stay unchecked and block promotion.
 `## Spec Changes` items carry no checkbox, and nothing under `proposed-design-specs/**` carries a
-marker of any kind — those files are drafts of canon and must already read as canon. Discussion
-links to drafts; specs carry no Discussion citations.
+progress marker — those files are drafts of canon and must read as canon. Discussion
+links to drafts; specs carry no Discussion citations but a gap footnote's `D#`.
 
 **Workflow-specific `auto` behavior.** `auto` suits a baseline whose inputs fully specify the specs.
 It never bypasses the Discussion blocked gate: unresolved items are supervisor decisions.
@@ -172,7 +172,8 @@ Work screen by screen: open the drawings, requirements and, for backfills, the a
 record uncertainties; continue. Seek decisions only after the last screen.
 
 Answer app-behavior questions from code and requirements; ask only about product intent. Draft
-even uncertain items under the recommended reading or a gap's placeholder (none: leave it out),
+even uncertain items under the recommended reading or a gap's placeholder, footnoted with the item ID per the shape guide even when none exists
+and the dependent text is left out,
 linked from Discussion's Concern or Proposal.
 
 Unobserved platform/service differences are package Assumptions; write specs for every app.
@@ -230,12 +231,12 @@ Group items under `###` topics, never in aggregator sections.
 
 Use `- [ ] D<n> [Kind] <summary>`, with Kind `[Question]`, `[Proposal]` or `[Tradeoff]`.
 Bold sub-bullet labels, without separators: **Concern** (required), **Proposal**, **Question**,
-**Options**, **Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "none; waiting on <what>"), **Decision**. Recommend whenever possible; Tradeoffs name
-the preferred option and why. Reserve Questions for cases with no basis to recommend.
+**Options**, **Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "none; waiting on <what>"), **Decision**. Recommend when possible; Tradeoffs name
+the preferred option and why. Reserve Questions for cases with no basis.
 
 A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 
-Concerns must make sense without ID links. Package prose may name frames, nodes and code files.
+Concerns must make sense without ID links. Package prose may name frames, nodes and files.
 
 ### What Earns an Item
 
@@ -246,12 +247,11 @@ supervisor supplies without an item is recorded as a checked item with its Decis
 
 With no items use: “The listed Inputs determine the proposed specs; review the drafts on the
 review page.” Omit when items exist. An undrawn-state item proposes
-the drawing by product name (“Draw `notes — acknowledged reminder`”).
+the drawing by product name.
 
 ### Resolution
 
-Follow the item approval/marker lifecycle in *Advance Intent*. Append Decision last, never into
-Concern. Remove a resolved item nothing current cites or needs. For gaps, remove **Gap**; Decision says answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep entries after item removal. Tools check log and items agree. For drawings, name the product-language drawing in Decision.
+Follow the marker lifecycle in *Advance Intent*. Append Decision last, never into Concern. Remove a resolved item nothing current cites or needs. For gaps, remove **Gap**; Decision says answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep entries after item removal. Tools check log and items agree. For drawings, name the product-language drawing in Decision.
 Apply decisions differing from recommendations before continuing. If design stands, add the item's
 known-difference note. Maintain draft links.
 

@@ -264,3 +264,5 @@ as the artifact's last section, the pointer sentence to `known-gaps.md`, gap ite
 Discussion gate, readiness item 1 failing on an open gap. Caps (supervisor, 2026-10-20, a little
 under the compressed sizes): `design-specs-authoring.md` 17,800; `design-specs-artifacts.md` 5,000
 (unchanged); `design-specs-promotion.md` 12,800 (unchanged). These supersede the 2026-10-18 rows.
+
+Slice 3 (2026-10-20): design specs authoring's *Drafting* adopts the gap footnote the same way (`product-specs-system-design.md` § Decisions — 2026-10-20 (known gaps: spec files)); cap 17,800 held (supervisor, 2026-10-20).

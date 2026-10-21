@@ -32,3 +32,10 @@ Target: `Guides/Core/known-gaps.md` and `Guides/Core/process-flow.md` § Structu
 | 2026-10-20 slice 2 r6 | F1 artifact skeletons routed "gaps needing no decision" / "unresolved design gaps" into Assumptions and TODOs | closed | "notes"; sweep of the word "gap" in pre-existing text repaired four more; "requirements gap" kept deliberately |
 | 2026-10-20 slice 2 r7 | F1 a UI Map gap stops work spec planning through the sibling invocation's "after it completes" | supervisor decision | G11: recommended to leave to slice 7 (G05 removes the invocation); ruling pending |
 | 2026-10-20 slice 2 r7 | G11 ruled: the sibling-invocation dependency is slice 7's (G05 removes the invocation) | converged by ruling | stop rule (b); slice 2's unimplemented ledger is this one item |
+| 2026-10-20 slice 3 r1 | F1 parser swallowed a gap definition in intro/section prose and allowed a rule after a footnote, against the validator's stated rejections | closed | parser fixed; probes and fixture verify |
+| 2026-10-20 slice 3 r1 | F2 drafting sentence could attach the footnote to any open item | closed (sharpened) | "or, for a gap, its placeholder footnoted …" |
+| 2026-10-20 slice 3 r1 | F3 `validate` and `check-changes` rows lack a companion link | logged | item-order and render-row links route the reader; revisit if an operator misses them |
+| 2026-10-20 slice 3 r2 | F1 "(none: leave it out)" read as omitting the gap's representation when no placeholder exists | closed | footnote applies regardless; the dependent text is what is left out |
+| 2026-10-20 slice 3 r2 | F2 Gaps list linked a retired item's non-retired anchor | closed | list uses the item's real anchor; probed |
+| 2026-10-20 slice 3 r3 | Old-side superscripts under `--base` link into the current item's footnote namespace (relabeled footnote leaves a dead historical link) | logged | renderer maintenance; current markers, Gap lines and the Gaps list are correct |
+| 2026-10-20 slice 3 r3 | Clean round over the final text | converged | stop rule (a) |

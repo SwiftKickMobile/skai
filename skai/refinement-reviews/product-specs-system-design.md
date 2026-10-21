@@ -471,6 +471,24 @@ Discussion-phase guide; these are the rules that go beyond the format.
    every `D#` a change entry cites is in the Discussion. The earlier rule that the original stays
    visible forever is withdrawn.
 
+## Decisions — 2026-10-20 (known gaps: spec files)
+
+Slice 3. The spec-file representation of a gap is `spec-format-design.md` decision 21; these are the
+workflow consequences.
+
+1. **Authoring marks the placeholder.** *Draft the requirement anyway* (product specs) and
+   *Drafting* (design specs) say the placeholder is marked with the shape guide's gap footnote
+   naming the item. Nothing else in the authoring guides changes: the footnote is the shape's.
+2. **The tool pairs footnotes and items (G12, supervisor, 2026-10-20).** `check-changes` fails when
+   a draft's gap footnote names a `D#` that is not an open gap item, or when an open gap item has
+   no footnote in any draft (a marker-less note counts). That is what makes zero open gaps at
+   promotion mean the drafts carry no placeholder.
+3. **The page lists gaps.** The artifact reference says the page lists the drafts' gap footnotes,
+   each linked to its item, beside the gap-item marks and the log.
+4. **Caps** for `product-specs-authoring.md` (21,300) and `product-specs-artifacts.md` (6,800) held
+   (supervisor, 2026-10-20): the one-sentence additions were compressed and the old caps forced the
+   trims.
+
 ## Size Budgets — 2026-10-18
 
 Set by the supervisor from four efficiency reviews (SalesPro checkout, `working-docs/requirements-process/reviews/`), as today's size less measured obsolete content, less the reviewed trim on what remains, plus known growth. Whole-file bytes by `wc -c`, managed header and addendum footer included. They bind every repair per the refinement guide's size-budget rule.

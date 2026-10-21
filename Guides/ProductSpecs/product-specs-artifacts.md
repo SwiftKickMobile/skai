@@ -30,13 +30,12 @@ evidence/                          persisted check output; may be absent
 
 **The review page is how the supervisor reads the package.** The tool renders it to
 `product-specs-review.html`, and a request to `request-review.html` beside `request.md`; both are
-committed. When the package materially changes (a draft, an item, a change item, a request), validate
-and re-render before anything else. The authoring and promotion artifacts link the page directly
+committed. When the package materially changes, validate and re-render before anything else. The authoring and promotion artifacts link the page directly
 under their title, as does `request.md`.
 
 End the authoring artifact with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>`
 per Discussion state change. An open **Gap** item marks a placeholder in the drafts, or that none exists
-([`known-gaps.md`](../Core/known-gaps.md)). The page marks and counts gap items and shows the log;
+([`known-gaps.md`](../Core/known-gaps.md)). The page marks and counts gap items, lists draft gap footnotes with item links, and shows the log;
 `check-changes` checks each item's state against its last log entry.
 
 In the promotion artifact, checked `C7` means the catalog is written; checked `C8`, the package

@@ -312,6 +312,7 @@ Draft requirements into a change package under `skai/changes/<change-id>/product
 - Hosting [`Guides/Core/artifact-hosting.md`](Guides/Core/artifact-hosting.md) — read when the artifact does not exist yet: which repository it goes in, and the README link
 - Content rules [`Guides/ProductSpecs/product-specs-catalog.md`](Guides/ProductSpecs/product-specs-catalog.md) -- scopes, layout, indexes and glossary, IDs, writing style
 - Shape [`Guides/Core/spec-file-shape.md`](Guides/Core/spec-file-shape.md) — the file shape product specs and design specs share, and the `Bin/spec-tool.py` commands that validate, cross-reference and render it (cited by the content, authoring and promotion guides)
+- Gap footnotes [`Guides/Core/spec-file-gaps.md`](Guides/Core/spec-file-gaps.md) — read when a spec draft carries a placeholder for an open gap: the footnote form and the tool's checks
 - Formats [`Guides/ProductSpecs/product-specs-artifacts.md`](Guides/ProductSpecs/product-specs-artifacts.md) -- the package and its rendered review page, requirement change items, change requests
 
 **Prerequisites:** Sources describing the behavior to capture. An existing catalog, linked from the project README, or the intent to start one.
@@ -375,6 +376,7 @@ Draft design specs -- the rules joining a screen's design to the requirements: w
 - Guide [`Guides/DesignSpecs/design-specs-authoring.md`](Guides/DesignSpecs/design-specs-authoring.md)
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 - Shape [`Guides/Core/spec-file-shape.md`](Guides/Core/spec-file-shape.md) — the file shape product specs and design specs share, and the `Bin/spec-tool.py` commands that validate, cross-reference and render it (cited by the content, authoring and promotion guides)
+- Gap footnotes [`Guides/Core/spec-file-gaps.md`](Guides/Core/spec-file-gaps.md) — read when a spec draft carries a placeholder for an open gap: the footnote form and the tool's checks
 - Hosting [`Guides/Core/artifact-hosting.md`](Guides/Core/artifact-hosting.md) — read when the artifact does not exist yet: which repository it goes in, and the README link
 - Content rules [`Guides/DesignSpecs/design-specs.md`](Guides/DesignSpecs/design-specs.md) -- layout, items, IDs, writing style, the ten verification checks
 - Formats [`Guides/DesignSpecs/design-specs-artifacts.md`](Guides/DesignSpecs/design-specs-artifacts.md) -- the package and its rendered review page, spec change items, change requests
