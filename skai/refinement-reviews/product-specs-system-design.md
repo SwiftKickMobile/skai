@@ -514,3 +514,7 @@ Group caps across both spec types and the design process guides: content 37,000;
 ## Adopts — 2026-10-21 (working docs placement)
 
 Working documents serving a package live in its `working-docs/` folder and archive with it at promotion (`product-specs-artifacts.md` layout, `product-specs-promotion.md` § Archive the package; caps held; skai#92, `Guides/Core/working-doc-conventions.md`); build and test output goes to the scratch root, never the package.
+
+## Amendment — 2026-10-21 (Verification placement)
+
+The authoring skeleton places `## Verification` after `## Out of scope`, just before `## Decision Log`: it is bookkeeping read by promotion, not content read by the supervisor (Tim, reviewing the Offers page, 2026-10-21; known-gaps planning G17). The design specs skeleton follows.

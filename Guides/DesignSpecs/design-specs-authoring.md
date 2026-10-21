@@ -43,10 +43,10 @@ content.
 ## Inputs                 draft sources
 ## Mode                   Baseline | Scoped change
 ## Discussion             open questions and decisions
-## Verification           one evidence line per check and per reference sweep
 ## Spec Changes           typed change items, kept current as the drafts change
 ## Assumptions and TODOs  what the drafts assume; notes needing no decision; may be empty
 ## Out of scope           excluded work; may be empty
+## Verification           one evidence line per check and per reference sweep
 ## Decision Log
 ```
 

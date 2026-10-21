@@ -10,6 +10,7 @@ is also its GitHub release notes.
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
 - **Glossary alternate terms.** A glossary entry can list what other people call the term ("Also called: bid (Salesforce)"), so an agent reading Slack, email or wiki pages recognizes it; the specs still use only the entry's term, and the spec tool checks and shows the note.
+- **Verification at the end.** The authoring artifact's Verification section now comes after the content sections, just before the Decision Log.
 - **Known gaps, wording.** A gap that has no placeholder yet now says "no placeholder; waiting on …" instead of "none; waiting on …".
 - **Known gaps, part four.** On a Figma change page, each open design gap is marked with an annotation on the drawn placeholder, removed when the gap closes; promotion refuses drafts that still carry one.
 - **Working documents.** Working documents now live beside what they serve — a change package's notes in that package's `working-docs/` folder, archived with it at promotion, everything else in a session folder with no branch level — and they are committed. Output captured to verify a build or test goes to a scratch folder outside the repository (`/tmp/skai/` by default, set in `skai/integration.md`), and documents record only the command, the result and where the output was. The update asks before moving existing working documents.
