@@ -11,7 +11,7 @@ Target: `Guides/Core/known-gaps.md` and `Guides/Core/process-flow.md` § Structu
 | 2026-10-20 r2 | F1 Gap field describes only a placeholder; no stated form for a gap without one (restates r1 open question) | logged | escalation route exists; sharpen the field description only on the supervisor's ruling |
 | 2026-10-20 r2 | Open question: a revised placeholder with state unchanged gets no log entry | logged | consistent with the decision that the log records state changes only |
 | 2026-10-20 r2 | Terminal round: no new live findings | converged | stop rule (a), clean round over the current text |
-| 2026-10-20 r2→r3 | Supervisor ruling on the no-placeholder form | closed | Gap field description now allows `"none; waiting on <what>"`; mirrored in the template and the amendment; round 3 commissioned over the final text |
+| 2026-10-20 r2→r3 | Supervisor ruling on the no-placeholder form | closed | Gap field description now allows `"no placeholder; waiting on <what>"`; mirrored in the template and the amendment; round 3 commissioned over the final text |
 | 2026-10-20 r3 | Clean round over the final text | converged | no findings; stop rule (a) |
 | 2026-10-20 post-r3 (supervisor) | Schema does not say what a changed decision is (new `decided` line, Decision line replaced) nor that `reopened` is only for a withdrawn decision with no replacement | accept | spec hole: the amendment listed states, not transitions; fix folded into slice 2 (process-flow Resolution rule, template, every inlined copy) |
 | 2026-10-20 slice 2 r1 | F1 reopening paragraphs froze decisions; implementation's return path mandated a new D# | closed | preservation now means stable IDs and untouched originals, state per Resolution; the return path reopens or adds |

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-authoring
 Managed-Source: Guides/DesignSpecs/design-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-20
+Managed-Updated-At: 2026-10-21
 
 # Design Specs Authoring
 
@@ -231,7 +231,7 @@ Group items under `###` topics, never in aggregator sections.
 
 Use `- [ ] D<n> [Kind] <summary>`, with Kind `[Question]`, `[Proposal]` or `[Tradeoff]`.
 Bold sub-bullet labels, without separators: **Concern** (required), **Proposal**, **Question**,
-**Options**, **Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "none; waiting on <what>"), **Decision**. Recommend when possible; Tradeoffs name
+**Options**, **Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "no placeholder; waiting on <what>"), **Decision**. Recommend when possible; Tradeoffs name
 the preferred option and why. Reserve Questions for cases with no basis.
 
 A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).

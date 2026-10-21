@@ -409,7 +409,7 @@ promotion readiness rule are a later slice and amend this spec again.
 
 1. **A gap item stays open with a Gap line.** An item that cannot be resolved because something
    outside the work is not yet known carries `- **Gap** <placeholder: what stands where until it is
-   answered, or "none; waiting on <what>">` as its last sub-bullet and keeps its box unchecked
+   answered, or "no placeholder; waiting on <what>">` as its last sub-bullet and keeps its box unchecked
    (supervisor, 2026-10-20: a gap without a placeholder says so in the same field; free text, no
    new field). An open gap item does not count
    toward the discussion-phase blocked gate: with only gap items open the planned gate is emitted,

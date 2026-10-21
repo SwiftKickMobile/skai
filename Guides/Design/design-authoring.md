@@ -166,7 +166,7 @@ topics, never in aggregator sections.
 
 Item line: `- [ ] D<n> [Kind] <summary>`, where `[Kind]` is `[Question]`, `[Proposal]`, or
 `[Tradeoff]`. Sub-bullet labels are bold with no separator: **Concern** (always), **Proposal**,
-**Question**, **Options**, **Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "none; waiting on <what>"), and **Decision** on resolution.
+**Question**, **Options**, **Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "no placeholder; waiting on <what>"), and **Decision** on resolution.
 
 A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 Once a gap's placeholder is drawn, mirror the gap on the change page as the tool guide says; remove

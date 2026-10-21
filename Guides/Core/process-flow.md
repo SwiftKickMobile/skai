@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.process-flow
 Managed-Source: Guides/Core/process-flow.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-20
+Managed-Updated-At: 2026-10-21
 
 # Process flow (house style reference)
 
@@ -248,7 +248,7 @@ Sub-bullet labels are **bold** with no separator after the label — the bold we
 - **Options** (for `[Tradeoff]`) — the considered alternatives.
 - **Detail** (when needed) — elaboration on the concern.
 - **Why** — the rationale.
-- **Gap** — for an item awaiting knowledge from outside this work; keep it unchecked, with `- **Gap** <placeholder: what stands in until it is answered, or "none; waiting on <what>">` last. Gaps block promotion.
+- **Gap** — for an item awaiting knowledge from outside this work; keep it unchecked, with `- **Gap** <placeholder: what stands in until it is answered, or "no placeholder; waiting on <what>">` last. Gaps block promotion.
 - **Decision** (added on resolution) — see below.
 
 Inlined verbatim beside each Discussion-phase guide's Discussion rules; the sanity scan checks it:

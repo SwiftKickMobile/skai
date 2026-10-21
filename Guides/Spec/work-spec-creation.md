@@ -122,7 +122,7 @@ At a blocked gate, the supervisor resolves the cause; on the next response the a
 emits the appropriate gate. Bare advance intent while unresolved re-emits the blocked gate.
 
 Discussion uses stable, never-renumbered `D#` checkboxes in tight topic lists. Explicit supervisor
-approval checks one item and appends its Decision; it is not advance intent. The planned gate appears
+approval checks one item and appends its Decision, not advance intent. The planned gate appears
 only after every non-gap item is checked, and advance intent there authorizes `## Implementation Design`.
 
 "Approve all proposals" resolves every open non-gap item at its stated Proposal, including Tradeoffs and
@@ -158,7 +158,7 @@ If drafting produces no items, `## Discussion` contains one sentence: `The liste
 the design; review the API Sketch as the proposed contract.` Omit that sentence whenever an item
 exists.
 
-Keep gaps unchecked with `- **Gap** <placeholder, or "none; waiting on <what>">` last. A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
+Keep gaps unchecked with `- **Gap** <placeholder, or "no placeholder; waiting on <what>">` last. A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 
 `[Question]` is for the rare case with no defensible recommendation. Its item uses a
 `**Question**` line to name the needed input and a `**Proposal**` line to state the provisional

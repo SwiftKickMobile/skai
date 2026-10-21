@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-authoring
 Managed-Source: Guides/ProductSpecs/product-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-20
+Managed-Updated-At: 2026-10-21
 
 # Product Specs Authoring
 
@@ -249,7 +249,7 @@ Group items under `###` topics, never in aggregator sections.
 
 Item line: `- [ ] D<n> [Kind] <summary>`, with Kind `[Question]`, `[Proposal]` or `[Tradeoff]`.
 Bold sub-bullet labels, no separator: **Concern** (always), **Proposal**, **Question**, **Options**,
-**Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "none; waiting on <what>"), **Decision** on resolution. Recommend when possible; Tradeoffs name the
+**Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "no placeholder; waiting on <what>"), **Decision** on resolution. Recommend when possible; Tradeoffs name the
 preferred option and why; reserve Questions for cases with no basis to recommend.
 
 A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
