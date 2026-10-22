@@ -183,19 +183,25 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
  2. Package page: title "Change Package: <id>", the id being the change folder above
     product-specs/ or design-specs/ (a legacy requirements/ parent is accepted too; else the drafts'
     parent); a legend
-    row of counts (added, modified, retired or removed, unchanged, added files), each with its
-    colored square; a card with the package's status (open item count, or "discussion complete",
+    two segmented controls in the title bar with the counts, one for change type (added,
+    modified, removed, unchanged, added files) and one for Discussion state (open, gaps), each
+    change-type segment with its colored square, each segment a toggle: with none pressed everything shows; with any pressed, only the
+    union of the pressed kinds (requirement cards by status, added files, open Discussion items,
+    gap items with the requirements carrying a gap footnote), with the topic headings, file
+    sections and Discussion heading left empty hidden; "open" and "gaps" tiles appear only when
+    the package has such items; a card with the package's status (open item count, or "discussion complete",
     either with the count of gaps carried — open items whose last sub-bullet is a Gap line),
     title, goal and discussion count; a "Documents" box with one linked line per file (square,
-    name, changed count); the discussion items as collapsible cards (summary: square, ID, kind, title, "open", "gap" or "resolved"; resolved start collapsed, open and gap expanded), in their "###" topic groups in artifact
-    order, each a card with its square (green approved, amber open or gap), ID, kind, title and its
+    name, changed count); the discussion items as collapsible cards (summary: ID, kind, title, "open", "gap" or "resolved"; no square, since squares mean change type; resolved start collapsed, open and gap expanded), in their "###" topic groups in artifact
+    order, each a card with its ID, kind, title and its
     sub-bullets as written (Concern, Proposal, Options with their lettered choices, Detail, Why,
     Gap, Decision), citations linked and popovers as elsewhere, so an item can be resolved from the
-    page; then the artifact's "## Decision Log" as a numbered list (ID, state, text; "No entries."
-    when empty) whenever the section exists; then each file in order. Between the Documents box
-    and the Discussion, a "Gaps (n)" list when any draft carries a gap footnote: one line per
-    footnote with the item, the file, the Discussion item it names, the question and the
-    placeholder (or "No placeholder."). Within an item, a "[^n]" marker renders as a superscript
+    page (the artifact's "## Decision Log" is bookkeeping and is not rendered); then each file in
+    order, each file in a section. The page links `spec-review.v1.css` and `spec-review.v1.js` beside this
+    script by a path relative to the output file (like the UI Map viewer): it needs the skai
+    checkout at that relative location and nothing else, and a styling or behaviour change there
+    reaches every rendered page without a re-render; the version in the name bumps only for a change
+    that would break pages already rendered, and old versions stay beside the tool. Within an item, a "[^n]" marker renders as a superscript
     link to the footnote's "Gap" line under the item, which names and links the Discussion item;
     an item carrying a gap footnote counts as modified. When the artifact has a "## Situations" section it is
     rendered after the card, as written (headings, bullets, paragraphs), citations linked. The
@@ -205,9 +211,10 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     Changed items are expanded; unchanged and retired items are collapsed in place so links to
     them resolve and open on arrival. Each change's justification from the authoring artifact
     sits under its card (items, glossary entries and index lines alike); a new file's under its
-    heading. A change nothing names directly but that rides in an entry's Touches (a changed
-    intro, section line or index line) carries that entry's justification, so every changed
-    thing on the page has a reason.
+    heading. A changed intro or section line that no entry names shows the reason of the
+    file-level entry (add file or modify file) whose Touches names the file, if there is one; an
+    index line shows only the reason of the entry for the file it links; neither ever aggregates
+    the reasons of the changes inside a file.
  4. Request page: title "Change Request: <nnn>" with "Change Package: <id>" beneath; the same card
     with status, title, goal and reviewer response; the Documents box; the request's drafts
     diffed against the package's drafts, falling back to the catalog, each requested change's
@@ -229,7 +236,7 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     the retirement statement. Inside a modified block, removed words carry a light red tint with
     strikethrough and added words a light green tint, at normal weight.
  8. Every citation and glossary term that resolves is a link: citations as chips, glossary terms
-    as dotted text, both with the link pointer. In artifact prose (Discussion, Situations,
+    as body-colored text with a dashed underline, both with the link pointer. In artifact prose (Discussion, Situations,
     justifications, a request's head) a bare ID and every glossary term are linked the same way at
     render time, outside links and code. Resting the pointer on one for about 400 ms (keyboard focus: at once) opens a popover card with the full cited
     item (statement, tables, rules; a cited rule outlined) or the glossary entry; an item cited
@@ -244,6 +251,7 @@ import difflib
 import html
 import os
 import re
+from urllib.parse import quote
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -1369,9 +1377,9 @@ def render_rules(old_rules, new_rules, parent, gloss, tag=True):
 
 def render_gaps(it, aid, gloss):
     return "".join(
-        f'<div class="gap" id="gap-{aid}-{g.label}"><sup class="fn">{html.escape(g.label)}</sup> <b>Gap</b> '
-        f'<a class="ref" href="#{g.did.lower()}">{g.did}</a> — {inline(g.question, gloss, auto=True)}'
-        + (f" <b>Placeholder:</b> {inline(g.placeholder, gloss, auto=True)}" if g.placeholder else " <i>No placeholder.</i>") + "</div>"
+        f'<div class="gapnote" id="gap-{aid}-{g.label}"><sup class="fn">{html.escape(g.label)}</sup><div class="gapbody"><div><b>Gap</b> '
+        f'<a class="ref" href="#{g.did.lower()}">{g.did}</a> — {inline(g.question, gloss, auto=True)}</div>'
+        + (f"<div><b>Placeholder</b> {inline(g.placeholder, gloss, auto=True)}</div>" if g.placeholder else "<div><i>No placeholder.</i></div>") + "</div></div>"
         for g in it.gaps)
 
 
@@ -1430,19 +1438,18 @@ def render_item(old: Item, new: Item, gloss, why):
     aid = anchor(iid) + ("-retired" if (new and new.retired) else "")
     if new and new.gaps:
         parts.append(render_gaps(new, anchor(iid), gloss))
-    return status, card(status, aid, iid, "".join(parts), why, gloss)
+    return status, card(status, aid, iid, "".join(parts), why, gloss, " has-gap" if (new and new.gaps) else "")
 
 
-def card(status, aid, name, body, why="", gloss=None):
-    """A card: expanded for added and modified, collapsed (details) for everything else, with the
-    change's justification under it."""
+def card(status, aid, name, body, why="", gloss=None, extra=""):
+    """A card: collapsible for every status, open by default for added and modified, collapsed for
+    everything else, with the change's justification under it."""
     w = f'<div class="why"><b>Why</b> {inline(why, gloss, auto=True)}</div>' if why else ""
     label = f'<span class="id">{html.escape(name)}</span>'
     ident = f' id="{aid}"' if aid else ""
-    if status in ("added", "modified"):
-        return f'<div class="item {status}"{ident}><div class="head"><span class="badge">{status}</span>{label}</div>{body}{w}</div>'
-    badge = "unchanged" if status == "unchanged" else ""
-    return f'<details class="item {status}"{ident}><summary><span class="badge">{badge}</span>{label}</summary>{body}{w}</details>'
+    badge = status if status in ("added", "modified") else "unchanged" if status == "unchanged" else ""
+    opened = " open" if status in ("added", "modified") else ""
+    return f'<details class="item {status}{extra}"{ident}{opened}><summary><span class="badge">{badge}</span>{label}</summary>{body}{w}</details>'
 
 
 def render_plain_item(it: Item, gloss):
@@ -1543,7 +1550,7 @@ def render_index(old: Spec, new: Spec, gloss, changes, rel):
         a, b = o.get(name), n.get(name)
         ot, nt = (target_identity(s.linkdefs.get(name, "")) if s else "" for s in (old, new))
         keys = {anchor(name), Path((new if b else old).linkdefs.get(name, "")).name}
-        why = why_for(changes, keys, rel)
+        why = why_for(changes, keys)  # the entry for the linked file, never every entry touching the index
         if a and b and same(fmt(a), fmt(b)) and ot == nt:
             status, body = "unchanged", ""
         elif a and b:
@@ -1628,11 +1635,12 @@ def identity_keys(identity, linkdefs, base_dir, drafts, paths=True):
 
 def why_for(changes, keys, file=""):
     """The joined justifications of every change-list entry naming one of the keys; when none
-    does and `file` is given, of every entry whose Touches names that file (a change riding in
-    another entry's Touches carries the owning entry's reason)."""
+    does and `file` is given, of the file-level entry (add file or modify file) whose Touches names
+    that file, so an intro or section line with no entry of its own shows the file's reason, never
+    the reasons of every change inside the file (index lines pass no `file`)."""
     hits = [c for c in changes if c.keys & keys and c.why]
     if not hits and file:
-        hits = [c for c in changes if c.touched & {file, Path(file).name} and c.why]
+        hits = [c for c in changes if c.touched & {file, Path(file).name} and c.why and c.type in ("add file", "modify file")]
     if len(hits) == 1:
         return hits[0].why
     return "; ".join(f"{c.cid} {c.why}" for c in hits)
@@ -1745,50 +1753,7 @@ def check_decision_log(path, text):
     return issues
 
 
-CSS = """
-:root{--bg:#fff;--page:#f6f6f7;--fg:#1b1b1b;--muted:#666;--line:#e3e3e3;--ref:#eef3ff;--refc:#2a4e9a;--term:#5a3e9a;
---tag-add:#2e8b3d;--tag-mod:#b7791f;--tag-ret:#c0392b;--tag-neutral:#777}
-@media(prefers-color-scheme:dark){:root{--bg:#1e1e1e;--page:#141414;--fg:#eaeaea;--muted:#999;--line:#333;--ref:#1e2a44;--refc:#9db6ff;--term:#c9b3ff;
---tag-add:#3da550;--tag-mod:#d19a2f;--tag-ret:#e05545;--tag-neutral:#888}}
-body{margin:auto;padding:24px 16px;background:var(--page);color:var(--fg);font:15px/1.5 -apple-system,system-ui,sans-serif;max-width:900px}
-h1{font-size:30px;margin:0 0 4px}.subtitle{font-size:18px;margin:0 0 8px}h3.section{font-size:15px;margin:22px 0 4px;text-transform:uppercase;letter-spacing:.04em}h2 .badge{margin-right:10px;vertical-align:middle;width:14px;height:14px}h2{font-size:24px;margin:44px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
-.sum{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}.sum div{border:1px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--bg)}
-.toc{border:1px solid var(--line);border-radius:10px;background:var(--bg);padding:10px 14px;margin:16px 0}.toc .toc-title{font-weight:600;margin-bottom:6px}.toc ol{list-style:none;margin:0;padding:0}.toc li{display:flex;align-items:center;gap:10px;padding:3px 0}.toc a{color:var(--refc);text-decoration:none;font-family:ui-monospace,Menlo,monospace;font-size:14px}.toc a:hover{text-decoration:underline}.toc .n{color:var(--muted);font-size:13px}
-.item{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:12px 0;background:var(--bg);box-shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.06)}
-@media(prefers-color-scheme:dark){.item{box-shadow:0 1px 3px rgba(0,0,0,.5),0 4px 12px rgba(0,0,0,.35)}}
-.head{display:flex;gap:10px;align-items:center;margin-bottom:4px}
-.badge{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--tag-neutral);vertical-align:middle;font-size:0;color:transparent;overflow:hidden;flex:none}
-.added .badge,.badge.added,tr.add .badge,li.add>.badge{background:var(--tag-add)}
-.modified .badge,.badge.modified,tr.mod .badge,li.mod>.badge{background:var(--tag-mod)}
-.retired .badge,.missing .badge,.removed .badge,.badge.retired,.badge.missing,tr.rem .badge,li.rem>.badge,li.ret>.badge{background:var(--tag-ret)}
-.badge.unchanged{background:var(--tag-neutral)}
-.sum div{display:flex;align-items:center;gap:8px}
-.id{font-weight:700;font-family:ui-monospace,Menlo,monospace}
-.retired .id,.removed .id,.missing .id,li.rem .rid,li.ret .rid{text-decoration:line-through;color:var(--muted)}
-.rid{font-weight:700;font-family:ui-monospace,Menlo,monospace;margin-right:4px}
-a.ref{background:var(--ref);color:var(--refc);border-radius:4px;padding:0 4px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;white-space:nowrap;text-decoration:none}a.ref:hover{text-decoration:underline}
-span.ref{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--muted);white-space:nowrap}
-span.term{color:var(--muted);border-bottom:1px dotted var(--muted)}
-.item:target{outline:2px solid var(--refc)}
-details.item{padding:6px 14px}details.item summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:center}details.item.unchanged summary .badge{background:var(--tag-neutral)}details.item[open]{padding-bottom:10px}details.item[open] summary{margin-bottom:4px}
-.term,a.term{color:var(--term);border-bottom:1px dotted var(--term);cursor:pointer;text-decoration:none}a.term:hover{border-bottom-style:solid}
-del{text-decoration:line-through;color:var(--muted)}del .ref,del .term{opacity:.6}
-del.w{color:inherit;background:#fbe3e3;border-radius:3px;padding:0 2px}ins.w{text-decoration:none;background:#dcf4dc;border-radius:3px;padding:0 2px}
-@media(prefers-color-scheme:dark){del.w{background:#4a2020}ins.w{background:#1f3f22}}
-blockquote{border-left:3px solid var(--line);margin:8px 0;padding:2px 12px;color:var(--muted)}
-.why{font-size:13px;color:var(--muted);border-top:1px dashed var(--line);margin-top:8px;padding-top:6px}
-p{margin:6px 0}
-ul{padding-left:18px;margin:6px 0}li{margin:2px 0}
-table.t{border-collapse:collapse;width:100%;margin:8px 0}table.t td,table.t th{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;vertical-align:top}
-table.t td .badge,table.t th .badge{margin-right:6px}li>.badge{margin-right:4px}
-.file-why{font-size:13px;color:var(--muted);margin:0 0 8px}
-details.discussion summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:center;flex-wrap:wrap}details.discussion summary::-webkit-details-marker{display:none}details.discussion .state{margin-left:auto;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}details.discussion>ul{margin-top:8px}details.discussion.gap .state{color:var(--tag-mod)}ol.log{margin:0;padding-left:22px}ol.log li{margin:2px 0}ol.log .status{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
-.gap{font-size:13px;border-top:1px dashed var(--line);margin-top:8px;padding-top:6px}sup.fn{font-size:11px;font-weight:700;color:var(--tag-mod)}sup.fn a{color:var(--tag-mod);text-decoration:none}ol.gaps{margin:0;padding-left:22px}ol.gaps li{margin:3px 0}ol.gaps .n{color:var(--muted);font-size:13px}
-.item.request .status{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;border:1px solid var(--line);border-radius:999px;padding:1px 8px}.item.request .title{font-weight:600}
-p.intro{margin:4px 0 10px}p.intro .badge{margin-right:8px}
-#pop{position:absolute;z-index:10;max-width:560px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:10px 14px;font-size:14px;display:none}
-#pop .pop-head{margin-bottom:4px}#pop li.hit{outline:2px solid var(--refc);border-radius:4px}
-"""
+ASSETS = ("spec-review.v1.css", "spec-review.v1.js")  # beside this script, linked by a path relative to the output file; the version bumps only when a change would break pages already rendered (see internal/maintain-skai.md)
 
 
 BUCKET = {"added": "added", "modified": "modified", "retired": "retired", "missing": "retired", "removed": "retired", "unchanged": "unchanged"}
@@ -1831,7 +1796,7 @@ def render_tree(bases, drafts, gloss, changes, prefix=""):
         if new.issues:
             body += '<p class="file-why">Validation: ' + "; ".join(html.escape(str(i)) for i in new.issues) + "</p>"
         body += "".join(e.html for e in entries)
-        sections.append(body)
+        sections.append(f'<section class="file" data-kind="{kind}">{body}</section>')
     return sections, toc, totals, all_entries
 
 
@@ -1923,35 +1888,26 @@ def parse_request(path, drafts):
     return fields, title, goal, parse_changes(text, linkdefs, path.resolve().parent, Path(drafts)), linkdefs
 
 
-def page_shell(title, summary_totals, head, sections, gloss, subtitle=""):
+def asset_links(out):
+    """The stylesheet and script beside this script, as URLs relative to the output file: the
+    page needs the skai checkout at that relative location and nothing else. Logical paths (no
+    symlink resolution), so a checkout reached through an alias links through the same alias;
+    each component URL-encoded and the whole HTML-escaped."""
+    rel = os.path.relpath(os.path.abspath(Path(__file__).parent), os.path.abspath(Path(out).parent)).replace(os.sep, "/")
+    return tuple(html.escape(quote(f"{rel}/{name}", safe="/")) for name in ASSETS)
+
+
+def page_shell(title, summary_totals, head, sections, gloss, out, subtitle=""):
+    css, js = asset_links(out)
     sub = f'<p class="subtitle">{html.escape(subtitle)}</p>' if subtitle else ""
     return f"""<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{html.escape(title)}</title><style>{CSS}</style></head><body>
-<h1>{html.escape(title)}</h1>{sub}
-<div class="sum"><div><span class="badge added"></span><b>{summary_totals['added']}</b> added</div>
-<div><span class="badge modified"></span><b>{summary_totals['modified']}</b> modified</div>
-<div><span class="badge retired"></span><b>{summary_totals['retired']}</b> retired or removed</div>
-<div><span class="badge unchanged"></span><b>{summary_totals['unchanged']}</b> unchanged</div>
-<div><span class="badge added"></span><b>{summary_totals['added files']}</b> added files</div></div>
+<title>{html.escape(title)}</title><link rel="stylesheet" href="{css}"></head><body>
+<div class="top"><h1>{html.escape(title)}</h1><div class="seg change" role="group" aria-label="Change"><button type="button" data-f="added" aria-pressed="false"><span class="badge added"></span><b>{summary_totals['added']}</b> added</button><button type="button" data-f="modified" aria-pressed="false"><span class="badge modified"></span><b>{summary_totals['modified']}</b> modified</button><button type="button" data-f="removed" aria-pressed="false"><span class="badge retired"></span><b>{summary_totals['retired']}</b> removed</button><button type="button" data-f="unchanged" aria-pressed="false"><span class="badge unchanged"></span><b>{summary_totals['unchanged']}</b> unchanged</button><button type="button" data-f="files" aria-pressed="false"><span class="badge added"></span><b>{summary_totals['added files']}</b> added files</button></div>{('<div class="seg state" role="group" aria-label="State">' + ('<button type="button" data-f="open" aria-pressed="false"><b>' + str(summary_totals['open']) + '</b> open</button>' if summary_totals.get('open') else '') + ('<button type="button" data-f="gaps" aria-pressed="false"><b>' + str(summary_totals['gaps']) + '</b> gaps</button>' if summary_totals.get('gaps') else '') + '</div>') if (summary_totals.get('open') or summary_totals.get('gaps')) else ''}</div><div class="wrap">{sub}
+
 {head}{''.join(sections)}
 {render_popovers(gloss)}
-<div id="pop"></div>
-<script>
-(function(){{var pop=document.getElementById('pop'),timer;
-function show(a){{var t=document.getElementById(a.dataset.tip);if(!t)return;pop.innerHTML='';pop.appendChild(t.content.cloneNode(true));
-var rule=a.dataset.rule;if(rule){{var rid=a.textContent.trim();var li=pop.querySelector('[data-rid="'+rid+'"]');if(li)li.classList.add('hit');}}
-var r=a.getBoundingClientRect();pop.style.display='block';var top=r.bottom+window.scrollY+6,left=Math.min(r.left+window.scrollX,window.scrollX+document.documentElement.clientWidth-pop.offsetWidth-16);
-pop.style.top=top+'px';pop.style.left=Math.max(8,left)+'px';}}
-var wait;
-document.addEventListener('mouseover',function(e){{if(pop.contains(e.target))return;var a=e.target.closest('[data-tip]');if(a){{clearTimeout(timer);clearTimeout(wait);wait=setTimeout(function(){{show(a);}},400);}}}});
-document.addEventListener('mouseout',function(e){{if(pop.contains(e.target))return;if(e.target.closest('[data-tip]')){{clearTimeout(wait);timer=setTimeout(function(){{pop.style.display='none';}},150);}}}});
-document.addEventListener('focusin',function(e){{if(pop.contains(e.target))return;var a=e.target.closest('[data-tip]');if(a){{clearTimeout(timer);clearTimeout(wait);show(a);}}}});
-document.addEventListener('focusout',function(e){{if(!pop.contains(e.target)&&e.target.closest('[data-tip]'))pop.style.display='none';}});
-pop.addEventListener('mouseenter',function(){{clearTimeout(timer);}});pop.addEventListener('mouseleave',function(){{pop.style.display='none';}});
-}})();
-function openTarget(){{var el=location.hash&&document.getElementById(decodeURIComponent(location.hash.slice(1)));if(!el)return;var d=el.closest('details');while(d){{d.open=true;d=d.parentElement&&d.parentElement.closest('details');}}el.scrollIntoView();}}
-addEventListener('hashchange',openTarget);openTarget();
-</script>
+<div id="pop"></div></div>
+<script src="{js}"></script>
 </body></html>"""
 
 
@@ -2011,7 +1967,7 @@ def render_request(catalog, package_drafts, request_dir, out):
         sections = [f'<div class="item request"><div class="head"><span class="status">{html.escape(c.type)}</span>'
                     f'<span class="id">{inline(c.identity, gloss)}</span></div>'
                     f'<div class="why"><b>Why</b> {inline(c.why, gloss, auto=True) if c.why else "<i>none given</i>"}</div></div>' for c in changes]
-    page = page_shell(f"Change Request: {request_dir.name}", totals, head + toc_html(toc), sections, gloss,
+    page = page_shell(f"Change Request: {request_dir.name}", totals, head + toc_html(toc), sections, gloss, out,
                       subtitle=f"Change Package: {package_id(package_drafts)}")
     out.write_text(page, encoding="utf-8")
     print(f"wrote {out}: {totals}")
@@ -2059,34 +2015,26 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
     if situations:
         head += f'<h2>Situations</h2><div class="item request">{render_markdown(situations, gloss)}</div>'
     if disc:
-        discussion = "<h2>Discussion</h2>" + "".join(
+        discussion = '<section class="discussion"><h2>Discussion</h2>' + "".join(
             (f'<h3 class="section">{html.escape(topic)}</h3>' if topic else "") + "".join(render_discussion_item(it, gloss) for it in items)
-            for topic, items in disc)
-    present, entries, _ = parse_decision_log(Path(authoring).read_text(encoding="utf-8")) if authoring else (None, [], [])
-    if present is not None:
-        discussion += "<h2>Decision Log</h2><div class=\"item request\">" + (
-            "<ol class=\"log\">" + "".join(f'<li><span class="id">{html.escape(i)}</span> <span class="status">{st}</span> {inline(t, gloss, auto=True)}</li>' for i, st, t, _ in entries) + "</ol>"
-            if entries else "<p>No entries.</p>") + "</div>"
+            for topic, items in disc) + "</section>"
     sections, toc, totals, _ = render_tree([*reversed(bases), catalog], drafts, gloss, changes)
-    gaps = [(d.relative_to(drafts).as_posix(), it, g) for d in sorted(drafts.rglob("*.md")) for sp in [parse(d)] if sp.kind == "spec" for it in sp.items for g in it.gaps]
-    gap_list = (f'<h2>Gaps ({len(gaps)})</h2><div class="item request"><ol class="gaps">' + "".join(
-        f'<li><a class="ref" href="#{anchor(it.id)}{"-retired" if it.retired else ""}">{it.id}</a> <span class="n">{html.escape(rel)}</span> · '
-        f'<a class="ref" href="#{g.did.lower()}">{g.did}</a> — {inline(g.question, gloss, auto=True)}'
-        + (f" <b>Placeholder:</b> {inline(g.placeholder, gloss, auto=True)}" if g.placeholder else " <i>No placeholder.</i>") + "</li>"
-        for rel, it, g in gaps) + "</ol></div>") if gaps else ""
-    head += toc_html(toc) + gap_list + discussion
-    page = page_shell(f"Change Package: {package_id(drafts)}", totals, head, sections, gloss)
+    n_gaps = sum(1 for _, items in disc for it in items if it["gap"]) if disc else 0
+    totals["gaps"] = n_gaps
+    totals["open"] = sum(1 for _, items in disc for it in items if not it["done"]) if disc else 0
+    head += toc_html(toc) + discussion
+    page = page_shell(f"Change Package: {package_id(drafts)}", totals, head, sections, gloss, out)
     out.write_text(page, encoding="utf-8")
     print(f"wrote {out}: {totals}")
 
 
 def render_discussion_item(it, gloss):
-    """A discussion item as a collapsible card: the summary line carries the square (green
-    resolved, amber open), ID, kind, title and the state word; resolved items start collapsed,
-    open ones expanded; the sub-bullets as written show on expand."""
+    """A discussion item as a collapsible card: the summary line carries the ID, kind, title and
+    the state word (no square: squares mean change type, which an item has none of); resolved
+    items start collapsed, open ones expanded; the sub-bullets as written show on expand."""
     done = it["done"]
     state, status = ("resolved", "added") if done else ("gap", "modified") if it["gap"] else ("open", "modified")
-    head = (f'<summary><span class="badge {status}"></span><span class="id">{it["id"]}</span>'
+    head = (f'<summary><span class="id">{it["id"]}</span>'
             f'<span class="status">{html.escape(it["kind"])}</span><span class="title">{inline(it["title"], gloss, auto=True)}</span>'
             f'<span class="state">{state}</span></summary>')
     bullets = "".join(

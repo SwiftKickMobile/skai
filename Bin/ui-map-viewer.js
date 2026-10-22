@@ -1,3 +1,4 @@
+// Frozen copy for maps rendered before the viewer was versioned (2026-10-22). Do not edit; the live viewer is ui-map-viewer.v1.js.
 // ui-map-viewer.js — the interactive UI Map viewer that `ui-map-render.py --html` pages load.
 // Vanilla JS, no dependencies. Reads the map model from window.UI_MAP (emitted by the renderer;
 // see "HTML OUTPUT" in ui-map-render.py's docstring for the model and the viewer's behaviour).

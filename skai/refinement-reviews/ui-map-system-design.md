@@ -32,7 +32,7 @@ its sections, and those quotes are used here. A principle inferred from guide te
   [`Guides/Core/process-flow.md`](../../Guides/Core/process-flow.md) for gates, advance intent,
   `auto` and markers.
 - The ten guides under `Guides/UIMap/`; `Bin/ui-map-render.py` (its docstring's *RENDER
-  CONVENTIONS* is the canonical render spec), `Bin/ui-map.schema.json`, `Bin/ui-map-viewer.js`.
+  CONVENTIONS* is the canonical render spec), `Bin/ui-map.schema.json`, `Bin/ui-map-viewer.v1.js` (versioned: a breaking change is a new file, old versions stay).
 - [`product-specs-system-design.md`](product-specs-system-design.md) § Decisions — 2026-10-19,
   adopted in P8.
 

@@ -5,7 +5,9 @@ Commands that write (render, render-request, convert, link-terms) run on a tempo
 fixtures stay as committed.
 """
 from pathlib import Path
+import os
 import re
+import urllib.parse
 import shutil
 import subprocess
 import sys
@@ -175,9 +177,18 @@ class Writers(unittest.TestCase):
                           "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
         html = page.read_text()
-        self.assertIn("Gaps (1)", html)
-        self.assertIn("Decision Log", html)
-        terminal = re.search(r'id="terminal-stage"><div class="head"><span class="badge">(\w+)</span>.*?<div class="why">', html, re.S)
+        self.assertIn("</b> gaps</button>", html)
+        self.assertIn('data-f="gaps"', html)
+        self.assertNotIn("<h2>Gaps (", html)
+        self.assertRegex(html, r'class="item (added|modified) has-gap"')
+        self.assertNotIn("<h2>Decision Log</h2>", html)
+        self.assertNotRegex(html, r'<details class="item request discussion[^"]*"[^>]*><summary><span class="badge', "discussion items carry no square")
+        self.assertIn('<section class="discussion"><h2>Discussion</h2>', html)
+        self.assertIn('class="gapnote"', html)
+        self.assertNotIn('class="gap"', html)
+        for href in re.findall(r'(?:href|src)="([^"]*spec-review\.v1\.(?:css|js))"', html):
+            self.assertTrue(Path(os.path.normpath(page.parent / urllib.parse.unquote(href))).is_file(), href)
+        terminal = re.search(r'id="terminal-stage" open><summary><span class="badge">(\w+)</span>.*?<div class="why">', html, re.S)
         self.assertIsNotNone(terminal, "Terminal stage card")
         self.assertEqual(terminal.group(1), "modified", "a changed Also called note alone modifies the entry")
         self.assertIn('<blockquote class="mod"><b>Also called:</b>', terminal.group(0))
@@ -192,9 +203,11 @@ class Writers(unittest.TestCase):
                           "--no-authoring", "--out", str(page), fixtures=self.copy)
         self.assertEqual(code, 0, lines)
         text = page.read_text()
+        for href in re.findall(r'(?:href|src)="([^"]*spec-review\.v1\.(?:css|js))"', text):
+            self.assertTrue(Path(os.path.normpath(page.parent / urllib.parse.unquote(href))).is_file(), "assets resolve from an --out elsewhere: " + href)
         end = text.find("Moved from glossary.md")
         self.assertGreater(end, 0, "the moved entry names its old home")
-        card = text[text.rfind('id="offer">', 0, end):end]
+        card = text[text.rfind('id="offer" open>', 0, end):end]
         self.assertIn('<blockquote class="mod"><b>Also called:</b>', card)
         self.assertIn("pitch (the web app).</ins>", card)
         self.assertNotIn("<del", card.split("<blockquote")[0], "the unchanged definition is not marked")

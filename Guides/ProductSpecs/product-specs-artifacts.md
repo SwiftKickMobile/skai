@@ -36,7 +36,7 @@ under their title, as does `request.md`.
 
 End the authoring artifact with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>`
 per Discussion state change. An open **Gap** item marks a placeholder in the drafts, or that none exists
-([`known-gaps.md`](../Core/known-gaps.md)). The page marks and counts gap items, lists draft gap footnotes with item links, and shows the log;
+([`known-gaps.md`](../Core/known-gaps.md)). The page counts gap items and filters to them and their footnoted requirements; the log is not rendered;
 `check-changes` checks each item's state against its last log entry.
 
 In the promotion artifact, checked `C7` means the catalog is written; checked `C8`, the package

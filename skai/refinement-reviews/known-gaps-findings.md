@@ -39,3 +39,4 @@ Target: `Guides/Core/known-gaps.md` and `Guides/Core/process-flow.md` § Structu
 | 2026-10-20 slice 3 r2 | F2 Gaps list linked a retired item's non-retired anchor | closed | list uses the item's real anchor; probed |
 | 2026-10-20 slice 3 r3 | Old-side superscripts under `--base` link into the current item's footnote namespace (relabeled footnote leaves a dead historical link) | logged | renderer maintenance; current markers, Gap lines and the Gaps list are correct |
 | 2026-10-20 slice 3 r3 | Clean round over the final text | converged | stop rule (a) |
+| 2026-10-21 Offers test | Gap-state Discussion cards rendered at 13px with a dashed top border: the slice 3 footnote block's class `gap` collided with the slice 2 card state class | closed | footnote block renamed `gapnote`; test passes; release entry; a renderer change sweeps class names across the stylesheet (skai#90 note) |

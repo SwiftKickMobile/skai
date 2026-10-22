@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.spec-file-gaps
 Managed-Source: Guides/Core/spec-file-gaps.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-20
+Managed-Updated-At: 2026-10-21
 
 # Spec File Gaps
 
@@ -27,7 +27,7 @@ Reminders expire after 30 days.[^1]
 
 `check-changes` fails if a draft footnote names no open gap item or an open gap item has no footnote in any draft (marker-less notes count): zero open gaps at promotion means no placeholders.
 
-On the page, a marker is a superscript link to its Gap line under the item, which links the Discussion item; a footnoted item counts as modified. "Gaps (n)" lists the drafts' footnotes between Documents and Discussion.
+On the page, a marker is a superscript link to its Gap line under the item, which links the Discussion item; a footnoted item counts as modified. The counts row shows the gaps; the gaps tile filters the page to them.
 
 ## Project Addendum
 

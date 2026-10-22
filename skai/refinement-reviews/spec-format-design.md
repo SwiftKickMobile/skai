@@ -90,8 +90,9 @@ parser, one renderer, and both guide sets cite the shape guide instead of each r
     a section's orientation line is prose and diffs like the intro. A reordered table row is always
     shown as moved; the tool cannot read whether the statement binds order, so the reviewer judges
     (settled 2026-10-18).
-12. **Package page.** Title `Change Package: <id>`. A legend row of counts (added, modified, retired
-    or removed, unchanged, added files), each with its colored square. A card with the package's
+12. **Package page.** Title `Change Package: <id>`. A title bar with two multi-select segmented
+    controls carrying the counts: change type (added, modified, removed, unchanged, added files), each
+    with its colored square, and Discussion state (open, gaps), without squares (2026-10-22). A card with the package's
     status (open item count, or ready for promotion), title, goal and discussion count. The `## Situations`
     section, when present, rendered after the card as written (added 2026-10-18, target 3). A "Documents"
     box, one linked line per file with its square and changed count. The discussion items, each with its
@@ -166,8 +167,8 @@ does not restate it.
     kind); `link-terms` re-wrapped a term inside a longer term's link (now treated as linked).
 
 19. **Discussion items on the page (supervisor, 2026-10-19).** Each item is a collapsible card
-    whose summary line carries its state: the square (green resolved, amber open), the ID, the
-    kind, the title, and the word "resolved" or "open" at the end; resolved items start collapsed,
+    whose summary line carries the ID, the kind, the title, and the state word ("resolved", "open" or
+    "gap") at the end, with no square, since squares mean change type (2026-10-22); resolved items start collapsed,
     open items start expanded. The body (Concern, Options, Proposal, Why, Decision) shows on
     expand. Reason: the list grows long and the state was hard to see.
 
@@ -188,7 +189,9 @@ does not restate it.
     projection; a note when the package does not hold the file). `check-changes` pairs footnotes
     with open gap items both ways. The page renders a marker as a superscript link to the
     footnote's Gap line under the item, which links the Discussion item; an item carrying a
-    footnote counts as modified; a "Gaps (n)" list sits between Documents and the Discussion.
+    footnote counts as modified; the counts row shows the number of gap items and the count tiles as multi-select filters
+    filter hides everything but gap items and footnoted requirements (supervisor, 2026-10-21,
+    replacing the earlier "Gaps (n)" list).
     Placement (supervisor, 2026-10-20, G13): the form, its edge cases, the example and the tool's
     checks live in a companion guide, `Guides/Core/spec-file-gaps.md`, read when a gap is raised;
     the shape guide keeps only what every author needs (the element's place in an item, one

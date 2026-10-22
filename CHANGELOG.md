@@ -10,6 +10,11 @@ is also its GitHub release notes.
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
 - **Glossary alternate terms.** A glossary entry can list what other people call the term ("Also called: bid (Salesforce)"), so an agent reading Slack, email or wiki pages recognizes it; the specs still use only the entry's term, and the spec tool checks and shows the note.
+- **Review pages share one stylesheet, versioned.** The page's styles and script now live in the skai checkout, like the UI Map viewer's, so a style fix reaches every page; a change that would break old pages becomes a new version and old pages keep theirs.
+- **Gaps count and filter.** The review page counts gaps in its header and its count tiles filter the page, several at once; the separate Gaps list is gone.
+- **Quieter term links.** Glossary terms on the review page are body-colored with a thin dashed underline.
+- **Fix.** Open gap items on the review page no longer shrink to the footnote's type size.
+- **Decision Log off the page.** The review page no longer shows the Decision Log; it stays in the artifact.
 - **Verification at the end.** The authoring artifact's Verification section now comes after the content sections, just before the Decision Log.
 - **Known gaps, wording.** A gap that has no placeholder yet now says "no placeholder; waiting on …" instead of "none; waiting on …".
 - **Known gaps, part four.** On a Figma change page, each open design gap is marked with an annotation on the drawn placeholder, removed when the gap closes; promotion refuses drafts that still carry one.

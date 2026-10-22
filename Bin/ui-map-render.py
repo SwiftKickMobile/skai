@@ -12,7 +12,8 @@ or a Mermaid flowchart.
 
 The input is a UI Map YAML document conforming to ui-map.schema.json.
 The primary output is a static HTML page (`--html`) that loads the viewer
-beside this script (ui-map-viewer.js, ui-map-viewer.css); no server is needed.
+beside this script (ui-map-viewer.v1.js, ui-map-viewer.v1.css; the version bumps only when a
+change would break pages already rendered); no server is needed.
 The Mermaid `flowchart LR` text (bare, no ``` fences) remains available for
 documents that embed a diagram, and `--svg` still renders it through the
 Mermaid CLI.
@@ -169,7 +170,7 @@ the demo doc and the guide describe the same conventions in prose.
 
 12. HTML OUTPUT (--html)
     - A static page: the map model inline as `window.UI_MAP` JSON, plus a
-      stylesheet link and script tag for ui-map-viewer.css / ui-map-viewer.js
+      stylesheet link and script tag for ui-map-viewer.v1.css / ui-map-viewer.v1.js
       beside this script, referenced by a path relative to the output file.
       The page works from file:// and from any static server; it needs the
       SKAI checkout at that relative location and nothing else. `--open`
@@ -247,7 +248,9 @@ from __future__ import annotations
 import argparse
 import json
 from html import escape as html_escape
+import html
 import os
+from urllib.parse import quote
 import shutil
 import subprocess
 import sys
@@ -865,7 +868,7 @@ def open_in_browser(path: Path) -> None:
 # HTML output — the interactive viewer (docstring rule 12)
 # ---------------------------------------------------------------------------
 
-VIEWER_ASSETS: tuple[str, ...] = ("ui-map-viewer.css", "ui-map-viewer.js")
+VIEWER_ASSETS: tuple[str, ...] = ("ui-map-viewer.v1.css", "ui-map-viewer.v1.js")  # the version bumps only when a change would break pages already rendered; old versions stay beside this script
 
 
 def build_viewer_model(model: Model) -> dict[str, Any]:
@@ -917,8 +920,8 @@ def build_viewer_model(model: Model) -> dict[str, Any]:
 def render_html(model: Model, html_path: Path) -> str:
     """The viewer page: model inline, viewer assets linked relative to html_path."""
     asset_dir = Path(__file__).resolve().parent
-    rel = os.path.relpath(asset_dir, html_path.resolve().parent).replace(os.sep, "/")
-    css, js = (f"{rel}/{name}" for name in VIEWER_ASSETS)
+    rel = os.path.relpath(os.path.abspath(asset_dir), os.path.abspath(html_path.parent)).replace(os.sep, "/")
+    css, js = (html.escape(quote(f"{rel}/{name}", safe="/")) for name in VIEWER_ASSETS)
     payload = json.dumps(build_viewer_model(model)).replace("</", "<\\/")
     return f"""<!doctype html>
 <html lang="en">

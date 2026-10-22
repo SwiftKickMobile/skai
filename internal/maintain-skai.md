@@ -38,10 +38,12 @@ When you change assets, keep these in sync:
   - always determine the date by running `date +%Y-%m-%d` in the terminal (see `Install/managed-header.md`, "Determining today's date")
   - format entries for fast scanning: prefer multiple short bullets over one giant "mega-entry"; short bold headline + 1-2 sentences max; group by theme when many files change (core mechanics, policies, spec guides, test guides, templates, etc.)
 - Tool tests: each tool under `Bin/` and `internal/apps/` has one self-contained automated test in `internal/tests/tools/<tool-name>/` (`test.py`, or `test.sh` when it must compile code first). Run it after changing that tool, and extend it when the tool's behavior changes; the tool's docstring stays its documentation, so the test folder has no README. There is no top-level runner.
+- `Bin/spec-tool.py`
+  - `Bin/spec-review.v<n>.css` and `Bin/spec-review.v<n>.js` are the review pages' stylesheet and script, loaded by every rendered page from the SKAI checkout by relative path. Versioning rule (both for these and for the UI Map viewer): a change that leaves every page already rendered against the current version working as before is made in place and reaches them all; a change that would break or alter such a page (markup, the classes and attributes the script reads, the script's behaviour) is a new version: new files, the renderer links them, and every old version stays beside the tool untouched. The unversioned `ui-map-viewer.css` / `.js` are frozen copies for maps rendered before versioning.
 - `Bin/ui-map-render.py`
   - its docstring ("RENDER CONVENTIONS") is the canonical render spec: update it in the same edit as the code
   - when the render output changes, regenerate the Mermaid block in `Guides/UIMap/ui-map-demo.md` from that guide's own YAML (`uv run Bin/ui-map-render.py <demo yaml> -o <file>`) and update the guide's notes; never hand-edit the block
-  - `Bin/ui-map-viewer.js` and `Bin/ui-map-viewer.css` are the `--html` output's viewer, loaded by every rendered page from the SKAI checkout: a behaviour change there is a render change (docstring rule 12, release documents), and the two files must stay beside the renderer under their current names, since rendered pages link them by relative path
+  - `Bin/ui-map-viewer.v<n>.js` and `Bin/ui-map-viewer.v<n>.css` are the `--html` output's viewer, loaded by every rendered page from the SKAI checkout by relative path: a behaviour change there is a render change (docstring rule 12, release documents) and follows the versioning rule above
 - Skills (if you add/change them):
    - shared templates live at `Templates/skills/skai-*/SKILL.md`
    - Cursor installer installs them into host repos at `.cursor/skills/`
