@@ -157,3 +157,113 @@ pointer in *Discussion*); design promotion's `C1` confirms no draft still mirror
 form is the tool guide's (for Figma, [`figma-designer-guide-design.md`](figma-designer-guide-design.md)
 § Amendment — 2026-10-21). Caps held (15,100 / 11,500), each sentence paid for by trims in the same
 guide (see `design-process-refinement.md` § Slice 5).
+
+## Amendment — 2026-10-23 (change requests: authoring against a base)
+
+Inventory for the guides, per skai#90 (inventory before prose; cap set after the compression
+review). Decided with the supervisor 2026-10-23 (skai#99; prototyped on a project's design
+package). Supersedes the settled decisions on the package path, the Design Changes inventory and
+promotion where they conflict. No sizes here.
+
+**design-authoring.md must say:**
+
+1. A package authors against a **base**: production by default; for a **change request**, another
+   open design package. Nothing differs but the base; a request against a request is one more level.
+2. Paths: a package against production at `skai/changes/<change-id>/design/`; a request at
+   `<base>/change-requests/<nnn>/`, numbered by filing order; the same folder contents, plus
+   `change-requests/` and `promoted-change-requests/` when they exist; a request's first input is
+   its base.
+3. Drawings: a package against production draws on its change page; a request draws in a
+   **request section** named `CR-<nnn> — <name>` on the base's change page, holding only what it
+   adds or changes, a changed screen as a copy of the base's frame with the change, never an edit
+   in place. The section's form is the tool guide's.
+4. The rendered page `design-review.html`, written by `Bin/design-tool.py render`, is the
+   supervisor's view: package card, Discussion, Design Changes; rendered on every material change
+   and before every gate (the 2026-10-18 live-render rule now reaches design packages).
+5. **No mockups**: when the supervisor, asked at the tool-access blocked gate, rules that none can
+   be drawn, the Mockups phase is skipped; Design Changes is written from the decisions at the
+   Discussion gate and is what the review gate reviews; the ruling is recorded under Assumptions
+   and TODOs.
+6. **Design Changes** is a typed list: `V<n> <add|modify|remove> <screen|state|component>:
+   <identity>`, IDs never renumbered, no checkbox; identity the frame's name linked into the file
+   (unlinked, the intended name, with no mockups); a **Description**, about a sentence with
+   mockups, enough to draw from without them; a **Justification** with a source (spec citation,
+   `Resolved decision: D<n>`, `Base decision: D<n>`, `Supervisor input`). Written on "approved"
+   with mockups; a reopen that changes the designs or the list removes it until the next approval.
+7. Whoever runs the workflow on a package authors it: a request filed by one person and continued
+   by another is one package under one set of rules; the second run reopens it, raises what it
+   finds as items, and may trim or change anything; no role rules.
+8. A request's gaps: it inherits its base's open gaps like any input's; its own travel into the
+   base at promotion.
+9. Initiation signal for a request ("request a design change to <package>"); the path resolved as
+   the next free number under the base.
+10. Gates as today, the review gate covering both the drawings and, with no mockups, the Design
+    Changes on the page; `auto` never bypasses it.
+
+**design-promotion.md must say:**
+
+1. Promotion folds the package into its base: into production, the drawings move from the change
+   page into the production designs and the package archives at `skai/promoted/<change-id>/design/`;
+   into a package, the drawings move from the request section into the base's drawings, the
+   request's changes are appended to the base's Design Changes (the base's next `V` numbers,
+   Description kept, Justification `Change request: <nnn> V<n>; …`, links to the new places), its
+   open gap items are appended to the base's Discussion (next `D` numbers, Gap lines and mirrors
+   kept, logged `gap`), the base's Assumptions name the promoted request, the base's page is
+   re-rendered, and the package archives at `<base>/promoted-change-requests/<nnn>/`.
+2. Readiness: non-gap items resolved; into production, gap items too; into a package, open gaps
+   are carried by the fold-in. Design Changes written. Every linked entry reaches its draft; an
+   unlinked entry allowed only with the recorded no-mockups ruling, and never into production.
+   Promoted path absent (either form). Product spec change requests triaged, as today.
+3. An undrawn entry folded into a package removes the base's approval: the base returns to Mockups
+   to draw it; completion says what the base now owes.
+4. Checks `C1`–`C6` as today, each stated for both bases: conventions (gap mirrors only block into
+   production); inventory matches the drawings (page or section); the base absorbs the package;
+   links point at the base; delete the drafts (page or section); archive (folder moved intact with
+   its `working-docs/`, `change-requests/`, `promoted-change-requests/`; links repaired; page
+   re-rendered).
+5. The review gate is a **Base review**: the supervisor reviews production or the base's
+   drawings before anything is deleted; a requested change returns the package to authoring with
+   the base restored from version history.
+
+**Clarification — 2026-10-23 (refinement r1, F4):** what represents a change is its drawing, or
+under the no-mockups ruling its Design Changes entry. Rules by operation: an `add` or `modify`
+entry links its draft and, after promotion, its place in the base; a `remove` entry names the base
+design removed and keeps that name after deletion, with no link. Readiness, the inventory check and
+the link check apply to the representation that exists; the review of the base covers its
+drawings and, for entries folded in undrawn, its Design Changes; drafts are deleted where they
+exist. Authoring items 3 and 6 and promotion items 2 and 4 read accordingly.
+
+**Out of this amendment:** the product specs change request model (the design guide's paragraph on
+filing requests against the specs package stays on the specs model until skai#99's sweep); a check
+command for the design change list; embedded frame images on the page.
+
+### Rulings — 2026-10-23 (after the compression review)
+
+- **No approval word.** The gate after a round of drawings is an ordinary planned gate with the
+  standard line; "next" there is the supervisor approving the designs. The list's presence is not
+  evidence of anything; promotion readiness checks state. Amends authoring items 6 and 10.
+- **The change list is live.** Design Changes is kept current from the first drawing on, as the
+  specs keep theirs, so the page shows the round under review; "written on approved" and "a reopen
+  removes it" go. Amends authoring item 6 and promotion item 2.
+- **Reconcile inputs at that gate's advance, decoupled.** The guide names no upstream type.
+  Inputs are whatever the supervisor brings (product specs among them). On "next" the agent
+  reconciles the drawings against every input; for each input the decisions changed, it files a
+  change request through that input's own process where one exists, with drafts, else tells the
+  supervisor what the input needs; the package completes with those named. Requests are batched
+  there, not filed per decision (cost: drafting and rendering per decision, and pulling the
+  input's supervisor in on something still changing; the Decision lines hold the record until
+  then). Replaces the Resolution paragraph that names the product specs request format, and
+  the trace pass's "product spec" wording, with input-agnostic ones. Downstream work (design
+  specs) is out of the design package's scope; completion names what it owes.
+
+## Size Budgets — 2026-10-23
+
+Set by the supervisor from the third compression round (`design-process-refinement.md` § Change
+Requests: Authoring Against A Base), a little under the compressed sizes; whole-file bytes by
+`wc -c`. These replace the 2026-10-20 caps and bind every repair.
+
+| File | Compressed | Cap |
+| --- | ---: | ---: |
+| design-authoring.md | 16,210 | 16,100 |
+| design-promotion.md | 12,206 | 12,100 |
+

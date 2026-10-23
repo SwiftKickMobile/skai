@@ -9,6 +9,9 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **Design change requests.** A design package now authors against a base, and a change request is simply a package whose base is another open design package: same artifact, same phases, same page; promotion folds it into the base. Anyone can file one, with or without drawings.
+- **Design Changes is a live typed list.** One entry per change with a description and a justification, kept current while drawing; "approved" is gone, the review gate's "next" is the approval, and completion reconciles the designs against their inputs.
+- **Design packages get a review page.** A new renderer writes `design-review.html` beside the design artifact, sharing the spec pages' look; cards and the top bar sit on a 5 grid.
 - **Glossary alternate terms.** A glossary entry can list what other people call the term ("Also called: bid (Salesforce)"), so an agent reading Slack, email or wiki pages recognizes it; the specs still use only the entry's term, and the spec tool checks and shows the note.
 - **Review pages share one stylesheet, versioned.** The page's styles and script now live in the skai checkout, like the UI Map viewer's, so a style fix reaches every page; a change that would break old pages becomes a new version and old pages keep theirs.
 - **Gaps count and filter.** The review page counts gaps in its header and its count tiles filter the page, several at once; the separate Gaps list is gone.

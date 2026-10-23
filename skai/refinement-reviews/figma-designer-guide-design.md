@@ -104,3 +104,16 @@ no comment tool), keeping the node's other annotations. Annotations show on the 
 Mode too (tested 2026-10-20). This is the one change-page convention the guide owns; the design
 process guides say only to mirror each open gap as this guide says. After the compression review (754 drafted, 512 proposed, 599
 applied) the pair is 17,292 bytes; cap **17,300 bytes**, set by the supervisor 2026-10-21, replacing the 19,000 above.
+
+## Amendment — 2026-10-23 (request sections)
+
+Requirement 9, from the change-request decision (skai#99; `design-process-design.md` § Amendment —
+2026-10-23): a change request against a change package draws in a Section of its own on that
+package's change page, `CR-<nnn> — <name>`, holding only the frames the request adds or changes,
+a changed screen as a copy of the package's frame with the change; promotion folds them into the
+page's other Sections and removes it. One passage under the page rules; nothing else. Cap set
+after the compression review (17,300 before it).
+Compression (third round, 2026-10-23): the pair 17,492 bytes; cap set at 17,400 by the
+supervisor 2026-10-23, then held at **17,500 bytes** (supervisor, 2026-10-23) after the
+refinement series found nothing against the passage: trimming elsewhere would have been cleanup.
+

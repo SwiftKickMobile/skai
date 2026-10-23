@@ -1,6 +1,6 @@
 ---
 name: skai-design-promotion
-description: Promotes an approved design package from its change page into production in the project's design file (readiness, checks with evidence, supervisor review of production before page deletion). Use to promote designs or land a design package.
+description: Promotes a completed design package into its base, production or the parent package of a change request (readiness, checks with evidence, supervisor review of the base before the drafts go). Use to promote designs or a change request.
 ---
 
 # SKAI: Design promotion

@@ -1,6 +1,6 @@
 ---
 name: skai-design-authoring
-description: Takes a design change from idea to approved mockups on a change page in the project's design file, in a skai change package (alternating discussion and mockup phases, gated review). Use when the user asks to design, mock up, redesign, or backfill designs for a feature or screen.
+description: Takes a design change to a completed skai change package against a base (production, or an open design package for a change request), drawn in the design file with gated review and a rendered page. Use to design, mock up, redesign or backfill designs, or request a design change.
 ---
 
 # SKAI: Design authoring

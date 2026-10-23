@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.designer-guide
 Managed-Source: Guides/Design/figma-designer-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-23
 
 # Figma Designer Guide
 
@@ -24,7 +24,9 @@ domains or scenes.
      [design conventions](#design-conventions).
 
    Other pages serve a purpose of their own: a change page, named for its change package, holds
-   that change's drafts until they are on `Production`.
+   that change's drafts until they are on `Production`. Each request puts only added or changed frames in its
+   `CR-<nnn> — <name>` Section there; copy base frames to change screens. Promotion folds them
+   into other Sections and deletes that Section.
 
 2. **Production is canonical.** `Production` holds the approved design of every screen (plus a page
    per further target size; see [Multiple target sizes](figma-designer-guide-multiple-sizes.md)).

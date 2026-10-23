@@ -342,7 +342,7 @@ requirement text and IDs remain unchanged.
 
 ### Design authoring (skill `skai-design-authoring`)
 
-Take a design change from an idea to approved mockups in a change package under `skai/changes/<change-id>/design/`, drafted on a change page named `<change-id>` in the project's design file. The production designs stay unchanged during authoring. Sources are open-ended -- an idea, sketches, a brief, a product spec package, an existing app to backfill from. The process guide is tool-agnostic and loads the conventions guide for the project's design tool (Figma today).
+Take a design change from an idea to a completed change package, authored against a **base**: production for a package under `skai/changes/<change-id>/design/`, drafted on a change page named `<change-id>` in the project's design file; or another open design package for a **change request**, a package of the same shape under `<base>/change-requests/<nnn>/`, drafted in a request section on the base's change page. The base stays unchanged during authoring. Sources are open-ended -- an idea, sketches, a brief, a product spec package, an existing app to backfill from. The artifact's rendered page, `design-review.html` beside it (from [`Bin/design-tool.py`](Bin/design-tool.py)), is the supervisor's view: package card, Discussion, change list. The process guide is tool-agnostic and loads the conventions guide for the project's design tool (Figma today).
 
 - Guide [`Guides/Design/design-authoring.md`](Guides/Design/design-authoring.md)
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
@@ -352,22 +352,23 @@ Take a design change from an idea to approved mockups in a change package under 
 
 **Phases** (alternating; never both at once):
 
-1. **Discussion.** Agent seeds topic-organized `- [ ]` items for the decisions it needs -- a proposed departure from the current app, something that looks like a defect, an open product question -- each with a written recommendation. Nothing is drawn. A decision that changes or adds a product spec is filed as a change request against the change's product spec package, never by editing it. Gate: supervisor resolves each item.
-2. **Mockups.** Agent draws the resolved items on the change page and, before the review gate, traces every drawn state to a product spec and every package spec to a drawing, filing change requests for the mismatches; supervisor reviews the designs there. Feedback goes into the designs; anything needing a decision is parked and opens the next Discussion phase. Gate: supervisor says "approved", after which the agent writes the Design Changes inventory. Ends with `🏁 Complete.`, naming any request still awaiting triage.
+1. **Discussion.** Agent seeds topic-organized `- [ ]` items for the decisions it needs -- a proposed departure from the base, something that looks like a defect, an open product question -- each with a written recommendation. Nothing is drawn. Gate: supervisor resolves each item. If the supervisor rules at the tool-access blocked gate that no mockups can be drawn, the typed Design Changes list, written from the decisions, stands in for the drawings from here on.
+2. **Mockups.** Agent draws the whole change on the change page or request section and keeps the Design Changes list (`V<n>`, add / modify / remove, a description, a justification) current with the drawings; before the review gate it traces every drawn state to an input and every input requirement to a drawing. Supervisor reviews the drawings and the rendered list. Feedback goes into the designs; anything needing a decision is parked and opens the next Discussion phase. Gate: "next" is the supervisor's approval.
+3. **Completion.** Agent reconciles the drawings against every input but the base and, for each input the decisions changed, files a change request through that input's own process (with drafts) or tells the supervisor what the input needs; names what the package owes downstream. Ends with `🏁 Complete.`
 
 ### Design promotion (skill `skai-design-promotion`)
 
-Move an approved package's drafts from its change page into the production designs, have the supervisor confirm the result, delete the page, and archive the package to `skai/promoted/<change-id>/design/`. Promotion refactors production to absorb the drafts; a draft that needs changing returns the package to authoring. Implementing designs in code is out of scope.
+Fold a completed package into its base: into production (drafts moved from the change page, package archived to `skai/promoted/<change-id>/design/`) or into the parent package for a change request (frames moved from the request section into the base's drawings, the request's entries appended to the base's Design Changes, its open gaps carried into the base's Discussion, package archived to `<base>/promoted-change-requests/<nnn>/`). The supervisor confirms the base before the drafts are deleted. Promotion refactors the base to absorb the drafts; a draft that needs changing returns the package to authoring. Implementing designs in code is out of scope.
 
 - Guide [`Guides/Design/design-promotion.md`](Guides/Design/design-promotion.md)
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when readiness finds an open gap; the package returns to authoring to resolve it
 
-**Prerequisites:** A change package whose discussion is resolved, whose Design Changes inventory is written, and whose change requests against the product spec package are triaged.
+**Prerequisites:** A completed change package: its non-gap items resolved (gaps too, into production), its Design Changes current, and every change request it filed against an input ruled under that input's process.
 
 **Phases:**
 
-1. **Promotion checks.** Agent screens the package for readiness, then writes an unchecked checklist: drafts meet the conventions, inventory matches the page, production absorbs the page, links repoint, page deleted. Gate: supervisor reviews what will land.
-2. **Execute.** Agent verifies and applies, then stops for the supervisor to review production in the design file. Gate: supervisor confirms; the change page is deleted and the package archived.
+1. **Promotion checks.** Agent renders the page and screens the package for readiness, then writes an unchecked checklist: drafts meet the conventions, inventory matches the drawings, the base absorbs the package, links repoint, drafts deleted, package archived. Gate: supervisor reviews what will land and into which base.
+2. **Execute.** Agent verifies and applies, then stops for the supervisor to review the base in the design file. Gate: supervisor confirms; the change page or request section is deleted and the package archived.
 
 ### Design specs authoring (skill `skai-design-specs-authoring`)
 
@@ -601,7 +602,7 @@ history and agreement between the packaged Mac resolver and portable Python reso
 app before testing changes to its source. UI appearance and interactions are checked manually.
 
 Each tool's automated test lives in [internal/tests/tools](internal/tests/tools), one folder per tool
-([spec-tool](internal/tests/tools/spec-tool/test.py), [ui-map-render](internal/tests/tools/ui-map-render/test.py),
+([spec-tool](internal/tests/tools/spec-tool/test.py), [design-tool](internal/tests/tools/design-tool/test.py), [ui-map-render](internal/tests/tools/ui-map-render/test.py),
 [skai-configuration](internal/tests/tools/skai-configuration/test.sh)); run it after changing that tool.
 Skill tests used while refining a skill live in [internal/tests/skills](internal/tests/skills/skill-tests.md).
 

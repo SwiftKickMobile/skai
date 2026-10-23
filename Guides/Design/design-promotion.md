@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-promotion
 Managed-Source: Guides/Design/design-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-23
 
 # Design Promotion
 
@@ -10,21 +10,22 @@ Print `📖 SKAI guide: design-promotion` now, as a line of its own. Read this g
 
 ## Purpose
 
-Move an approved package's designs from its change page into production, have the supervisor
-confirm the result, delete the change page, and archive the package.
+Move a completed package's changes into its **base** ([`design-authoring.md`](design-authoring.md)):
+from the change page into production, or from the request section into the parent package.
+Have the supervisor confirm, delete the drafts, and archive the package.
 
-Promotion refactors production to absorb the drafts; it does not redesign them. A design that needs
-changing returns the package to authoring. The tool guide owns what "page", "production" and
-"component library" mean and the conventions the designs must meet: load
+Promotion refactors the base to absorb the drafts; it does not redesign them. A design that needs
+changing returns the package to authoring. The tool guide owns pages, sections, production, the component library and the conventions the
+designs must meet: load
 [`figma-designer-guide.md`](figma-designer-guide.md) for Figma.
 
 ## The promotion artifact
 
-Promotion writes `skai/changes/<change-id>/design/design-promotion.md` beside the authoring artifact:
+Write `design-promotion.md` beside the authoring artifact:
 
 ```
 # Design Promotion — <name>
-## Inputs               the package being promoted; the design file
+## Inputs               the package being promoted; its base; the design file
 ## Promotion Checks     - [ ] C<n> items, unchecked until executed
 ## Evidence             the verification trail
 ```
@@ -53,22 +54,21 @@ In the planned gate line, `<what happens after your response>` should describe w
 If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
 Workflow-specific gate notes:
-- At the Promotion Checks gate — after the readiness screen, before production changes — `Next`
-  means execute `C1`–`C4`; the summary names the screens added or replaced, from
-  `## Design Changes`.
-  - `⏳ GATE: Next: Promote <N> screens from <change-id> to production. Say "next" or what to change.`
-- The Production review gate is non-standard: the supervisor reviews production in the design file
-  before anything is deleted; a requested design change is a blocked gate — the package returns to
-  authoring and production is restored from the tool's version history.
-  - `⏳ GATE: Next: Review production in the design file. Say "next" to confirm it and delete the change page <change-id>, or what to change.`
+- At the Promotion Checks gate — after readiness, before changing the base — `Next` executes
+  `C1`–`C4`; name the base and changes from `## Design Changes`.
+  - `⏳ GATE: Next: Promote <N> changes from <package> into <production | its base <base>>. Say "next" or what to change.`
+- At the non-standard Base review gate, the supervisor reviews the base's drawings, and any
+  Design Changes folded in undrawn, before deletion. A requested design change blocks: restore the base from version history and return
+  to authoring.
+  - `⏳ GATE: Next: Review <production | the base's drawings and Design Changes>. Say "next" to confirm and delete <the change page | the request section> <name>, or what to change.`
 
 Workflow-specific blocked gates:
 - A readiness failure (conditions 1–3, or 5 when a ruling invalidates mockups), a `C1` or `C2`
   failure, or a design change the supervisor asks for at either gate: only authoring resolves them; each takes:
   `⏳ GATE: Blocked: <C1 | C2 | readiness condition | requested design change> — <what failed>. The package returns to authoring; re-run promotion once it is resolved.`
-- A promoted path already present (condition 4) or a `Proposed` change request (condition 5)
-  waits at the standard blocked gate naming it; the ruling is the product spec supervisor's.
-- A `C3` (production) or `C4` (links) fault is a promotion mistake repaired in place, never by
+- An existing promoted path (condition 4) or unruled request (condition 5) takes the standard
+  blocked gate naming it; use the input's process for rulings.
+- A `C3` (base) or `C4` (links) fault is a promotion mistake repaired in place, never by
   redesigning; one needing access or a library the agent lacks takes the standard blocked line.
 
 ## Advance intent
@@ -81,7 +81,7 @@ Rules:
 - Outside a gate, interpret "begin"/"next"/"continue" using the workflow's active-phase rules below. Do not use them to skip phases or clear unrelated progress markers.
 
 `auto` = advance intent that bypasses planned gates only. Blocked gates always require explicit supervisor resolution.
-`auto to <milestone>` = auto-advance but STOP before the named planned gate. Valid milestones in this workflow: `promotion checks`, `production review`.
+`auto to <milestone>` = auto-advance but STOP before the named planned gate. Valid milestones in this workflow: `promotion checks`, `base review`.
 
 Progress tracking:
 
@@ -95,13 +95,13 @@ Progress tracking:
 **Workflow-specific marker lifecycle.** This workflow's markers are the `- [ ] C<n>` items in
 `## Promotion Checks`, written unchecked before the first gate. After advance intent, `C1`–`C4`
 run in order and are checked as each passes, with evidence; a failing `C1` or `C2` is
-left unchecked and nothing after it runs. `C5` and `C6` run only after the Production review gate
+left unchecked and nothing after it runs. `C5` and `C6` run only after the Base review gate
 advances. An unfinished promotion (`C6` unchecked) continues from its pending check or gate, never
 restarts. **A new run after an authoring return unchecks every check** and starts from `C1`; prior
 evidence stays under `### Run <n>`.
 
 **Workflow-specific `auto` behavior.** `auto` bypasses the Promotion Checks gate but never the
-Production review gate: the supervisor looks at production before the drafts are deleted.
+Base review gate: the supervisor looks at the base before the drafts are deleted.
 
 ## Initiation
 
@@ -113,44 +113,53 @@ readiness screen is for a new run.
 
 ### Readiness screen
 
-Before writing `## Promotion Checks`, verify:
+Render the page, then verify before writing the checks:
 
-1. Every `- [ ]` item in `## Discussion` is resolved, gaps included
-   ([`known-gaps.md`](../Core/known-gaps.md)).
-2. `## Design Changes` is written (the mockups were approved).
-3. The change page exists and every Design Changes entry links a draft on it.
-4. `skai/promoted/<change-id>/design/` does not exist.
-5. Every change request the package filed against the product spec package (listed under
-   `## Assumptions and TODOs`) is `Incorporated`, `Rejected`
-   or `Superseded` per [`product-specs-artifacts.md`](../ProductSpecs/product-specs-artifacts.md)
-   § Change Requests, with the ruling applied to the approved mockups: one invalidating what the drawings
-   assumed returns the package to authoring; one leaving them valid needs nothing. A `Proposed` one blocks, now and when the production write begins.
+1. All non-gap `- [ ]` items in `## Discussion` are resolved; into production, gaps too
+   ([`known-gaps.md`](../Core/known-gaps.md)); into a package, `C3` carries them.
+2. `## Design Changes` is current, Review advanced and inputs reconciled (authoring's *Completion*).
+3. `add` and `modify` entries link drafts on the change page or request section, unless the
+   no-mockups ruling under `## Assumptions and TODOs` leaves them unlinked; unlinked entries never
+   enter production. `remove` entries name the base design.
+4. The promoted path (*C6*) does not exist.
+5. Requests filed against inputs (under `## Assumptions and TODOs`) have rulings from their
+   processes. Apply them to the package: invalidation returns it to authoring; otherwise do
+   nothing. Unruled requests block now and at the base write.
 
-A failure is a blocked gate (*Gates*), recorded in `## Evidence` instead of a checks section.
+A failure is a blocked gate, recorded in `## Evidence` instead of a checks section.
 
 ## Promotion Checks
 
 Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution order.
 
-- `C1 Drafts meet the conventions` — every draft on the change page follows the tool guide, and
+- `C1 Drafts meet the conventions` — every draft follows the tool guide, and, into production,
   none still mirrors a gap. A script, where one exists, covers the rules it tests; inspect the rest.
-- `C2 Inventory matches the page` — every `## Design Changes` entry has its draft, and every screen
-  draft on the change page has an entry. Components a draft needs are not screens; no entry.
-- `C3 Production absorbs the change page` — condition 5 still holding by current statuses, per
-  entry: a changed screen's production design is
-  updated to the draft, keeping its identity; a new screen is placed where the tool guide's layout
-  rules put it; the components a draft needs are integrated as the tool guide says. Designs outside
-  the inventory change only by the placement and relocation the tool guide's rules need to absorb
-  them.
-- `C4 Links point at production` — each `## Design Changes` link is repointed from the draft to its
-  production design.
-- `C5 Delete the change page` — after the Production review gate advances, delete the page.
-- `C6 Archive the package` — move `skai/changes/<change-id>/design/` intact (with `working-docs/`) to
-  `skai/promoted/<change-id>/design/`, leaving siblings in place and removing an emptied
-  `<change-id>` folder; repair live links into the moved files and relative links inside them,
-  keeping their targets; verify the move and check `C6` in the archived artifact.
+- `C2 Inventory matches the drawings` — each linked `## Design Changes` entry has a draft; every
+  screen draft of this package has an entry. Components a draft
+  needs are not screens; no entry.
+- `C3 The base absorbs the package` — with condition 5 still met by current statuses, per entry:
+  update changed screens in the base to match drafts, keeping identities; place new screens or
+  states and integrate needed components per the tool guide; delete removed designs.
+  Designs outside the inventory change only by the placement and relocation the tool guide's
+  rules need to absorb them. Into a package, also:
+  - Append entries to its `## Design Changes`: next `V` numbers, Descriptions kept,
+    Justifications `Change request: <nnn> V<n>; <the entry's own>`. Undrawn entries stay unlinked
+    and return the base to Mockups to draw them.
+  - Append open gaps to its `## Discussion` topics: next `D` numbers, Gap lines and mirrors
+    kept; log `gap` in its `## Decision Log`.
+  - Name the promoted request in its `## Assumptions and TODOs`.
+- `C4 Links point at the base` — repoint `add` and `modify` links, including appended entries,
+  to the base's drawings; a `remove` entry keeps its name; re-render a package base's page.
+- `C5 Delete the drafts` — after Base review advances, delete the change page or request section,
+  where one exists.
+- `C6 Archive the package` — move the folder intact with `working-docs/`, `change-requests/`
+  and `promoted-change-requests/` if present: to `skai/promoted/<change-id>/design/` for production,
+  leaving siblings and removing an empty `<change-id>` folder; to
+  `<base>/promoted-change-requests/<nnn>/` for a package. Repair links into and inside the moved
+  files, keeping targets; re-render the moved page, verify the move and check
+  `C6` in the archived artifact.
 
-**Excerpt** (at the Production review gate: `C1`–`C4` checked, `C5`–`C6` unchecked):
+**Excerpt** (at the Base review gate: `C1`–`C4` checked, `C5`–`C6` unchecked):
 
 ```markdown
 ## Evidence
@@ -172,10 +181,10 @@ it; silence is not a pass: name what was compared and found.
 
 ## Completion
 
-When `C6` is checked, production holds the designs, the change page is gone and the package is
-archived at `skai/promoted/<change-id>/design/`; link its artifact and end with
+With `C6` checked, the base holds the changes, drafts are gone and the package is archived.
+Link its artifact, name drawings the base owes and gaps carried, and end with
 `🏁 Complete. Let me know if anything needs adjustment.`
-If archival fails after `C5`, report production promoted but archival incomplete, use the standard
+If archival fails after `C5`, report the base promoted but archival incomplete, use the standard
 blocked gate and later resume only the archival.
 
 ## Project Addendum

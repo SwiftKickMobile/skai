@@ -151,6 +151,12 @@
       "tags": ["core"]
     },
     {
+      "id": "tool.design-tool",
+      "type": "tool",
+      "sourcePath": "Bin/design-tool.py",
+      "tags": ["core"]
+    },
+    {
       "id": "guide.spec-file-gaps",
       "type": "guide",
       "sourcePath": "Guides/Core/spec-file-gaps.md",
