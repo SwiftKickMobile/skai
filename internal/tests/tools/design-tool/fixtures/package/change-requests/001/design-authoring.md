@@ -16,8 +16,9 @@ The listed Inputs determine the designs; review them on `CR-001 — Pin Menu`.
 ## Design Changes
 
 - V01 add state: [note editor — pin menu](https://example.test/file?node-id=2-1)
-  - **Description** The editor's overflow menu with Pin as its first action, as [the base](../../design-authoring.md) decided.
+  - **Description** The editor's overflow menu with Pin as its first action, as [the base](../../design-authoring.md) decided.[^1]
   - **Justification** Base decision: D01
+  [^1]: **Gap:** base D02. Placeholder: the menu's pinned group does not collapse.
 
 ## Assumptions and TODOs
 

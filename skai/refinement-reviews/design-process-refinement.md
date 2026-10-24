@@ -439,3 +439,379 @@ Misses fixed during the retro: skill descriptions over cap (trimmed). Follow-ups
 installed skill copies (`.claude/skills/skai-design-*`) and any other adapter's are stale until the
 update runbook re-runs; the host's `skai/integration.md` may add the render command (project-owned).
 
+## Change List Mirrors The Page — 2026-10-23
+
+Per skai#90 in use: inventory in `design-process-design.md` § Amendment — 2026-10-23 (change list
+mirrors the page) and `figma-designer-guide-design.md` § Amendment — 2026-10-23 (page
+organization); drafts; author check; sweep; compression by Codex Astra; caps by the supervisor.
+
+### Author check and sweep — 2026-10-23
+
+Drafts: authoring 16,054 → 16,706 (cap 16,100); promotion 12,066 → 12,310 (cap 12,100); Figma
+14,794 → 15,475, pair 18,173 (cap 17,500).
+
+Figma inventory 1–5: 1 Screen pages 1 and the page table (feature areas vs one per screen, the
+tall-screen spill); 2 Screen pages 7, Components 1, the table; 3 Pages 1; 4 Pages 1 and Screen
+pages 1; 5 Agent tooling 7. Authoring 1–2: Design Changes (headings, one per frame, sub-IDs,
+stable IDs, example) and Mockups (structure check before the trace pass); "the renderer shows the
+headings" is the tool's and not in the guide. Promotion 1–2: C1, C2, C3. Sweep: the old Pages 1
+request sentence and the old "one entry per base change" opening were replaced; nothing else the
+amendment obsoletes (grep for "loose", "prefix", "groups of screens": one occurrence each, all
+rewritten).
+
+### Compression review — 2026-10-23 (Codex Astra, scratchpad `compress4/`)
+
+| Guide | Released | After (draft) | Compressed | Compressed addition |
+| --- | ---: | ---: | ---: | ---: |
+| design-authoring.md | 16,054 | 16,706 | 16,614 | 560 |
+| design-promotion.md | 12,066 | 12,310 | 12,218 | 152 |
+| figma-designer-guide.md | 14,794 | 15,475 | 15,380 | 586 (pair 18,078) |
+
+Protected blocks intact; the kept sentences and the sub-ID example present. Astra restored four
+inventory clauses the draft had left implicit (render shows headings and sub-changes; a screen
+Section named for its screen in plain words; one concept per page with no prefixes on frames or
+Sections; the check reports Sections too), all accepted. Two draft rules beyond the inventory,
+kept as written: the structure check runs before the trace pass (an ordering, not a rule), and
+"fix what it reports" in the tool guide. Caps proposed a little under the compressed sizes,
+pending the supervisor: 16,500 / 12,150 / 18,000.
+
+Rulings after compression (supervisor, 2026-10-23): keep the tall-screen clause (Production does
+it; the guide never said so); C3 says plainly that per-screen sections do not survive promotion
+into production; the Figma guide's check line is one line. Caps: 16,450 / 12,150 / 17,900 (100
+under the combined proposal). Drafts over cap at the start of refinement: authoring by 164,
+promotion by 128, Figma pair by 66.
+
+### Refinement — series CL (2026-10-23)
+
+#### Round 1 — finding matrix (prompt `scratchpad/refine/cl1/prompt.txt`, r3's with the standard, binding passages, settled dispositions and revised sections updated; report `review-r1.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 the structure check is mandated in Mockups and C1 with no drawings to check on the no-mockups path | accept | amendment authoring 2, promotion 1; § Mockups, C1 | "with drawings" on both | drawn packages still run and pass it; the ruling still needs the tool-access gate |
+| F2 the C1 evidence excerpt claims a "bindings, names" script the check does not do | accept | promotion § Promotion Checks excerpt | delete the line | inspection of untested rules stays |
+| F3 C4 re-renders only a package base's page; the promoting package's links go stale at Base review | accept | promotion C4 | re-render every page whose artifact changed | C6's post-move render stays |
+| F4 "next V in its section" reads as per-section numbering; renderer ids and provenance are package-wide | accept (reviewer log-only; the intent is known and the spec wording was the cause) | spec amendment authoring 1; § Design Changes | one sequence per package, placed under its heading; spec reworded | existing IDs, canvas order, sub-IDs, provenance |
+
+Arithmetic: F1 divergent · off-normal · verified = 3.75 · F2 divergent · normal · verified = 5 · F3 divergent · normal · verified = 5 · F4 divergent · normal · verified = 5 · no noise · open child requests already logged.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 18.75 | 4 | 0 | 4 | 0 | 0 |
+
+#### Round 1 — repairs
+
+One cluster per finding, each self-checked: F1 "with drawings" in Mockups and C1 (no contradiction with the stand-in sentence; the trace pass still runs on the list); F2 the excerpt's C1 line deleted (C1's text still says script plus inspection); F3 C4 "re-render every page whose artifact changed, the promoting package's included" (C6 unchanged); F4 "one sequence per package … under its screen's heading" in the guide and the spec (C3's "next V numbers" now unambiguous). Trims for the caps: the Review gate line shortened to the standard form; "The tool guide defines pages and sections", "(sections, then columns …)", "raises findings as items and may change or trim anything" tightened; in the Figma guide the page-table cell, Components 1 and Screen pages 7 tightened. Sizes: authoring    16452 (cap 16,450), promotion 12108 (12,150), Figma pair 17896 (17,900).
+
+#### Round 2 (prompt `scratchpad/refine/cl2/prompt.txt`; report `review-r2.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 Screen pages 7 ("only screens inside a Section") and Components 1 ("their change page's Components Section") contradict the request hierarchy Pages 1 and the table set | accept | Figma amendment 2–3; Screen pages 7, Components 1 | the content rule scoped to screen Sections, a request Section holding screen Sections and a Components Section; components in the package's own Components Section | screen Sections hold only screens or crops |
+| F2 C2's "components a draft needs … no entry" forbids an entry for a component that is itself a change | accept | promotion C2 | delete the sentence | incidental components need no entry |
+| F3 the check on a base's page also checks its open child requests' sections | log-only | — | — | — |
+
+Arithmetic: F1 divergent · off-normal · speculative = 1.875 · F2 divergent · off-normal · speculative = 1.875 · F3 logged, noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 18.75 | 4 | 0 | 4 | 0 | 0 |
+| r2 | 3.75 | 2 | 0 | 2 | 0 | 1 |
+
+Repairs: F1 both Figma rules reworded (self-check: Pages 1 and the table unchanged; no stale "except" left); F2 the C2 sentence deleted (C2 still inventories the package's screen drafts). Trims: "in the skai checkout" → "skai's" in tooling 7; "sub-IDs instead" → "sub-IDs". Sizes: authoring 16444, promotion 12056, Figma pair 17922.
+
+#### Round 3 (prompt `scratchpad/refine/cl3/prompt.txt`; report `review-r3.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 `known-gaps.md` rule 6 says every package needs zero open gaps for promotion; design promotion into a package carries them | routed to its owner (`Guides/Core/known-gaps.md`), fixed there: "into production", plus one clause for a workflow that promotes into another open package; `known-gaps-design.md` amended; 3386 of 3,400 | — | — | production promotion still rejects every open gap; no other workflow gains carry-forward |
+| F2 the Figma pair 22 bytes over its cap, from the round-two repair; my size check ran after the launch | accept | Figma tooling 7 | "checks the rules above; process guides say when" | script path, scope, division of coverage |
+
+Arithmetic: F1 outside the binding target, routed · F2 cosmetic · normal · verified = 2 · no noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 18.75 | 4 | 0 | 4 | 0 | 0 |
+| r2 | 3.75 | 2 | 0 | 2 | 0 | 1 |
+| r3 | 2 | 1 | 0 | 0 | 1 | 0 |
+
+Lesson recorded: a round spent on a 22-byte overrun a check would have caught; the launch now
+waits on the size check. Sizes: authoring 16444, promotion 12056, Figma pair 17895.
+
+#### Round 4 (prompt `scratchpad/refine/cl4/prompt.txt`; report `review-r4.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 tooling 7's "checks the rules above" overstates the script (it checks what its header lists, not one-screen-per-Section or the page name) — my r3 trim | accept | Figma tooling 7 | "reports the breaches its header lists" | the check stays mandatory; C1's "inspect the rest" |
+| F2 authoring names the change page `<change-id>` while the tool guide puts the concept letter in the page name | accept | authoring § The change package | "the change page the tool guide names" | paths and the shared change id |
+
+Open question (logged): a request removing a frame the base's list links leaves that base entry pointing at a deleted draft after C3; no occurrence; the blocked route covers it.
+
+Arithmetic: F1 divergent · normal · verified = 5 · F2 divergent · normal · speculative = 2.5 · no noise. Findings on my own previous repairs: F1 (one of two); consolidation trigger not fired.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 18.75 | 4 | 0 | 4 | 0 | 0 |
+| r2 | 3.75 | 2 | 0 | 2 | 0 | 1 |
+| r3 | 2 | 1 | 0 | 0 | 1 | 0 |
+| r4 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+
+Repairs: both replacements, net −8 bytes. Sizes: authoring    16447, promotion    12056, Figma pair 17910 (the first r4 repair left the pair 10 over; the launch guard stopped it, trimmed).
+
+#### Round 5 — terminal (prompt `scratchpad/refine/cl5/prompt.txt`; report `review-r5.md`)
+
+No findings; the reviewer verified the page naming, the prefix rule, the check's coverage claim
+against the script and the renderer's headings and sub-changes against `design-tool.py`; the
+four simulations route correctly; sizes 16,447 / 12,056 / 17,885 under caps. Open question
+restated: the status of open child requests at the base's promotion, already logged.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 18.75 | 4 | 0 | 4 | 0 | 0 |
+| r2 | 3.75 | 2 | 0 | 2 | 0 | 1 |
+| r3 | 2 | 1 | 0 | 0 | 1 | 0 |
+| r4 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r5 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+Converged by clean round (stop rule a), 2026-10-23. Net size change of the pass against the
+released guides (5b2fb59): authoring 16,054 → 16,447 (+393), promotion 12,066 → 12,056 (−10),
+Figma pair 17,492 → 17,885 (+393); `known-gaps.md` 3,278 → 3,386 (+108, routed fix). Rounds 3
+and 4 each cost a defect of my own making (an overrun launched unchecked; an over-claiming trim);
+the launch guard and the "header lists" wording close both.
+
+#### Closure
+
+| Finding | Disposition | Evidence |
+|---|---|---|
+| r1 F1–F4 | closed | with drawings; excerpt line deleted; every changed page re-rendered; one sequence per package |
+| r2 F1, F2 | closed | content rule scoped; C2 sentence deleted |
+| r2 F3 | logged | base check reports child requests' sections; no occurrence |
+| r3 F1 | routed, fixed | known-gaps rule 6 |
+| r3 F2 | closed | pair trimmed |
+| r4 F1, F2 | closed | header-lists wording; page name the tool guide's |
+| r4 open question | logged | removal of a frame the base's list links |
+
+## Maintenance retro — change list mirrors the page — 2026-10-23
+
+Inventory: three Design guides amended (compressed, refined in five rounds), `known-gaps.md` rule 6
+(routed fix), `design-tool.py` (headings, sub-changes) with its test and fixture, new
+`figma-page-check.js` with its test (node), manifest entries for both tools, README (usage entry,
+test list), release documents (three technical entries plus the known-gaps line; CHANGELOG line),
+the stylesheet (inline why) in place. Host-install-visible.
+
+Checks (recorded): stale names in Guides/Design, README, Templates/skills → 0 (grep); Gates and
+Advance intent present in both process guides (2 each); `Managed-Updated-At` 2026-10-23 on the
+four edited guides; manifest parses, both new tool entries present with existing paths; tests
+design-tool OK (2), figma-page-check OK (2), spec-tool OK (18); the real Offers page checks clean
+(8 sections, 0 findings). Flow reflection: unchanged from the morning's retro except the Mockups
+step, which now runs the check before the trace pass where drawings exist; simulated normal,
+no-mockups (check skipped) and `auto` (stops at Review); no issues found in simulation.
+
+Misses fixed: none outstanding. Follow-ups: host installed skill copies still stale until the
+update runbook runs; the Figma addendum (project-owned) is to gain the SF Symbols CLI and the
+kit-wrapping convention per the supervisor.
+
+## Inherited Gaps As Footnotes — 2026-10-23
+
+Per skai#90 in use. Inventory: `design-process-design.md` § Amendment — 2026-10-23 (inherited
+gaps as footnotes), `figma-designer-guide-design.md` § Amendment — 2026-10-23 (gap annotation
+format), `known-gaps-design.md` § Amendment — 2026-10-23. Before-state copies in scratchpad
+`compress5/`.
+
+### Author check and sweep — 2026-10-23
+
+Authoring 1–3: Discussion (inherited gap = footnote, own gap = item, mirror once drawn), Design
+Changes (the footnote form, labels unique, footnoted entries count as open gaps); 3 is the
+renderer's (done: marks link to gap notes under the card, `has-gap`, the gaps tile counts them;
+test extended, 2 pass). Promotion 1–2: readiness 1, C3. Figma 11: § Gaps rewritten to the three
+lines. known-gaps: rules 3, 5, 6; sweep found rule 7's "close your inherited gap as answered" →
+"clear the mark" (obsoleted by 5), nothing else (grep for the old annotation format, "carry your
+own gap item", "Requests inherit base gaps": 0). Drafts: known-gaps 3386 (cap 3,400), authoring
+16852 (16,450), promotion 12194 (12,150), Figma pair 17983 (17,900).
+
+### Compression review — 2026-10-23 (Codex Astra, scratchpad `compress5/`, removals counted)
+
+| Guide | Before | After (draft) | Compressed | Net over before |
+| --- | ---: | ---: | ---: | ---: |
+| design-authoring.md | 16,447 | 16,852 | 16,817 | +370 |
+| design-promotion.md | 12,056 | 12,194 | 12,143 | +87 |
+| figma-designer-guide.md | 15,187 | 15,285 | 15,199 | +12 (pair 17,897) |
+| known-gaps.md | 3,386 | 3,386 | 3,343 | −43 |
+
+Astra restored nine inventory clauses the draft left implicit (the marker lifecycle saying only
+gap items stay unchecked; the gate and card counting footnoted entries; the request's base gaps
+as footnotes; the `base D04` → `D04` rewrite on fold-in; one annotation per frame; own gaps'
+Gap line; known-gaps rule 4 scoped to own gaps) and reported three sentences still teaching the
+old behaviour, all reworded in its rewrite. Protected blocks intact; the pointer sentence kept.
+Compressed drafts installed. Caps proposed a little under: 16,750 / 12,100 / 17,850 / 3,300.
+
+Caps set (supervisor, 2026-10-23): 16,750 / 12,100 / 17,850 / 3,300. Trimmed under them before
+round one (the Artifact maintenance clause restating the renderer; C1 and C3 wording; the Figma
+annotation sentence; known-gaps rule 3's list): authoring    16747, promotion    12100, Figma pair 17839,
+known-gaps 3278.
+
+### Refinement — series GF (2026-10-23)
+
+#### Round 1 (prompt `scratchpad/refine/gf1/prompt.txt`, cl5's with known-gaps.md rules 3–7 and § Gaps binding, the three specs, the gap-footnote dispositions and a fifth simulation; report `review-r1.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 known-gaps rule 6 sends every open gap to authoring "where each is answered, adopted or omitted", inherited marks included | accept | known-gaps 5–6; rule 6 | "its own are resolved (4) and inherited marks wait on their owners (5, 7)" | both kinds block production; promotion resolves nothing; carry into a package |
+| F2 the card state says "no discussion items" for a package whose only gaps are footnotes, while the tile counts them | accept (tool) | authoring 2; `design-tool.py` | state "no discussion items; N gaps carried"; fixture and test | counting unit unchanged |
+
+Open question (logged): Figma Pages 1 says promotion folds a request's sections into "the page's Sections"; for a request against a request C3 says the base's; no misroute yet.
+
+Arithmetic: F1 divergent · off-normal · speculative = 1.875 · F2 cosmetic · normal · verified = 2 · no noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 3.875 | 2 | 0 | 1 | 1 | 0 |
+
+Repairs: rule 6 reworded (self-check: 4, 5, 7 unchanged; shorter); the renderer's state branches on open, items, or neither; request fixture gains a footnote, test asserts the state (2 pass). Sizes: authoring 16747, promotion 12100, Figma pair 17839, known-gaps     3267 (rule 2's "gives nothing to build on" sentence trimmed to pay for rule 6).
+
+#### Round 2 — terminal (prompt `scratchpad/refine/gf2/prompt.txt`; report `review-r2.md`, 2026-10-24)
+
+No accept findings. F1 (log-only, noise): known-gaps rule 7's "normal input catch-up" has no
+named counterpart in design authoring for an upstream gap answered differently from its
+placeholder after completion; the Discussion, reopen and Mockups rules cover the substance and the
+blocked gate the strand; no occurrence. Reviewer verified the renderer's card state and the
+footnote rendering and walked the five simulations.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 3.875 | 2 | 0 | 1 | 1 | 0 |
+| r2 | 0 | 0 | 0 | 0 | 0 | 1 |
+
+Converged by clean round (stop rule a), 2026-10-24. Net size change of the gap-footnote change
+against the start of the day's work: authoring 16,447 → 16,747 (+300), promotion 12,056 → 12,100
+(+44), Figma pair 17,885 → 17,839 (−46), known-gaps 3,386 → 3,267 (−119). Caps 16,750 / 12,100 /
+17,850 / 3,300 held.
+
+#### Closure
+
+| Finding | Disposition | Evidence |
+|---|---|---|
+| r1 F1 | closed | rule 6: own gaps resolved, inherited marks wait on their owners |
+| r1 F2 | closed — tool | card state names carried gaps with no items; test |
+| r1 open question | logged | "the page's Sections" for nested requests |
+| r2 F1 | logged | input catch-up route; no occurrence |
+
+## Maintenance retro — inherited gaps as footnotes — 2026-10-24
+
+Inventory: `known-gaps.md` rules 2–7; the three Design guides' gap passages; `design-tool.py`
+footnotes and card state with fixtures and tests; release documents (two technical entries, one
+CHANGELOG line). Host-install-visible. Checks: `Managed-Updated-At` 2026-10-24 on the four guides;
+no manifest change (no new asset); README usage entries unaffected (gaps are the guide's detail);
+tests design-tool OK, figma-page-check OK, spec-tool OK; stale wording grep (`D<n> — <placeholder>`,
+"carry your own gap item", "close your inherited gap") → 0. Follow-ups unchanged: host skill
+copies stale until the update runbook runs; the Figma addendum lines (project-owned).
+
+## One Gap Footnote For Every Artifact — 2026-10-24
+
+Inventory: `spec-format-design.md` § Amendment — 2026-10-24; adopted by `design-process-design.md`
+and `known-gaps-design.md`. Tools first (mechanical): `spec-tool.py` parses, validates and renders
+the new form, shares the note rendering and item tooltips, marks inert; `design-tool.py` uses them;
+fixtures and tests (18, 2) pass; the Offers specs drafts' 14 footnotes migrated (validate 0 issues,
+check-changes 0). Guides: `spec-file-gaps.md` rewritten as the owner (1,844 → 2,208 drafted),
+`design-authoring.md` cites it (16,726 → 16,632). Compression (Astra, scratchpad `compress6/`,
+removals counted): spec-file-gaps 1,903 (+59 over released), design-authoring 16,616 (−110).
+Astra restored two clauses (check-changes pairs only this artifact's items; old footnotes drop
+their question) and cut two the inventory did not call for (a one-sentence placeholder; the tile
+as the counter). Compressed drafts installed. Caps proposed a little under: spec-file-gaps 1,875,
+design-authoring 16,550.
+
+Caps set (supervisor, 2026-10-24): spec-file-gaps 1,875, authoring 16,550; trimmed under them
+(1,871 / 16,540).
+
+### Refinement — series FN (2026-10-24)
+
+#### Round 1 (prompt `scratchpad/refine/fn1/prompt.txt`; report `review-r1.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 the shared footnote contract outran the tools: a scoped owner in a spec draft got no link or tooltip; inherited-only spec packages had no gaps tile; a request archived to `promoted-change-requests/` lost its base resolution | accept (tools) | spec-format amendment; `spec-tool.py`, `design-tool.py` | one owner resolver in the spec tool for both renderers (this artifact, the base through either request folder name, the product specs artifact the artifact or its base links); tooltips for every owner; the spec page counts requirements with inherited marks | ID-only chips, inert marks, one box per card, questions with their owners |
+| F2 `validate` did not enforce "numbered by first use" | accept (tool) | spec-file-gaps § validate | the check, one error at the first deviation per file; the Offers drafts renumbered in two files | marker-less definitions, uniqueness, placement checks |
+
+Arithmetic: F1 divergent · normal · verified = 5 · F2 cosmetic · past-a-rule · verified = 0.5 · no noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 5.5 | 2 | 0 | 1 | 1 | 0 |
+
+Repairs: both in the tools; tests 18 and 2 pass (the broken fixture now also trips the numbering
+check); Offers drafts validate 0, check-changes 0; both pages re-rendered. No guide text changed.
+
+#### Round 2 (prompt `scratchpad/refine/fn2/prompt.txt`; report `review-r2.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 the shared gap guide's tooling paragraphs read as if `validate` and `check-changes` covered every artifact (a designer may take a rendered page for a validated one) and "fails on unpaired draft footnotes or open gaps" read as failing every open gap | accept | spec-file-gaps § tooling | the checks named as spec-draft tools; "unpaired" spelled out both ways with a marked open gap passing; design pages only render; funded by dropping "no open gaps at promotion means no placeholders" (rule 6 and readiness own it) and small trims | the common form, numbering, marker-less notes, local-only pairing, readiness blocking |
+
+Arithmetic: F1 divergent · off-normal · verified = 3.75 · no noise. Six walks clean; Astra confirms the
+round-1 tool repairs and declines a C3 carry checklist without an observed failure.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 5.5 | 2 | 0 | 1 | 1 | 0 |
+| r2 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+
+Repair installed: `spec-file-gaps.md` 1,874 / 1,875; spec-tool test OK; the design spec's amendment
+records the clarified check behavior.
+
+#### Round 3 (prompt `scratchpad/refine/fn3/prompt.txt`; report `review-r3.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 the shared guide said footnoted items count as modified; a design entry keeps its operation (an added screen with an inherited gap stays added) and a spec requirement is reclassified only when it already existed | accept | spec-file-gaps § pages | delete the modified claim; keep "count as gaps; the gaps tile filters to them" | typed operations, the spec diff classification, gap counts and filter; neither renderer changes |
+
+Arithmetic: F1 cosmetic · normal · verified = 2 · no noise. Six walks clean; the r2 rewrite confirmed
+against the implementation.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 5.5 | 2 | 0 | 1 | 1 | 0 |
+| r2 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r3 | 2 | 1 | 0 | 0 | 1 | 0 |
+
+Repair installed: `spec-file-gaps.md` 1,861 / 1,875.
+
+#### Round 4 (prompt `scratchpad/refine/fn4/prompt.txt`; report `review-r4.md`)
+
+No findings; six walks clean; the r2 and r3 repairs confirmed against the implementation. One open
+question, verified by Astra: `spec-tool.py` still classifies an existing requirement that gains a
+footnote as modified. Disposition: not a defect. The spec page's design records that behavior
+(`spec-format-design.md` convention: a footnote on an existing requirement counts as modified, so
+`check-changes` wants a list entry for it); r3 removed only the shared guide's claim that every
+footnoted item counts as modified, which was wrong for design entries and added requirements. My
+round-4 prompt disposition overstated r3 ("a footnote does not change a requirement's diff class"),
+which produced the question; recorded here, no tool change.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 5.5 | 2 | 0 | 1 | 1 | 0 |
+| r2 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r3 | 2 | 1 | 0 | 0 | 1 | 0 |
+| r4 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+Converged by stop rule (a). Final sizes: spec-file-gaps 1,858 / 1,875; design-authoring 16,540 / 16,550;
+promotion 12,100 / 12,100; Figma pair 17,839 / 17,850; known-gaps 3,267 / 3,300.
+
+## Maintenance retro — one gap footnote form, series FN — 2026-10-24
+
+Inventory: `spec-file-gaps.md` (owner of the form; tooling paragraphs scoped to spec drafts; modified
+claim removed), `design-authoring.md` citation, `spec-tool.py` (new form, owner resolver, tooltips,
+gaps count, numbering check), `design-tool.py` (uses them), fixtures and tests; the Offers drafts
+migrated. Host-install-visible. Bookkeeping: release entry extended with the numbering rule, its
+migration step and the owner resolution; CHANGELOG line says "numbered by first use"; README's two
+gap-guide lines name design change lists and the page; `Managed-Updated-At` 2026-10-24 on every edited
+guide; manifest unchanged (no new asset; `tool.design-tool` and `tool.figma-page-check` were added in the
+previous retro). Tests: spec-tool OK, design-tool OK, figma-page-check OK. Consistency: stale wording
+grep (`count(s) as modified`, `named only`) → `Bin/spec-tool.py:206` false positive (an existing item
+with a footnote does count as modified on spec pages), `:1435` false positive (owner named only when its
+artifact was not read); Guides and README 0 occurrences. Change-package verification: artifact format
+only, no path or promotion mechanics changed; migration guidance is re-runnable and covers mixed state
+(definitions already in the new form left alone, then renumber). Addendum contract: the guide keeps its
+Project Addendum section. Follow-ups unchanged: host skill copies stale until the update runbook runs;
+the Figma addendum lines (project-owned). Process reflection: my round-4 prompt disposition overstated
+the round-3 ruling and produced a spurious open question; dispositions quoted into a prompt should
+repeat the repair's own words, not paraphrase them.
+

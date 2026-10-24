@@ -157,6 +157,12 @@
       "tags": ["core"]
     },
     {
+      "id": "tool.figma-page-check",
+      "type": "tool",
+      "sourcePath": "Bin/figma-page-check.js",
+      "tags": ["core"]
+    },
+    {
       "id": "guide.spec-file-gaps",
       "type": "guide",
       "sourcePath": "Guides/Core/spec-file-gaps.md",

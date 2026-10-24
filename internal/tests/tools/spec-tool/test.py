@@ -68,7 +68,7 @@ class Validate(unittest.TestCase):
         expected_files = {f"broken/{p.name}" for p in (FIXTURES / "broken").glob("*.md") if p.name != "dup-a.md"}
         self.assertEqual(files, expected_files, "every broken file but the duplicate's first copy reports")
         gaps = [i for i in found if i.startswith("broken/gaps.md")]
-        for message in ["gap footnote outside an item", "has no definition", "duplicate gap footnote label",
+        for message in ["gap footnote outside an item", "has no definition", "duplicate gap footnote label", "number by first use",
                         "gap footnote must read", "after a gap footnote", "after a known-difference note",
                         "in a canonical file"]:
             self.assertTrue(any(message in g for g in gaps), message)
@@ -79,7 +79,7 @@ class Validate(unittest.TestCase):
                                ("follows the entry's definition paragraph", 1), ("a blockquote outside a glossary entry", 1)]:
             self.assertEqual(sum(message in g for g in glossary), count, message)
         self.assertFalse(any("Theta term" in g for g in glossary), "a definition saying 'Also called' is not the note")
-        self.assertEqual(len(found), 54, found)
+        self.assertEqual(len(found), 55, found)
 
     def test_revived_item_and_rule_are_rejected(self):
         code, lines = run("validate", "broken-revive/catalog", "broken-revive/drafts")

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.designer-guide
 Managed-Source: Guides/Design/figma-designer-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-23
+Managed-Updated-At: 2026-10-24
 
 # Figma Designer Guide
 
@@ -23,10 +23,11 @@ domains or scenes.
    - `Design System` — variables, text styles, and the app's
      [design conventions](#design-conventions).
 
-   Other pages serve a purpose of their own: a change page, named for its change package, holds
-   that change's drafts until they are on `Production`. Each request puts only added or changed frames in its
-   `CR-<nnn> — <name>` Section there; copy base frames to change screens. Promotion folds them
-   into other Sections and deletes that Section.
+   A change page, named for its change package, holds its drafts until they reach `Production`:
+   one concept per page, its letter in the page name. A request uses one `CR-<nnn> — <name>`
+   Section on the base's page, the same per-screen Sections inside holding only added or changed
+   frames, a changed screen as a copy. Promotion folds them into the page's Sections and deletes
+   the request Section.
 
 2. **Production is canonical.** `Production` holds the approved design of every screen (plus a page
    per further target size; see [Multiple target sizes](figma-designer-guide-multiple-sizes.md)).
@@ -65,7 +66,8 @@ designer makes them; the guide does not.
 
 | Page | Sections are | Inside a Section |
 | --- | --- | --- |
-| `Production` (and its target-size pages), change pages | Groups of screens | Screens |
+| `Production` (and its target-size pages) | Feature areas | Screens |
+| Change pages and request Sections | One per screen, named for it plainly; `Components` | States; new components |
 | `Components` | Component families (`Controls`, `Icons`, `Images`) | Component sets, components, and reference frames |
 | `Design System` | Foundation topics (`Conventions`, `Colors`, `Text Styles`, `Dimensions`) | Documentation frames |
 | Asset pages (an app icon page) | Asset groups | Frames set up for export |
@@ -76,7 +78,8 @@ designer makes them; the guide does not.
 
 1. **Screens go right, states go down.** Within a Section each distinct screen is its own column, in
    the order a user meets them (notebooks → notes → note editor). A screen's states, and crops of
-   them, stack below it. Columns are 50px apart; states are 100px apart.
+   them, stack below it; a tall screen spills into a second column beside it. Columns are 50px
+   apart; states are 100px apart. Names carry no concept prefix.
 
 2. **Choose states for the screen, not screens for states.** A state is drawn when the screen is
    naturally in that situation: its main use, a mode, a lifecycle point, empty, error, loading. A
@@ -100,8 +103,8 @@ designer makes them; the guide does not.
    the screen beneath them, so the audience has context. Where a kit supplies one, its look is the
    kit's (rule 6 under Components).
 
-7. **Only screens inside a Section.** Every node in a Section is a screen (frame, component, or
-   instance) or a crop of one; on a change page, also the new components its drafts need.
+7. **Only screens or crops inside a screen Section** (frames, components, or instances); a
+   request Section holds screen Sections, a `Components` Section components.
 
 ### Components page
 
@@ -192,8 +195,8 @@ designer makes them; the guide does not.
 
 ## Components
 
-1. **Main components live on `Components`.** Two exceptions: a new component a draft needs stays on
-   its change page until promotion moves it; and screen components in a file with several target
+1. **Main components live on `Components`.** Two exceptions: a draft's new components stay in its
+   own package's `Components` Section until promotion; and screen components in a file with several target
    sizes (see [Multiple target sizes](figma-designer-guide-multiple-sizes.md)).
 
 2. **Component sets use auto layout.** A component set is a grid auto layout that arranges its
@@ -227,12 +230,12 @@ designer makes them; the guide does not.
 
 ## Gaps
 
-A design gap is an open Discussion item in the design package's artifact; its **Gap** line names the
-drawn state that stands as the placeholder. Mirror each on the change page: one Dev Mode annotation on
-the node that draws that state, its text `D<n> — <placeholder>`: the item's ID, then its Gap line's value unchanged.
-Add it once the line and the drawing exist, update it when the placeholder changes, remove it when the
-item closes; `Production` never carries one. Write it through the node's Plugin API `annotations`
-property (the connector has no comment tool), keeping the node's other annotations.
+Own gaps are open Discussion items whose **Gap** line names the placeholder; inherited gaps
+are footnotes on the change list entry whose frame uses it. Once drawn, each frame's placeholder
+node gets one Dev Mode annotation of three lines: `Gap: <the question>`,
+`Placeholder: <what is drawn>`, `Owner: <the owning item: product specs D21, or this package's D04>`.
+Update when the placeholder changes; remove when the owning item closes; `Production` never
+carries one. Use the node's Plugin API `annotations` (the connector has no comment tool), keeping others.
 
 ## Working a backfill
 
@@ -272,6 +275,9 @@ project-specific ones stay in the project.
 
 6. **Scaling unlinks text styles.** `rescale()` (the Scale tool) detaches scaled text from its
    style; the component keeps the linked style at its base size.
+
+7. **Structure check:** skai's `Bin/figma-page-check.js`, run via the tool on a page or Section,
+   reports breaches its header lists; process guides say when.
 
 ## Project Addendum
 

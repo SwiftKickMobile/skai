@@ -50,7 +50,7 @@ A suggestion carries these dates.
 | Received | When the sync service recorded the suggestion, not necessarily when the collaborator first made it |
 | Expiration | The collaborator-specified date when the suggestion's validity ends[^1] |
 
-[^1]: **Gap:** D3 — How long a Submitted suggestion stays active with no response. Placeholder: 14 days after Received when no Expiration arrives.
+[^1]: **Gap:** D3. Placeholder: 14 days after Received when no Expiration arrives.
 
 ## Reissue And Replacement
 

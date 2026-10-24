@@ -312,7 +312,7 @@ Draft requirements into a change package under `skai/changes/<change-id>/product
 - Hosting [`Guides/Core/artifact-hosting.md`](Guides/Core/artifact-hosting.md) — read when the artifact does not exist yet: which repository it goes in, and the README link
 - Content rules [`Guides/ProductSpecs/product-specs-catalog.md`](Guides/ProductSpecs/product-specs-catalog.md) -- scopes, layout, indexes and glossary, IDs, writing style
 - Shape [`Guides/Core/spec-file-shape.md`](Guides/Core/spec-file-shape.md) — the file shape product specs and design specs share, and the `Bin/spec-tool.py` commands that validate, cross-reference and render it (cited by the content, authoring and promotion guides)
-- Gap footnotes [`Guides/Core/spec-file-gaps.md`](Guides/Core/spec-file-gaps.md) — read when a spec draft carries a placeholder for an open gap: the footnote form and the tool's checks
+- Gap footnotes [`Guides/Core/spec-file-gaps.md`](Guides/Core/spec-file-gaps.md) — read when a spec draft or a design change list carries a placeholder for an open gap: the footnote form, the spec tool's checks and the page
 - Formats [`Guides/ProductSpecs/product-specs-artifacts.md`](Guides/ProductSpecs/product-specs-artifacts.md) -- the package and its rendered review page, requirement change items, change requests
 
 **Prerequisites:** Sources describing the behavior to capture. An existing catalog, linked from the project README, or the intent to start one.
@@ -353,7 +353,7 @@ Take a design change from an idea to a completed change package, authored agains
 **Phases** (alternating; never both at once):
 
 1. **Discussion.** Agent seeds topic-organized `- [ ]` items for the decisions it needs -- a proposed departure from the base, something that looks like a defect, an open product question -- each with a written recommendation. Nothing is drawn. Gate: supervisor resolves each item. If the supervisor rules at the tool-access blocked gate that no mockups can be drawn, the typed Design Changes list, written from the decisions, stands in for the drawings from here on.
-2. **Mockups.** Agent draws the whole change on the change page or request section and keeps the Design Changes list (`V<n>`, add / modify / remove, a description, a justification) current with the drawings; before the review gate it traces every drawn state to an input and every input requirement to a drawing. Supervisor reviews the drawings and the rendered list. Feedback goes into the designs; anything needing a decision is parked and opens the next Discussion phase. Gate: "next" is the supervisor's approval.
+2. **Mockups.** Agent draws the whole change on the change page or request section and keeps the Design Changes list current with the drawings (a heading per screen in canvas order, one `V<n>` entry per frame with add / modify / remove, a description and a justification, several changes to one frame as numbered sub-changes); before the review gate it traces every drawn state to an input and every input requirement to a drawing. Supervisor reviews the drawings and the rendered list. Feedback goes into the designs; anything needing a decision is parked and opens the next Discussion phase. Gate: "next" is the supervisor's approval.
 3. **Completion.** Agent reconciles the drawings against every input but the base and, for each input the decisions changed, files a change request through that input's own process (with drafts) or tells the supervisor what the input needs; names what the package owes downstream. Ends with `🏁 Complete.`
 
 ### Design promotion (skill `skai-design-promotion`)
@@ -377,7 +377,7 @@ Draft design specs -- the rules joining a screen's design to the requirements: w
 - Guide [`Guides/DesignSpecs/design-specs-authoring.md`](Guides/DesignSpecs/design-specs-authoring.md)
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 - Shape [`Guides/Core/spec-file-shape.md`](Guides/Core/spec-file-shape.md) — the file shape product specs and design specs share, and the `Bin/spec-tool.py` commands that validate, cross-reference and render it (cited by the content, authoring and promotion guides)
-- Gap footnotes [`Guides/Core/spec-file-gaps.md`](Guides/Core/spec-file-gaps.md) — read when a spec draft carries a placeholder for an open gap: the footnote form and the tool's checks
+- Gap footnotes [`Guides/Core/spec-file-gaps.md`](Guides/Core/spec-file-gaps.md) — read when a spec draft or a design change list carries a placeholder for an open gap: the footnote form, the spec tool's checks and the page
 - Hosting [`Guides/Core/artifact-hosting.md`](Guides/Core/artifact-hosting.md) — read when the artifact does not exist yet: which repository it goes in, and the README link
 - Content rules [`Guides/DesignSpecs/design-specs.md`](Guides/DesignSpecs/design-specs.md) -- layout, items, IDs, writing style, the ten verification checks
 - Formats [`Guides/DesignSpecs/design-specs-artifacts.md`](Guides/DesignSpecs/design-specs-artifacts.md) -- the package and its rendered review page, spec change items, change requests
@@ -602,7 +602,7 @@ history and agreement between the packaged Mac resolver and portable Python reso
 app before testing changes to its source. UI appearance and interactions are checked manually.
 
 Each tool's automated test lives in [internal/tests/tools](internal/tests/tools), one folder per tool
-([spec-tool](internal/tests/tools/spec-tool/test.py), [design-tool](internal/tests/tools/design-tool/test.py), [ui-map-render](internal/tests/tools/ui-map-render/test.py),
+([spec-tool](internal/tests/tools/spec-tool/test.py), [design-tool](internal/tests/tools/design-tool/test.py), [figma-page-check](internal/tests/tools/figma-page-check/test.py), [ui-map-render](internal/tests/tools/ui-map-render/test.py),
 [skai-configuration](internal/tests/tools/skai-configuration/test.sh)); run it after changing that tool.
 Skill tests used while refining a skill live in [internal/tests/skills](internal/tests/skills/skill-tests.md).
 

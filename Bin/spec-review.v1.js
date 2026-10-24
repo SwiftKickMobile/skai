@@ -10,7 +10,7 @@ Array.prototype.forEach.call(sec.children,function(k){if(k.tagName==='H2')return
 groups.forEach(function(g){g.kids.forEach(function(k){if(!isCard(k))return;var show=whole||sel[statusOf(k)]||(sel.gaps&&k.classList.contains('has-gap'));hide(k,!show);if(show)g.shown++;});total+=g.shown;});
 groups.forEach(function(g,n){var keep=whole||(g.head?g.shown>0:total>0);g.kids.forEach(function(k){if(!isCard(k))hide(k,!keep);});if(g.head)hide(g.head,!keep);});
 hide(sec,!(whole||total>0));});
-document.querySelectorAll('section.discussion details.discussion').forEach(function(d){var show=(sel.open&&!d.classList.contains('resolved'))||(sel.gaps&&d.classList.contains('gap'));hide(d,!show);});
+document.querySelectorAll('section.discussion details.discussion').forEach(function(d){var g=d.classList.contains('gap'),r=d.classList.contains('resolved');var show=(sel.open&&!r&&!g)||(sel.gaps&&g)||(sel.resolved&&r);hide(d,!show);});
 document.querySelectorAll('section.discussion h3.section').forEach(function(h){var n=h.nextElementSibling,vis=0;while(n&&n.tagName==='DETAILS'){if(!n.classList.contains('hid'))vis++;n=n.nextElementSibling;}hide(h,!vis);});
 var disc=document.querySelector('section.discussion');if(disc)hide(disc,!disc.querySelector('details.discussion:not(.hid)'));}
 function clearFilters(){document.querySelectorAll('.seg button[aria-pressed=true]').forEach(function(b){b.setAttribute('aria-pressed','false');});apply();}

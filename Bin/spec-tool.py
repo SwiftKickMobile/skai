@@ -33,7 +33,7 @@ Usage:
         cited item or rule (its anchor became "-retired"), moved the item to another file, or
         removed the glossary entry, a conflict the projection introduces that the package must
         settle (hold the file, or a change request). Gap footnotes: a "[^n]" marker in an item's
-        text pairs with a "[^n]: **Gap:** D<n> — <question>. Placeholder: <one line>" definition
+        text pairs with a "[^n]: **Gap:** <owning item>. Placeholder: <what this item shows for it>" definition
         under that item (after its rules and tables, before known differences); a marker with no
         definition, a duplicate label in a file, a definition outside an item or off its shape is
         rejected; a definition with no marker is a marker-less note. Canon carries none: a
@@ -272,7 +272,7 @@ BARE_ADDRESS_RE = re.compile(r"://|\b(?:mailto|tel):|\bwww\.|\S@\S+\.\w", re.I) 
 ALSO_RE = re.compile(rf"^> \*\*Also called:\*\* (?P<text>(?:{ALSO_ALT}; )*{ALSO_ALT}\.)$")
 LINKDEF_RE = re.compile(r"^\[(?P<name>[^\]]+)\]:\s+(?P<target>\S.*)$")
 FOOT_DEF_RE = re.compile(r"^\[\^(?P<label>[A-Za-z0-9-]+)\]:\s*(?P<text>.*)$")
-GAP_NOTE_RE = re.compile(r"^\*\*Gap:\*\*\s*(?P<did>D\d+)\s*—\s*(?P<q>.+?)(?:\s+Placeholder:\s*(?P<ph>.+))?$")
+GAP_NOTE_RE = re.compile(r"^\*\*Gap:\*\*\s*(?:(?P<scope>[a-z][a-z ]*?)\s+)?(?P<did>D\d+)\.(?:\s+Placeholder:\s*(?P<ph>.+?))?\s*$")
 FOOT_MARK_RE = re.compile(r"\[\^(?P<label>[A-Za-z0-9-]+)\](?!:)")
 TABLE_ROW_RE = re.compile(r"^( *)\|(.*)\|\s*$")
 TABLE_SEP_RE = re.compile(r"^ *\|(\s*:?-+:?\s*\|)+\s*$")
@@ -321,11 +321,12 @@ class Known:
 
 @dataclass
 class Gap:
-    """A gap footnote under an item: its label, the Discussion item it names, the question, the
-    placeholder (empty when there is nothing to proceed on) and its line."""
+    """A gap footnote under an item: its label, the Discussion item that owns the question (and the
+    scope naming that item's artifact when it is another one, "" for this one), the placeholder as
+    this item shows it (empty when there is nothing to proceed on) and its line."""
     label: str
     did: str
-    question: str
+    scope: str
     placeholder: str
     line: int
 
@@ -417,6 +418,17 @@ def _gap_markers(spec, lines, err):
             if g.label in seen:
                 err(g.line - 1, f"duplicate gap footnote label [^{g.label}]; also at line {seen[g.label]}")
             seen[g.label] = g.line
+    order = []
+    for ln, line in enumerate(lines):
+        for m in (FOOT_MARK_RE.finditer(line) if not FOOT_DEF_RE.match(line) else [FOOT_DEF_RE.match(line)]):
+            if m.group("label") not in order:
+                order.append(m.group("label"))
+                if m.group("label") != str(len(order)):
+                    err(ln, f"gap footnote labels number by first use: expected [^{len(order)}], found [^{m.group('label')}]")
+                    break
+        else:
+            continue
+        break
     bounds = [it.line for it in spec.items] + [len(lines) + 1]
     for it, end in zip(spec.items, bounds[1:]):
         defined = {g.label for g in it.gaps}
@@ -511,11 +523,11 @@ def _parse_spec(spec, body, err):
                 mode = "detail"
                 mg = GAP_NOTE_RE.match(mf.group("text").strip())
                 if not mg:
-                    err(i, "gap footnote must read `[^n]: **Gap:** D<n> — <question>. Placeholder: <one line>`")
+                    err(i, "gap footnote must read `[^n]: **Gap:** <owning item>. Placeholder: <what this item shows for it>`")
                 else:
                     if item.knowns:
                         err(i, "gap footnote after a known-difference note; known differences come last in an item")
-                    item.gaps.append(Gap(mf.group("label"), mg.group("did"), mg.group("q").strip(), (mg.group("ph") or "").strip(), i + 1))
+                    item.gaps.append(Gap(mf.group("label"), mg.group("did"), (mg.group("scope") or "").strip(), (mg.group("ph") or "").strip(), i + 1))
             k += 1
             continue
         if item is None:
@@ -1147,7 +1159,7 @@ def inline(s, gloss=None, auto=False):
     head), a bare requirement ID and every glossary term outside a link or code span are linked
     the same way, so the page reads uniformly without the artifact carrying the links."""
     s = html.escape(s)
-    s = FOOT_MARK_RE.sub(lambda m: f'<sup class="fn"><a href="#gap-{RESOLVER.get("item", "")}-{m.group("label")}">{m.group("label")}</a></sup>', s)
+    s = FOOT_MARK_RE.sub(lambda m: f'<sup class="fn">{m.group("label")}</sup>', s)
     s = re.sub(r"~~(.+?)~~", r"<del>\1</del>", s, flags=re.S)
     s = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s)
     s = re.sub(r"`([^`]+)`", r"<code>\1</code>", s)
@@ -1375,12 +1387,65 @@ def render_rules(old_rules, new_rules, parent, gloss, tag=True):
     return "".join(out), changed
 
 
+def gap_notes(notes, aid, gloss):
+    """A card's gap notes in one box, one line each: the label, the owning item's chip (already
+    HTML: link and tooltip), then the placeholder as this place shows it. `notes` is an iterable
+    of (label, owner_html, placeholder)."""
+    body = "".join(
+        f'<div class="gapnote" id="gap-{aid}-{html.escape(label)}"><sup class="fn">{html.escape(label)}</sup><div class="gapbody">'
+        f'{owner_html} {inline(placeholder, gloss, auto=True) if placeholder else "<i>No placeholder.</i>"}</div></div>'
+        for label, owner_html, placeholder in notes)
+    return f'<div class="gapnotes">{body}</div>' if body else ""
+
+
+def gap_owners(authoring, disc):
+    """The artifacts whose Discussion items a gap footnote may name, by scope: "" is this artifact
+    (items from `disc`); "base" the parent package of a change request (the folder above
+    `change-requests/` or `promoted-change-requests/`, same artifact name); "product specs" and
+    "specs" the product specs artifact this artifact or its base links. Each maps to (its review
+    page's href relative to this page, "" for this page; {D: item}); the href doubles as the
+    source shown in the tooltip."""
+    owners = {"": ("", {it["id"]: it for _, its in disc for it in its})}
+    if not authoring:
+        return owners
+    authoring = Path(authoring).resolve()
+    folder = authoring.parent
+    base = folder.parent.parent / authoring.name if folder.parent.name in ("change-requests", "promoted-change-requests") else None
+    if base and base.exists():
+        owners["base"] = ("../../" + authoring.name.replace("-authoring.md", "-review.html"), {it["id"]: it for _, its in parse_discussion(base.read_text(encoding="utf-8")) for it in its})
+    for src in [authoring] + ([base] if base and base.exists() else []):
+        for m in re.finditer(r"\(([^)\s]*product-specs-authoring\.md)\)|\]:\s*(\S*product-specs-authoring\.md)", src.read_text(encoding="utf-8")):
+            path = (src.parent / (m.group(1) or m.group(2))).resolve()
+            if path.exists():
+                page = os.path.relpath(path.with_name("product-specs-review.html"), folder).replace(os.sep, "/")
+                items = {it["id"]: it for _, its in parse_discussion(path.read_text(encoding="utf-8")) for it in its}
+                owners["product specs"] = owners["specs"] = (page, items)
+                break
+        if "specs" in owners:
+            break
+    return owners
+
+
+def scope_key(scope):
+    return scope.replace(" ", "-") or "own"
+
+
+def gap_owner_chip(scope, did, owners):
+    """The owning item as a chip showing its ID: linked to it on this page or on its artifact's
+    review page, with its tooltip when that artifact was read; named only when it was not."""
+    info = owners.get(scope)
+    if info is None:
+        return f'<span class="ref">{did}</span>'
+    page, items = info
+    href = f"{page}#{did.lower()}"
+    tip = f' data-tip="tip-gap-{scope_key(scope)}-{did.lower()}"' if did in items else ""
+    return f'<a class="ref" href="{html.escape(href)}"{tip}>{did}</a>'
+
+
 def render_gaps(it, aid, gloss):
-    return "".join(
-        f'<div class="gapnote" id="gap-{aid}-{g.label}"><sup class="fn">{html.escape(g.label)}</sup><div class="gapbody"><div><b>Gap</b> '
-        f'<a class="ref" href="#{g.did.lower()}">{g.did}</a> — {inline(g.question, gloss, auto=True)}</div>'
-        + (f"<div><b>Placeholder</b> {inline(g.placeholder, gloss, auto=True)}</div>" if g.placeholder else "<div><i>No placeholder.</i></div>") + "</div></div>"
-        for g in it.gaps)
+    """An item's gap notes, each owner resolved through the artifacts the page knows."""
+    owners = RESOLVER.get("gap_owners", {})
+    return gap_notes(((g.label, gap_owner_chip(g.scope, g.did, owners), g.placeholder) for g in it.gaps), aid, gloss)
 
 
 def render_item(old: Item, new: Item, gloss, why):
@@ -1463,8 +1528,23 @@ def render_plain_item(it: Item, gloss):
     return "".join(parts)
 
 
+def item_tips(items, gloss, scope="", source=""):
+    """A popover template per Discussion item a gap note may name: the item's summary and
+    sub-bullets, led by the owning page's path when it is another document."""
+    src = f'<div class="pop-src">{html.escape(source)}</div>' if source else ""
+    return "".join(
+        f'<template id="tip-gap-{scope_key(scope)}-{did.lower()}">{src}<div class="pop-head"><span class="id">{did}</span> <span class="status">{html.escape(it["kind"])}</span></div>'
+        f'<p>{inline(it["title"], gloss, auto=True)}</p>' + (("<ul>" + "".join(f"<li>{inline(text, gloss, auto=True)}</li>" for text, _ in it["bullets"]) + "</ul>") if it["bullets"] else "") + "</template>"
+        for did, it in items.items())
+
+
+def owner_tips(owners, gloss):
+    """Popovers for every owning artifact's items; the specs alias shares the product specs' templates."""
+    return "".join(item_tips(items, gloss, scope, page) for scope, (page, items) in owners.items() if scope != "specs")
+
+
 def render_popovers(gloss):
-    out = []
+    out = [owner_tips(RESOLVER.get("gap_owners", {}), gloss)]
     for ref, (term, text) in sorted(gloss.items()):
         out.append(f'<template id="tip-{ref}"><div class="pop-head"><span class="id">{html.escape(term)}</span>'
                    f'</div><p>{inline(text, gloss)}</p>{also_called("", RESOLVER.get("alts", {}).get(ref, ""), "unchanged")}</template>')
@@ -1897,12 +1977,20 @@ def asset_links(out):
     return tuple(html.escape(quote(f"{rel}/{name}", safe="/")) for name in ASSETS)
 
 
+def state_tiles(totals):
+    """The discussion-state tiles: open (unresolved, not a gap), gaps, resolved — a partition of the
+    items, each tile a filter, shown only for the states the page has."""
+    tiles = "".join(f'<button type="button" data-f="{k}" aria-pressed="false"><b>{totals[k]}</b> {k}</button>'
+                    for k in ("open", "gaps", "resolved") if totals.get(k))
+    return f'<div class="seg state" role="group" aria-label="State">{tiles}</div>' if tiles else ""
+
+
 def page_shell(title, summary_totals, head, sections, gloss, out, subtitle=""):
     css, js = asset_links(out)
     sub = f'<p class="subtitle">{html.escape(subtitle)}</p>' if subtitle else ""
     return f"""<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{html.escape(title)}</title><link rel="stylesheet" href="{css}"></head><body>
-<div class="top"><h1>{html.escape(title)}</h1><div class="seg change" role="group" aria-label="Change"><button type="button" data-f="added" aria-pressed="false"><span class="badge added"></span><b>{summary_totals['added']}</b> added</button><button type="button" data-f="modified" aria-pressed="false"><span class="badge modified"></span><b>{summary_totals['modified']}</b> modified</button><button type="button" data-f="removed" aria-pressed="false"><span class="badge retired"></span><b>{summary_totals['retired']}</b> removed</button><button type="button" data-f="unchanged" aria-pressed="false"><span class="badge unchanged"></span><b>{summary_totals['unchanged']}</b> unchanged</button><button type="button" data-f="files" aria-pressed="false"><span class="badge added"></span><b>{summary_totals['added files']}</b> added files</button></div>{('<div class="seg state" role="group" aria-label="State">' + ('<button type="button" data-f="open" aria-pressed="false"><b>' + str(summary_totals['open']) + '</b> open</button>' if summary_totals.get('open') else '') + ('<button type="button" data-f="gaps" aria-pressed="false"><b>' + str(summary_totals['gaps']) + '</b> gaps</button>' if summary_totals.get('gaps') else '') + '</div>') if (summary_totals.get('open') or summary_totals.get('gaps')) else ''}</div><div class="wrap">{sub}
+<div class="top"><h1>{html.escape(title)}</h1><div class="seg change" role="group" aria-label="Change"><button type="button" data-f="added" aria-pressed="false"><span class="badge added"></span><b>{summary_totals['added']}</b> added</button><button type="button" data-f="modified" aria-pressed="false"><span class="badge modified"></span><b>{summary_totals['modified']}</b> modified</button><button type="button" data-f="removed" aria-pressed="false"><span class="badge retired"></span><b>{summary_totals['retired']}</b> removed</button><button type="button" data-f="unchanged" aria-pressed="false"><span class="badge unchanged"></span><b>{summary_totals['unchanged']}</b> unchanged</button><button type="button" data-f="files" aria-pressed="false"><span class="badge added"></span><b>{summary_totals['added files']}</b> added files</button></div>{state_tiles(summary_totals)}</div><div class="wrap">{sub}
 
 {head}{''.join(sections)}
 {render_popovers(gloss)}
@@ -1994,6 +2082,7 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
             sys.exit(f"no authoring artifact ({' or '.join(names)}) in {drafts.parent}; pass --authoring FILE, or --no-authoring for a bare comparison")
     title, goal, disc, changes, linkdefs, situations = parse_authoring(authoring, drafts)
     gloss = prepare(catalog, bases, drafts, out)
+    RESOLVER["gap_owners"] = gap_owners(authoring, disc)
     # everything from the authoring artifact resolves its links through the artifact's own
     # definitions, so it is rendered before the drafts (whose loop re-sets the resolver per file)
     if authoring:
@@ -2007,11 +2096,9 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
         gaps = f"{n_gap} gap{'s' if n_gap != 1 else ''}"
         state = ((f"discussion complete; {gaps} carried" if n_gap else "discussion complete") if items and not n_open
                  else (f"{n_open} open" + (f", {gaps}" if n_gap else "") if n_open else "no discussion items"))
-        foot = f"Discussion: {n_done} approved, {n_open} open, {gaps}" if items else "No discussion items"
         head += (f'<div class="item request"><div class="head"><span class="status">{html.escape(state)}</span>'
                  f'<span class="title">{html.escape(title)}</span></div>'
-                 + (f"<p>{inline(goal, gloss, auto=True)}</p>" if goal else "")
-                 + f'<div class="why"><b>{foot}</b></div></div>')
+                 + (f"<p>{inline(goal, gloss, auto=True)}</p>" if goal else "") + "</div>")
     if situations:
         head += f'<h2>Situations</h2><div class="item request">{render_markdown(situations, gloss)}</div>'
     if disc:
@@ -2020,8 +2107,10 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
             for topic, items in disc) + "</section>"
     sections, toc, totals, _ = render_tree([*reversed(bases), catalog], drafts, gloss, changes)
     n_gaps = sum(1 for _, items in disc for it in items if it["gap"]) if disc else 0
+    n_gaps += sum(1 for d in sorted(drafts.rglob("*.md")) for it in (lambda sp: sp.items if sp.kind == "spec" else [])(parse(d)) if any(g.scope for g in it.gaps))  # inherited marks
     totals["gaps"] = n_gaps
-    totals["open"] = sum(1 for _, items in disc for it in items if not it["done"]) if disc else 0
+    totals["open"] = sum(1 for _, items in disc for it in items if not it["done"] and not it["gap"]) if disc else 0
+    totals["resolved"] = sum(1 for _, items in disc for it in items if it["done"]) if disc else 0
     head += toc_html(toc) + discussion
     page = page_shell(f"Change Package: {package_id(drafts)}", totals, head, sections, gloss, out)
     out.write_text(page, encoding="utf-8")
@@ -2121,6 +2210,8 @@ def check_changes(catalog, drafts, authoring, bases=()):
         sp = parse(d)
         for it in (sp.items if sp.kind == "spec" else []):
             for g in it.gaps:
+                if g.scope:
+                    continue  # another artifact's item owns it
                 marked.add(g.did)
                 if g.did not in open_gaps:
                     log_issues.append(Issue(d, g.line, f"gap footnote [^{g.label}] names {g.did}, which is not an open gap item in ## Discussion"))

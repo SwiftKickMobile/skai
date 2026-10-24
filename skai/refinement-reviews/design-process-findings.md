@@ -58,3 +58,43 @@ round. Size 11,264 → 11,812 bytes against the 12,000 cap.
 | 2026-10-23 r3 | F1: C4 "including appended entries" can read as demanding a drawing for undrawn entries; C3 states they stay unlinked | logged | No occurrence; the exception sits in C3 at its point of use; sharpen C4's scope if it recurs |
 | 2026-10-23 r3 | Terminal round: no live findings | converged | stop rule (a); series CR: r1 11.375, r2 4.375, r3 0 |
 
+## 2026-10-23 — change list mirrors the page (series CL)
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-10-23 r1 | F1: structure check mandated on the no-mockups path | closed | "with drawings" in Mockups and C1 |
+| 2026-10-23 r1 | F2: C1 evidence excerpt claimed a bindings check the script does not do | closed | line deleted |
+| 2026-10-23 r1 | F3: C4 re-rendered only the base's page | closed | every page whose artifact changed |
+| 2026-10-23 r1 | F4: per-section V numbering ambiguity | closed | one sequence per package, in guide and spec |
+| 2026-10-23 r2 | F1: Figma Screen pages 7 and Components 1 contradicted the request hierarchy | closed | content rule scoped to screen Sections; components in the package's own Components Section |
+| 2026-10-23 r2 | F2: C2 forbade an entry for a component that is a change | closed | sentence deleted |
+| 2026-10-23 r2 | F3: a base's structure check also checks its open child requests' sections | logged | no occurrence; the edit boundary and the blocked gate cover it; a package filter in the script if it recurs |
+| 2026-10-23 r3 | F1: known-gaps rule 6's universal zero-gap requirement vs promotion into a package | routed — fixed in `Guides/Core/known-gaps.md` | "into production"; a workflow promoting into another open package carries them |
+| 2026-10-23 r3 | F2: Figma pair 22 bytes over cap after the r2 repair | closed | tooling 7 shortened; pair 17,895 |
+| 2026-10-23 r4 | F1: tooling 7 overstated the structure check's coverage | closed | "reports the breaches its header lists" |
+| 2026-10-23 r4 | F2: authoring named the change page `<change-id>` against the tool guide's page-name convention | closed | the tool guide names the page |
+| 2026-10-23 r4 | Open question: a request's removal of a frame the base's list links | logged | no occurrence; blocked route |
+| 2026-10-23 r5 | Terminal round: no findings | converged | stop rule (a); series CL: 18.75, 3.75, 2, 7.5, 0 |
+
+## 2026-10-24 — inherited gaps as footnotes (series GF)
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-10-24 r1 | F1: known-gaps rule 6 told authoring to resolve inherited marks locally | closed | own gaps resolved (4), inherited marks wait on their owners (5, 7) |
+| 2026-10-24 r1 | F2: the card state hid inherited gaps when no Discussion item existed | closed — tool | state "no discussion items; N gaps carried"; test |
+| 2026-10-24 r1 | Open question: "the page's Sections" vs the base's for nested requests | logged | no misroute; C3 is operational |
+| 2026-10-24 r2 | F1: no named input catch-up route in design authoring for an upstream answer differing from the placeholder | logged | Discussion, reopen and Mockups cover it; blocked gate for a strand |
+| 2026-10-24 r2 | Terminal round: no live findings | converged | stop rule (a); series GF: 3.875, 0 |
+| 2026-10-24 in use | The agent labelled footnotes with the owning item's ID (`[^d15]`); the guide said only "labels unique per artifact" | closed | "numbered by first use"; observed on CR-001 |
+| 2026-10-24 in use | One gap spans several entries; the agent defined its footnote once and marked the rest, so marks linked to notes under another card | closed — by ruling | a render issue: the artifact defines a gap once, the renderer shows the note under every entry that marks it; guide sentence says so |
+
+## 2026-10-24 — one gap footnote for every artifact (series FN)
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-10-24 r1 | F1: scoped owners unlinked on spec pages; inherited-only packages no gaps tile; base lost after archive | closed — tools | shared owner resolver, tooltips, count; tests |
+| 2026-10-24 r1 | F2: validate did not enforce numbering by first use | closed — tool | check added; Offers drafts renumbered |
+| 2026-10-24 r2 | F1: the shared guide let a designer take rendering for validation and a spec author read a marked open gap as a failure | closed | tooling paragraphs scoped to spec drafts; pairing spelled out; design pages only render |
+| 2026-10-24 r3 | F1: the shared guide claimed footnoted items count as modified; the renderers keep the entry's operation | closed | claim deleted |
+| 2026-10-24 r4 | Terminal round: no findings; open question on the spec tool's modified class for footnoted existing requirements | converged; question closed, by design | stop rule (a); series FN: 5.5, 3.75, 2, 0 |
+

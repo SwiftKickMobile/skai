@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-authoring
 Managed-Source: Guides/Design/design-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-23
+Managed-Updated-At: 2026-10-24
 
 # Design Authoring
 
@@ -33,9 +33,9 @@ Packages live at `skai/changes/<change-id>/design/` against production; requests
 | `change-requests/` | open requests; may be absent |
 | `promoted-change-requests/` | promoted requests; may be absent |
 
-Draw against production on a **change page** named `<change-id>`; requests use a **request section**
+Draw against production on the **change page** the tool guide names; requests use a **request section**
 `CR-<nnn> — <name>` on the base's page for additions and changes only. Change screens on copies of
-base frames, never in place. The tool guide defines pages and sections. Other types for the same change share its `<change-id>` and
+base frames, never in place. Other types for the same change share its `<change-id>` and
 update freely; promotion archives each type independently.
 
 Use the input's change ID; otherwise propose a short kebab-case default and block before
@@ -100,7 +100,7 @@ Workflow-specific gate notes:
   - Planned: `⏳ GATE: Next: Discussion complete<; N open gaps carried>. Say "next" to draw the mockups on <page or section> (with no mockups: to write Design Changes).`
 - After the trace pass, Review covers drawings and rendered Design Changes (list alone with no
   mockups). Feedback follows *Mockups*; the supervisor's `next` approves and runs *Completion*.
-  - `⏳ GATE: Next: Reconcile the inputs and complete the package; the drawings on <page or section> and Design Changes on the rendered page are ready for review. Say "next" or what to change.`
+  - `⏳ GATE: Next: Reconcile the inputs and complete <package>. Say "next" or what to change.`
 
 Planned gates for this workflow:
 - After every non-gap Discussion item is resolved, before anything is drawn.
@@ -132,10 +132,10 @@ Progress tracking:
 - At a planned gate, advance intent is the approval signal for clearing the guide-owned progress markers completed by the phase that just finished.
 - Ordering rule: the agent first stops and waits at the gate, then clears the approved markers only after the supervisor gives advance intent.
 
-**Workflow-specific marker lifecycle.** This workflow owns exactly one marker: the `- [ ] D<n>` items
+**Workflow-specific marker lifecycle.** This workflow owns the `- [ ] D<n>` items
 in `## Discussion`. Each is resolved individually, on the supervisor's explicit approval of *that
 item*, by checking its box and appending `- **Decision** <resolution>.` Advance intent at the
-Discussion gate does not clear them; by the time that gate is reached they are already clear. Gaps stay unchecked; they block promotion into production.
+Discussion gate does not clear them; by the time that gate is reached they are already clear. Gap items stay unchecked; all open gaps block promotion into production.
 `## Design Changes` has no checkboxes; the drawings, or the list with no mockups, are the change.
 
 **Workflow-specific `auto` behavior.** `auto` never bypasses the Discussion blocked gate (unresolved
@@ -157,7 +157,7 @@ On the signal:
 3. Otherwise resolve the path, create the artifact, and record `## Goal` and `## Inputs`.
 4. Open the first Discussion phase.
 
-Any author reopens the same package under the same rules, raises findings as items and may change or trim anything. On reopen, a resolved `- [x] D<n>` keeps its number, Concern, Options and
+Any author reopens the same package under the same rules and may change anything in it. On reopen, a resolved `- [x] D<n>` keeps its number, Concern, Options and
 Proposal; *Resolution* governs its state; new items continue the numbering.
 
 **A backfill** (designs drawn from an existing app) is a change like any other; its items are the
@@ -174,9 +174,8 @@ Item line: `- [ ] D<n> [Kind] <summary>`, where `[Kind]` is `[Question]`, `[Prop
 **Question**, **Options**, **Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "no placeholder; waiting on <what>"), and **Decision** on resolution.
 
 A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
-Once a gap's placeholder is drawn, mirror the gap in the design file as the tool guide says; remove
-the mirror when the item closes. Requests inherit base gaps like any input's; their own enter the
-base at promotion.
+Mirror all gaps in the design file per the tool guide once placeholders are drawn; remove
+mirrors when owning items close. Requests inherit base gaps; their own enter the base at promotion.
 
 **Every item carries a recommendation**, in words. An item that can only be judged visually says
 so, and the supervisor resolves it by approving the recommended option as a trial
@@ -219,7 +218,8 @@ Goal and Inputs call for, as the decisions and any later feedback currently stan
 changed is updated through *Resolution*, its old outcome in the log; Discussion holds decisions,
 not the scope.
 
-Before Review, run the **trace pass**: every drawn state traces to an input; everything inputs
+Before Review, with drawings, run the tool guide's structure check on the page or section and
+fix findings; then run the **trace pass**: every drawn state traces to an input; everything inputs
 ask of this change is drawn, or under `## Out of scope`. Mismatches become Discussion items or
 input-changing Decisions for *Completion*; then end at the gate *Gates* prescribes.
 
@@ -229,15 +229,29 @@ pass and end at the gate *Gates* prescribes.
 
 ## Design Changes
 
-Keep one entry per base change, `- V<n> <add|modify|remove> <screen|state|component>: <identity>`,
-current from the first drawing; with no mockups, write from decisions as the Discussion gate advances.
+Under `### <screen>` headings in canvas order (columns left to right), list one
+entry per frame, top to bottom: `- V<n> <add|modify|remove> <screen|state|component>: <identity>`.
+Current from the first drawing; with no mockups, from decisions at the Discussion gate.
 
-Use `V01`, `V02`, …; never renumber or reuse. Identity: for `add` and `modify`, the frame's name
+One sequence per package, `V01`, `V02`, …, never renumbered or reused: a new frame takes the
+next `V` under its screen's heading, a new change its frame's next sub-ID. Identity: for `add` and `modify`, the frame's name
 linked to its draft (`[name](<link>)`), or its intended name unlinked with no mockups; for
 `remove`, the base design's name, unlinked. Each entry has:
 - **Description** about a sentence with mockups, longer only as needed; enough to draw from without them.
 - **Justification** an input citation standing alone, `Resolved decision: D<n>` (this package),
   `Base decision: D<n>` (its base), or `Supervisor input`.
+
+Inherited gaps are footnotes, not items: an entry or sub-change whose frame uses a placeholder gets one, per [`spec-file-gaps.md`](../Core/spec-file-gaps.md).
+
+Several changes: sub-IDs:
+
+```markdown
+### Notes
+
+- V03 modify screen: [notes](<link>)
+  - **01** A `Pinned` group with its own header above the list — Resolved decision: D01
+  - **02** The unread dot on each row goes — [NOTES-07]
+```
 
 ## Completion
 

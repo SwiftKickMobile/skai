@@ -231,3 +231,17 @@ Set by the supervisor from four efficiency reviews (SalesPro checkout, `working-
 | Guides/Core/spec-file-gaps.md | 1,850 (2026-10-20, slice 3) |
 
 **Live render (supervisor, 2026-10-18).** The rendered page is the primary way the supervisor views a change package while it is being iterated on. Any time the package materially changes — a draft edited, a discussion item resolved, a change item added, a request triaged — the agent validates and re-renders before anything else, in every workflow that writes a package. The gate and promotion renders are not the only ones; they are the last of many. Validation and rendering take milliseconds, so there is no cost argument for deferring them.
+
+## Amendment — 2026-10-24 (one gap footnote form for every artifact)
+
+Supervisor, 2026-10-24, from the design dry run: the companion guide `spec-file-gaps.md` owns the
+gap footnote for every artifact that marks a placeholder, spec drafts and design change lists
+alike. Form: `[^n]: **Gap:** <owning item>. Placeholder: <what this place shows for it>`; the owning
+item is `D<n>` of this artifact or scoped to another (`base D04`, `product specs D21`); the question
+is never repeated, it stays with the owning item; no Placeholder clause means nothing to proceed on;
+labels numbered by first use, unique per file. `validate` enforces the form; `check-changes` pairs
+only this artifact's items, failing a draft footnote with no open owner and an open gap no footnote marks,
+never a marked open gap; both are spec-draft tools, design pages only render (FN r2, 2026-10-24). Page: marks are plain superscripts; a card's notes sit in one box, one
+line each, the owning item as a chip linked to it with its text on hover, then the placeholder.
+Migration: existing footnotes drop their question text. Cap set after compression (1,850 before).
+Cap after compression: **1,875 bytes** for `spec-file-gaps.md` (compressed 1,903; supervisor, 2026-10-24), replacing 1,850.

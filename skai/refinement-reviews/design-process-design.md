@@ -267,3 +267,86 @@ Requests: Authoring Against A Base), a little under the compressed sizes; whole-
 | design-authoring.md | 16,210 | 16,100 |
 | design-promotion.md | 12,206 | 12,100 |
 
+## Amendment — 2026-10-23 (change list mirrors the page)
+
+Inventory per skai#90. Decided with the supervisor 2026-10-23: the change list is organized so a
+reviewer walks it the way they walk the canvas.
+
+**design-authoring.md must say:**
+
+1. `## Design Changes` groups entries under `### <screen>` headings in canvas order (sections,
+   then columns, left to right); under a heading, one entry per frame, top to bottom. A frame
+   with several changes lists them as sub-IDs `- **NN** <description> — <justification>` under
+   the entry, the way a spec item lists rules; a single change keeps Description and Justification
+   on the entry. IDs stay stable and form one sequence per package: a later frame takes the next `V`, placed
+   under its screen's heading; a later change to a frame takes the next sub-ID. The renderer shows the headings and the sub-changes.
+2. Before the Review gate, run the tool guide's structure check on the page or section and fix
+   what it reports.
+
+**design-promotion.md must say:**
+
+1. `C1` runs the structure check. `C2` inventories per section.
+2. `C3`: a request's per-screen sections fold into the base's same-named sections (a new
+   section where the base has none); into production the per-screen sections do not survive:
+   every column is regrouped into `Production`'s feature areas as the tool guide places it.
+
+**Out of this amendment:** the page's renderer mechanics (`design-tool.py`), tested on their own.
+
+## Size Budgets — 2026-10-23 (change list mirrors the page)
+
+Set by the supervisor after the compression round of this amendment, 100 bytes under the
+combined proposal "to keep the refiner honest"; whole-file bytes by `wc -c`. These replace the
+earlier 2026-10-23 caps and bind every repair.
+
+| File | Draft | Cap |
+| --- | ---: | ---: |
+| design-authoring.md | 16,614 | 16,450 |
+| design-promotion.md | 12,278 | 12,150 |
+
+## Amendment — 2026-10-23 (inherited gaps as footnotes)
+
+Inventory per skai#90. Decided with the supervisor 2026-10-23: a gap this package inherits from
+an input is not a question it is asking, so it is not a Discussion item; it is a mark on what
+stands on the placeholder, as the spec files mark theirs. Discussion holds only the gaps the
+design itself raises. Adopts the same-day amendment of `known-gaps-design.md`.
+
+**design-authoring.md must say:**
+
+1. An inherited gap is a footnote on the Design Changes entry, or sub-change, whose frame stands
+   on the placeholder: `[^n]` ending its text, defined under the entry as
+   `[^n]: **Gap:** <owning item> — <question>. Placeholder: <one line>`, the owning item named as
+   `product specs D21` or `base D04`; labels unique per artifact. The design file mirrors it as the
+   tool guide says. A gap of this package's own stays an item with a Gap line, mirrored the same
+   way once its placeholder is drawn.
+2. "Open gaps" at the Discussion gate and in the card's state count both: open gap items and
+   footnoted entries.
+3. The renderer shows the footnote under the entry's card and counts it in the gaps tile.
+
+**design-promotion.md must say:**
+
+1. Readiness 1: into production no open gap of either kind; into a package `C3` carries both.
+2. `C3` into a package: the package's own open gap items are appended to the base's Discussion as
+   today; footnotes ride with their entries, and one naming the base's own item names it as the
+   base's (`base D04` becomes `D04`).
+
+**Out of this amendment:** the UI Map's gap mirror.
+
+## Size Budgets — 2026-10-23 (inherited gaps as footnotes)
+
+Set by the supervisor after the compression round, a little under the compressed sizes; whole-file
+bytes by `wc -c`. These replace the earlier 2026-10-23 caps and bind every repair.
+
+| File | Compressed | Cap |
+| --- | ---: | ---: |
+| design-authoring.md | 16,817 | 16,750 |
+| design-promotion.md | 12,143 | 12,100 |
+
+## Adopts — 2026-10-24 (the shared gap footnote)
+
+Design authoring's inherited-gap footnote is `spec-file-gaps.md`'s form, cited, not restated (one
+per entry that stands on a placeholder). Rendering rulings of 2026-10-24: the owning item's chip
+shows the ID alone; its tooltip leads with the owning review page's path when it is another
+document; a card's notes share one box; one line per note, no "Gap" or "Placeholder" labels on the
+design page; marks are inert. These supersede the footnote form in § Amendment — 2026-10-23
+(inherited gaps as footnotes), item 1.
+Cap after the shared-footnote change: `design-authoring.md` **16,550 bytes** (compressed 16,616; supervisor, 2026-10-24), replacing 16,750; promotion stays at 12,100.

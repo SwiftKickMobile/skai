@@ -117,3 +117,41 @@ Compression (third round, 2026-10-23): the pair 17,492 bytes; cap set at 17,400 
 supervisor 2026-10-23, then held at **17,500 bytes** (supervisor, 2026-10-23) after the
 refinement series found nothing against the passage: trimming elsewhere would have been cleanup.
 
+## Amendment — 2026-10-23 (page organization for change pages)
+
+Inventory per skai#90 (inventory before prose; sweep; compression; cap after). Decided with the
+supervisor 2026-10-23 after the Offers dry run; the Offers Concept A page is the worked case.
+Requirement 10, in the screen-page rules:
+
+1. Change pages and request sections group **one section per screen**, named for the screen in
+   plain words, its states stacked below it; a tall screen spills into a second column beside
+   it (Production already does this; the guide never said so — supervisor, 2026-10-23: keep it).
+   `Production` groups by feature area, screens as columns; promotion regroups in general (the
+   process guide says when, this guide says where).
+2. A change page holds a `Components` section for the components a mockup needs; replaces the
+   loose allowance in Screen pages 7 and Components 1.
+3. A request draws in one section of its own on the base's page, `CR-<nnn> — <name>`, holding
+   the same per-screen sections (Pages 1 reworded).
+4. One concept per page: the concept letter is in the page name; frames and sections carry no
+   prefix.
+5. A **structure check**: one line under Agent tooling naming `Bin/figma-page-check.js`, run
+   through the tool, as the check of the rules above; what it reports is the script's header's to
+   say; the process guides say when (before the Review gate; promotion's `C1`).
+Page-organization amendment, 2026-10-23: the pair 17,966 bytes after compression; cap
+**17,900 bytes**, set by the supervisor 2026-10-23 (combined caps cut 100 under the proposal),
+replacing the 17,500 above.
+
+## Amendment — 2026-10-23 (gap annotation format)
+
+Requirement 11, replacing requirement 8's text format (supervisor, 2026-10-23: the annotation did
+not even say "gap"; terminology stays the guides' own): the annotation on the node that draws a
+placeholder reads, on three lines, `Gap: <the question>`, `Placeholder: <what is drawn>`,
+`Owner: <the item that owns the question — product specs D21, or this package's D04>`. One
+per frame that stands on the placeholder; added once the frame exists, updated when the
+placeholder changes, removed when the owning item closes; `Production` never carries one. The
+rest of § Gaps (Plugin API `annotations`, keep other annotations) stands. The design gap's
+definition moves: an inherited gap is a footnote on the change list entry, a design's own gap an
+item (`design-process-design.md` § Amendment — 2026-10-23, inherited gaps).
+Gap annotation change, 2026-10-23: the pair 17,897 bytes after compression; cap **17,850 bytes**,
+set by the supervisor 2026-10-23, replacing the 17,900 above.
+

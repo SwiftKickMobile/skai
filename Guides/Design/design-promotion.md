@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-promotion
 Managed-Source: Guides/Design/design-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-23
+Managed-Updated-At: 2026-10-24
 
 # Design Promotion
 
@@ -115,8 +115,8 @@ readiness screen is for a new run.
 
 Render the page, then verify before writing the checks:
 
-1. All non-gap `- [ ]` items in `## Discussion` are resolved; into production, gaps too
-   ([`known-gaps.md`](../Core/known-gaps.md)); into a package, `C3` carries them.
+1. All non-gap `- [ ]` items in `## Discussion` are resolved; into production, no open gap items
+   or footnotes ([`known-gaps.md`](../Core/known-gaps.md)); into a package, `C3` carries both.
 2. `## Design Changes` is current, Review advanced and inputs reconciled (authoring's *Completion*).
 3. `add` and `modify` entries link drafts on the change page or request section, unless the
    no-mockups ruling under `## Assumptions and TODOs` leaves them unlinked; unlinked entries never
@@ -132,24 +132,27 @@ A failure is a blocked gate, recorded in `## Evidence` instead of a checks secti
 
 Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution order.
 
-- `C1 Drafts meet the conventions` — every draft follows the tool guide, and, into production,
-  none still mirrors a gap. A script, where one exists, covers the rules it tests; inspect the rest.
-- `C2 Inventory matches the drawings` — each linked `## Design Changes` entry has a draft; every
-  screen draft of this package has an entry. Components a draft
-  needs are not screens; no entry.
+- `C1 Drafts meet the conventions` — with drawings, run and pass the tool guide's structure
+  check; drafts follow the guide and, into production, mirror no gap. A script covers what it tests; inspect the rest.
+- `C2 Inventory matches the drawings` — per section, each linked `## Design Changes` entry has a
+  draft; every screen draft of this package has an entry.
 - `C3 The base absorbs the package` — with condition 5 still met by current statuses, per entry:
   update changed screens in the base to match drafts, keeping identities; place new screens or
-  states and integrate needed components per the tool guide; delete removed designs.
+  states and integrate needed components per the tool guide; delete removed designs. Into
+  production, the per-screen sections do not survive: every column is regrouped into
+  `Production`'s feature areas.
   Designs outside the inventory change only by the placement and relocation the tool guide's
-  rules need to absorb them. Into a package, also:
-  - Append entries to its `## Design Changes`: next `V` numbers, Descriptions kept,
-    Justifications `Change request: <nnn> V<n>; <the entry's own>`. Undrawn entries stay unlinked
+  rules need to absorb them. Into a package, fold screen sections into same-named base sections
+  (create missing ones), and:
+  - Append entries with footnotes (`base D04` becomes `D04`) to its `## Design Changes`: next `V`
+    numbers, Descriptions kept, Justifications `Change request: <nnn> V<n>; <the entry's own>`. Undrawn entries stay unlinked
     and return the base to Mockups to draw them.
-  - Append open gaps to its `## Discussion` topics: next `D` numbers, Gap lines and mirrors
-    kept; log `gap` in its `## Decision Log`.
+  - Append its own open gap items to the base's `## Discussion`: next `D` numbers, Gap lines and
+    mirrors kept; log `gap`.
   - Name the promoted request in its `## Assumptions and TODOs`.
 - `C4 Links point at the base` — repoint `add` and `modify` links, including appended entries,
-  to the base's drawings; a `remove` entry keeps its name; re-render a package base's page.
+  to the base's drawings; a `remove` entry keeps its name; re-render every page whose
+  artifact changed, the promoting package's included.
 - `C5 Delete the drafts` — after Base review advances, delete the change page or request section,
   where one exists.
 - `C6 Archive the package` — move the folder intact with `working-docs/`, `change-requests/`
@@ -164,7 +167,6 @@ Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution or
 ```markdown
 ## Evidence
 
-[evidence: C1; script over page `pinned-notes` (bindings, names) passed, output: skai/changes/pinned-notes/design/evidence/promotion-run1-c1.txt; inspection of the remaining rules (components in context, sample data) — no finding]
 [evidence: C2; inspection — 3 entries, 3 frames on `pinned-notes`, each entry links one frame; none extra]
 ```
 
@@ -182,7 +184,7 @@ it; silence is not a pass: name what was compared and found.
 ## Completion
 
 With `C6` checked, the base holds the changes, drafts are gone and the package is archived.
-Link its artifact, name drawings the base owes and gaps carried, and end with
+Link its artifact, name what the base owes and gaps carried, and end with
 `🏁 Complete. Let me know if anything needs adjustment.`
 If archival fails after `C5`, report the base promoted but archival incomplete, use the standard
 blocked gate and later resume only the archival.

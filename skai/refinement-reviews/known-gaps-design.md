@@ -96,3 +96,25 @@ field, the Figma annotation convention, the Decision Log line shape, or the Inpu
 and catch-up procedure; each belongs to its owning guide. It does not describe promotion's checks
 beyond the zero-open-gaps condition, and it has no gates of its own: an agent that reaches a
 decision it cannot make returns to its workflow's gate model.
+
+## Amendment — 2026-10-23 (promotion into a package carries gaps)
+
+Rule 6's zero-gap requirement is for promotion into production. A workflow that promotes a package
+into another open package (design change requests, `design-process-design.md` § Amendment —
+2026-10-23) carries the open gaps into the base, as that workflow's guide says. Found by the
+design guides' cold review (series CL r3 F1), routed here; one clause, within the 3,400 cap.
+
+## Amendment — 2026-10-23 (inherited gaps are marks, not items)
+
+Supervisor, 2026-10-23, from the design dry run: a package that builds on an input's placeholder
+is not re-discussing the question, so carrying a Discussion item for it is wrong. Rule 3 and rule
+5 change: a package's own gap is an unchecked item with a Gap line; an inherited gap is the
+artifact's marker on what stands on the placeholder, naming the owning item, and no item; the
+marker clears when the owning item closes (rule 7 unchanged). Rule 6 counts both kinds as open.
+Each artifact's marker is its guide's: the spec-file footnote, the design change list footnote,
+the UI Map mirror. Within the 3,400 cap; additions paid by trims in rules 3 and 5.
+Cap after the 2026-10-23 change: **3,300 bytes** (compressed 3,343; supervisor, 2026-10-23),
+replacing 3,400.
+The marker's form for footnoting artifacts is `spec-file-gaps.md`'s (2026-10-24); rule 3 keeps
+naming the guides.
+
