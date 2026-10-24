@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs
 Managed-Source: Guides/DesignSpecs/design-specs.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-24
 
 # Design Specs
 
@@ -141,22 +141,20 @@ and decide per citation whether it still holds.
 
 ## Writing Style
 
-Write as a **product manager describing a screen to a developer who sees the design**. These
-rules apply to canonical and draft specs and quoted proposed text; package prose may name
-frames, nodes and code files.
+Write as a **product manager describing a screen to a developer who sees the design** in canon,
+drafts and quoted proposals; package prose may name frames, nodes and code files.
 
 ### Product Language Only
 
 Use product terms ("compact card", "stale notice"), never design-tool frame, component, variant or
-property names, URLs or node IDs; a drawing the design does not make findable by product name is
-a Discussion item. No jargon or coined phrases: "a tip pointing at the profile button", not
-"platform-rendered TipKit popover".
+property names, URLs or node IDs; raise drawings unfindable by product name in Discussion. No jargon or coined phrases: "a tip pointing at the profile button", not
+"platform-rendered TipKit popover". Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ### Never Appearance
 
-Never prescribe color, position, shape, size or style in rules, intros or glossary entries.
-**Would a purely visual redesign make the sentence false without changing what the thing is,
-is for, or does?** If so, delete it: the design owns appearance. Exceptions: established product
+No color, position, shape, size or style in rules, intros or glossary entries.
+**Would a purely visual redesign falsify the sentence without changing what the thing is,
+is for, or does?** If so, delete it: design owns appearance. Exceptions: established product
 names ("compact card") and relationships that only identify a thing ("the button beside the
 search field"). ❌ "the completed row is gray" · ❌ "a blue notice with an icon, heading and two
 links" · ✅ "the completed row" · ✅ "the notice explaining an unfinished transfer".
@@ -171,9 +169,9 @@ variable labels under the item.
 
 ### Mechanism Is the Developer's
 
-Describe what the person sees, not its platform mechanism: "a standard tip bubble", not "a standard
-iOS tip bubble". Rules apply to every app; tablet/phone adaptation is a condition. Record
-single-app verification in package Assumptions.
+Describe what people see, not platform mechanisms: "a standard tip bubble", not "a standard
+iOS tip bubble". Rules cover all apps; tablet/phone adaptation is a condition. Log single-app
+verification in package Assumptions.
 
 ### Restatement
 
@@ -203,8 +201,8 @@ says whether it is drawn.
 
 ### Nothing That Decays
 
-As in the catalog, omit temporal references ("as before the redesign") and workflow state: the
-spec must survive the change's memory.
+Omit temporal references ("as before the redesign") and workflow state; specs must outlive memory
+of the change.
 
 ## Verification Checks
 

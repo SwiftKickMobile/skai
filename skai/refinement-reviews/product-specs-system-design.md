@@ -518,3 +518,7 @@ Working documents serving a package live in its `working-docs/` folder and archi
 ## Amendment — 2026-10-21 (Verification placement)
 
 The authoring skeleton places `## Verification` after `## Out of scope`, just before `## Decision Log`: it is bookkeeping read by promotion, not content read by the supervisor (Tim, reviewing the Offers page, 2026-10-21; known-gaps planning G17). The design specs skeleton follows.
+
+## Adopts — 2026-10-24 (writing for people)
+
+`process-flow.md` gains § Writing for people, owner of the pointer sentence every guide that writes for a person inlines (`writing-style-design.md`). Cap **21,550 bytes** (compressed 21,578; supervisor, 2026-10-24), replacing 21,200.

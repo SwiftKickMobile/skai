@@ -169,6 +169,12 @@
       "tags": ["core"]
     },
     {
+      "id": "guide.writing-style",
+      "type": "guide",
+      "sourcePath": "Guides/Core/writing-style.md",
+      "tags": ["core"]
+    },
+    {
       "id": "guide.artifact-hosting",
       "type": "guide",
       "sourcePath": "Guides/Core/artifact-hosting.md",

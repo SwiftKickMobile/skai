@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-authoring
 Managed-Source: Guides/ProductSpecs/product-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-24
 
 # Product Specs Authoring
 
@@ -10,15 +10,17 @@ Print `📖 SKAI guide: product-specs-authoring` now, as a line of its own. Read
 
 ## Purpose
 
-Draft requirements into a **change package** against the product specs, resolve the open questions
-they raise with the supervisor, and leave the package ready to promote.
+Draft product requirements into a **change package**, settle their questions with the
+supervisor and ready it to promote.
 
-Authoring edits the package and its drafts; the canonical catalog stays unchanged. Adjacent findings
-go in Discussion when they affect a requirement decision, in Assumptions and TODOs when nonblocking,
-in Out of scope when excluded; editing adjacent artifacts needs its own authorization. Read the
-content rules, [`product-specs-catalog.md`](product-specs-catalog.md), before drafting; the package,
-change items and requests are [`product-specs-artifacts.md`](product-specs-artifacts.md), the file
-shape and the spec tool [`spec-file-shape.md`](../Core/spec-file-shape.md).
+Edit only the package and drafts, not canon. Adjacent findings go in Discussion if they affect
+requirement decisions, Assumptions and TODOs if nonblocking, Out of scope if excluded;
+adjacent edits need separate authorization. Before drafting, read
+[`product-specs-catalog.md`](product-specs-catalog.md) for content rules;
+[`product-specs-artifacts.md`](product-specs-artifacts.md) for packages, change items and requests;
+[`spec-file-shape.md`](../Core/spec-file-shape.md) for file shape and the spec tool.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## The change package
 

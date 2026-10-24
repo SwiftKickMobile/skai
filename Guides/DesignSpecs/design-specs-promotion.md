@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-promotion
 Managed-Source: Guides/DesignSpecs/design-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-24
 
 # Design Specs Promotion
 
@@ -10,18 +10,19 @@ Print `📖 SKAI guide: design-specs-promotion` now, as a line of its own. Read 
 
 ## Purpose
 
-Write approved specs and archive the package. Promotion owns canonical writes except verified
-work-spec known-difference cleanup; it validates and prepares destination links, never changing
-prose, IDs, notes or drafts. Package defects return to authoring; canonical defects follow
+Write approved specs; archive. Promotion alone writes canon except verified
+work-spec known-difference cleanup. Validate and prepare destination links; keep prose, IDs,
+notes and drafts unchanged. Return package defects to authoring; route canonical defects via
 *Raising a Change Request*.
 
-Use [content rules/checks](design-specs.md), [artifact formats](design-specs-artifacts.md) and
-[shape guide and tool](../Core/spec-file-shape.md).
+Use [rules/checks](design-specs.md), [formats](design-specs-artifacts.md) and
+[shape/tool](../Core/spec-file-shape.md).
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## The Promotion Artifact
 
-Promotion writes `skai/changes/<change-id>/design-specs/design-specs-promotion.md` beside the
-authoring artifact:
+Write `skai/changes/<change-id>/design-specs/design-specs-promotion.md` beside the authoring artifact:
 
 ```
 # Design Specs Promotion — <name>
@@ -106,16 +107,15 @@ blockers still stop it.
 
 ## Initiation
 
-Begin only on explicit promotion intent, never automatically after authoring, on the named or
-contextual package, not its siblings or history. Inspect Evidence first: a recorded `C3`
-write awaiting confirmation/repair resumes there (retain `C1`–`C2`, repair without rewording,
-verify, check `C3`, archive); checked `C3` resumes incomplete archival only; changed drafts,
-intervening canon or uncertain outcomes block; never assume an unrecorded write. An archived
-package is never reopened or promoted.
+Promote only on explicit intent, never automatically after authoring; use the named or contextual
+package, not siblings or history. First inspect Evidence: resume a recorded `C3` write needing
+confirmation/repair there (keep `C1`–`C2`, repair without rewording, verify, check `C3`, archive);
+checked `C3` resumes archival only. Changed drafts, intervening canon or uncertain outcomes block;
+never assume unrecorded writes or reopen/promote archived packages.
 
-Before writing, ensure `skai/promoted/<change-id>/design-specs/` is absent and identify live
-incoming references from specs/app repositories, related packages and work specs; a collision or
-inaccessible required reference blocks; never overwrite or merge a destination.
+Before writing, require `skai/promoted/<change-id>/design-specs/` absent; find live incoming
+references from specs/app repos, related packages and work specs. Collisions or inaccessible
+required references block; never overwrite or merge destinations.
 
 ### Readiness Screen
 

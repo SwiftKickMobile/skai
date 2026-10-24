@@ -2,13 +2,13 @@ Managed-By: skai
 Managed-Id: guide.ticket-filing
 Managed-Source: Guides/Process/ticket-filing.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-24
 
 # Ticket filing
 
 Print `📖 SKAI guide: ticket-filing` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
-Purpose: capture process improvement suggestions and file them as GitHub issues on the `skai` repo. Handles both ad-hoc suggestions (supervisor describes a problem or idea) and retro handoffs (drafts already written by the retro).
+Purpose: file process improvements as GitHub issues on `skai`: ad-hoc supervisor problems or ideas, or retro drafts. Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## Gates
 

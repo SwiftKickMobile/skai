@@ -98,3 +98,26 @@ round. Size 11,264 → 11,812 bytes against the 12,000 cap.
 | 2026-10-24 r3 | F1: the shared guide claimed footnoted items count as modified; the renderers keep the entry's operation | closed | claim deleted |
 | 2026-10-24 r4 | Terminal round: no findings; open question on the spec tool's modified class for footnoted existing requirements | converged; question closed, by design | stop rule (a); series FN: 5.5, 3.75, 2, 0 |
 
+## 2026-10-24 — writing style guide and design change prose (series WS)
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-10-24 r1 | F1: the sub-change example taught a citation-only justification (reason before the separator) | closed | example rows rewritten |
+| 2026-10-24 r1 | F2: unqualified first person conflicted with requirement voice | closed | rule 5 scoped to the agent's own actions, recommendations, questions |
+| 2026-10-24 r1 | F3: spec-tool help and diagnostic kept the old Placeholder wording | closed — tool | strings replaced |
+| 2026-10-24 r1 | "contract phrasing" readable as banning normative language; ❌/✅ pair weak on the outside-reader test | logged | wait for recurrence |
+| 2026-10-24 r2 | Terminal round: no findings; vacuous reason sentences and the generic ❌/✅ pair logged | converged | stop rule (a); series WS: 10, 0 |
+
+## 2026-10-24 — footnote owner is where the question was raised (series GO)
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-10-24 r1 | F1: spec tool counts a footnoted existing requirement as modified | noise — by design; prompt disposition misquoted the FN r3 ruling a second time | `spec-format-design.md` convention; FN r4 record |
+| 2026-10-24 r1 | F2: numbering rule read as spec-only from its place in the validate sentence | closed | relocated into the form sentence |
+| 2026-10-24 r1 | F3: owner link resolves immediate base and linked specs only | logged | wait for recurrence |
+| 2026-10-24 process | A paraphrased disposition in a cold-review prompt produced the same noise twice | closed — practice | prompts quote dispositions from the refinement record verbatim |
+| 2026-10-24 r2 | F1: pairing sentence keyed on the footnote's location, not its owner | closed | sentence sharpened |
+| 2026-10-24 r2 | F2: package page's gaps tile skipped requirements footnoting local owners | closed — tool | count every footnoted requirement |
+| 2026-10-24 r2 | F3: request page rendered footnotes without owner links or a gaps tile | closed — tool | request owners from its package; fixture, test |
+| 2026-10-24 r3 | Terminal round: no accepted findings; a resolved chip is not proof of ownership (past-a-rule) | converged; logged | stop rule (a); series GO: 2.5, 8.25, 0 |
+

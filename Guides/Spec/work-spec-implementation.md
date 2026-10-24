@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-implementation
 Managed-Source: Guides/Spec/work-spec-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-24
 
 # Work Spec Implementation
 
@@ -10,29 +10,30 @@ Print `📖 SKAI guide: work-spec-implementation` now, as a line of its own. Rea
 
 ## Purpose
 
-Turn a ready design into a task list, obtain one approval, then implement continuously. This skill
-writes the work spec, code, and evidence. The approved design, requirement contracts,
-`skai/integration.md`, and sibling artifacts remain read-only except for sibling task-state updates
-under *Audit and plan* and verified known-difference cleanup under *Completion*.
+Turn a ready design into a task list; get one approval, then implement continuously.
+Write the work spec, code and evidence. Keep the approved design, requirement contracts,
+`skai/integration.md` and sibling artifacts read-only except sibling task-state updates under
+*Audit and plan* and verified known-difference cleanup under *Completion*.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## Inputs and initiation
 
-Start from the exact path to a design created by
-[`work-spec-creation.md`](work-spec-creation.md). If no design exists, load Work Spec Design; when the
-request includes a work spec or implementation, it returns here after completion. A design is ready
-when:
+Start from the exact design path from [`work-spec-creation.md`](work-spec-creation.md).
+Without a design, load Work Spec Design; return here on completion if the request includes a
+work spec or implementation. Readiness requires:
 
 - `## Discussion` has no unchecked non-gap items. A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 - `## API Sketch` and `## Implementation Design` are present.
 - No assumption or TODO blocks implementation planning.
 - Every required sibling architecture artifact is ready.
 
-An assumption or TODO blocks when its being wrong would change a resolved `D#` or the API Sketch;
-otherwise it is a recorded non-blocking note.
+An assumption or TODO blocks if being wrong would change a resolved `D#` or the API Sketch;
+otherwise record a non-blocking note.
 
-If the screen fails on the design's own content, load Work Spec Design; it owns reopening the artifact
-and ends at its Discussion gate. For a missing external input, stop at a blocked gate. Do not infer
-approval from chat history or repair the design inside the task list.
+If the design's content fails readiness, load Work Spec Design to reopen it and end at its
+Discussion gate. Missing external inputs block. Never infer approval from chat history or repair
+the design in the task list.
 
 Before auditing or writing the work spec, require `skai/integration.md` to define the build, test, and
 runtime commands this work needs. Missing or unfilled commands are a blocked gate; the supervisor

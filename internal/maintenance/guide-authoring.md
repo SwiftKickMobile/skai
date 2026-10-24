@@ -56,6 +56,7 @@ Checks:
 - Advance controls missing their declared authorization/phase semantics; preserve documented variants such as no-auto workflows rather than inserting default auto text
 - References to `Guides/Core/process-flow.md` that imply it is a required runtime read (e.g., "This guide follows the shared process-flow mechanics in...")
 - Standalone "Progress Tracking" or "Emoji System" sections that redefine the canonical marker conventions (`- [ ]` / `🟡`).
+- A guide whose agent writes for a person missing the writing-style pointer sentence (grep `writing-style.md`; verbatim from `Guides/Core/process-flow.md` § Writing for people), or inlining style rules of its own.
 
 **Marker convention compliance:**
 - `🟡` used in process artifacts (markdown workflow docs) — should be `- [ ]` / `- [x]` instead. `🟡` is reserved for in-code progress (test files, source files) where completion = removal. Canonical in-code case: `Guides/Test/unit-test-planning-guide.md`.

@@ -228,6 +228,9 @@ class Writers(unittest.TestCase):
                               "--request", f"package/change-requests/{number}", fixtures=self.copy)
             self.assertEqual(code, 0, lines)
             self.assertTrue(page.exists(), number)
+            if number == "001":  # a footnote naming the package's item: owner chip resolved, gaps counted
+                self.assertIn("tip-gap-base-d3", page.read_text(encoding="utf-8"))
+                self.assertTrue(any("'gaps': 1" in ln for ln in lines), lines)
 
     def test_convert_old_shape_validates_and_is_idempotent(self):
         code, lines = run("convert", "old-shape", fixtures=self.copy)

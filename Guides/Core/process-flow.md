@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.process-flow
 Managed-Source: Guides/Core/process-flow.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-24
 
 # Process flow (house style reference)
 
@@ -335,6 +335,14 @@ A gap and the log after D01 was decided:
 - D01 decided — A, modal sheet.
 - D02 gap — PDF until product decides.
 ```
+
+## Writing for people
+
+Every guide whose agent writes for people inlines this sentence verbatim at its Purpose's end (content-rule guides: in writing rules); the sanity scan checks it:
+
+> Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
+
+Guides keep their tool-neutral vocabulary.
 
 ## Project Addendum
 

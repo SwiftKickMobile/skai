@@ -815,3 +815,173 @@ the Figma addendum lines (project-owned). Process reflection: my round-4 prompt 
 the round-3 ruling and produced a spurious open question; dispositions quoted into a prompt should
 repeat the repair's own words, not paraphrase them.
 
+## Writing Style Guide And Design Change Prose — 2026-10-24
+
+Inventory: `writing-style-design.md` (new standard); `design-process-design.md` § Amendment —
+2026-10-24 (descriptions, reasons, footnote placement); `spec-format-design.md` § Amendment —
+2026-10-24 (Placeholder clause); skai#97 and its comments. Drafted: `Guides/Core/writing-style.md`
+(2,267); the pointer sentence in 13 guides (end of Purpose; `product-specs-catalog.md` and
+`design-specs.md` in their writing rules; `ticket-filing.md` in its purpose paragraph);
+`process-flow.md` § Writing for people (owner); sanity-scan check; manifest, README, release notes.
+
+Author check (writing-style.md against `writing-style-design.md` § Requirements): 1 kinds named once in
+the Read line, no per-artifact sections ✓; 2 the stands-alone test as rule 1 with the "per D15"
+example ✓; 3 rule 2 ✓; 4 rule 3 with the Casey Cedar example ✓; 5 rule 4, guide vocabulary named ✓;
+6 rules 5 and 6 ✓; 7 six numbered rules, one ❌/✅ pair, the self-check, 2,267 bytes ✓; 8 nothing to
+check yet; 9 it points nowhere ✓. Amendments: design-authoring Description, Justification, footnote
+placement and the sub-change example carry the three repairs ✓; spec-file-gaps clause ✓.
+
+Obsolescence sweep (grep `plain language|plain-language|jargon|coined` across Guides): ui-map-architecture
+§ Writing style's opening sentence (plain language for a teammate who does not know the schema) now owned
+by the shared guide → removed, its schema-specific tells kept; process-flow `<summary>: plain-language
+description` → kept (format definition); product-specs-authoring Situations "in plain language" → kept
+(content rule); design-specs § Product Language Only → kept (content rule, now also points at the guide);
+cold-review-prompt-template → maintainer text, kept.
+
+Compression (Astra, scratchpad `compress7/`, sixteen guides): running. Caps before this change:
+process-flow 21,200; spec-file-gaps 1,875; design-authoring 16,550; design-promotion 12,100; the design
+specs set 60,000 combined; product-specs-authoring 21,300, -promotion 17,000, -catalog 10,500; the work
+spec pair 32,600 combined; ui-map-architecture 35,700, -implementation 50,900; ticket-filing and
+writing-style none.
+
+Compression (Astra, `compress7/`, sixteen guides) returned 2026-10-24. The eleven pointer-only guides
+each earned the pointer's bytes back inside their own text (net −1 to −42, two at 0); installed as
+compressed. writing-style 2,267 → 2,183; design-authoring 16,794 → 16,786; process-flow 21,648 →
+21,578 (Astra also moved my § Writing for people out of the example's code fence, where my insertion
+had landed). Restored or corrected on Astra's report: the audience sentence (a colleague who knows the
+product but was not in the session) kept and added to the standard; "shorthand the reader has not seen
+defined" adopted; the maintainers' logging rule taken back out of the guide (standard req 8 now says it
+is not guide text); rule 6 reworded; "sample data never" made explicit; the design guide's footnote
+sentence rewritten in plain words and the example's second sub-change given a reason. Installed sizes:
+writing-style 2,188; design-authoring 16,865; process-flow 21,578; the rest at or under their caps.
+Tests OK.
+
+Caps needing a ruling (a little under compressed): writing-style (none → 2,150 proposed); process-flow
+(21,200 → 21,550 proposed); design-authoring (16,550 → 16,850 proposed). All other caps hold.
+
+Caps set (supervisor, 2026-10-24): writing-style 2,150; process-flow 21,550; design-authoring 16,850. Trim to fit, then series WS.
+
+### Refinement — series WS (2026-10-24)
+
+#### Round 1 (prompt `scratchpad/refine/ws1/prompt.txt`; report `review-r1.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 the sub-change example put the reason before the ` — ` separator and only the citation after it, so the renderer's Why field showed a citation alone, against the Justification rule | accept | design-authoring § Design Changes example | reason sentence and citation after the separator in both rows | sub-IDs, source forms, the renderer's split on ` — ` |
+| F2 "write in first person" unqualified, in a guide that also covers spec text, against the catalog's requirement voice | accept | writing-style rule 5 | first person for the agent's own actions, recommendations and questions; paid by trims to rules 2 and 6 and the self-check | the catalog's voice, gate forms |
+| F3 `spec-tool.py` help and the malformed-footnote diagnostic still read `Placeholder: <what this item shows for it>` | accept (tool) | spec-tool docstring and validate message | the guide's clause wording | form, parser, validation scope |
+
+Arithmetic: F1 divergent · off-normal · verified = 3.75 · F2 divergent · normal · speculative = 2.5 · F3
+divergent · off-normal · verified = 3.75 · no noise. Log-only: "contract phrasing" could be misread as
+excluding normative requirement language; the ❌/✅ pair demonstrates clearer wording more than the
+outside-reader test (a stronger pair waits for a recurring correction).
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 10 | 3 | 0 | 3 | 0 | 0 |
+
+#### Round 2 (prompt `scratchpad/refine/ws2/prompt.txt`; report `review-r2.md`)
+
+No findings; five walks clean (the V06 scenario now cannot be reproduced without going against a
+rule; the three-records state gets no D19 footnote; spec voice and first person compose; the pointer
+found once, verbatim, in each of the thirteen guides). Open questions logged: a reason sentence can
+still be vacuous ("this matches the requirements"); the ❌/✅ pair is less concrete than the rules'
+own examples. Both wait for a recurring correction.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 10 | 3 | 0 | 3 | 0 | 0 |
+| r2 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+Converged by stop rule (a). Final sizes: writing-style 2,144 / 2,150; process-flow 21,541 / 21,550;
+design-authoring 16,850 / 16,850; spec-file-gaps 1,859 / 1,875; the thirteen pointer guides at or under
+their caps.
+
+## Maintenance retro — writing style guide, series WS — 2026-10-24
+
+Inventory: new `Guides/Core/writing-style.md` (asset `guide.writing-style`); `process-flow.md` § Writing
+for people; the pointer sentence in thirteen guides, each compressed to absorb it; `design-authoring.md`
+§ Design Changes (Description, Justification, footnote placement, example); `spec-file-gaps.md` clause;
+`ui-map-architecture.md` § Writing style trimmed; `spec-tool.py` help and diagnostic wording; the sanity
+scan check. Host-install-visible. Bookkeeping: two release entries (guide with its pointer and no
+migration; the design change prose rules) and two CHANGELOG lines; manifest entry; README gets a Writing
+line under each of the eleven skills that point at the guide; `Managed-Updated-At` 2026-10-24 on every
+edited guide (twelve bumped in the retro); the release note's form line updated to the new clause.
+Tests: spec-tool, design-tool, figma-page-check OK. Consistency: stale clause grep → 0 in Guides, Bin
+and README after the release-note fix; pointer sentence 14 occurrences (13 guides + the owner);
+gap-pointer sentence and `⏳ GATE` counts unchanged in every compressed guide against HEAD; no plain
+language rule left outside the style guide except content rules. Change-package verification: artifact
+formats unchanged. Addendum contract: the new guide carries the Project Addendum section. Follow-ups
+unchanged: host skill copies stale until the update runbook runs (the wrappers read the submodule's
+guides, so runtime behavior is current); Figma addendum lines. Process reflection: the size guard
+refused two launches this series (3 and 20 bytes over); trimming before launch, not after, would save a
+round trip; measuring right after each repair is the fix, no process change.
+
+Owner clause (2026-10-24, after series WS): `spec-file-gaps.md` says the owner is the item where the question was raised, never one that only inherits it; trims paid for it (1,859 → under 1,875); spec-tool test OK; then, on the supervisor's correction, the full process: compression (Astra, `compress8/`: 1,874 → 1,836, restoring "only there", "design pages only render" and "the gaps tile" that my trims had weakened; I kept the two marker-less rules as separate sentences, which its rewrite had fused), installed at 1848; cap set at 1,850 (supervisor, 2026-10-24); cold series GO follows.
+
+### Refinement — series GO (2026-10-24)
+
+#### Round 1 (prompt `scratchpad/refine/go1/prompt.txt`; report `review-r1.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 the spec tool classifies an existing requirement that gains a footnote as modified | reject — noise | — | none: that is the spec page's design (`spec-format-design.md`: a footnote on an existing requirement counts as modified so `check-changes` wants a list entry); my prompt's disposition said "not as modified" without the spec-page qualifier, for the second time (FN r4) | — |
+| F2 the numbering-and-uniqueness rule sat only inside the `validate` sentence, which the next sentence scopes to spec drafts, so a designer could read numbering as spec-only | accept | spec-file-gaps form paragraph | numbering and uniqueness relocated into the "All artifacts" form sentence; `validate` sentence says "numbering" | design pages render-only; numbering by first use |
+| F3 the page's owner link reaches this artifact, the immediate base and the product specs artifact either links, not an arbitrary ancestor | log-only | — | wait for a recurring strand | the supported routes |
+
+Arithmetic: F2 divergent · normal · speculative = 2.5 · F1 noise (prompt-induced) · F3 logged. Owner clause
+walked clean: a legacy base item that inherits a specs question is never named; a request on a request
+names `base D<n>`.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+
+Repair installed: spec-file-gaps 1849 / 1,850 (a first relocation ran 6 bytes over and was refused by the
+size check before writing). Prompt for r2 quotes the spec-page disposition in the record's own words.
+
+#### Round 2 (prompt `scratchpad/refine/go2/prompt.txt`; report `review-r2.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 "pairs only this artifact's draft footnotes" put the distinction on the footnote's location, not its owner; an inherited footnote is in this artifact's draft too | accept | spec-file-gaps check-changes sentence | "pairs draft footnotes naming this artifact's own items with its open gaps"; paid by trims | scoped footnotes skipped; marked open gaps pass; design pages render only |
+| F2 the spec package page counted only requirements with scoped footnotes toward the gaps tile; a requirement footnoting a local owner was left out | accept (tool) | spec-tool render | count every footnoted requirement once | Discussion gap items counted; filtering; the modified classification |
+| F3 the change request page (`render-request`) never set the owner resolver and had no gaps tile, so a request's footnotes rendered unlinked | accept (tool) | spec-tool render-request | owners from the package the request is filed against (its Discussion as `base`, its linked product specs); gaps counted from the request's drafts; fixture and test | question text with its owner; no ancestor traversal |
+
+Arithmetic: F1 divergent · normal · speculative = 2.5 · F2 cosmetic · normal · verified = 2 · F3 divergent ·
+off-normal · verified = 3.75 · no noise. Owner clause and numbering relocation walked clean again.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r2 | 8.25 | 3 | 0 | 2 | 1 | 0 |
+
+Repairs installed: spec-file-gaps 1,846 / 1,850; spec-tool tests 18 OK (request fixture gained a footnote
+naming the package's D3; the test asserts the chip and the count).
+
+#### Round 3 (prompt `scratchpad/refine/go3/prompt.txt`; report `review-r3.md`)
+
+No accepted findings. Log-only: a resolved owner chip proves the ID exists, not that the item raised the
+question (past-a-rule: naming an inheriting item goes against the Owner sentence); a stale comment in
+`design-tool.py` still said "as this frame shows it" (fixed, comment only). Five walks clean.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r2 | 8.25 | 3 | 0 | 2 | 1 | 0 |
+| r3 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+Converged by stop rule (a). Final: spec-file-gaps 1,846 / 1,850.
+
+## Maintenance retro — footnote owner clause, series GO — 2026-10-24
+
+Inventory: `spec-file-gaps.md` (owner clause; numbering in the form sentence; pairing sentence keyed on
+ownership; compression); `spec-tool.py` (every footnoted requirement counts toward the gaps tile; the
+change request page resolves owners through its package and shows a gaps tile; request fixture and
+test); `design-tool.py` comment. Host-install-visible (guide and tool). Bookkeeping: release entry and
+CHANGELOG line added; `Managed-Updated-At` already 2026-10-24; manifest unchanged; README unchanged (the
+gap-guide lines still describe it). Tests: spec-tool 18 OK, design-tool OK. Consistency: stale clause grep
+(`as this frame shows it`, `what this item shows for it`) → 0 in Guides and Bin. Follow-ups unchanged.
+Process reflection: I shortcut the process on a one-clause change and had to be told; rule saved to
+memory. Twice a paraphrased disposition in a prompt produced noise; prompts now quote the record.
+

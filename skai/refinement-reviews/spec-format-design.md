@@ -245,3 +245,18 @@ never a marked open gap; both are spec-draft tools, design pages only render (FN
 line each, the owning item as a chip linked to it with its text on hover, then the placeholder.
 Migration: existing footnotes drop their question text. Cap set after compression (1,850 before).
 Cap after compression: **1,875 bytes** for `spec-file-gaps.md` (compressed 1,903; supervisor, 2026-10-24), replacing 1,850.
+
+## Amendment — 2026-10-24 (the Placeholder clause is the provisional answer)
+
+The footnote form is unchanged; its Placeholder clause reads `<the provisional answer this place
+builds on>` instead of `<what this place shows for it>`, which the Offers request read as "describe
+the frame" and so duplicated the description three times over (supervisor, 2026-10-24). Tools
+unchanged. `spec-file-gaps.md` keeps its cap of 1,875.
+
+## Amendment — 2026-10-24 (the owner is where the question was raised)
+
+A footnote names the item where the question was raised, here or in another artifact; an item that
+only inherits that question is never named (supervisor, 2026-10-24, after CR-001's V13 footnoted base
+D05, a pure reference to product specs D22). One clause in `spec-file-gaps.md`; compressed by Astra to 1,836 (installed 1848 after keeping the two
+marker-less rules apart); cap **1,850 bytes** (supervisor, 2026-10-24), replacing 1,875; cold series GO.
+

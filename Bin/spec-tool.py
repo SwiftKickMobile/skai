@@ -33,7 +33,7 @@ Usage:
         cited item or rule (its anchor became "-retired"), moved the item to another file, or
         removed the glossary entry, a conflict the projection introduces that the package must
         settle (hold the file, or a change request). Gap footnotes: a "[^n]" marker in an item's
-        text pairs with a "[^n]: **Gap:** <owning item>. Placeholder: <what this item shows for it>" definition
+        text pairs with a "[^n]: **Gap:** <owning item>. Placeholder: <the provisional answer this place builds on>" definition
         under that item (after its rules and tables, before known differences); a marker with no
         definition, a duplicate label in a file, a definition outside an item or off its shape is
         rejected; a definition with no marker is a marker-less note. Canon carries none: a
@@ -523,7 +523,7 @@ def _parse_spec(spec, body, err):
                 mode = "detail"
                 mg = GAP_NOTE_RE.match(mf.group("text").strip())
                 if not mg:
-                    err(i, "gap footnote must read `[^n]: **Gap:** <owning item>. Placeholder: <what this item shows for it>`")
+                    err(i, "gap footnote must read `[^n]: **Gap:** <owning item>. Placeholder: <the provisional answer this place builds on>`")
                 else:
                     if item.knowns:
                         err(i, "gap footnote after a known-difference note; known differences come last in an item")
@@ -1426,6 +1426,23 @@ def gap_owners(authoring, disc):
     return owners
 
 
+def request_gap_owners(package_dir, request_dir):
+    """Owners for a change request's page: the request has no Discussion of its own, so "base" is
+    the package it is filed against and "product specs" whatever that package's artifact links."""
+    package_dir, request_dir = Path(package_dir).resolve(), Path(request_dir).resolve()
+    base = next((package_dir / n for n in ("product-specs-authoring.md", "design-specs-authoring.md") if (package_dir / n).exists()), None)
+    owners = {"": ("", {})}
+    if not base:
+        return owners
+    found = gap_owners(base, parse_discussion(base.read_text(encoding="utf-8")))
+    rel = lambda p: os.path.relpath(p, request_dir).replace(os.sep, "/")
+    owners["base"] = (rel(base.with_name(base.name.replace("-authoring.md", "-review.html"))), found[""][1])
+    if "specs" in found:
+        page, items = found["specs"]
+        owners["product specs"] = owners["specs"] = (rel((package_dir / page).resolve()), items)
+    return owners
+
+
 def scope_key(scope):
     return scope.replace(" ", "-") or "own"
 
@@ -2041,6 +2058,7 @@ def render_request(catalog, package_drafts, request_dir, out):
     fields, title, goal, changes, linkdefs = parse_request(request_dir / "request.md", cr_drafts or package_drafts)
     gloss = prepare(catalog, [package_drafts], cr_drafts, out)
     set_resolver(linkdefs, (request_dir / "request.md").resolve())
+    RESOLVER["gap_owners"] = request_gap_owners(package_drafts.parent, request_dir)
     status = fields.get("Change Request Status", "Proposed")
     response = fields.get("Reviewer Response", "")
     head = (f'<div class="item request"><div class="head"><span class="status">{html.escape(status)}</span>'
@@ -2050,6 +2068,7 @@ def render_request(catalog, package_drafts, request_dir, out):
     sections, toc, totals = [], [], {"added files": 0, "added": 0, "modified": 0, "retired": 0, "unchanged": 0}
     if cr_drafts:
         sections, toc, totals, _ = render_tree([package_drafts, catalog], cr_drafts, gloss, changes)
+        totals["gaps"] = sum(1 for d in sorted(cr_drafts.rglob("*.md")) for it in (lambda sp: sp.items if sp.kind == "spec" else [])(parse(d)) if it.gaps)
     else:
         # no drafts: one card per requested change, so the page still says what is asked
         sections = [f'<div class="item request"><div class="head"><span class="status">{html.escape(c.type)}</span>'
@@ -2107,7 +2126,7 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
             for topic, items in disc) + "</section>"
     sections, toc, totals, _ = render_tree([*reversed(bases), catalog], drafts, gloss, changes)
     n_gaps = sum(1 for _, items in disc for it in items if it["gap"]) if disc else 0
-    n_gaps += sum(1 for d in sorted(drafts.rglob("*.md")) for it in (lambda sp: sp.items if sp.kind == "spec" else [])(parse(d)) if any(g.scope for g in it.gaps))  # inherited marks
+    n_gaps += sum(1 for d in sorted(drafts.rglob("*.md")) for it in (lambda sp: sp.items if sp.kind == "spec" else [])(parse(d)) if it.gaps)  # footnoted requirements, once each
     totals["gaps"] = n_gaps
     totals["open"] = sum(1 for _, items in disc for it in items if not it["done"] and not it["gap"]) if disc else 0
     totals["resolved"] = sum(1 for _, items in disc for it in items if it["done"]) if disc else 0

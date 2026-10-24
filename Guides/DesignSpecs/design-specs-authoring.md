@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-authoring
 Managed-Source: Guides/DesignSpecs/design-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-24
 
 # Design Specs Authoring
 
@@ -10,29 +10,29 @@ Print `📖 SKAI guide: design-specs-authoring` now, as a line of its own. Read 
 
 ## Purpose
 
-Draft specs into a change package, resolve supervisor questions and leave it ready to promote.
-Edit only the package and drafts. Read [content rules and checks](design-specs.md) before drafting;
-[artifact formats](design-specs-artifacts.md) owns the package, typed changes and requests,
-[the shape guide](../Core/spec-file-shape.md) the file shape and the spec tool.
+Draft specs in a change package; settle supervisor questions; ready it to promote.
+Edit only the package and drafts. Before drafting, read [content rules/checks](design-specs.md);
+[formats](design-specs-artifacts.md) owns packages, typed changes and requests;
+[shape/tool](../Core/spec-file-shape.md) owns file shape and the spec tool.
 
-Inputs are open-ended; always propose and reserve Discussion for supervisor input.
+Inputs are open-ended; always propose; reserve Discussion for supervisor input.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## The Change Package
 
 [Artifact formats § The Package](design-specs-artifacts.md#the-package) owns contents, path and
 decoupling. Use the supplied change ID; otherwise propose a short kebab-case ID and block before
-creation (from a branch, its final component). Check active
-and promoted paths: reopen unpromoted work; promoted ID/type pairs need new IDs. Create the
-artifact with Goal/Inputs before drafting. Sibling types of one change update freely while it is
-open; a consumer wanting this package changed files a change request, never edits it.
+creation (from a branch, its final component). Check active and promoted paths: reopen unpromoted work; use new IDs for promoted ID/type pairs.
+Create the artifact with Goal/Inputs before drafting. Sibling types update freely while the change
+is open; consumers file change requests, never edit it.
 
 ### What `proposed-design-specs/` Holds
 
-Mirror only touched paths, drafting whole files. Reuse existing drafts; initialize a missing draft
-from canon, or create it when canon is absent. Carry unchanged items, index lines and glossary
-entries. A new specs root needs the root index, glossary and all three folder indexes. Absent files
-remain untouched; files cannot be deleted. Restructure with `move` items, retaining unmoved source
-content.
+Draft whole files at touched paths only. Reuse drafts; start missing ones from canon, or create
+if canon is absent. Keep unchanged items, index lines and glossary entries. New specs roots need
+the root index, glossary and all three folder indexes. Leave absent files untouched; delete none.
+Restructure via `move` items; keep unmoved source content.
 
 ### Artifact Skeleton
 

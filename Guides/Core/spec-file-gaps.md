@@ -8,13 +8,13 @@ Managed-Updated-At: 2026-10-24
 
 Print `📖 SKAI guide: spec-file-gaps` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
-Read when raising a gap; the [workflow](known-gaps.md), the [file shape](spec-file-shape.md).
+Read when raising a gap; [workflow](known-gaps.md), [shape](spec-file-shape.md).
 
-All artifacts use `[^n]` at a placeholder's sentence, rule, table cell or entry end, defined under the item (spec: after rules and tables, before known differences):
+All artifacts: `[^n]`, numbered by first use and unique per file, ends a placeholder sentence, rule, cell or entry; define under its item (spec: after rules and tables, before known differences):
 
-`[^n]: **Gap:** <owning item>. Placeholder: <what this place shows for it>`
+`[^n]: **Gap:** <owning item>. Placeholder: <the provisional answer this place builds on>`
 
-Owner: an open gap `D<n>` here or scoped (`base D04`, `product specs D21`). Questions stay only there. Marker-less definitions note the nearest requirement; no Placeholder clause: nothing to proceed on.
+Owner: open gap `D<n>` where the question was raised, not merely inherited (here or scoped: `base D04`, `product specs D21`). Questions stay only there. Marker-less definitions note the nearest requirement; no Placeholder: nothing to proceed on.
 
 ```markdown
 ### REMIND-01
@@ -23,11 +23,11 @@ Reminders expire after 30 days.[^1]
 [^1]: **Gap:** D02. Placeholder: 30 days.
 ```
 
-Spec drafts: `validate` requires this form, placement, a definition per marker and labels numbered by first use, unique per file; none in canon (a single root, or a projection's first root).
+Spec drafts: `validate` checks form, placement, numbering and defined markers; none in canon (single root or projection's first root).
 
-`check-changes` pairs this artifact's items only: it fails a draft footnote naming no open gap and an open gap no footnote marks (marker-less notes count); a marked open gap passes. Design pages only render; neither check runs.
+`check-changes` pairs draft footnotes naming this artifact's own items with its open gaps (marker-less notes count): unpaired ones fail; marked open gaps pass. Design pages only render; neither check runs.
 
-Pages: plain superscript marks; a card's notes share one box, a line each: owner chip linked to its item (text on hover), then placeholder. Footnoted items count as gaps; the gaps tile filters to them.
+Pages: plain superscripts; a card's notes share a box, one line each: owner chip linked to its item (text on hover), then placeholder. Footnoted items count as gaps, filtered by the gaps tile.
 
 ## Project Addendum
 

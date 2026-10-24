@@ -72,8 +72,8 @@ def parse_changes(text):
     justification, section, subs, gaps}; `section` is the `###` heading the entry sits under ("" with
     none), `subs` the numbered sub-changes [(num, text, justification)] of a frame changed in
     several ways (the justification is what follows the last ' — ' of the line), `gaps` the
-    footnotes defined under the entry, each (label, owning item, placeholder as this frame shows
-    it); one footnote per entry that stands on a gap, the question staying with its owner."""
+    footnotes defined under the entry, each (label, owning item, the provisional answer the entry
+    builds on); one footnote per entry whose change rests on a gap, the question staying with its owner."""
     body = re.search(r"^## Design Changes\s*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
     if not body:
         return []
@@ -84,7 +84,7 @@ def parse_changes(text):
     for c, nxt in zip(heads, heads[1:] + [None]):
         block = src[c.end(): nxt.start() if nxt else len(src)]
         block = block[: next((m.start() for m in HEADING_RE.finditer(block)), len(block))]
-        gaps = []  # this entry's footnotes: (label, owning item, the placeholder as this frame shows it)
+        gaps = []  # this entry's footnotes: (label, owning item, the the provisional answer this entry builds on)
         for m in GAP_DEF_RE.finditer(block):
             owner, _, placeholder = m.group("text").partition(". Placeholder:")
             gaps.append((m.group("label"), owner.strip().rstrip("."), placeholder.strip()))

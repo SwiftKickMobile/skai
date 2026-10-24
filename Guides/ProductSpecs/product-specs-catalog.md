@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-catalog
 Managed-Source: Guides/ProductSpecs/product-specs-catalog.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-24
 
 # Product Specs Catalog
 
@@ -150,18 +150,16 @@ The same test applies to a rule or table row inside an item. Before either, run 
 
 ## Writing style
 
-Write as a **product manager with no knowledge of the codebase**.
+Write as a **product manager with no knowledge of the codebase**. Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ### Required
 
-- User-visible behavior, domain invariants and system contracts, in `must` / `should` / `will`
-  voice; every requirement is verifiable from outside — by a user, QA or another system — without
-  reading code, and legible to a non-engineer.
+- User-visible behavior, domain invariants and system contracts in `must` / `should` / `will`
+  voice; readable by non-engineers and verifiable by users, QA or other systems without reading code.
 - Product guarantees, not screen arrangement or mechanics. ✅ *"Canceling an edit preserves the
   saved note and returns users to their previous context."* · ❌ *"The editor opens as a sheet
   from Profile."* Meaningful navigation and presentation guarantees still belong here.
-- A bug earns a requirement only where it exposes a missing contract or essential boundary — never
-  one rule per past failure.
+- Bugs earn requirements only for missing contracts or essential boundaries, never a rule per failure.
   ✅ *"Each confirmed reminder produces one notification."* · ❌ *"Reopening the screen must not
   trigger that notification again."*
 
@@ -169,14 +167,13 @@ Write as a **product manager with no knowledge of the codebase**.
 
 Plans (`implement`, `add`, `refactor`); data structures, algorithms and execution strategies ("use
 caching", "debounce"); storage mechanisms ("persist as JSON"); concurrency design ("off the main
-thread"); code identifiers, file paths, method and type names; frameworks and tooling. A detail
-that is important but inherently technical belongs in the work spec. ❌ *"The
+thread"); code identifiers, file paths, method and type names; frameworks and tooling. Important technical details belong in the work spec. ❌ *"The
 `AssetCatalog` should DFS templates and throw `CircularReferenceError`."* · ✅ *"The system must
 detect and report circular references in templated documents."*
 
 ### Nothing that decays
 
-A requirement is read years later by someone with no memory of the change that produced it.
+Requirements must make sense years later without knowing the original change.
 ❌ *"Must behave identically to the app as it existed before modes were introduced"* — a temporal
 reference; state the behavior. ❌ *"(The former relaunch caption is dropped while the design is
 reconsidered.)"* — workflow state; it belongs in the package's Discussion. The known-difference

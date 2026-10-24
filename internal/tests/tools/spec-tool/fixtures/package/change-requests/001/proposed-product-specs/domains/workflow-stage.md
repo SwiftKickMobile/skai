@@ -20,7 +20,9 @@ A workflow stage identifies the current phase or outcome of a [notebook][g-noteb
 | Deleted | [Notebooks][g-notebook] that will not be kept by the owner | Yes ([STAGE-03]) |
 
 - **01** A [notebook][g-notebook] starts in Inbox. This stage also serves as the owner's reminder schedule, including upcoming reminders for [notebooks][g-notebook] in downstream stages ([REMINDER-26], [LIST-02], [LIST-03]). A [notebook][g-notebook] with a reminder in a downstream stage appears in both Inbox and its current stage; its appearance in the schedule does not change its current stage ([STAGE-05]).
-- **02** A [notebook][g-notebook] that remains in Inbox after its reminder is completed transitions to Drafting on the next calendar day ([REMINDER-05], [STAGE-12]).
+- **02** A [notebook][g-notebook] that remains in Inbox after its reminder is completed transitions to Drafting on the next calendar day ([REMINDER-05], [STAGE-12]).[^1]
+
+[^1]: **Gap:** base D3. Placeholder: the next calendar day.
 
 ### STAGE-02 (retired)
 Superseded by the stage table in [STAGE-01].

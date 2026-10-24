@@ -11,13 +11,13 @@ Print `📖 SKAI guide: design-promotion` now, as a line of its own. Read this g
 ## Purpose
 
 Move a completed package's changes into its **base** ([`design-authoring.md`](design-authoring.md)):
-from the change page into production, or from the request section into the parent package.
-Have the supervisor confirm, delete the drafts, and archive the package.
+change page to production, or request section to parent package.
+After supervisor confirmation, delete drafts and archive the package.
 
-Promotion refactors the base to absorb the drafts; it does not redesign them. A design that needs
-changing returns the package to authoring. The tool guide owns pages, sections, production, the component library and the conventions the
-designs must meet: load
-[`figma-designer-guide.md`](figma-designer-guide.md) for Figma.
+Refactor the base to absorb drafts; any redesign returns to authoring. For Figma, load
+[`figma-designer-guide.md`](figma-designer-guide.md): it owns pages, sections, production, the component library and design conventions.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## The promotion artifact
 

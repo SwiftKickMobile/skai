@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-creation
 Managed-Source: Guides/Spec/work-spec-creation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-24
 
 # Work Spec Design
 
@@ -10,12 +10,13 @@ Print `📖 SKAI guide: work-spec-creation` now, as a line of its own. Read this
 
 ## Purpose
 
-Turn open-ended input into an approved technical design for a software change. The primary review
-surface is an API diff, supported by only the additional design material the change needs.
+Turn open-ended input into an approved technical design for a software change, reviewed mainly
+as an API diff with only needed supporting material.
 
-This skill owns the design document. It does not create the implementation task list or change code;
-[`work-spec-implementation.md`](work-spec-implementation.md) owns both. The same agent may transition
-directly into that skill, or the completed design may be handed to another developer.
+This skill owns the design; [`work-spec-implementation.md`](work-spec-implementation.md) owns
+task lists and code changes. Continue there or hand the completed design to another developer.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## Inputs and initiation
 

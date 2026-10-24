@@ -350,3 +350,25 @@ document; a card's notes share one box; one line per note, no "Gap" or "Placehol
 design page; marks are inert. These supersede the footnote form in § Amendment — 2026-10-23
 (inherited gaps as footnotes), item 1.
 Cap after the shared-footnote change: `design-authoring.md` **16,550 bytes** (compressed 16,616; supervisor, 2026-10-24), replacing 16,750; promotion stays at 12,100.
+
+## Amendment — 2026-10-24 (descriptions say what changed; reasons are sentences)
+
+From the Offers request CR-001 (supervisor, 2026-10-24: entry V06 was unreadable). Three instruction
+defects in `design-authoring.md` § Design Changes, repaired there; the writing rules themselves move
+to the new shared `writing-style.md`, reached by the pointer sentence process-flow owns.
+
+- **Description** names what changed on the screen, state or component, in the product's words,
+  about a sentence; it is not a visual diff of the frame and never names sample data. With no
+  mockups it is enough to design from.
+- **Justification** is the reason in a sentence, then its source (an input citation, a decision of
+  this package or its base, or supervisor input). A citation alone is not a justification. The
+  sub-change example carries a reason before its citation.
+- An inherited gap's footnote goes on the entry or sub-change whose **change rests on** the
+  placeholder; a frame that merely keeps what the base already shows gets none. The footnote's
+  Placeholder clause is the provisional answer the entry builds on (spec-format's form), not a
+  restatement of the frame.
+- The guide keeps its tool-neutral vocabulary (draw, drawings, the package); `writing-style.md`
+  tells the agent not to carry it into what a person reads.
+
+Cap: **16,850 bytes** for `design-authoring.md` (compressed 16,786, installed 16,865 after plain-language corrections; supervisor, 2026-10-24), replacing 16,550.
+

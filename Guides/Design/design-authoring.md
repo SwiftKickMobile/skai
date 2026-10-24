@@ -11,11 +11,12 @@ Print `📖 SKAI guide: design-authoring` now, as a line of its own. Read this g
 ## Purpose
 
 Settle decisions with the supervisor; draw and list a **change package** ready for
-[`design-promotion.md`](design-promotion.md). Its **base** defaults to production; a **change request**
-uses another open package. Only the base differs, even for requests against requests.
+[`design-promotion.md`](design-promotion.md). The **base** is production by default, another open
+package for a **change request**; only the base differs, even for requests against requests.
 
-Edit only the package and its drawings; carry input changes at *Completion*. The conventions the designs must meet live in the design
-tool's own guide: load [`figma-designer-guide.md`](figma-designer-guide.md) for Figma.
+Edit only the package and drawings; carry input changes at *Completion*. For conventions, load [`figma-designer-guide.md`](figma-designer-guide.md) for Figma.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## The change package
 
@@ -229,19 +230,17 @@ pass and end at the gate *Gates* prescribes.
 
 ## Design Changes
 
-Under `### <screen>` headings in canvas order (columns left to right), list one
-entry per frame, top to bottom: `- V<n> <add|modify|remove> <screen|state|component>: <identity>`.
+Under `### <screen>` in canvas order (columns left to right), list frames top to bottom, one entry each: `- V<n> <add|modify|remove> <screen|state|component>: <identity>`.
 Current from the first drawing; with no mockups, from decisions at the Discussion gate.
 
-One sequence per package, `V01`, `V02`, …, never renumbered or reused: a new frame takes the
-next `V` under its screen's heading, a new change its frame's next sub-ID. Identity: for `add` and `modify`, the frame's name
-linked to its draft (`[name](<link>)`), or its intended name unlinked with no mockups; for
-`remove`, the base design's name, unlinked. Each entry has:
-- **Description** about a sentence with mockups, longer only as needed; enough to draw from without them.
-- **Justification** an input citation standing alone, `Resolved decision: D<n>` (this package),
-  `Base decision: D<n>` (its base), or `Supervisor input`.
+One sequence per package: `V01`, `V02`, …, never renumber or reuse. New frames take the next `V`
+under their screen; new changes take their frame's next sub-ID. Identity: `add` and `modify` use
+the frame name linked to its draft (`[name](<link>)`), or the intended name unlinked without mockups;
+`remove` uses the base design's name, unlinked. Each entry has:
+- **Description** the screen, state or component change in product words, never a visual diff or sample data; about a sentence with mockups; without them, enough to design from.
+- **Justification** a reason sentence, then an input citation, `Resolved decision: D<n>` (this package), `Base decision: D<n>` (its base), or `Supervisor input`.
 
-Inherited gaps are footnotes, not items: an entry or sub-change whose frame uses a placeholder gets one, per [`spec-file-gaps.md`](../Core/spec-file-gaps.md).
+Inherited gaps are footnotes, not items, on the entry or sub-change whose change rests on a placeholder, never on what a frame merely keeps from the base; the Placeholder clause is the provisional answer, not the frame ([`spec-file-gaps.md`](../Core/spec-file-gaps.md)).
 
 Several changes: sub-IDs:
 
@@ -249,8 +248,8 @@ Several changes: sub-IDs:
 ### Notes
 
 - V03 modify screen: [notes](<link>)
-  - **01** A `Pinned` group with its own header above the list — Resolved decision: D01
-  - **02** The unread dot on each row goes — [NOTES-07]
+  - **01** A `Pinned` group with its own header above the list — pinned notes were easy to miss; Resolved decision: D01
+  - **02** The unread dot on each row goes — unread notes come first, so the dot adds nothing; [NOTES-07]
 ```
 
 ## Completion

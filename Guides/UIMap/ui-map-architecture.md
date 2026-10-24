@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture
 Managed-Source: Guides/UIMap/ui-map-architecture.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-24
 
 # UI Map Architecture
 
@@ -22,6 +22,8 @@ The workflow runs in two stages:
 
 1. **Discussion** — resolve the genuine map decisions.
 2. **Map Changes** — the determined map change items, plus the proposed map and its render.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## The architecture change artifact
 
@@ -294,7 +296,7 @@ Keep IDs stable and never renumber existing items. Each `- [ ]` item resolves on
 
 ### Writing style
 
-Map decisions and notes are written in **plain language** — a teammate who doesn't know the schema should understand them. Say what the thing actually is, says, or does; don't describe it by its schema field or by a rule name.
+Say what the thing is, says or does, not its schema field or rule name.
 
 Tells to check before writing:
 - Quote or paraphrase the real content — what a design actually shows, what a stale note actually says, what the map actually does — not `todos[scope=...]` or `primary_parent`.

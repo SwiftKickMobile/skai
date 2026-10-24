@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-promotion
 Managed-Source: Guides/ProductSpecs/product-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-24
 
 # Product Specs Promotion
 
@@ -10,19 +10,17 @@ Print `📖 SKAI guide: product-specs-promotion` now, as a line of its own. Read
 
 ## Purpose
 
-Write an approved change package into the product specs.
+Write approved packages to product specs. Only promotion writes contracts except verified
+work-spec known-difference cleanup. Validate text; prepare destination links; preserve prose,
+IDs, notes and drafts. Return package wording defects to authoring; route existing spec defects
+via *Raising a change request*.
 
-Promotion owns contract writes; verified work-spec known-difference cleanup is the exception.
-Validate text and prepare destination links without changing prose, IDs, notes or drafts.
-Package wording defects return to authoring; defects in the existing product specs follow
-*Raising a change request*.
+In chat, link requirement and Discussion IDs inline to exact targets via real anchors or verified file/line links.
 
-In conversation, link requirement and Discussion IDs inline to their exact targets, by real
-anchors or verified file/line links.
+Content: [`product-specs-catalog.md`](product-specs-catalog.md). Package, items, requests, review: [`product-specs-artifacts.md`](product-specs-artifacts.md). File shape/tool:
+[`spec-file-shape.md`](../Core/spec-file-shape.md).
 
-Content rules: [`product-specs-catalog.md`](product-specs-catalog.md). The package, change items,
-change requests and review page: [`product-specs-artifacts.md`](product-specs-artifacts.md). File
-shape and the spec tool: [`spec-file-shape.md`](../Core/spec-file-shape.md).
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## When promotion happens
 
@@ -32,8 +30,7 @@ shipment.
 
 ## The promotion artifact
 
-Promotion writes `skai/changes/<change-id>/product-specs/product-specs-promotion.md` beside the
-authoring artifact:
+Write `skai/changes/<change-id>/product-specs/product-specs-promotion.md` beside the authoring artifact:
 
 ```
 # Product Specs Promotion — <name>

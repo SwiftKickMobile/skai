@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation
 Managed-Source: Guides/UIMap/ui-map-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-24
 
 # UI Map Implementation
 
@@ -14,12 +14,12 @@ For platform-specific code conventions, load [`ui-map-swiftui.md`](ui-map-swiftu
 
 ## Purpose
 
-Implementation makes app code conform to an approved UI Map architecture or records the conformance work for a larger effort, then advances the official map when a proposed map exists. The system keeps two map files:
+Conform app code to approved UI Map architecture or record the work for a larger effort; then advance the official map if a proposed map exists. The two map files:
 
 - **Official map** — the approved architecture authority; frozen while a proposed change is under review.
 - **Proposed map** — `skai/changes/<change-id>/ui-map/proposed-ui-map.yaml`, the architecture the change moves toward.
 
-When a proposed map exists, implementation works against it, then **promotes** it after the Code Changes spec is approved: copy the proposed YAML to the official YAML, then regenerate the official HTML page from that official YAML, so the approved architecture advances. The proposed HTML page is a preview, not a promotion source. In Build this follows a green conforming build. In Plan the approved map intentionally leads the unchecked implementation work recorded in the artifact. Promotion and archival are the final UI Map implementation step of every run that changes the map; a no-package conformance run works against and leaves the official map unchanged.
+Work against the proposed map when present, then **promote** it after Code Changes spec approval: copy proposed YAML to official YAML, then regenerate official HTML from it. Proposed HTML is only a preview, never a promotion source. In Build this follows a green conforming build. In Plan the approved map intentionally leads the unchecked implementation work recorded in the artifact. Promotion and archival are the final UI Map implementation step of every run that changes the map; a no-package conformance run works against and leaves the official map unchanged.
 
 **Invariant — the map leads, code follows.** The target map is the architecture authority. Implementation may scaffold, align, move, rename, hand off, block, or raise a **change request** back to architecture — but it never edits map content to justify code. When the map itself is wrong or infeasible, raise a change request; when the skill simply can't do a change mechanically, hand it off or stop at a blocked gate (see *Code Changes*).
 
@@ -33,6 +33,8 @@ Implementation runs in four stages:
 2. **Discussion** — resolve the audit findings that genuinely need a decision.
 3. **Code Changes** — write the checklisted, disposition-coded code-change items, ending with a terminal promote item when a proposed map exists.
 4. **Implement** — execute the items this mode owns and, when applicable, end by promoting the proposed map.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## Run mode
 
