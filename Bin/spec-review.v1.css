@@ -40,3 +40,4 @@ details.discussion summary{cursor:pointer;list-style:none;display:flex;gap:10px;
 p.intro{margin:4px 0 10px}p.intro .badge{margin-right:8px}
 #pop{position:absolute;z-index:10;max-width:560px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:10px 14px;font-size:14px;display:none}
 #pop .pop-head{margin-bottom:4px}#pop .pop-src{font-size:12px;color:var(--muted);font-family:ui-monospace,Menlo,monospace;margin-bottom:4px}#pop li.hit{outline:2px solid var(--refc);border-radius:4px}
+.item.prose{border:0;background:none;box-shadow:none;padding:0;margin:4px 0 10px}.item.prose>p.intro{margin:0}

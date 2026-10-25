@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.cold-review-prompt-template
 Managed-Source: Guides/Process/cold-review-prompt-template.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-25
 
 # Cold-Review Prompt Template
 
@@ -23,7 +23,7 @@ Replace each `{{SLOT}}`:
 - `{{CONTEXT_FILES}}` -- non-normative files the reviewer may consult for context (paths); mark them non-normative.
 - `{{SETTLED_DISPOSITIONS}}` -- decisions already made and closed: things the maintainer or project owner deliberately chose, and deferrals that are already scheduled. Give the *decisions only*, never the findings log itself -- the log is refiner-facing and showing it would stop the review being cold. Omitting this is the second most common cause of a review that never converges: the findings log is deliberately withheld from the reviewer, so without this slot nothing prevents a fresh reader re-raising settled ground every round.
 - `{{RECENTLY_REVISED}}` -- a short list of what changed recently, so the reviewer looks hardest there.
-- `{{FAILURE_MODES}}` -- recurring traps to check (e.g. append-without-restructure, jargon over plain language, scattered gate behavior, grab-bag findings).
+- `{{FAILURE_MODES}}` -- recurring traps to check (e.g. append-without-restructure, jargon over plain language, examples that teach shorthand or a citation-only reason, scattered gate behavior, grab-bag findings).
 - `{{SIMULATION_STEPS}}` -- the workflow-specific steps a greenfield operator would walk (this workflow's phases/gates).
 - `{{LEGACY_ARTIFACTS}}` -- predecessor / stale artifacts the reviewer must NOT treat as compliance targets.
 

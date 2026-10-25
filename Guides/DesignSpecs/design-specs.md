@@ -10,19 +10,17 @@ Print `📖 SKAI guide: design-specs` now, as a line of its own. Read this guide
 
 ## Purpose
 
-A **design spec** joins a screen's design to its requirements: which drawn state appears under
-which condition, data formatting, variable copy, controls, destinations and referenced shared
-patterns. The UI Map is downstream of requirements, design and spec and references none of them.
+A **design spec** joins a screen's design to its requirements: drawn states and their conditions,
+data formatting, variable copy, controls, destinations and referenced shared patterns. The UI Map is downstream of requirements, design and spec and references none of them.
 
-Write for an implementing agent with the design and requirements open, in language a product
-manager can read. This guide owns content and the ten checks; no gates. How a spec file is laid
-out — headings, statements, rules, tables, known differences, links, IDs and anchors, glossary and
-index form, the validating tool — is [`spec-file-shape.md`](../Core/spec-file-shape.md), cited,
+Write for an implementing agent with the design and requirements open, in product-manager language.
+This guide owns content and the ten checks, not gates. File layout — headings, statements, rules,
+tables, known differences, links, IDs and anchors, glossary and index form, the validating tool — belongs to [`spec-file-shape.md`](../Core/spec-file-shape.md), cited,
 never restated. [`design-specs-authoring.md`](design-specs-authoring.md) drafts;
 [`design-specs-promotion.md`](design-specs-promotion.md) promotes.
 
 **Inspect changed items and every touched file whole; block only on what this package changed.**
-A fault already in content it did not change, in a held file or not, starts a package against the
+A pre-existing fault in unchanged content, held file or not, starts a package against the
 base ([`change-requests.md`](../Core/change-requests.md)); only a contradiction that would make
 the write inconsistent blocks. `validate` faults in held files and conflicts the projection
 introduces always block. Work-spec implementation may update or remove
@@ -30,10 +28,9 @@ known-difference notes after verified fixes; spec text and IDs are otherwise rea
 
 ### What Belongs Here
 
-One home per fact. **Requirements** own screen-independent promises and thresholds; the
-**design** owns appearance and the copy it draws; the **spec** owns how screens
-present promises — conditions and states, formatting constants (rounding, a `1 min` floor),
-variable copy, controls by function, destinations. Cite requirements without restating them
+One home per fact. **Requirements** own screen-independent promises and thresholds; **design** owns
+appearance and drawn copy; **specs** own how screens present promises — conditions and states, formatting
+constants (rounding, a `1 min` floor), variable copy, controls by function, destinations. Cite requirements without restating them
 (*Restatement*). A spec that narrows a requirement, such as hiding a notice in an unmentioned
 case, is a requirements gap, routed as authoring § Requirements Gaps says, never
 specified quietly.
@@ -54,11 +51,11 @@ skai/design-specs/   the fixed root, in the repository the README links
 **Screen is the primary key**, never subject, class or module. One file per product-named screen;
 a differently drawn screen earns its own file; screens sharing a design share a family file.
 
-Put a rule in the first fitting home: screen; family file under `screens/`; `shared/` for
+Put each rule in the first fitting home: screen; family file under `screens/`; `shared/` for
 cross-family pieces; `global/` for patterns every screen uses (loading, errors, empty states).
-Extract when a rule would first be written twice. Cite another spec's rule rather
+Extract before first repeating a rule. Cite another spec's rule rather
 than copying it; only a declared override restates (*Citing by Reference*). ❌ a screen file
-repeating the family's heading rule · ✅ "Headings as [UI-LIST-01-02]".
+repeating the family's heading rule · ✅ "Headings follow the list family's rule ([UI-LIST-01-02])".
 
 Create all three folders and indexes immediately.
 
@@ -66,43 +63,41 @@ Create all three folders and indexes immediately.
 
 The root index holds a product paragraph naming the design file and requirements, a folder map
 with one-line reminders, and the glossary as second index; status text belongs in the package.
-Each file's line in a folder index, in the shape guide's form, lists every prefix the file holds
-(including those spanning files after a move), the questions it answers and optional `(uses: …)`
-references last. Name questions, not subjects: ✅ "Which row and reminder
+Each file's folder-index line follows the shape guide: every prefix held (including those spanning
+files after a move), questions answered, then optional `(uses: …)` references. Name questions, not subjects: ✅ "Which row and reminder
 badge a note gets, its date format and tap action".
 
 ### Glossary
 
-`glossary.md` is the second index, answering cross-screen questions. Give every thing the specs
-name (rows, cards, badges, notices) one short product-language paragraph: **what it means and is
-for**, then links to its governing items; one or two identifying details may follow. Never
+`glossary.md`, the second index, answers cross-screen questions. Give every named thing (rows,
+cards, badges, notices) one short product-language paragraph: **meaning and purpose**, then links
+to governing items; one or two identifying details may follow. Never
 inventory elements, position or appearance; never bind — conditions, formats and precedence
 belong in the linked items. Every occurrence of a term in spec prose links its entry (`link-terms`).
 
 ❌ *Transfer notice* — a blue banner with an icon, a heading and two links below the toolbar.
 ✅ *Transfer notice* — explains an unfinished transfer; dismissible ([UI-TRANSFER-03]).
 
-Sections are **Global**, **Shared**, then one per screen family, entries alphabetical within each,
-each under its governing item's home; entries move with their items, and
-cross-family terms sit in Shared once extracted. Read Global, Shared and the current family. A
-glossary that outgrows one file splits per folder along these seams. A thing named like a
+Sections are **Global**, **Shared**, then each screen family, with alphabetical entries under their
+governing item's home. Entries move with their items; extracted cross-family terms sit in Shared.
+Read Global, Shared and the current family. Split an overgrown glossary per folder along these seams. A thing named like a
 requirements term gets an entry identifying the drawn element and crediting the requirements for
-the concept ("whether a note is pinned is the requirements' ([NOTE-08], [UI-NOTES-01])");
+the concept ("the pin glyph at a row's leading edge; the requirements say when a note is pinned ([NOTE-08], [UI-NOTES-01])");
 requirement terms themselves (*overdue*, *stale*) get no entry.
 
 ## Items
 
-An item is one `###` heading carrying its ID, in the shape guide's form. It opens with one
-sentence identifying its subject and linking the requirement it presents — ✅ "The [reminder
+An item has one `###` heading with its ID in the shape guide's form. Its opening sentence names
+its subject and links the requirement it presents — ✅ "The [reminder
 badge][g-reminder-badge] shows the note's reminder state ([REMIND-02]):" — then its rules; data
 (mappings, strings) goes in tables, never under rule numbers.
-A `##` part groups and may open with one nonbinding orientation line; anything that says what
-shows or when belongs under an item.
+A `##` part groups items and may open with one nonbinding orientation line; what shows or when
+belongs under an item.
 
 - **Contract unit:** an item is its rules and its data; data edits follow *Modify vs. Retire*.
 - **Conditions:** exhaustive and unambiguous; state precedence for overlaps ("the first that holds").
-- **Known differences:** only observed app/spec differences qualify, under the affected item with a
-  tracking issue when available; a gap, not an exception. Platform words belong only here.
+- **Known differences:** only observed app/spec differences, under the affected item with a tracking
+  issue when available; gaps, not exceptions. Platform words belong only here.
 - **Pending references:** name unwritten specs inline, unlinked: `(spec pending: <file>)`. A
   pending destination does not block promotion; a depended-on global pattern does.
 - **Links:** link requirement IDs, drafts in active product spec packages included; promotion
@@ -115,35 +110,33 @@ shows or when belongs under an item.
 A glossary name brings all governing items; a file reference brings its items. An override of a
 family, shared or global rule declares itself and links the superseded rule ("Validation here
 replaces [UI-FORM-01-02]: …", with `[UI-FORM-01-02]: form.md#ui-form-01`); parents never name
-overrides. An override may restate the parent with modifications; without a declaration the
-inherited rule stands.
+overrides. Overrides may restate parents with modifications; without a declaration, the inherited rule stands.
 
 ## IDs
 
-Form and anchors are the shape guide's; `UI-` distinguishes spec IDs from requirements. Prefixes
-uniquely name the thing (screen, family, shared piece), never the file, with its kind if the noun
-is abstract (`UI-DEFAULT-FOLDER`, not `UI-DEFAULT`). Next number: one above the prefix's maximum
-in the base, its unpromoted IDs included; two packages colliding surface at the later promotion.
+Form and anchors follow the shape guide; `UI-` distinguishes spec IDs from requirements. Prefixes
+uniquely name the thing (screen, family, shared piece), never its file; include its kind for abstract
+nouns (`UI-DEFAULT-FOLDER`, not `UI-DEFAULT`). Next number: one above the prefix's base maximum, including
+unpromoted IDs; collisions between packages surface at the later promotion.
 
 ### Stability
 
 IDs are file-independent and append-only from first drafting. Moves never renumber; restructures
-use `move` items. Retired IDs are burned. Retire in place at every level, keeping headings and
-rule numbers and replacing binding text with a short explanation naming any successor; retiring a
-parent retires its descendants.
+use `move` items. Retired IDs are burned. Retire in place: keep headings and rule numbers; replace binding text with a
+sentence saying in product words what replaced it, then its citation; retiring a parent retires its
+descendants.
 
 ### Modify vs. Retire
 
-**Modify** retains the ID for the same promise, clarified; existing citations still mean it.
-**Retire and add** when the contract changes so previously conforming behavior no longer
-conforms. Append new rules under a parent; a changed rule retires and is replaced there; moving a
+**Modify** keeps the ID for a clarified promise that existing citations still mean.
+**Retire and add** when a changed contract makes previously conforming behavior nonconforming. Append new rules under a parent; a changed rule retires and is replaced there; moving a
 rule to another parent is retire-and-add. Before either, run `references`
 and decide per citation whether it still holds.
 
 ## Writing Style
 
 Write as a **product manager describing a screen to a developer who sees the design** in canon,
-drafts and quoted proposals; package prose may name frames, nodes and code files.
+drafts and quoted proposals; package prose names a frame, node or code file only where the reader must go to it.
 
 ### Product Language Only
 
@@ -176,10 +169,10 @@ verification in package Assumptions.
 
 ### Restatement
 
-A sentence citing a requirement must add a screen binding beyond the cited contract, or shrink to
-the citation. "Tapping anywhere on the row opens the note ([NOTE-05])" adds a tap target; "The
-list refreshes when pulled down ([SYNC-06])" adds nothing. Cite another spec's rule, or restate
-it only as a declared override (*Citing by Reference*).
+A sentence citing a requirement adds a screen binding beyond the cited contract; one that adds
+nothing goes, or names in words the rule it applies, never a bare citation. "Tapping anywhere on
+the row opens the note ([NOTE-05])" adds a tap target; "The list refreshes when pulled down
+([SYNC-06])" adds nothing.
 
 ### What Counts as a State
 
@@ -189,16 +182,15 @@ it only as a declared override (*Citing by Reference*).
 - **Data substitution:** different string, same look (per-notebook empty messages, day-heading
   text). Specify data; no drawing.
 - **Motion and polish:** transitions, animation, timing, haptics, loading and refresh feel,
-  entrances and exits. Design cannot draw these and a careful developer will not add them unasked,
-  so specify under the item what moves, when and what it conveys ("the new row slides in from
+  entrances and exits. Design cannot draw these; a careful developer will not add them unasked.
+  Specify under the item what moves, when and what it conveys ("the new row slides in from
   where it was added, so the person sees where it went"), never easing curves or pixels.
   ❌ "the label gives way to an indicator" (a substitution, not its motion) · ✅ "the label fades
   out as the indicator fades in".
 
 An element disappearing without moving the rest (a missing date) is a component property;
-internal reflow does not count and not every combination is drawn. For unstyled standard system
-UI (tips, alerts), specify conditions and choices; no drawing is required, and the spec never
-says whether it is drawn.
+internal reflow does not count, and not every combination is drawn. For unstyled standard system
+UI (tips, alerts), specify conditions and choices; no drawing is required, and specs never say whether it is drawn.
 
 ### Nothing That Decays
 
@@ -216,7 +208,7 @@ the projection introduces, blocks; a fault in an untouched canonical file is rep
 - `V2 Appearance` — inspect sentences, including glossary entries, against *Never Appearance*'s
   redesign test. Evidence names inspected sentences, never a word list.
 - `V3 Product language` — no design-tool or code identifier or mechanism anywhere in spec text;
-  platform names only in known-difference and Also called notes (*Product Language Only*).
+  platform names only in known-difference and Also called notes (*Product Language Only*); changed sentences read as the writing guide says.
 - `V4 Static copy` — quoted strings are formats, data-dependent or undrawn copy.
 - `V5 Drawn state` — find every prescribed screen state or component variant by product name in
   production or approved change-page mockups ([Figma](../Design/figma-designer-guide.md)), from
@@ -235,12 +227,11 @@ the projection introduces, blocks; a fault in an untouched canonical file is rep
   purpose and routing, no inventory, position, appearance or binding, any detail supported by the
   items it links. Each live item opens with its statement and requirement link, a retired one
   carries the retirement form; orientation prose binds nothing.
-- `V10 Completeness` — every binding the inputs require (requirements, drawings, the app in a
-  backfill) traces to a governing item; an omission fails. Conditions are exhaustive and
-  unambiguous, with precedence for overlaps. For each item, look for motion or polish a careful
-  developer would not ship unasked — in the app's code in a backfill, otherwise in what the
-  designer stated — and check it is specified; unstated motion is a Discussion item, never
-  assumed absent.
+- `V10 Completeness` — every binding required by inputs (requirements, drawings, the app in a
+  backfill) traces to a governing item; omissions fail. Conditions are exhaustive and unambiguous,
+  with precedence for overlaps. For each item, check that motion or polish a careful developer
+  would not ship unasked is specified: inspect app code in a backfill, otherwise the designer's
+  statements. Unstated motion is a Discussion item, never assumed absent.
 
 ## Cross-References
 

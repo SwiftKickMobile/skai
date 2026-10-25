@@ -8,15 +8,17 @@ Managed-Updated-At: 2026-10-25
 
 Print `📖 SKAI guide: product-specs-artifacts` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
-The typed formats the product spec workflows produce and consume. Content rules:
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
+
+Typed formats for product spec workflows. Content rules:
 [`product-specs-catalog.md`](product-specs-catalog.md). File shape and the spec tool:
 [`spec-file-shape.md`](../Core/spec-file-shape.md).
 
 ## The Package
 
-In the repository holding the catalog, `skai/changes/<change-id>/product-specs/`; after promotion,
-`skai/promoted/<change-id>/product-specs/`. A promoted package is closed; new work takes a new
-ID/type pair. A sibling package of another type is independent. For the **base** and requests, read
+In the catalog's repository, `skai/changes/<change-id>/product-specs/`; after promotion,
+`skai/promoted/<change-id>/product-specs/`. Promoted packages are closed; new work needs a new ID/type pair. Sibling packages of other types
+are independent. For the **base** and requests, read
 [`change-requests.md`](../Core/change-requests.md). Supervisor input during authoring is a decision, never a request.
 
 ```
@@ -30,31 +32,29 @@ evidence/                         persisted check output; may be absent
 working-docs/                     working documents; the tool ignores it
 ```
 
-**The supervisor reads the package through `product-specs-review.html`.** Render and commit it;
-validate and re-render before anything else after material changes. Both workflow artifacts link
-it directly under their titles.
+**The supervisor reads the package through `product-specs-review.html`.** Render and commit it; after material changes, validate and re-render first. Both workflow artifacts link
+it under their titles.
 
 End the authoring artifact with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>`
-per Discussion state change. An open **Gap** item marks a placeholder in the drafts, or that none exists
-([`known-gaps.md`](../Core/known-gaps.md)). The page counts gap items and filters to them and their footnoted requirements; the log is not rendered;
-`check-changes` checks each item's state against its last log entry.
+per Discussion state change. An open **Gap** item marks a draft placeholder or its absence
+([`known-gaps.md`](../Core/known-gaps.md)). The page counts gaps and filters to them and their footnoted requirements; it omits the log.
+`check-changes` compares each item's state with its last log entry.
 
 In the promotion artifact, checked `C7` means the base is written; checked `C8`, the package
 archived.
 
 ## Requirement Change Items
 
-`## Requirement Changes` lists each base-to-draft difference by prose and resolved target identity
-as one typed entry. Entries carry no text; the page shows each difference under its justification.
+`## Requirement Changes` gives each base-to-draft difference one typed entry, by prose and resolved
+target identity. Entries omit spec text; the page shows each difference under its justification.
 
 ```
 - R<n> <type>: <identity>
-  - **Justification** <Source>: <reference or rationale>
+  - **Justification** <why the change is needed>; <Source>: <reference>
   - **Touches** catalog-relative paths of the files this entry changes
 ```
 
-- **ID** `R01`, `R02`, …: never renumbered or reused. Entries run in catalog order and carry no
-  checkbox.
+- **ID** `R01`, `R02`, …: never renumbered or reused. Entries run in catalog order, no checkbox.
 - **Type** `add folder` | `add file` | `add requirement` | `modify requirement` |
   `retire requirement` | `add glossary entry` | `modify glossary entry` | `retire glossary entry`.
   *Modify vs. retire* in the catalog guide decides between the two; a note-only change is
@@ -62,33 +62,31 @@ as one typed entry. Entries carry no text; the page shows each difference under 
 - **Identity** the requirement ID linked to its draft, the glossary term, or the catalog-relative
   path.
 - **Source** `Design` | `Implementation` | `Supervisor input` | `Resolved decision` |
-  `Agent inference` | `Change request` | `Catalog`. `Design` names the screen or state by
-  product name, never a design-tool link; for a spec the Justification is the
-  citation; `Resolved decision: D#` cites a Discussion item, `Base decision: D#` its base's;
-  `Agent inference` carries a real rationale and draws first scrutiny; promotion writes
-  `Change request: <nnn> R<n>; <the entry's own>` on folded entries.
+  `Agent inference` | `Change request` | `Catalog`. A Justification is a reason a reader follows
+  without opening anything, then its source. `Design` names the screen or state by product
+  name, never a design-tool link; `Resolved decision: D#` cites a Discussion item, `Base decision: D#`
+  its base's; `Agent inference` draws first scrutiny; promotion ends a folded entry's Justification
+  with `; Change request: <nnn> R<n>`.
 
-The tool's `check-changes` confirms the list matches the projection: every changed requirement
-and glossary entry is named by an entry, every changed index line, intro or added file by an
-entry or a `Touches` line, and nothing unchanged is.
+`check-changes` confirms the list matches the projection: entries name every changed requirement
+and glossary entry; entries or `Touches` lines name every changed index line, intro or added file;
+nothing names unchanged content.
 
-**Naming the source is the check on leaked detail.** ❌ `Implementation: the list is rebuilt
-whenever either stream emits` describes code — the requirement is wrong, not the Justification.
-✅ `Implementation: the list reorders itself whenever either source changes, and no design covers
-what the user sees while that happens`.
+**Implementation words in a reason are a signal.** ❌ `The list is rebuilt whenever either stream
+emits; Implementation` describes code: read the requirement and the reason, and fix whichever holds the mechanism; a
+reason says why the requirement changes, not what the app does.
 
-**Granularity follows the file.** A file the base does not have is one entry, its folder and
-index line riding in `Touches` — as is the package creating the catalog root, with the root index
-and glossary. Inside a file the base has, each requirement or glossary entry added, changed or
-retired is its own entry.
+**Granularity follows the file.** A file absent from the base gets one entry, its folder and index line in `Touches`;
+so does catalog root creation, with the root index and glossary. In base files, each added,
+changed or retired requirement or glossary entry gets an entry.
 
 ```markdown
 - R01 modify requirement: [REMIND-04]
-  - **Justification** Resolved decision: [D02]
+  - **Justification** Reminders that fired while the app was closed were lost; Resolved decision: [D02]
   - **Touches** features/reminders.md
 
 - R02 add file: features/sharing.md
-  - **Justification** Design: the share sheet screens.
+  - **Justification** Sharing a note is designed and the catalog has no requirement for it; Design: the share sheet screens
   - **Touches** features/sharing.md, features/_features.md
 
 [D02]: #missed-reminders

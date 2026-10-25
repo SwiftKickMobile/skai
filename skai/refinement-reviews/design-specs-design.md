@@ -282,3 +282,12 @@ package" instead of a request in the old form; `design-specs-promotion.md` § Ra
 becomes "start a package against the base". Supersedes § Decisions — 2026-10-19 where they conflict.
 The set's cap of 60,000 holds unless compression says otherwise.
 
+
+## Amendment — 2026-10-25 (plain language: a change item's reason)
+
+Design specs adopt [`product-specs-system-design.md`](product-specs-system-design.md) § Amendment —
+2026-10-25 (plain language): a spec change item's Justification is a reason in plain words, then its
+source as a link; `design-specs-artifacts.md`'s Source line ("as the product spec guide") inherits
+the rule and its example shows a reason before the source. Same plain-language pass, same standard.
+
+Cap (supervisor, 2026-10-25, series PL): the design specs set **47,500** combined (was 60,000), a little under the compressed 47,721.

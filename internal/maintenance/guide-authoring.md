@@ -57,6 +57,7 @@ Checks:
 - References to `Guides/Core/process-flow.md` that imply it is a required runtime read (e.g., "This guide follows the shared process-flow mechanics in...")
 - Standalone "Progress Tracking" or "Emoji System" sections that redefine the canonical marker conventions (`- [ ]` / `🟡`).
 - A guide whose agent writes for a person missing the writing-style pointer sentence (grep `writing-style.md`; verbatim from `Guides/Core/process-flow.md` § Writing for people), or inlining style rules of its own.
+- An example or template of text a person reads that fails `writing-style.md`: a citation or source token standing for a reason, a proposal that is only an option letter or a name, identifiers or guide words doing the work of words, a gate or completion line that reports workflow state instead of what happens next.
 
 **Marker convention compliance:**
 - `🟡` used in process artifacts (markdown workflow docs) — should be `- [ ]` / `- [x]` instead. `🟡` is reserved for in-code progress (test files, source files) where completion = removal. Canonical in-code case: `Guides/Test/unit-test-planning-guide.md`.

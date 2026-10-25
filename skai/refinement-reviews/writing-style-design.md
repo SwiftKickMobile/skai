@@ -79,3 +79,21 @@ guide's size-budget rule.
 
 The guide does not define the Discussion schema, the footnote form, the spec content rules, or any
 gate. It has no gates of its own and invokes no skill.
+
+## Amendment — 2026-10-25 (the rule for guide writers)
+
+Ruled (supervisor, 2026-10-25): the plain-language standard binds the guides' own examples and the
+templates of text a person reads, so that every current and future guide produces it, not only the
+guides repaired by hand. Series PL found thirteen defects in guides that already carried the pointer
+sentence: their formats and examples taught citation-only reasons, letter-only proposals and
+shorthand, and an agent copies the example in front of it.
+
+10. **A guide's examples and reader-facing templates pass this guide.** Every worked example of
+    text a person reads (a Discussion item, a change entry and its reason, a gate line, an evidence
+    line, a handoff) and every template an agent fills for a person reads correctly under Requirements
+    2–6. This is a rule for whoever writes a guide: `internal/maintain-skai.md` § Common house style
+    states it, the guide-authoring sanity check in `internal/maintenance/guide-authoring.md` asks it
+    of every edited guide, and the cold-review prompt template names examples that teach shorthand or
+    a citation-only reason among its recurring failure modes.
+
+Caps (supervisor, 2026-10-25, series PL): `process-flow.md` **21,500** (was 21,550); the UI Map guides keep no cap and were not compressed (supervisor: the only guides with an extensive regression test; no aggressive compression now).

@@ -9,6 +9,8 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **Plain language in every guide's own examples.** The spec, UI Map and work-spec guides' templates and worked examples now read as the writing guide says: a change's reason in words before its source, decisions that state the outcome, gate and evidence lines that say what happens next or what a run established, retirements that name what replaced them; and a rule for guide writers that an example must pass the writing guide, since an agent copies the example in front of it.
+- **The review page shows what the author wrote.** Reasons reach every covered change (intros, index lines, added files, rules, section text), deleted text and popovers cite what their own document cited, same-named things in other documents keep their own links and hover text, and a prose change filters together with its reason.
 - **Writing style guide.** One short guide says how an agent writes anything a person reads: sentences that stand alone without their IDs, reasons in words, the thing named rather than the sample that shows it, everyday words instead of the guides' own vocabulary, first person. Every workflow guide points at it.
 - **Design change descriptions say what changed.** A change entry names the state or behavior that changed and gives its reason in a sentence; gap footnotes sit only on the entry whose change rests on the placeholder.
 - **A footnote names the item that raised the question.** Never one that merely inherits it; change request pages now link footnote owners and count gaps like package pages.

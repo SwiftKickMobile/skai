@@ -32,12 +32,12 @@ A reminder is in exactly one of these states.
 
 - **01** A reminder that fires while the app is closed becomes overdue and stays so until acknowledged or thirty days pass.
   - **01** After thirty days it is removed from the note and no longer counted.
-- **02** (retired) Superseded by **01**.
+- **02** (retired) Thirty-day removal is now rule **01**.
 
 > **Known difference — Android:** Overdue reminders never expire. Tracked in [expiry-fix].
 
 ### REMIND-02 (retired)
-Superseded by [REMIND-01].
+Overdue reminders are now defined in [REMIND-01].
 
 [NOTE-05]: note.md#note-05
 [REMIND-01]: #remind-01

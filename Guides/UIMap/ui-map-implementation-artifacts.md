@@ -2,11 +2,13 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation-artifacts
 Managed-Source: Guides/UIMap/ui-map-implementation-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-25
 
 # UI Map Implementation Artifact Formats
 
 Print `📖 SKAI guide: ui-map-implementation-artifacts` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 The typed formats the implementation skill produces. Read an artifact with [`ui-map-implementation.md`](ui-map-implementation.md) for Mode and control flow, the platform guide named in its `## Inputs`, and [`ui-map-guide.md`](ui-map-guide.md) for the YAML map. The architecture-side formats it *consumes* (map change items) and *raises* (change requests) live in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md).
 
@@ -37,7 +39,7 @@ with its requests beside it. `## Code Changes` lists **code change items**; `## 
   - `planned` — UI-map-owned work intentionally not executed because the run is Plan; the receiving workflow should implement and check it using the UI Map and platform guides.
   - `handoff` — concrete, verifiable work outside UI Map implementation ownership that directly affects UI Map conformance; the required outcome is already defined, and another workflow, skill, person, or PR owns and checks it. Missing guidance or an unmapped value is not a handoff; it blocks before Code Changes.
 - **Description for `planned` / `handoff`** — include what remains, why this run is not doing it, and the relevant UI Map/platform guidance or constraints the receiving workflow must preserve. A `handoff` Description must define enough of the expected outcome to decide when its checkbox is true.
-- **Realizes** — what this item carries out, so each code change traces back to the map: an `M#` from the architecture change list, a `D#` discussion decision, a short description of the audit finding when it has no ID, or — for the terminal promote item — the approved change as a whole rather than a single `M#`.
+- **Realizes** — what this item carries out, so each code change traces back to the map; it traces, it does not explain, the Description says why: an `M#` from the architecture change list, a `D#` discussion decision, a short description of the audit finding when it has no ID, or — for the terminal promote item — the approved change as a whole rather than a single `M#`.
 
 There is no `Type` field: the identity and Description convey the kind at a glance (e.g. `T03 move pantry/ → inventory/`, `T05 scaffold edit_item`). Items are written top-down in structural order: any shared, cross-scene item (e.g. a generated `DomainColors`) **first**, then per domain → scene → route, mirroring the map.
 
@@ -55,13 +57,14 @@ artifact. Older checked items retain their meaning; migration fabricates no new 
 
 ## Verification evidence
 
-`## Evidence` records the verification trail: build checks at chunk boundaries and completion, plus the official render performed by a terminal promote item. One bracket per check:
+`## Evidence` records the verification trail: build checks at chunk boundaries and completion, plus the official render performed by a terminal promote item. One line per check, a sentence saying what it established, then the bracket:
 
 ```
-[evidence: <command>; exit <code>; output: <scratch path, if captured>]
+The Tickets domain builds after the move. [evidence: <command>; exit <code>; output: <scratch path, if captured>]
+The official map renders with the three new scenes. [evidence: <render command>; exit 0]
 ```
 
-Captured output stays in the scratch root ([`working-doc-conventions.md`](../Core/working-doc-conventions.md)), never the repository. The evidence brackets are the durable record that conformance and promotion were verified, not asserted.
+Captured output stays in the scratch root ([`working-doc-conventions.md`](../Core/working-doc-conventions.md)), never the repository. Say only what that run established: a passing compile is not a tested click-through.
 
 ## Project Addendum
 

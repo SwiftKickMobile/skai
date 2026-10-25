@@ -143,7 +143,7 @@ Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution or
   rules need to absorb them. Into a package, fold screen sections into same-named base sections
   (create missing ones), and:
   - Append entries with footnotes (`base D04` becomes `D04`) to its `## Design Changes`: next `V`
-    numbers, Descriptions kept, Justifications `Change request: <nnn> V<n>; <the entry's own>`. Undrawn entries stay unlinked
+    numbers, Descriptions kept, each Justification ending `; Change request: <nnn> V<n>`. Undrawn entries stay unlinked
     and return the base to Mockups to draw them.
   - Carry open items, gaps and requests into the base per the shared guide, mirrors kept,
     logging `gap` for gaps; name the request in its `## Assumptions and TODOs`.

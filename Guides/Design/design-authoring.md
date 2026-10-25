@@ -60,7 +60,7 @@ Authoring alternates between two phases, never both at once:
    record it under `## Assumptions and TODOs`; nothing is drawn, and the Design Changes list
    stands in for the drawings below.
 
-The phases alternate, feedback handled as *Mockups* says, until the supervisor advances the
+The phases alternate until the supervisor advances the
 Review gate.
 
 ## Gates
@@ -69,7 +69,7 @@ Core rule: every time the agent is waiting on the supervisor, the message must e
 
 The supervisor is the human or authorized agent outside this workflow that resolves its discussion items and reviews its gates; the executing agent does not resolve or approve its own.
 
-**Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
+**Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
 **No fabricated gates.** `⏳ GATE:` lines only appear at gates this `## Gates` section defines or at a properly emitted blocked gate. Do not invent new gate categories or labels to describe discussion state, partial completion, or intermediate review. If a `⏳ GATE:` line is needed that this guide doesn't define, that's a signal the guide is missing a gate — file it as a process improvement.
 
@@ -178,12 +178,11 @@ so, and the supervisor resolves it by approving the recommended option as a tria
 
 An item is a decision the agent needs from the supervisor: a departure from the base or an
 existing design that the agent proposes, behavior that looks like a defect, a product question the inputs leave open, a scope
-call that could go either way. Design iteration (layout, spacing, copy, the look) earns no
-items; a change the supervisor asks for during a review needs no new item (one that changes
-an existing decision updates it through *Resolution*); the design is the record.
+call that could go either way. Design iteration (layout, spacing, copy, the look) and changes the supervisor asks for at a review
+need no new item; the design is the record. One that changes an existing decision replaces it and logs the change.
 
-With no items, leave `## Discussion` as: "The listed Inputs determine the designs; review them on
-`<page or section>`." Use `design-review.html` with no mockups. Omit it when items exist.
+With no items, Discussion is one sentence saying which input settled the designs and where to review
+them (`design-review.html` without mockups); omit it when items exist.
 
 **Example** (LumenNotes):
 
@@ -194,13 +193,13 @@ With no items, leave `## Discussion` as: "The listed Inputs determine the design
   - **Concern** The brief says "pinned notes are easy to find" but not where they go. The current
     app sorts them first with a pin glyph, which is easy to miss.
   - **Proposal** A `Pinned` group with its own header above the rest of the list.
-  - **Why** It matches other notes apps, and the header makes the state visible without a glyph.
+  - **Why** It matches other notes apps, and the header shows the state without a glyph; the brief wants pinned notes easy to find.
 ```
 
 ### Resolution
 
 On the supervisor's explicit approval of an item: check the box and append
-`- **Decision** <resolution>.` as the last sub-bullet; the original is kept. Remove a resolved item nothing current cites or needs. For gaps, remove **Gap**; Decision says answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep entries after item removal.
+`- **Decision** <resolution>.` as the last sub-bullet; the original is kept. Remove a resolved item nothing current cites or needs. For gaps, remove **Gap**; Decision states the outcome in words and which it was: answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep entries after item removal.
 
 A Decision that changes an input says so; *Completion* carries it.
 

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.process-flow
 Managed-Source: Guides/Core/process-flow.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-24
+Managed-Updated-At: 2026-10-25
 
 # Process flow (house style reference)
 
@@ -12,7 +12,7 @@ Purpose: canonical definitions for process-flow mechanics (gates, advance intent
 
 ## Declared workflow variants
 
-These are the shared operational invariants. A workflow may explicitly declare a different control
+A workflow may explicitly declare a different control
 model, such as no auto mode or Discussion-only markers resolved before its planned gate. Maintain
 that declared model rather than adding default auto instructions or duplicate pending markers.
 Variants still require supervisor approval boundaries, persistent gate lines, blocked stops and an
@@ -240,14 +240,14 @@ The agent always takes a position: every item carries a recommendation, and a `[
 
 ### Sub-bullet labels
 
-Sub-bullet labels are **bold** with no separator after the label — the bold weight is the separator. Standard labels:
+Sub-bullet labels are **bold** with no separator after the label. Standard labels:
 
 - **Concern** (always) — what the issue is.
 - **Proposal** (for `[Proposal]` / `[Tradeoff]`) — the recommended action.
 - **Question** (for `[Question]`) — what the agent needs decided and why it can't recommend yet.
 - **Options** (for `[Tradeoff]`) — the considered alternatives.
 - **Detail** (when needed) — elaboration on the concern.
-- **Why** — the rationale.
+- **Why** — the reason, then its source.
 - **Gap** — for an item awaiting knowledge from outside this work; keep it unchecked, with `- **Gap** <placeholder: what stands in until it is answered, or "no placeholder; waiting on <what>">` last. Gaps block promotion.
 - **Decision** (added on resolution) — see below.
 
@@ -259,9 +259,9 @@ Inlined verbatim beside each Discussion-phase guide's Discussion rules; the sani
 
 On the supervisor's explicit approval of an item:
 1. Check the box (`- [x]`).
-2. Append `- **Decision** <succinct resolution>.` as the last sub-bullet. For a gap, remove its **Gap** line and say which: answered, placeholder adopted, or omitted.
+2. Append `- **Decision** <the outcome, in words>.` as the last sub-bullet. For a gap, remove its **Gap** line and state the outcome and which it was: answered, placeholder adopted, or omitted.
 
-The original question/proposal/tradeoff stays visible. The decision is appended, not substituted — the why-this-was-discussed trail is preserved for later review. Keep at most one **Decision** line; on reopening, remove it and uncheck the box (the log retains it). Replace a changed Decision and log `decided` again; `reopened` means withdrawn with no replacement, so the item waits open. Remove a resolved item nothing current cites or needs; its log entries stay.
+The original question/proposal/tradeoff stays visible. The why-this-was-discussed trail is preserved for later review. Keep at most one **Decision** line; on reopening, remove it and uncheck the box (the log retains it). Replace a changed Decision and log `decided` again; `reopened` means withdrawn with no replacement, so the item waits open. Remove a resolved item nothing current cites or needs; its log entries stay.
 
 ### Decision Log
 
@@ -306,7 +306,7 @@ A note needs a way to share its contents. Today it has no outgoing share route.
     - A — modal sheet over the note
     - B — pushed screen
   - **Proposal** A (modal) — sharing is a transient side-task, not a destination in the note's flow.
-  - **Why** A sheet dismisses back to where you were; a push implies a place in the navigation.
+  - **Why** A sheet dismisses back to where you were; a push implies a place in the navigation; the designs show no share screen.
 ```
 
 After resolution:
@@ -318,7 +318,7 @@ After resolution:
     - A — modal sheet over the note
     - B — pushed screen
   - **Proposal** A (modal) — sharing is a transient side-task, not a destination in the note's flow.
-  - **Why** A sheet dismisses back to where you were; a push implies a place in the navigation.
+  - **Why** A sheet dismisses back to where you were; a push implies a place in the navigation; the designs show no share screen.
   - **Decision** A — modal sheet. Aligns with the agent's recommended pick.
 ```
 
@@ -342,7 +342,7 @@ Every guide whose agent writes for people inlines this sentence verbatim at its 
 
 > Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
-Guides keep their tool-neutral vocabulary.
+
 
 ## Project Addendum
 

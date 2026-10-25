@@ -577,3 +577,21 @@ Caps (supervisor, 2026-10-25, a little under the compressed sizes): `product-spe
 (was 6,500), `product-specs-authoring.md` **20,350** (was 21,300), `product-specs-promotion.md` **16,550**
 (was 17,000). The design specs set keeps 60,000.
 
+
+## Amendment — 2026-10-25 (plain language: a change item's reason)
+
+Ruling (supervisor, 2026-10-25): a change item's Justification is a reason in plain words, then its
+source as a link, for a spec as for a design change. The reader of a change list learns why the
+requirement changed without opening the screen or the decision it cites; links are for digging
+further. `product-specs-artifacts.md`'s "for a spec the Justification is the citation" goes, and its
+examples show a reason before the source. Supersedes P-level wording that made a bare source token a
+sufficient justification. Part of the plain-language pass over the spec, UI Map and work-spec guides,
+judged against [`writing-style-design.md`](writing-style-design.md) (its Requirements 2–6): where a
+guide's instruction or example produces text for a person that is not plain, or says nothing the
+reader can use, the instruction and the example are both repaired. Caps hold unless compression says
+otherwise.
+
+Caps (supervisor, 2026-10-25, series PL, a little under the compressed sizes): `product-specs-artifacts.md` **5,450** (was 5,350), `product-specs-authoring.md` **18,900** (was 20,350), `product-specs-promotion.md` **15,550** (was 16,550); `product-specs-catalog.md` keeps 10,500.
+Clarification (2026-10-25, series PL r2): "its source as a link" means linked where a link exists (a
+Discussion item, a requirement, a decision); a `Design` source stays the screen or state by product
+name, never a design-tool link, as before.

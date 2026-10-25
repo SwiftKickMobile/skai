@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-swiftui-placeholders
 Managed-Source: Guides/UIMap/ui-map-swiftui-placeholders.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-25
 
 # UI Map — SwiftUI Placeholder Scenes
 
@@ -11,6 +11,8 @@ Print `📖 SKAI guide: ui-map-swiftui-placeholders` now, as a line of its own. 
 How the UI Map **implementation** skill scaffolds scenes in SwiftUI: skeleton + navigation, no feature content. Companion to [`ui-map-swiftui.md`](ui-map-swiftui.md) — read its **Scene file layout**, **Route enums**, and **Modal routing** sections first; this doc builds on them. Load this doc while auditing, planning, or building whenever placeholder work is in scope; omit it only when no placeholder work is in scope.
 
 Placeholders are built from the `SKAISwiftUI` package. Inspect the app target first; when the local package product is absent, adding it from the skai submodule is mechanical scaffold setup owned by this skill in Build. If the package path is unavailable or project constraints prevent linking it, STOP at a blocked gate. **Requires iOS 18 / macOS 15** (uses `ScrollPosition`).
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## Build philosophy
 

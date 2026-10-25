@@ -2,13 +2,15 @@ Managed-By: skai
 Managed-Id: guide.ui-map-compose
 Managed-Source: Guides/UIMap/ui-map-compose.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-10-25
 
 # UI Map — Jetpack Compose Reference
 
 Print `📖 SKAI guide: ui-map-compose` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Platform reference for implementing a UI Map in Jetpack Compose. Companion to [`ui-map-guide.md`](ui-map-guide.md), which defines the platform-agnostic YAML format.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 Each scene's routing is implemented locally: the view model emits one-shot navigation effects, and the screen subscribes and dispatches each effect to a Compose Navigation `NavController` scoped to that scene. There is no central router.
 

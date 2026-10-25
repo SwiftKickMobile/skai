@@ -171,3 +171,60 @@ round. Size 11,264 → 11,812 bytes against the 12,000 cap.
 | 2026-10-25 r11 | request fixture's glossary links | closed — fixture | base's glossary; validate in the test |
 | 2026-10-25 r12 | Terminal round: no findings | converged | stop rule (a); series CA: 31.25, 19.375, 11.25, 10, 10, 14.375, 11.875, 10, 11.25, 10, 1.25, 0 |
 
+## 2026-10-25 — plain language in the spec, UI Map and work-spec guides (series PL)
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-10-25 r1 | spec F1: a citation sufficed as a Justification; "entries carry no text"; folded provenance first | accept — verified | both artifacts guides, both promotion guides, shared rule 5, checker |
+| 2026-10-25 r1 | spec F2: Tradeoff example taught letter-only proposals; Resolution let a state label stand for the decision | accept | example; process-flow owner sentence swept to five copies |
+| 2026-10-25 r1 | spec F3: "package prose may name frames, nodes and files" | accept | narrowed to where the reader must go |
+| 2026-10-25 r1 | spec F4: gap footnote names its owner by ID only | noise — settled 2026-10-24, reaffirmed 2026-10-25: the gap item is the source of truth, the footnote states the placeholder for this item, the owner link and tooltip are for more | prompt omitted the disposition |
+| 2026-10-25 r1 | spec F5: Restatement examples shrink to a citation | accept | subject kept before the citation |
+| 2026-10-25 r1 | spec F6: C4 / V3 check content rules only; C4 failure example names no defect | accept | apply the writing guide; example names the defect |
+| 2026-10-25 r1 | spec F7: gate wording in guide vocabulary | accept — cosmetic | reworded in place |
+| 2026-10-25 r1 | uimap F1: "the Justification is just the citation"; `Realizes` as explanation | accept | reason then source; Realizes traces only |
+| 2026-10-25 r1 | uimap F2: gate says "implement" in Plan mode; scoped audit completes as whole-app conformance | accept | templates say the real next action and scope |
+| 2026-10-25 r1 | uimap F3+F4: domain line, Discussion and annotation examples teach shorthand | accept — one defect | examples repaired together |
+| 2026-10-25 r1 | uimap F5: evidence bracket as the whole record | accept — cosmetic | a result sentence before the bracket |
+| 2026-10-25 r1 | uimap F6: eight guides without the writing-style pointer | accept | pointer added |
+| 2026-10-25 r1 | workspec F1: image-loading example without substance in both guides | accept | one example across both |
+| 2026-10-25 r1 | workspec F2: no-items sentence and "link or summarize" let the agent point instead of state | accept | both sharpened |
+| 2026-10-25 r1 | product-specs-baseline without the pointer (not raised; checked) | log-only | read only from authoring |
+| 2026-10-25 r2 | spec F1: the review page dropped the no-items Discussion sentence | closed — tool (both renderers), test | `discussion_note` |
+| 2026-10-25 r2 | spec F2: an intro covered through a requirement entry's Touches rendered without its reason (second sighting of CA r9 F4) | closed — tool, test | `why_for` fallback takes every covering entry |
+| 2026-10-25 r2 | spec F3: evidence examples led with bookkeeping, not the result | closed | form and seven examples result-first, both promotion guides |
+| 2026-10-25 r2 | spec F4: reconciliation kept a justification for a matching ID whatever it still explained | closed | "only while it still explains the current difference", both authoring guides |
+| 2026-10-25 r2 | spec F5: product authoring Completion omitted whether promotion can follow | closed | Completion says now or waits on shipping |
+| 2026-10-25 r2 | uimap F1: empty-Discussion sentence claimed the inputs determined the map | closed — class swept | sentence, example, gate paragraph; design-authoring's no-items sentence too |
+| 2026-10-25 r2 | uimap F2: Code Changes gate summary was path, counts and links | closed | leads with what changes in the app; ❌/✅ pair |
+| 2026-10-25 r2 | workspec F1: evidence examples and the requested-stop line carried only metadata | closed | result in words first; stop line names the next task's outcome |
+| 2026-10-25 r2 | workspec F2: Why templates and example gave a reason without its source | closed — owner swept | process-flow defines Why as reason then source; four guides' example Whys cite |
+| 2026-10-25 r2 | open note: "single screens" in the domain line example | closed | "collapsed to their root screens" |
+| 2026-10-25 r3 | work-spec read: no findings | clean read | — |
+| 2026-10-25 r3 | UI Map read: no findings; note that architecture's reconciliation kept a justification unconditionally (round 2's spec F4 class) | closed — swept | "only while it still explains why the change is needed"; UI Map family re-read in round 4 |
+| 2026-10-25 r3 | spec F1: a product index line covered through Touches rendered without its reason; a justification's source link resolved with the draft's definitions | closed — tool, test | index lines pass their file to `why_for`; justifications render with the authoring artifact's resolver |
+| 2026-10-25 r3 | spec F2: the leaked-detail paragraph blamed the requirement from the reason alone | closed | inspect both; fix whichever holds the mechanism |
+| 2026-10-25 r3 | note: design-specs-authoring "with no text inline" (r1 F1 class) | closed — swept | "omitting spec text" |
+| 2026-10-25 r4 | UI Map read: no findings | converged — stop rule (a) for the UI Map family | — |
+| 2026-10-25 r4 | spec F1: the ✅ leaked-detail example described behavior, not a reason (a round-3 trim) | closed | example removed; "a reason says why the requirement changes, not what the app does" |
+| 2026-10-25 r4 | spec F2: the page omits Assumptions and TODOs and Out of scope | noise — settled 2026-10-23 (page = card, Discussion, change cards) | reported to the supervisor once |
+| 2026-10-25 r5 | spec F1: an added file covered through another entry's Touches rendered its heading without a reason | closed — tool, test | file-heading lookup passes the file |
+| 2026-10-25 r6 | spec F1: a new or removed section's orientation text was never diffed; the file could be skipped as unchanged | closed — tool, class fix (every prose comparison × added/modified/removed), tests | `render_spec` section prose; intro removal |
+| 2026-10-25 r7 | spec F1: a glossary's intro was never compared (the glossary renderer skipped the shared intro comparison) | closed — tool, test | `render_glossary` calls `intro_entries` |
+| 2026-10-25 r8 | spec F1: the renderer chose a reason by name without kind, so a same-named glossary term supplied a section's reason | closed — tool, test | `why_for` filters by kind as the checker does |
+| 2026-10-25 r8 | spec F2: a changed prose paragraph and its reason filtered separately on the page | closed — tool, test | one prose card holds text and reason |
+| 2026-10-25 r8 | note: a section with orientation text and no items was never visited | closed — tool | sections without items rendered |
+| 2026-10-25 r9 | spec F1: rule-level change entries' reasons never rendered | closed — tool, test | each changed rule shows its entry's reason |
+| 2026-10-25 r9 | spec F2: a removed table column's cell text dropped from the diff | closed — tool, test | changed rows padded both sides |
+| 2026-10-25 r10 | spec F1: a rule's reason shown only with a visual marker (table-only changes and rules in added items lost it) | closed — tool, test | reason looked up whenever an entry names the rule |
+| 2026-10-25 r11 | spec F1: retirement examples taught "Superseded by [ID]" | closed — routed to spec-file-shape (its owner) and Stability sharpened in both content guides | successor named in product words, then cited |
+| 2026-10-25 r11 | spec F2: a topic-anchor citation in a justification linked nowhere on the page | closed — tool, test | topic headings carry ids; unmatched fragments link to the artifact |
+| 2026-10-25 r12 | spec F1: a citation into another document was shortened to a same-named local anchor | closed — tool, test | the anchor shortcut applies only to documents the page represents |
+| 2026-10-25 r13 | spec read: no findings; note that the ID and term shortcuts bypassed the document check (round 12 residual) | closed — tool, test | shortcuts respect `on_page` |
+| 2026-10-25 r14 | spec F1: the gap tooltip dropped an item's nested bullets (a Tradeoff's alternatives) | closed — tool, test | tooltip renders bullets as the Discussion card does |
+| 2026-10-25 r15 | spec F1: popovers resolved citations under the last draft's definitions, losing or misdirecting a source link | closed — tool, test | every popover renders under its own document's definitions |
+| 2026-10-25 r16 | spec F1: sources identified by ID or heading alone (shared tooltips, page-local jumps from external hover text, re-pointed citations compared equal) | closed — tool, tests | document-qualified identity, except a spec item's own ID |
+| 2026-10-25 r17 | spec read: no findings; residual: a term citation into another glossary showed the local definition on hover | closed — tool, test | local tooltip only for the page's own definition |
+| 2026-10-25 r18 | spec F1: deleted text resolved its citations under the draft's definitions and folder | closed — tool, tests | one old-document context for every old-side fragment |
+| 2026-10-25 close | Series PL converged: spec family at r13 by stop rule (a), confirmed r17; UI Map at r4; work-spec at r3. Rounds 14–18 reclassified as renderer follow-up work done outside the series; r19 logged on return | converged | supervisor: a zero round stops the series |
+| 2026-10-25 r19 (after close) | renderer: a glossary entry moved between files can show as a false change with an incomplete reason (reviewer's probe) | logged — follow-up; the series had closed at r13/r17 | for the renderer-hardening effort, with the rest of rounds 14–18's class |

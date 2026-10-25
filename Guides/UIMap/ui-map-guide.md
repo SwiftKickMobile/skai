@@ -2,13 +2,15 @@ Managed-By: skai
 Managed-Id: guide.ui-map-guide
 Managed-Source: Guides/UIMap/ui-map-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-22
+Managed-Updated-At: 2026-10-25
 
 # UI Map Guide
 
 Print `📖 SKAI guide: ui-map-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 A UI Map is a YAML document that defines every scene in an app and the routing relationships between them. The map is the single source of truth for the app's UI architecture; implementation should mirror it directly. A render script produces a visual diagram from the YAML for review.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 This guide defines the platform-agnostic YAML format. Platform implementation patterns live in companion references:
 
@@ -240,7 +242,7 @@ library:
   notes:
     - "Subfolder support planned for v2"
     - at: modal
-      text: "Both surfaced from the library toolbar"
+      text: "Profile and Search open from the Library toolbar"
 ```
 
 A note item can be:

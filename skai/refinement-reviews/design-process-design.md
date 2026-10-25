@@ -381,3 +381,6 @@ readiness 5 points at the shared rule on requests filed against inputs; readines
 2026-10-25 ruling that into a package open items, gaps and requests move up a level. Caps (supervisor,
 2026-10-25): `design-authoring.md` **16,000** (was 16,850), `design-promotion.md` **12,000** (was 12,100).
 
+## Size Budgets — 2026-10-25
+
+Series PL (plain language): `design-authoring.md` **16,000** and `design-promotion.md` **12,000** hold (supervisor, 2026-10-25); the Resolution sentence swept from process-flow and the provenance tag order fit under them by hand trims.

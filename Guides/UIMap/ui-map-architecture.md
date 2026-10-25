@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture
 Managed-Source: Guides/UIMap/ui-map-architecture.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-24
+Managed-Updated-At: 2026-10-25
 
 # UI Map Architecture
 
@@ -184,7 +184,7 @@ Place a marker on the specific content line that needs input — never on a head
 
 Use `###` subsections only for actual Discussion topics: one or more `D#` items, or retained resolved items that still explain the current map. Do not create `###` headings merely to restate fully specified input. Capture fully specified input in `## Inputs`, `## Provisional preview`, `## Assumptions and TODOs`, and `## Map Changes` instead.
 
-**Empty Discussion state:** If drafting or updating produces no `D#` items, and there are no retained resolved items that still explain the current map, leave `## Discussion` as one plain paragraph: "The listed Inputs determine the proposed map; review the provisional preview before it is finalized in Map Changes." This is the empty state for the section; omit it whenever `## Discussion` contains any `D#` items.
+**Empty Discussion state:** If drafting or updating produces no `D#` items, and there are no retained resolved items that still explain the current map, leave `## Discussion` as one plain paragraph saying that nothing needs the supervisor's decision and that the proposed map is ready to review on the preview: "No choice here needs your decision; the proposed map is on the preview for review." Omit it whenever `## Discussion` contains any `D#` items.
 
 **Drafting:**
 
@@ -220,7 +220,7 @@ The proposed map is YAML-first. Do not investigate render tooling before the art
 **Domain structure line.** In `## Provisional preview`, record and keep current a one-line domain summary: name every domain, and for each non-collapsed (`scenes:`) domain list its root scenes. Collapsed domains are named only; a bucket lists its roots:
 
 ```text
-Domains: shell, tickets, billing (collapsed); reports (bucket — roots: ticket_report, billing_report)
+Domains: Shell, Tickets and Billing are collapsed to their root screens; Reports is a bucket whose roots are the ticket report and the billing report (ticket_report, billing_report)
 ```
 
 Writing this forces the single-root check into the open — a bucket whose root list has one entry must be collapsed (rename the domain to that scene), not left as a `scenes:` wrapper. Keep the line current whenever the domain set changes; the supervisor reviews it alongside the render.
@@ -237,7 +237,7 @@ or, when unavailable:
 🗺️ Provisional map render not updated: <reason>.
 ```
 
-**Example** (LumenNotes — a Tradeoff with a recommended pick, and a Proposal):
+**Example** (LumenNotes — a resolved Tradeoff):
 
 ```
 ## Discussion
@@ -246,20 +246,14 @@ or, when unavailable:
 
 A note needs a way to share its contents. Today it has no outgoing share route.
 
-- [ ] D01 [Tradeoff] How is share presented from a note?
-  - **Concern** Share can be a modal sheet over the note or a pushed screen.
+- [x] D01 [Tradeoff] How is share presented from a note?
+  - **Concern** Share can open as a sheet over the note or as a screen pushed onto the note's stack; the designs show neither, only the Share button.
   - **Options**
-    - A — `modal` sheet over the note
-    - B — `nav` push onto the note's stack
-  - **Proposal** A (modal) — sharing is a transient side-task, not a destination in the note's flow.
-  - **Why** A sheet dismisses back to where you were; a push implies a place in the navigation.
-
-### Scene name
-
-- [ ] D02 [Proposal] Name for the share scene
-  - **Concern** The new scene needs a scene id.
-  - **Proposal** `share_sheet`.
-  - **Why** Matches the modal's role and reads clearly in the map.
+    - A — A sheet over the note (`modal`).
+    - B — A pushed screen on the note's stack (`nav`).
+  - **Proposal** I recommend A: share opens as a sheet over the note, because sharing is a side task, not a place in the note's flow.
+  - **Why** A sheet dismisses back to where you were; a pushed screen makes sharing a place you navigate to and back from. The designs show Share as a button on the note, not a screen of its own.
+  - **Decision** A: share opens as a sheet over the note (approved as proposed).
 ```
 
 **Example** (empty Discussion state):
@@ -267,7 +261,7 @@ A note needs a way to share its contents. Today it has no outgoing share route.
 ```
 ## Discussion
 
-The listed Inputs determine the proposed map; review the provisional preview before it is finalized in Map Changes.
+No choice here needs your decision; the proposed map is on the preview for review.
 ```
 
 Each discussion item is its own `- [ ]` item under the appropriate `###` subsection. The title is `<id> [Kind] <plain-language summary>` — the id is `D01`, `D02`, ... (letter-led so renderers don't misparse it as a list; continuous across subsections, no per-group reset), `[Kind]` is `Proposal` / `Tradeoff` / `Question`, and the title itself carries no bold. Sub-bullet labels are **bold** with no separator after: `Concern` always, then either a `Proposal` (the recommended action — a `Tradeoff` adds `Options`) or, for a `Question`, a `Question` line (what you need decided and why you can't recommend yet); `Detail` when the concern needs elaboration; `Why` for the rationale; `Gap` last for unchecked gaps (placeholder or "no placeholder; waiting on <what>"). On approval, check the box and append a `- **Decision** <succinct resolution>.` line as the last sub-bullet.
@@ -276,9 +270,9 @@ A gap on an input you rely on, or an item of yours that cannot be resolved becau
 
 **Keep discussion items tight:** where two or more `- [ ]` items sit under the same heading, leave no blank line between them. A blank line makes the list "loose," which pushes the checkbox onto its own line in some renderers; a tight list keeps the checkbox inline with the title. This applies to discussion items and map change items alike.
 
-After drafting, and after each subsequent response, update the artifact before speaking: revise `ui-map-architecture.md`, update the provisional preview to match it, then STOP at a gate. Emit a **Blocked** gate if any non-gap `- [ ]` items remain, or the advancing **Planned** gate if none do — every non-gap item `- [x]`, or drafting produced no items at all because the inputs fully specify the map. Do not describe intended artifact changes without applying them.
+After drafting, and after each subsequent response, update the artifact before speaking: revise `ui-map-architecture.md`, update the provisional preview to match it, then STOP at a gate. Emit a **Blocked** gate if any non-gap `- [ ]` items remain, or the advancing **Planned** gate if none do — every non-gap item `- [x]`, or drafting produced no items. Do not describe intended artifact changes without applying them.
 
-`⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to Map Changes.`
+`⏳ GATE: Blocked: <N> open items in Discussion. Resolve them; then I write the map changes.`
 `⏳ GATE: Next: Discussion complete<; N open gaps carried>. Say "next" to write Map Changes.`
 
 **Discussion loop:** the agent proposes, the supervisor refines or redirects. Discussion items are live until resolved, not a frozen first draft.
@@ -290,7 +284,7 @@ As the conversation evolves:
 - Remove an unresolved non-gap item when the direction changes so it no longer applies (a gap is resolved as omitted first, per *Resolution*). The artifact stays focused on the current map, not every abandoned branch.
 - Do not add follow-up items for unknowns that can be represented as assumptions, TODOs, or non-blocking notes without changing scene/route architecture.
 
-Keep IDs stable and never renumber existing items. Each `- [ ]` item resolves on the supervisor's explicit approval — check the box (`- [x]`) and append a `- **Decision** <succinct resolution>.` line as the last sub-bullet of the item. For gaps, remove **Gap**; Decision says answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep entries of removed items. Keep resolved decisions only while a map change cites them or they explain the current map. If a later direction subsumes, contradicts, or makes a resolved item misleading, collapse the topic around the current decision: revise the surviving item and remove stale items rather than carrying redundant history forward. Resolved items are not meeting minutes, but they must not erase why the decision existed: when the supervisor changes or rejects a recommendation, keep enough of the original options, proposal, and rationale to show what was changed, then use the Decision line for the current outcome. Keep the Kind label (`Question` / `Proposal` / `Tradeoff`) in the title so the original shape of the decision stays visible. No separate "Decisions" section — decisions stay inline next to their topic.
+Keep IDs stable and never renumber existing items. Each `- [ ]` item resolves on the supervisor's explicit approval — check the box (`- [x]`) and append a `- **Decision** <succinct resolution>.` line as the last sub-bullet of the item. For gaps, remove **Gap**; Decision states the outcome in words and which it was: answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep entries of removed items. Keep resolved decisions only while a map change cites them or they explain the current map. If a later direction subsumes, contradicts, or makes a resolved item misleading, collapse the topic around the current decision: revise the surviving item and remove stale items rather than carrying redundant history forward. Resolved items are not meeting minutes, but they must not erase why the decision existed: when the supervisor changes or rejects a recommendation, keep enough of the original options, proposal, and rationale to show what was changed, then use the Decision line for the current outcome. Keep the Kind label (`Question` / `Proposal` / `Tradeoff`) in the title so the original shape of the decision stays visible. No separate "Decisions" section — decisions stay inline next to their topic.
 
 **Completeness:** Discussion is done when every non-gap `- [ ]` item has been checked off (`- [x]`). STOP at the advancing gate; `next` here advances to Map Changes.
 
@@ -317,7 +311,7 @@ Map change items are written and updated only in Map Changes, never during Discu
 
 **The final map is the reviewed provisional.** Write the structure the supervisor approved at the gate; do not silently re-derive or restructure it here. If realizing the map exposes a needed correction — the provisional cannot be made valid without one — make the minimal fix, record it in Map Changes / Assumptions, and re-render. A structural change beyond a validity fix is a new decision: return to Discussion and re-gate rather than changing the shape after approval.
 
-`## Map Changes` describes exactly the differences between the frozen official map and the proposed map. Since the official map does not move, that diff is recomputable at any time: when the artifact is reopened for new work and already holds map change items from earlier passes, recompute the diff and reconcile the existing items against it — never reset or regenerate the section. An item that still matches a difference keeps its `M#` id and justification; a new difference gets a new item; a difference that no longer holds (the proposed map moved back) loses its item. The ids and rationale are the part a raw diff cannot reconstruct.
+`## Map Changes` describes exactly the differences between the frozen official map and the proposed map. Since the official map does not move, that diff is recomputable at any time: when the artifact is reopened for new work and already holds map change items from earlier passes, recompute the diff and reconcile the existing items against it — never reset or regenerate the section. An item that still matches a difference keeps its `M#` id, and its justification only while it still explains why the change is needed; a new difference gets a new item; a difference that no longer holds (the proposed map moved back) loses its item. The ids and rationale are the part a raw diff cannot reconstruct.
 
 Produce these together before completing:
 
@@ -335,11 +329,11 @@ If every resolved decision produces zero map changes, state that in `## Map Chan
 
 Once the package is in place, declare completion directly — no final planned gate. Use the completion line:
 
-`🏁 Complete. The UI Map architecture artifact is ready.`
+`🏁 Complete. The proposed map, its render and its notes are in the package at <path>, ready for review and for implementation.`
 
 ### Map change item format
 
-Map change items follow the format defined in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md): a stable `M#` ID, a `Type` (`<operation> <element>`), an identity, and **Description** / **Justification** (`<Source>: ...`) / **Touches** sub-bullets. Do not use a checkbox — the map change is realized by the accompanying proposed map and render. Write items top-down in structural order (domain-level changes first, then scenes, then routes), mirroring the map and the rendered diagram; the `M#` ID identifies, it does not order.
+Map change items follow the format defined in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md): a stable `M#` ID, a `Type` (`<operation> <element>`), an identity, and **Description** / **Justification** (a reason, then `<Source>: ...`) / **Touches** sub-bullets. Do not use a checkbox — the map change is realized by the accompanying proposed map and render. Write items top-down in structural order (domain-level changes first, then scenes, then routes), mirroring the map and the rendered diagram; the `M#` ID identifies, it does not order.
 
 ### Deferrals entry format
 

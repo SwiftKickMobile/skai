@@ -173,8 +173,9 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     Row order is compared: a row that moved
     relative to the rows kept around it is marked; whether the order binds is the statement's
     to say and the reviewer's to judge. Glossary link markup is not content. A citation compares
-    by its label and the identity of its target (the anchor, or the file name when there is no
-    anchor), so a link-definition path change is not a change and a retargeted citation is.
+    by its label and the identity of its target (a spec item's anchor alone, stable across moves;
+    any other anchor with its file; the file when there is no anchor), so a link-definition path
+    change to the same item is not a change and a retargeted citation is.
     Sections are not diffed: a section's name, its order and which items it holds are never
     compared, and an item moving between sections is not a change; a section's orientation line
     is prose and is word-diffed like the intro.
@@ -1101,14 +1102,44 @@ def references(target, roots):
 # ---------------------------------------------------------------- rendering
 
 RESOLVER = {"linkdefs": {}, "anchors": set(), "base": None}
+WHY_RESOLVER = {}  # the authoring artifact's link definitions and base, kept while drafts render under their own
+RULE_CHANGES = []  # the change list, for the reasons of rule-level entries (design specs list changed rules one per entry)
+
+
+def rendered_under(linkdefs, path, fn):
+    """`fn()` with the resolver set to another document's link definitions and location, then
+    restored: text copied from a document (a justification, a popover's item or term, a gap owner's
+    Discussion item) resolves its citations as that document defines them, whatever draft is being
+    rendered around it."""
+    if path is None:
+        return fn()
+    saved = RESOLVER["linkdefs"], RESOLVER["base"], RESOLVER.get("doc")
+    RESOLVER["linkdefs"], RESOLVER["base"], RESOLVER["doc"] = linkdefs, Path(path).parent, Path(path)
+    try:
+        return fn()
+    finally:
+        RESOLVER["linkdefs"], RESOLVER["base"], RESOLVER["doc"] = saved
+
+
+def inline_why(why, gloss=None):
+    """A change entry's justification rendered with the authoring artifact's own link definitions."""
+    if not WHY_RESOLVER:
+        return inline(why, gloss, auto=True)
+    return rendered_under(WHY_RESOLVER["linkdefs"], WHY_RESOLVER["doc"], lambda: inline(why, gloss, auto=True))
 
 
 def collect_texts(spec):
     """ID -> Item, for citation popovers."""
     if spec.kind != "spec":
         return
+    doc = Path(spec.path).resolve()
+    external = bool(LAYERS) and not any(root == doc or root in doc.parents for root in LAYERS)
     for it in spec.items:
+        if external:  # a document outside the projection: its items keep their own tooltips, apart from same-ID items on the page
+            RESOLVER.setdefault("ext_items", {})[(doc, it.id)] = (it, spec.linkdefs)
+            continue
         RESOLVER.setdefault("items", {})[it.id] = it
+        RESOLVER.setdefault("item_src", {})[it.id] = (spec.linkdefs, spec.path)
 
 
 def set_resolver(linkdefs, spec_path):
@@ -1116,6 +1147,7 @@ def set_resolver(linkdefs, spec_path):
     on disk has that file's items collected too, so the citation gets its popover like any other."""
     RESOLVER["linkdefs"] = linkdefs
     RESOLVER["base"] = spec_path.parent
+    RESOLVER["doc"] = spec_path
     for target in linkdefs.values():
         path = target.split("#", 1)[0]
         if not path or target.startswith(("http:", "https:", "mailto:")):
@@ -1126,19 +1158,69 @@ def set_resolver(linkdefs, spec_path):
             collect_texts(parse(disk))
 
 
+def doc_on_page(doc):
+    """Whether a document's own text is on this page: none set, the authoring artifact being
+    rendered, or a file under one of the projection's roots. Text copied from any other document
+    (an external citation's popover) resolves its page-local links to that document."""
+    if doc is None:
+        return True
+    doc = Path(doc).resolve()
+    if WHY_RESOLVER and WHY_RESOLVER.get("doc") is not None and Path(WHY_RESOLVER["doc"]).resolve() == doc:
+        return True
+    return any(root == doc or root in doc.parents for root in LAYERS)
+
+
+def on_page(target):
+    """Whether a link target's document is one the page represents: the page itself (`#frag`), the
+    authoring artifact being rendered, or a file under one of the projection's roots. A citation into
+    any other document keeps that document, even when a local anchor shares its fragment."""
+    path_part = target.split("#", 1)[0]
+    if not path_part:
+        return doc_on_page(RESOLVER.get("doc"))
+    if RESOLVER.get("base") is None or target.startswith(("http:", "https:", "mailto:")):
+        return False
+    path = (RESOLVER["base"] / path_part).resolve()
+    if RESOLVER.get("doc") is not None and path == Path(RESOLVER["doc"]).resolve():
+        return True
+    return any(root == path or root in path.parents for root in LAYERS)
+
+
+def external_doc(name):
+    """The resolved document a reference's definition points at when that document is not on this
+    page, else None (a bare ID, a page-local fragment or a projection file)."""
+    target = RESOLVER["linkdefs"].get(name, "")
+    path_part = target.split("#", 1)[0]
+    if not target or not path_part or on_page(target) or RESOLVER.get("base") is None or target.startswith(("http:", "https:", "mailto:")):
+        return None
+    return (RESOLVER["base"] / path_part).resolve()
+
+
+def ext_tip_id(doc, iid):
+    return f"tip-{anchor(iid)}-at-{anchor(Path(doc).as_posix())}"
+
+
 def href_for(name):
     """Page anchor when the target item is rendered on this page, else the spec file itself."""
-    if name.startswith("g-") and name[2:] in RESOLVER["anchors"]:
+    target = RESOLVER["linkdefs"].get(name, "")
+    local = on_page(target) if target else True  # a bare ID or term with no definition is the page's own
+    if name.startswith("g-") and name[2:] in RESOLVER["anchors"] and local:
         return f"#{name[2:]}"
     m = re.match(rf"({ID_RE})(?:-\d{{2}})*$", name)
-    if m and anchor(m.group(1)) in RESOLVER["anchors"]:
+    if m and anchor(m.group(1)) in RESOLVER["anchors"] and local:
         return f"#{anchor(m.group(1))}"
-    target = RESOLVER["linkdefs"].get(name, "")
     frag = target.split("#", 1)[1] if "#" in target else ""
-    if frag and frag in RESOLVER["anchors"]:
+    if frag and frag in RESOLVER["anchors"] and on_page(target):
         return f"#{frag}"
     if target.startswith("#"):  # page-local: the item may be retired on this page; never the folder
-        return f"#{frag}-retired" if f"{frag}-retired" in RESOLVER["anchors"] else f"#{frag}"
+        if f"{frag}-retired" in RESOLVER["anchors"]:
+            return f"#{frag}-retired"
+        doc = RESOLVER.get("doc")
+        if doc is not None and RESOLVER.get("out_dir") is not None:  # a section the page does not show: the document itself, at that fragment
+            try:
+                return f"{Path(os.path.relpath(doc, RESOLVER['out_dir'])).as_posix()}#{frag}"
+            except ValueError:
+                pass
+        return f"#{frag}"
     if target and RESOLVER["base"] is not None and not target.startswith(("http:", "https:")):
         path = (RESOLVER["base"] / target.split("#", 1)[0]).resolve()
         try:
@@ -1165,11 +1247,17 @@ def inline(s, gloss=None, auto=False):
         name = ref if ref else label
         href = href_for(name)
         if gloss and name in gloss:
-            tip = f' data-tip="tip-{name}"'
+            tip = f' data-tip="tip-{name}"' if external_doc(name) is None else ""  # a term defined to point at another document's glossary shows no local definition
             return (f'<a class="term" href="{href}"{tip}>{label}</a>' if href
                     else f'<span class="term"{tip}>{label}</span>')
         m2 = re.match(rf"({ID_RE})((?:-\d{{2}})*)$", name)
-        tip = f' data-tip="tip-{anchor(m2.group(1))}" data-rule="{m2.group(2).lstrip("-")}"' if m2 and m2.group(1) in RESOLVER.get("items", {}) else ""
+        tip = ""
+        if m2:
+            ext = external_doc(name)
+            if ext is not None and (ext, m2.group(1)) in RESOLVER.get("ext_items", {}):
+                tip = f' data-tip="{ext_tip_id(ext, m2.group(1))}" data-rule="{m2.group(2).lstrip("-")}"'
+            elif ext is None and m2.group(1) in RESOLVER.get("items", {}):
+                tip = f' data-tip="tip-{anchor(m2.group(1))}" data-rule="{m2.group(2).lstrip("-")}"'
         return f'<a class="ref" href="{href}"{tip}>{label}</a>' if href else f'<span class="ref"{tip}>{label}</span>'
     s = LINK_USE_RE.sub(link, s)
     return autolink(s, gloss) if auto else s
@@ -1202,16 +1290,20 @@ def autolink(h, gloss):
             runs = nxt
         def make_id(m):
             base, rule = m.group(1), m.group(2)
-            if base not in RESOLVER.get("items", {}):
+            ext = external_doc(base + rule) or external_doc(base)
+            if ext is not None and (ext, base) in RESOLVER.get("ext_items", {}):
+                tip = f' data-tip="{ext_tip_id(ext, base)}" data-rule="{rule.lstrip("-")}"'  # the bare ID's definition points at another document: that document's item
+            elif ext is None and base in RESOLVER.get("items", {}):
+                tip = f' data-tip="tip-{anchor(base)}" data-rule="{rule.lstrip("-")}"'
+            else:
                 return None
             href = href_for(base + rule)
-            tip = f' data-tip="tip-{anchor(base)}" data-rule="{rule.lstrip("-")}"'
             return f'<a class="ref" href="{href}"{tip}>{m.group(0)}</a>' if href else f'<span class="ref"{tip}>{m.group(0)}</span>'
         apply(re.compile(rf"(?<![\w-])({ID_RE})((?:-\d{{2}})*)(?![\w-])"), make_id)
         for term, key in terms:
             def make_term(m, key=key):
                 href = href_for(key)
-                tip = f' data-tip="tip-{key}"'
+                tip = f' data-tip="tip-{key}"' if external_doc(key) is None else ""  # as for an explicit term link: no local definition for a term defined elsewhere
                 return f'<a class="term" href="{href}"{tip}>{m.group(0)}</a>' if href else f'<span class="term"{tip}>{m.group(0)}</span>'
             apply(term_pattern(term), make_term)
         out.append("".join(t for t, _ in runs))
@@ -1251,7 +1343,10 @@ def target_identity(target):
     if target.startswith(("http:", "https:", "mailto:")):
         return target  # an external destination is identified whole, anchor included
     if "#" in target:
-        return target.split("#", 1)[1]
+        path, frag = target.split("#", 1)
+        if re.fullmatch(rf"{ID_RE.lower().replace('[a-z][a-z-]*[a-z]', '[a-z][a-z0-9-]*[a-z]')}(?:-\d{{2}})*(?:-retired)?", frag):
+            return frag  # a spec item's own ID: stable across moves and layers
+        return (os.path.normpath(path).replace(os.sep, "/") + "#" + frag) if path else "#" + frag  # a heading: its document qualifies it
     return os.path.normpath(target).replace(os.sep, "/") if target else target
 
 
@@ -1296,13 +1391,26 @@ def word_diff(old, new, gloss=None):
     return " ".join(parts)
 
 
+OLD_CTX = {"linkdefs": {}, "doc": None}  # the base file being diffed: its own definitions and location, for every old-side fragment
+
+
 def inline_old(s, gloss=None):
-    """Removed text resolves its links through the old file's definitions."""
-    current, RESOLVER["linkdefs"] = RESOLVER["linkdefs"], LINKS["old"]
-    try:
-        return inline(s, gloss)
-    finally:
-        RESOLVER["linkdefs"] = current
+    """Removed text, whole or word-level, resolves its links through the old file's own definitions
+    at the old file's location, so a struck-through citation leads where it led."""
+    if OLD_CTX["doc"] is None:
+        current, RESOLVER["linkdefs"] = RESOLVER["linkdefs"], LINKS["old"]
+        try:
+            return inline(s, gloss)
+        finally:
+            RESOLVER["linkdefs"] = current
+    return rendered_under(OLD_CTX["linkdefs"], OLD_CTX["doc"], lambda: inline(s, gloss))
+
+
+def under_old(fn):
+    """`fn()` rendered in the old file's context (a retired item's body with its tables and rules)."""
+    if OLD_CTX["doc"] is None:
+        return fn()
+    return rendered_under(OLD_CTX["linkdefs"], OLD_CTX["doc"], fn)
 
 
 def norm(s):
@@ -1332,7 +1440,7 @@ def render_table(old: Table, new: Table, gloss, tag=True):
             else:
                 changed = True
                 cells = []
-                for oc, nc in zip(orow + [""] * (len(nrow) - len(orow)), nrow):
+                for oc, nc in zip(orow + [""] * (len(nrow) - len(orow)), nrow + [""] * (len(orow) - len(nrow))):  # a removed column's cells still show as deletions
                     cells.append(f"<td>{inline(nc, gloss) if same(oc, nc) else word_diff(oc, nc, gloss)}</td>")
                 cells[0] = cells[0].replace("<td>", f'<td><span class="badge">{"moved" if key in moved else "changed"}</span>', 1)
                 out.append('<tr class="mod">' + "".join(cells) + "</tr>")
@@ -1343,7 +1451,7 @@ def render_table(old: Table, new: Table, gloss, tag=True):
             out.append(f'<tr class="{"add" if tag else ""}">' + "".join(cells) + "</tr>")
         else:
             changed = True
-            cells = [f'<td><span class="badge">removed</span><del>{inline(orow[0], gloss)}</del></td>'] + [f"<td><del>{inline(c, gloss)}</del></td>" for c in orow[1:]]
+            cells = [f'<td><span class="badge">removed</span><del>{inline_old(orow[0], gloss)}</del></td>'] + [f"<td><del>{inline_old(c, gloss)}</del></td>" for c in orow[1:]]
             out.append('<tr class="rem">' + "".join(cells) + "</tr>")
     out.append("</table>")
     return "".join(out), changed
@@ -1370,7 +1478,7 @@ def render_rules(old_rules, new_rules, parent, gloss, tag=True):
         if orule and nrule:
             if orule.retired != nrule.retired and nrule.retired:
                 changed = True
-                body = f'<del>{inline(orule.text, gloss)}</del> {inline(nrule.text, gloss)}'
+                body = f'<del>{inline_old(orule.text, gloss)}</del> {inline(nrule.text, gloss)}'
                 cls = "ret"
             elif not same(orule.text, nrule.text):
                 changed = True
@@ -1392,11 +1500,13 @@ def render_rules(old_rules, new_rules, parent, gloss, tag=True):
             tbl = "".join(render_table(None, t, gloss, tag)[0] for t in nrule.tables)
         else:
             changed = True
-            body, cls = f'<del>{inline(orule.text, gloss)}</del>', "rem"
+            body, cls = f'<del>{inline_old(orule.text, gloss)}</del>', "rem"
             kids = render_rules(orule.children, [], rid, gloss)[0] if orule.children else ""
             tbl = "".join(render_table(t, None, gloss)[0] for t in orule.tables)
         mark = '<span class="badge"></span>' if cls else ""
-        out.append(f'<li class="{cls}" data-rid="{rid}">{mark}<span class="rid">{num}</span> {body}{tbl}{kids}</li>')
+        why = why_for(RULE_CHANGES, {anchor(rid)}, what="rule")  # a rule's own entry carries its reason, whether or not the rule gets a marker (a table-only change, a rule inside an added item)
+        why = f' <span class="why">— {inline_why(why, gloss)}</span>' if why else ""
+        out.append(f'<li class="{cls}" data-rid="{rid}">{mark}<span class="rid">{num}</span> {body}{why}{tbl}{kids}</li>')
     out.append("</ul>")
     return "".join(out), changed
 
@@ -1419,21 +1529,25 @@ def gap_owners(authoring, disc):
     "specs" the product specs artifact this artifact or its base links. Each maps to (its review
     page's href relative to this page, "" for this page; {D: item}); the href doubles as the
     source shown in the tooltip."""
-    owners = {"": ("", {it["id"]: it for _, its in disc for it in its})}
+    defs = lambda text: {m.group("name"): m.group("target") for m in map(LINKDEF_RE.match, text.splitlines()) if m}
+    own_text = Path(authoring).read_text(encoding="utf-8") if authoring else ""
+    owners = {"": ("", {it["id"]: it for _, its in disc for it in its}, defs(own_text), Path(authoring).resolve() if authoring else None)}
     if not authoring:
         return owners
     authoring = Path(authoring).resolve()
     folder = authoring.parent
     base = folder.parent.parent / authoring.name if folder.parent.name in ("change-requests", "promoted-change-requests") else None
     if base and base.exists():
-        owners["base"] = ("../../" + authoring.name.replace("-authoring.md", "-review.html"), {it["id"]: it for _, its in parse_discussion(base.read_text(encoding="utf-8")) for it in its})
+        base_text = base.read_text(encoding="utf-8")
+        owners["base"] = ("../../" + authoring.name.replace("-authoring.md", "-review.html"), {it["id"]: it for _, its in parse_discussion(base_text) for it in its}, defs(base_text), base.resolve())
     for src in [authoring] + ([base] if base and base.exists() else []):
         for m in re.finditer(r"\(([^)\s]*product-specs-authoring\.md)\)|\]:\s*(\S*product-specs-authoring\.md)", src.read_text(encoding="utf-8")):
             path = (src.parent / (m.group(1) or m.group(2))).resolve()
             if path.exists():
                 page = os.path.relpath(path.with_name("product-specs-review.html"), folder).replace(os.sep, "/")
-                items = {it["id"]: it for _, its in parse_discussion(path.read_text(encoding="utf-8")) for it in its}
-                owners["product specs"] = owners["specs"] = (page, items)
+                specs_text = path.read_text(encoding="utf-8")
+                items = {it["id"]: it for _, its in parse_discussion(specs_text) for it in its}
+                owners["product specs"] = owners["specs"] = (page, items, defs(specs_text), path)
                 break
         if "specs" in owners:
             break
@@ -1450,7 +1564,7 @@ def gap_owner_chip(scope, did, owners):
     info = owners.get(scope)
     if info is None:
         return f'<span class="ref">{did}</span>'
-    page, items = info
+    page, items = info[0], info[1]
     href = f"{page}#{did.lower()}"
     tip = f' data-tip="tip-gap-{scope_key(scope)}-{did.lower()}"' if did in items else ""
     return f'<a class="ref" href="{html.escape(href)}"{tip}>{did}</a>'
@@ -1476,12 +1590,12 @@ def render_item(old: Item, new: Item, gloss, why):
             parts.append(f'<blockquote><b>Known difference — {html.escape(k.app)}:</b> {inline(k.text, gloss)}</blockquote>')
     elif new is None:
         status = "missing"
-        parts.append(f"<del>{render_plain_item(old, gloss)}</del><p>Present in the catalog but absent from the draft.</p>")
+        parts.append(f"<del>{under_old(lambda: render_plain_item(old, gloss))}</del><p>Present in the catalog but absent from the draft.</p>")
     else:
         changed = False
         if new.retired and not old.retired:
             status = "retired"
-            parts.append(f"<del>{render_plain_item(old, gloss)}</del>")
+            parts.append(f"<del>{under_old(lambda: render_plain_item(old, gloss))}</del>")
             parts.append("".join(f"<p>{inline(p, gloss)}</p>" for p in new.statement))
             changed = True
         else:
@@ -1523,7 +1637,7 @@ def render_item(old: Item, new: Item, gloss, why):
 def card(status, aid, name, body, why="", gloss=None, extra=""):
     """A card: collapsible for every status, open by default for added and modified, collapsed for
     everything else, with the change's justification under it."""
-    w = f'<div class="why"><b>Why</b> {inline(why, gloss, auto=True)}</div>' if why else ""
+    w = f'<div class="why"><b>Why</b> {inline_why(why, gloss)}</div>' if why else ""
     label = f'<span class="id">{html.escape(name)}</span>'
     ident = f' id="{aid}"' if aid else ""
     badge = status if status in ("added", "modified") else "unchanged" if status == "unchanged" else ""
@@ -1542,29 +1656,44 @@ def render_plain_item(it: Item, gloss):
     return "".join(parts)
 
 
-def item_tips(items, gloss, scope="", source=""):
-    """A popover template per Discussion item a gap note may name: the item's summary and
-    sub-bullets, led by the owning page's path when it is another document."""
-    src = f'<div class="pop-src">{html.escape(source)}</div>' if source else ""
+def bullet_list(bullets, gloss):
+    """A Discussion item's sub-bullets as list items, each with its nested bullets (an Options list,
+    a Detail's points), the one rendering the card and every tooltip of the item share."""
     return "".join(
+        f"<li>{inline(text, gloss, auto=True)}" + (f"<ul>{''.join(f'<li>{inline(c, gloss, auto=True)}</li>' for c in kids)}</ul>" if kids else "") + "</li>"
+        for text, kids in bullets)
+
+
+def item_tips(items, gloss, scope="", source="", linkdefs=None, path=None):
+    """A popover template per Discussion item a gap note may name: the item's summary and
+    sub-bullets, led by the owning page's path when it is another document, its citations resolved
+    as that document defines them."""
+    src = f'<div class="pop-src">{html.escape(source)}</div>' if source else ""
+    return rendered_under(linkdefs or {}, path, lambda: "".join(
         f'<template id="tip-gap-{scope_key(scope)}-{did.lower()}">{src}<div class="pop-head"><span class="id">{did}</span> <span class="status">{html.escape(it["kind"])}</span></div>'
-        f'<p>{inline(it["title"], gloss, auto=True)}</p>' + (("<ul>" + "".join(f"<li>{inline(text, gloss, auto=True)}</li>" for text, _ in it["bullets"]) + "</ul>") if it["bullets"] else "") + "</template>"
-        for did, it in items.items())
+        f'<p>{inline(it["title"], gloss, auto=True)}</p>' + (f"<ul>{bullet_list(it['bullets'], gloss)}</ul>" if it["bullets"] else "") + "</template>"
+        for did, it in items.items()))
 
 
 def owner_tips(owners, gloss):
     """Popovers for every owning artifact's items; the specs alias shares the product specs' templates."""
-    return "".join(item_tips(items, gloss, scope, page) for scope, (page, items) in owners.items() if scope != "specs")
+    return "".join(item_tips(items, gloss, scope, page, linkdefs, path) for scope, (page, items, linkdefs, path) in owners.items() if scope != "specs")
 
 
 def render_popovers(gloss):
     out = [owner_tips(RESOLVER.get("gap_owners", {}), gloss)]
     for ref, (term, text) in sorted(gloss.items()):
-        out.append(f'<template id="tip-{ref}"><div class="pop-head"><span class="id">{html.escape(term)}</span>'
-                   f'</div><p>{inline(text, gloss)}</p>{also_called("", RESOLVER.get("alts", {}).get(ref, ""), "unchanged")}</template>')
+        src = RESOLVER.get("gloss_src", {}).get(ref, ({}, None))
+        out.append(rendered_under(src[0], src[1], lambda: f'<template id="tip-{ref}"><div class="pop-head"><span class="id">{html.escape(term)}</span>'
+                   f'</div><p>{inline(text, gloss)}</p>{also_called("", RESOLVER.get("alts", {}).get(ref, ""), "unchanged")}</template>'))
     for iid, it in sorted(RESOLVER.get("items", {}).items()):
-        out.append(f'<template id="tip-{anchor(iid)}"><div class="pop-head"><span class="id">{html.escape(iid)}</span>'
-                   f'{" <span class=\"badge retired\"></span>" if it.retired else ""}</div>{render_plain_item(it, gloss)}</template>')
+        src = RESOLVER.get("item_src", {}).get(iid, ({}, None))
+        out.append(rendered_under(src[0], src[1], lambda: f'<template id="tip-{anchor(iid)}"><div class="pop-head"><span class="id">{html.escape(iid)}</span>'
+                   f'{" <span class=\"badge retired\"></span>" if it.retired else ""}</div>{render_plain_item(it, gloss)}</template>'))
+    for (doc, iid), (it, linkdefs) in sorted(RESOLVER.get("ext_items", {}).items(), key=lambda kv: (str(kv[0][0]), kv[0][1])):
+        src = os.path.relpath(doc, RESOLVER["out_dir"]).replace(os.sep, "/") if RESOLVER.get("out_dir") else doc.name
+        out.append(rendered_under(linkdefs, doc, lambda: f'<template id="{ext_tip_id(doc, iid)}"><div class="pop-src">{html.escape(src)}</div><div class="pop-head"><span class="id">{html.escape(iid)}</span>'
+                   f'{" <span class=\"badge retired\"></span>" if it.retired else ""}</div>{render_plain_item(it, gloss)}</template>'))
     return "".join(out)
 
 
@@ -1583,14 +1712,14 @@ class Entry:
     own: bool = True  # a modified item whose own prose, tables, notes and gaps are unchanged (only its rules moved) is not own
 
 
-def render_glossary(old: Spec, new: Spec, gloss, changes, elsewhere=None):
-    """Entries by term in the draft's order, its section headings between them, then removed ones.
+def render_glossary(old: Spec, new: Spec, gloss, changes, elsewhere=None, rel="glossary.md"):
+    """The intro, then entries by term in the draft's order, its section headings between them, then removed ones.
     An entry new to this file whose term sits in another baseline glossary file (`elsewhere`:
     term -> (definition, note, file, its link definitions)) moved here: it stays added, and its definition and note are
     diffed against their old home."""
     o = {t: (x, ln) for t, x, ln in (old.items if old else [])}
     n = {t: (x, ln) for t, x, ln in new.items}
-    out, section = [], None
+    out, section = intro_entries(old, new, gloss, changes, rel), None
     for term in [t for t, _, _ in new.items] + [t for t in o if t not in n]:
         ot, nt = o.get(term), n.get(term)
         aid = anchor(term)
@@ -1598,7 +1727,7 @@ def render_glossary(old: Spec, new: Spec, gloss, changes, elsewhere=None):
             section = new.entry_sections.get(term)
             if section:
                 out.append(Entry(f'<h3 class="section">{html.escape(section)}</h3>', "section", section, set(), "unchanged", nt[1]))
-        why = why_for(changes, {aid})
+        why = why_for(changes, {aid}, what="glossary entry")
         oa, na = (old.entry_alts.get(term, ("",))[0] if old and ot else ""), (new.entry_alts.get(term, ("",))[0] if nt else "")
         moved = bool(nt and not ot and term in (elsewhere or {}))
         if ot and nt and same(ot[0], nt[0]):
@@ -1615,7 +1744,7 @@ def render_glossary(old: Spec, new: Spec, gloss, changes, elsewhere=None):
         elif nt:
             status, body = "added", f"<p>{inline(nt[0], gloss)}</p>"
         else:
-            status, body = "removed", f"<p><del>{inline(ot[0], gloss)}</del></p>"
+            status, body = "removed", f"<p><del>{inline_old(ot[0], gloss)}</del></p>"
         if not moved:  # a moved entry's note is already diffed against its old home
             body += also_called(oa if ot else na, na if nt else "", status)
         out.append(Entry(card(status, aid, term, body, why, gloss), "glossary entry", term, {aid}, status, (nt or ot)[1]))
@@ -1646,7 +1775,7 @@ def render_index(old: Spec, new: Spec, gloss, changes, rel):
         ot, nt = (target_identity(LINKS[side].get(name, "")) for side in ("old", "new"))
         tgt = LINKS["new" if b else "old"].get(name, "").split("#")[0]
         keys = {anchor(name)} | ({tgt} if tgt else set())  # the file described, by its root-relative path
-        why = why_for(changes, keys)  # the entry for the linked file, never every entry touching the index
+        why = why_for(changes, keys, rel, "index line")  # the entry for the linked file, else the entries covering the index through Touches, as check-changes accepts
         if a and b and same(fmt(a), fmt(b)) and ot == nt:
             status, body = "unchanged", ""
         elif a and b:
@@ -1655,7 +1784,7 @@ def render_index(old: Spec, new: Spec, gloss, changes, rel):
         elif b:
             status, body = "added", f"<p>{inline(fmt(b), gloss)}</p>"
         else:
-            status, body = "removed", f"<p><del>{inline(fmt(a), gloss)}</del></p>"
+            status, body = "removed", f"<p><del>{inline_old(fmt(a), gloss)}</del></p>"
         out.append(Entry(card(status, "", name, body, why, gloss) if body else "", "index line", name, keys, status, (b or a)[2]))
     return out
 
@@ -1732,17 +1861,27 @@ def identity_keys(identity, linkdefs, base_dir, drafts, paths=True):
     return label, keys
 
 
-def why_for(changes, keys, file=""):
-    """The joined justifications of every change-list entry naming one of the keys; when none
-    does and `file` is given, of the file-level entry (add file or modify file) whose Touches names
-    that file, so an intro or section line with no entry of its own shows the file's reason, never
-    the reasons of every change inside the file (index lines pass no `file`)."""
-    hits = [c for c in changes if c.keys & keys and c.why]
+def why_for(changes, keys, file="", what=None):
+    """The joined justifications of every change-list entry naming one of the keys and, when
+    `what` is given, of that kind (as check-changes matches: a glossary term, an item and an index
+    line sharing a name never lend each other a reason); when none does and `file` is given, of
+    every entry whose Touches names that file, each with its ID, so an intro, section line or
+    covered file shows the reasons of the entries that cover it, as check-changes accepts them."""
+    hits = [c for c in changes if c.keys & keys and c.why and (what is None or kind_matches(c.type, what))]
     if not hits and file:
-        hits = [c for c in changes if c.touched & {file, Path(file).name} and c.why and c.type in ("add file", "modify file")]
+        hits = [c for c in changes if c.touched & {file, Path(file).name} and c.why]
     if len(hits) == 1:
         return hits[0].why
     return "; ".join(f"{c.cid} {c.why}" for c in hits)
+
+
+def discussion_note(path, disc):
+    """The one-sentence paragraph an authoring artifact's `## Discussion` holds when it has no
+    items (what settled the drafts), so the page shows it; empty when items exist or nothing is written."""
+    if not path or any(its for _, its in disc):
+        return ""
+    m = re.search(r"^## Discussion\s*\n(.*?)(?=^## |\Z)", Path(path).read_text(encoding="utf-8"), re.M | re.S)
+    return LINKDEF_RE.sub("", m.group(1)).strip() if m else ""
 
 
 def parse_authoring(path, drafts):
@@ -1910,9 +2049,10 @@ def render_tree(bases, drafts, gloss, changes, prefix=""):
         base = broot / rel if broot else None
         old = parse(base) if base else None
         set_resolver(new.linkdefs, draft.resolve())
+        OLD_CTX["linkdefs"], OLD_CTX["doc"] = (old.linkdefs if old else {}), (base.resolve() if base else None)
         LINKS["old"], LINKS["new"] = (rebased_linkdefs(old, broot) if old else {}), rebased_linkdefs(new, drafts)  # root-relative, so a target reads the same from any layer
         if new.kind == "glossary":
-            entries = render_glossary(old, new, gloss, changes, {t: v for t, v in baseline_entries(bases).items() if v[2] != rel})
+            entries = render_glossary(old, new, gloss, changes, {t: v for t, v in baseline_entries(bases).items() if v[2] != rel}, rel)
         elif new.kind == "index":
             entries = render_index(old, new, gloss, changes, rel)
         else:
@@ -1930,9 +2070,9 @@ def render_tree(bases, drafts, gloss, changes, prefix=""):
         fid = f"{prefix}file-" + anchor(rel)
         toc.append((fid, kind, rel, n_changed))
         body = f'<h2 id="{fid}"><span class="badge {kind}">{kind}</span> {html.escape(rel)}</h2>'
-        why = why_for(changes, {rel, Path(rel).name})
+        why = why_for(changes, {rel, Path(rel).name}, rel if kind == "added" else "", "file")  # the file's own entry; an added file with none shows the entry covering it through Touches (a folder or root creation)
         if why:
-            body += f'<p class="file-why"><b>Why</b> {inline(why, gloss, auto=True)}</p>'
+            body += f'<p class="file-why"><b>Why</b> {inline_why(why, gloss)}</p>'
         if new.issues:
             body += '<p class="file-why">Validation: ' + "; ".join(html.escape(str(i)) for i in new.issues) + "</p>"
         body += "".join(e.html for e in entries)
@@ -1956,32 +2096,53 @@ def baseline_entries(bases):
 
 def render_spec(old: Spec, new: Spec, gloss, changes, prefix, rel):
     """Entries for a spec file: intro, section headings with their lines, items in file order,
-    then items the base has that the draft lacks. A changed intro or section line carries the
-    reason of the entry whose Touches names the file."""
+    then items and section lines the base has that the draft lacks. An intro or section line that
+    is added, changed or removed carries the reason of the entry naming it, else of the entries
+    whose Touches name the file."""
     o = {it.id: it for it in old.items} if old else {}
     old_sections = ({it.section for it in old.items} | set(old.sections)) if old else set()
     out = intro_entries(old, new, gloss, changes, rel)
-    section = None
+    section, seen = None, set()
     for it in new.items:
         if it.section != section:
             section = it.section
             if section:
+                seen.add(section)
                 head = next((i for i, l in enumerate(new.raw) if H2_RE.match(l) and H2_RE.match(l).group(1).strip() == section), 0)
                 out.append(Entry(f'<h3 class="section">{html.escape(section)}</h3>', "section", section, set(), "unchanged", head + 1))
                 desc_new = new.sections.get(section, "")
                 desc_old = old.sections.get(section, "") if old else ""
                 if section in old_sections and not same(desc_old, desc_new):
-                    out.append(Entry(prose_card(word_diff(desc_old, desc_new, gloss), True, why_for(changes, {anchor(section)}, rel), gloss), "section line", section, {anchor(section)}, "modified", prose_line(new.raw, head)))
+                    out.append(Entry(prose_card(word_diff(desc_old, desc_new, gloss), True, why_for(changes, {anchor(section)}, rel, "section line"), gloss), "section line", section, {anchor(section)}, "modified", prose_line(new.raw, head)))
+                elif old is not None and section not in old_sections and desc_new:  # a new section's orientation text in a file the base has
+                    out.append(Entry(prose_card(word_diff("", desc_new, gloss), True, why_for(changes, {anchor(section)}, rel, "section line"), gloss), "section line", section, {anchor(section)}, "added", prose_line(new.raw, head)))
                 elif desc_new:
                     out.append(Entry(prose_card(inline(desc_new, gloss)), "section line", section, {anchor(section)}, "unchanged", prose_line(new.raw, head)))
-        status, h = render_item(o.get(it.id), it, gloss, why_for(changes, {anchor(it.id)}))
+        status, h = render_item(o.get(it.id), it, gloss, why_for(changes, {anchor(it.id)}, what="item"))
         if prefix:
             h = h.replace(' id="', f' id="{prefix}', 1)
         out.append(Entry(h, "item", it.id, {anchor(it.id)}, status, it.line, own=status != "modified" or item_own_changed(o.get(it.id), it)))
         out += rule_entries(o[it.id].rules if it.id in o else [], it.rules, it.id)
     for k, it in o.items():
         if k not in {it.id for it in new.items}:
-            out.append(Entry(render_item(it, None, gloss, why_for(changes, {anchor(k)}))[1], "item", k, {anchor(k)}, "missing", it.line))
+            out.append(Entry(render_item(it, None, gloss, why_for(changes, {anchor(k)}, what="item"))[1], "item", k, {anchor(k)}, "missing", it.line))
+    for sec, desc_new in new.sections.items():  # a section with orientation text and no item under it
+        if sec in seen or not desc_new:
+            continue
+        head = next((i for i, l in enumerate(new.raw) if H2_RE.match(l) and H2_RE.match(l).group(1).strip() == sec), 0)
+        out.append(Entry(f'<h3 class="section">{html.escape(sec)}</h3>', "section", sec, set(), "unchanged", head + 1))
+        desc_old = old.sections.get(sec, "") if old else ""
+        if sec in old_sections and not same(desc_old, desc_new):
+            out.append(Entry(prose_card(word_diff(desc_old, desc_new, gloss), True, why_for(changes, {anchor(sec)}, rel, "section line"), gloss), "section line", sec, {anchor(sec)}, "modified", prose_line(new.raw, head)))
+        elif old is not None and sec not in old_sections:
+            out.append(Entry(prose_card(word_diff("", desc_new, gloss), True, why_for(changes, {anchor(sec)}, rel, "section line"), gloss), "section line", sec, {anchor(sec)}, "added", prose_line(new.raw, head)))
+        else:
+            out.append(Entry(prose_card(inline(desc_new, gloss)), "section line", sec, {anchor(sec)}, "unchanged", prose_line(new.raw, head)))
+    new_sections = {it.section for it in new.items} | set(new.sections)
+    for sec, desc_old in (old.sections.items() if old else ()):  # a removed section's orientation text
+        if sec not in new_sections and desc_old:
+            head = next((i for i, l in enumerate(old.raw) if H2_RE.match(l) and H2_RE.match(l).group(1).strip() == sec), 0)
+            out.append(Entry(prose_card(word_diff(desc_old, "", gloss), True, why_for(changes, {anchor(sec)}, rel, "section line"), gloss), "section line", sec, {anchor(sec)}, "missing", prose_line(old.raw, head)))
     return out
 
 
@@ -1991,7 +2152,7 @@ def intro_entries(old, new, gloss, changes, rel):
     whose Touches names the file."""
     intro_new, intro_old = " ".join(new.intro), " ".join(old.intro) if old else ""
     if old and not same(intro_old, intro_new):
-        return [Entry(prose_card(word_diff(intro_old, intro_new, gloss), True, why_for(changes, {"intro"}, rel), gloss), "intro", "intro", {"intro"}, "modified", prose_line(new.raw, 0))]
+        return [Entry(prose_card(word_diff(intro_old, intro_new, gloss), True, why_for(changes, {"intro"}, rel, "intro"), gloss), "intro", "intro", {"intro"}, "modified", prose_line(new.raw, 0))]
     if intro_new:
         return [Entry(prose_card(inline(intro_new, gloss)), "intro", "intro", {"intro"}, "unchanged", prose_line(new.raw, 0))]
     return []
@@ -2000,8 +2161,8 @@ def intro_entries(old, new, gloss, changes, rel):
 def prose_card(body, modified=False, why="", gloss=None):
     if not modified:
         return f'<p class="intro">{body}</p>'
-    w = f'<div class="why"><b>Why</b> {inline(why, gloss, auto=True)}</div>' if why else ""
-    return f'<p class="intro modified"><span class="badge modified"></span>{body}</p>{w}'
+    w = f'<div class="why"><b>Why</b> {inline_why(why, gloss)}</div>' if why else ""
+    return f'<div class="item prose modified"><p class="intro modified"><span class="badge modified"></span>{body}</p>{w}</div>'
 
 
 def prose_line(raw, after):
@@ -2059,6 +2220,7 @@ def prepare(catalog, bases, drafts, out):
             for term, text, _ in gp.items:
                 gloss[f"g-{anchor(term)}"] = (term, text)
                 RESOLVER.setdefault("alts", {})[f"g-{anchor(term)}"] = gp.entry_alts.get(term, ("",))[0]
+                RESOLVER.setdefault("gloss_src", {})[f"g-{anchor(term)}"] = (gp.linkdefs, gp.path)
         for d in sorted(root.rglob("*.md")):
             sp = parse(d)
             RESOLVER.setdefault("collected", set()).add(d.resolve())
@@ -2108,12 +2270,17 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
         if not authoring:
             sys.exit(f"no authoring artifact ({' or '.join(names)}) in {drafts.parent}; pass --authoring FILE, or --no-authoring for a bare comparison")
     title, goal, disc, changes, linkdefs, situations = parse_authoring(authoring, drafts)
+    note = discussion_note(authoring, disc)
     gloss = prepare(catalog, bases, drafts, out)
     RESOLVER["gap_owners"] = gap_owners(authoring, disc)
     # everything from the authoring artifact resolves its links through the artifact's own
     # definitions, so it is rendered before the drafts (whose loop re-sets the resolver per file)
+    WHY_RESOLVER.clear()
+    RULE_CHANGES[:] = changes
     if authoring:
         set_resolver(linkdefs, Path(authoring).resolve())
+        WHY_RESOLVER.update({"linkdefs": RESOLVER["linkdefs"], "base": RESOLVER["base"], "doc": RESOLVER["doc"]})
+        RESOLVER["anchors"] |= {anchor(topic) for topic, _ in disc if topic} | {it["id"].lower() for _, its in disc for it in its}  # the page's Discussion headings and cards
     head, discussion = "", ""
     if title or goal:
         items = [it for _, its in disc for it in its]
@@ -2125,12 +2292,13 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
                  else (f"{n_open} open" + (f", {gaps}" if n_gap else "") if n_open else "no discussion items"))
         head += (f'<div class="item request"><div class="head"><span class="status">{html.escape(state)}</span>'
                  f'<span class="title">{html.escape(title)}</span></div>'
-                 + (f"<p>{inline(goal, gloss, auto=True)}</p>" if goal else "") + "</div>")
+                 + (f"<p>{inline(goal, gloss, auto=True)}</p>" if goal else "")
+                 + (f'<p class="note">{inline(note, gloss, auto=True)}</p>' if note else "") + "</div>")
     if situations:
         head += f'<h2>Situations</h2><div class="item request">{render_markdown(situations, gloss)}</div>'
     if disc:
         discussion = '<section class="discussion"><h2>Discussion</h2>' + "".join(
-            (f'<h3 class="section">{html.escape(topic)}</h3>' if topic else "") + "".join(render_discussion_item(it, gloss) for it in items)
+            (f'<h3 class="section" id="{anchor(topic)}">{html.escape(topic)}</h3>' if topic else "") + "".join(render_discussion_item(it, gloss) for it in items)
             for topic, items in disc) + "</section>"
     sections, toc, totals, _ = render_tree([*reversed(bases), catalog], drafts, gloss, changes)
     n_gaps = sum(1 for _, items in disc for it in items if it["gap"]) if disc else 0
@@ -2153,9 +2321,7 @@ def render_discussion_item(it, gloss):
     head = (f'<summary><span class="id">{it["id"]}</span>'
             f'<span class="status">{html.escape(it["kind"])}</span><span class="title">{inline(it["title"], gloss, auto=True)}</span>'
             f'<span class="state">{state}</span></summary>')
-    bullets = "".join(
-        f"<li>{inline(text, gloss, auto=True)}" + (f"<ul>{''.join(f'<li>{inline(c, gloss, auto=True)}</li>' for c in kids)}</ul>" if kids else "") + "</li>"
-        for text, kids in it["bullets"])
+    bullets = bullet_list(it["bullets"], gloss)
     return f'<details class="item request discussion {state}" id="{it["id"].lower()}"{"" if done else " open"}>{head}{f"<ul>{bullets}</ul>" if bullets else ""}</details>'
 
 
@@ -2232,7 +2398,7 @@ def check_changes(catalog, drafts, authoring, bases=()):
     disc_items = {it["id"]: it for _, its in parse_discussion(text) for it in its}
     known = set(disc_items)
     log_issues += [Issue(authoring, c.line, f"{c.cid} cites {did}, which is not in ## Discussion")
-                   for c in changes for did in sorted(set(re.findall(r"(?<!base )(?<!specs )\bD\d+\b", re.sub(r"Base decision: D\d+", "", c.why)))) if did not in known and not c.why.lstrip().startswith("Change request:")]  # a folded entry's citation stays the request's  # a scoped item (base D4, product specs D21) is another artifact's
+                   for c in changes for did in sorted(set(re.findall(r"(?<!base )(?<!specs )\bD\d+\b", re.sub(r"Base decision: D\d+", "", c.why)))) if did not in known and "Change request:" not in c.why]  # a folded entry's citation stays the request's  # a scoped item (base D4, product specs D21) is another artifact's
     # every gap footnote in the drafts names an open gap item, and every open gap item is marked
     open_gaps = {d for d, it in disc_items.items() if it["gap"] and not it["done"]}
     marked = set()

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-compose-placeholders
 Managed-Source: Guides/UIMap/ui-map-compose-placeholders.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-25
 
 # UI Map — Jetpack Compose Placeholder Scenes
 
@@ -11,6 +11,8 @@ Print `📖 SKAI guide: ui-map-compose-placeholders` now, as a line of its own. 
 How the UI Map **implementation** skill scaffolds scenes in Jetpack Compose: skeleton + navigation, no feature content. Companion to [`ui-map-compose.md`](ui-map-compose.md) — read its **Scene file layout** and **Route enums** sections first; this doc builds on them. Load this doc while auditing, planning, or building whenever placeholder work is in scope; omit it only when no placeholder work is in scope.
 
 Placeholders require two project-vendored libraries: the **placeholder library** (the `PlaceholderScene` family — the Compose counterpart to `SKAISwiftUI`) and the **routing library** (`SlideNavHost`, `ModalBottomSheetNavHost`, the `bottomSheet` / `bottomSheetFullScreen` / `dialog` modal builders, the `navigate*` extensions). SKAI does not currently distribute these libraries. Before Code Changes, confirm that the project provides compatible implementations of the APIs below; if either library is absent or incompatible, STOP in Discussion under the implementation guide's missing-mapping rule. Do not hand-roll a substitute during scaffolding.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## Build philosophy
 

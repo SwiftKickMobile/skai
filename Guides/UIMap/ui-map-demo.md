@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-demo
 Managed-Source: Guides/UIMap/ui-map-demo.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-10-25
 
 # UI Map Demo
 
@@ -11,6 +11,8 @@ Print `📖 SKAI guide: ui-map-demo` now, as a line of its own. Read this guide 
 A complete UI Map shown in both representations: YAML source (the source of truth) and the Mermaid render derived from it. For feedback on the format and the render.
 
 The standard render is the interactive HTML page (`--html`, see [`ui-map-guide.md`](ui-map-guide.md)), which a Markdown document cannot embed; this demo shows the Mermaid render instead. To view the demo as the HTML page, save the YAML below to a file and render it with `--html`.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 Examples use **LumenNotes**, skai's shared fictional theme. The schema and conventions are project-agnostic.
 
@@ -44,7 +46,7 @@ domains:
       - search                            # cross-domain ref (reused)
     notes:
       - at: modal
-        text: "Both surfaced from the library toolbar"
+        text: "Profile and Search open from the Library toolbar"
 
   note:                                   # collapsed
     composite:
@@ -183,7 +185,7 @@ flowchart LR
 
     note_welcome@{ shape: tag-rect, label: "Onboarding flow not yet built" }
     note_welcome -.- welcome
-    note_library@{ shape: tag-rect, label: "Both surfaced from the library toolbar" }
+    note_library@{ shape: tag-rect, label: "Profile and Search open from the Library toolbar" }
     note_library -.- library_modal
 
     mstyle_library[/"<div style='text-align:left'>Profile <b>sheet</b>, Search <b>full_screen</b></div>"/]

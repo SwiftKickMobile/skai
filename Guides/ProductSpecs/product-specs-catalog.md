@@ -131,9 +131,9 @@ and registered on the file's index line; check the indexes before introducing on
 - IDs never change when files move, rename or reorganize.
 - IDs are **append-only from the moment they are drafted**, not from promotion: a work spec may
   already cite a `(pending)` ID. A retired ID is burned — never reused, never renumbered.
-- A retired requirement keeps its heading and ID in place, its body replaced by a statement naming
-  what superseded it. ❌ deleting the heading breaks every citation; ❌ leaving the old text under
-  `(retired)` leaves a contradicted rule readable as if it held.
+- A retired requirement keeps its heading and ID in place, its body replaced by a sentence saying in product words what replaced it, then the citation.
+  ❌ deleting the heading breaks citations; ❌ leaving the old text under `(retired)` leaves a
+  contradicted rule in force.
 
 ### Modify vs. retire
 

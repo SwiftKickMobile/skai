@@ -504,3 +504,7 @@ never lands in the spec folder or the repository: captured output goes under the
 the command, the result and the scratch path. The bracket is the record; output is reproducible by
 rerun and need not survive, so the former `evidence/` folder for failure output is gone. The
 combined cap holds at 32,600 (32,594 after the change).
+
+## Size Budget — 2026-10-25
+
+Combined cap reset to **31,700 bytes** (supervisor, 2026-10-25, series PL, plain language in the guides' examples and review text), a little under the compressed 31,789; replaces 32,600.

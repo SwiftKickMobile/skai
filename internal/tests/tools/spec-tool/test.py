@@ -13,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import importlib.util
 
 ROOT = Path(__file__).resolve().parents[4]
 TOOL = ROOT / "Bin/spec-tool.py"
@@ -197,6 +198,316 @@ class Writers(unittest.TestCase):
         self.assertIn("<blockquote><b>Also called:</b> journal (the import service, its API).</blockquote>", html)
         popover = re.search(r'<template id="tip-g-terminal-stage">.*?</template>', html, re.S).group(0)
         self.assertIn("<blockquote><b>Also called:</b> closed stage (support desk); done (the web app).</blockquote>", popover)
+
+    def test_render_shows_the_no_items_sentence(self):
+        authoring = self.copy / "package/product-specs-authoring.md"
+        text = authoring.read_text()
+        text = re.sub(r"^## Discussion\n.*?(?=^## )", "## Discussion\n\nThe catalog settles every requirement here; the drafts follow it.\n\n", text, flags=re.M | re.S)
+        text = re.sub(r"^## Decision Log\n.*", "## Decision Log\n", text, flags=re.M | re.S)
+        authoring.write_text(text)
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        self.assertIn('<span class="status">no discussion items</span>', html)
+        self.assertIn('<p class="note">The catalog settles every requirement here; the drafts follow it.</p>', html)
+
+    def test_render_intro_covered_through_touches_shows_the_covering_reason(self):
+        draft = self.copy / "package/proposed-product-specs/domains/workflow-stage.md"
+        draft.write_text(draft.read_text().replace("\n\n## ", " Stages are listed first.\n\n## ", 1))
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        card = re.search(r'<div class="item prose modified"><p class="intro modified">.*?Stages are listed first.*?</p>(<div class="why">.*?</div>)?</div>', html, re.S)
+        self.assertIsNotNone(card, "the changed intro renders as modified")
+        self.assertIsNotNone(card.group(1), "an intro covered through a requirement entry's Touches shows that entry's reason")
+        self.assertIn("R1 ", card.group(1) + " ", "several covering entries are attributed by ID" if card.group(1).count("R") > 1 else "")
+
+    def test_render_justification_citation_stays_a_link_inside_a_draft_card(self):
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        card = re.search(r'id="stage-01".*?<div class="why"><b>Why</b> (.*?)</div>', html, re.S)
+        self.assertIsNotNone(card, "STAGE-01 card with a Why")
+        self.assertRegex(card.group(1), r'<a [^>]*href="[^"]*#stage-definitions"[^>]*>D1</a>', "the cited decision resolves through the authoring artifact's definitions, not the draft's")
+
+    def test_render_index_line_covered_through_touches_shows_the_covering_reason(self):
+        index = ("# Domains\n\n- [workflow-stage] -- `STAGE-` -- the stages a notebook moves through\n"
+                 "- [suggestion-status] -- `SUGGESTION-STATUS-` -- reported statuses\n\n"
+                 "[workflow-stage]: workflow-stage.md\n[suggestion-status]: suggestion-status.md\n")
+        (self.copy / "catalog/domains/_domains.md").write_text(index)
+        (self.copy / "package/proposed-product-specs/domains/_domains.md").write_text(index.replace("the stages a notebook moves through", "the stage table and what each stage holds"))
+        authoring = self.copy / "package/product-specs-authoring.md"
+        authoring.write_text(authoring.read_text().replace("  - **Touches** domains/workflow-stage.md\n", "  - **Touches** domains/workflow-stage.md, domains/_domains.md\n", 1))
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        self.assertIn("stage table", html, "the changed index line renders")
+        self.assertRegex(html, r'stage table.{0,900}?<div class="why"><b>Why</b> Resolved decision:', "an index line covered through an entry's Touches shows that entry's reason")
+
+    def test_render_added_file_covered_through_touches_shows_the_covering_reason(self):
+        drafts = self.copy / "package/proposed-product-specs/domains"
+        for name, iid in (("extra.md", "EXTRA-01"), ("extra-two.md", "EXTRA2-01")):
+            (drafts / name).write_text(f"# {name[:-3].title()}\n\nSpillover items.\n\n## Items\n\n### {iid}\nSomething a person can observe.\n")
+        authoring = self.copy / "package/product-specs-authoring.md"
+        text = authoring.read_text()
+        text = text.replace("## Requirement Changes\n", "## Requirement Changes\n\n- R9 add file: domains/extra.md\n  - **Justification** Both files hold what the suggestion domain spilled over; Supervisor input\n  - **Touches** domains/extra.md, domains/extra-two.md\n", 1)
+        authoring.write_text(text)
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        for name in ("extra.md", "extra-two.md"):
+            section = re.search(rf'domains/{re.escape(name)}.{{0,1500}}?<p class="file-why"><b>Why</b> (.*?)</p>', html, re.S)
+            self.assertIsNotNone(section, f"{name} shows a file-level reason")
+            self.assertIn("spilled over", section.group(1), f"{name} shows the covering entry's reason")
+
+    def test_render_new_section_orientation_text_shows_as_added_with_its_reason(self):
+        draft = self.copy / "package/proposed-product-specs/domains/workflow-stage.md"
+        draft.write_text(draft.read_text().replace("## Entries\n", "## Extras\n\nSpillover notes about stages.\n\n### STAGE-90\nSomething a person can observe.\n\n## Entries\n", 1))
+        authoring = self.copy / "package/product-specs-authoring.md"
+        authoring.write_text(authoring.read_text().replace("## Requirement Changes\n", "## Requirement Changes\n\n- R9 add requirement: [STAGE-90]\n  - **Justification** The stage work left notes with no home; Supervisor input\n  - **Touches** domains/workflow-stage.md\n", 1).replace("\n[STAGE-01]:", "\n[STAGE-90]: proposed-product-specs/domains/workflow-stage.md#stage-90\n[STAGE-01]:", 1))
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        card = re.search(r'<div class="item prose modified"><p class="intro modified"><span class="badge modified"></span>(.*?)</p>(<div class="why">.*?</div>)?</div>', html, re.S)
+        cards = [m for m in re.finditer(r'<div class="item prose modified"><p class="intro modified"><span class="badge modified"></span>(.*?)</p>(<div class="why">.*?</div>)?</div>', html, re.S) if "Spillover notes" in m.group(1)]
+        self.assertEqual(len(cards), 1, "the new section's orientation text renders as a changed prose card")
+        self.assertIsNotNone(cards[0].group(2), "it carries the covering entry's reason")
+        self.assertIn("no home", cards[0].group(2))
+
+    def test_render_removed_section_orientation_text_shows_as_missing(self):
+        base = self.copy / "catalog/domains/workflow-stage.md"
+        base.write_text(base.read_text().replace("## Entries\n\n", "## Entries\n\nWhat every entry in a stage carries.\n\n", 1))
+        draft = self.copy / "package/proposed-product-specs/domains/workflow-stage.md"
+        text = draft.read_text()
+        start, end = text.index("## Entries\n"), text.index("## Attention\n")
+        draft.write_text(text[:start] + text[end:])
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        self.assertRegex(html, r'<div class="item prose modified"><p class="intro modified"><span class="badge modified"></span><del[^>]*>What every entry in a stage carries', "the removed section's orientation text renders as a deleted prose card")
+
+    def test_render_glossary_intro_change_shows_with_its_covering_reason(self):
+        glossary = self.copy / "package/proposed-product-specs/glossary.md"
+        glossary.write_text(glossary.read_text().replace("Terms the product specs use, and the items that govern each.", "Terms the product specs use, the items that govern each, and the suggestion terms added here.", 1))
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        cards = [m for m in re.finditer(r'<div class="item prose modified"><p class="intro modified"><span class="badge modified"></span>(.*?)</p>(<div class="why">.*?</div>)?</div>', html, re.S) if "suggestion terms added here" in m.group(1)]
+        self.assertEqual(len(cards), 1, "the changed glossary intro renders as a changed prose card")
+        self.assertIsNotNone(cards[0].group(2), "it carries the reason of the entries whose Touches name the glossary")
+        self.assertIn("R11", cards[0].group(2), "several covering entries are attributed by ID")
+
+    def test_render_section_prose_takes_no_reason_from_a_same_named_glossary_term(self):
+        draft = self.copy / "package/proposed-product-specs/domains/workflow-stage.md"
+        draft.write_text(draft.read_text().replace("What the stages are, what each holds, and which are terminal.", "What the stages are, what each holds, which are terminal, and how they are ordered.", 1))
+        glossary = self.copy / "package/proposed-product-specs/glossary.md"
+        glossary.write_text(glossary.read_text().replace("### Active suggestion", "### Stages\nThe ordered set of workflow stages ([STAGE-01]).\n\n### Active suggestion", 1))
+        authoring = self.copy / "package/product-specs-authoring.md"
+        authoring.write_text(authoring.read_text().replace("## Requirement Changes\n", "## Requirement Changes\n\n- R9 add glossary entry: Stages\n  - **Justification** A term for the whole set was missing; Supervisor input\n  - **Touches** glossary.md\n", 1))
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        cards = [m for m in re.finditer(r'<div class="item prose modified"><p class="intro modified">(.*?)</p>(<div class="why">.*?</div>)?</div>', html, re.S) if "how they are ordered" in m.group(1)]
+        self.assertEqual(len(cards), 1, "the changed section prose renders as one card holding text and reason")
+        self.assertIsNotNone(cards[0].group(2))
+        self.assertNotIn("whole set was missing", cards[0].group(2), "a glossary entry sharing the section's name lends it no reason")
+        self.assertIn("R1 ", cards[0].group(2) + " ", "the reason comes from the entries covering the file through Touches")
+
+    def test_render_section_with_orientation_text_and_no_items(self):
+        draft = self.copy / "package/proposed-product-specs/domains/workflow-stage.md"
+        draft.write_text(draft.read_text().replace("## Entries\n", "## Notes\n\nOrientation only, no items yet.\n\n## Entries\n", 1))
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        self.assertIn('<h3 class="section">Notes</h3>', html, "a section with no items still renders its heading")
+        self.assertRegex(html, r'<div class="item prose modified"><p class="intro modified"><span class="badge modified"></span><ins[^>]*>Orientation only, no items yet\.</ins>', "its new orientation text renders as an added prose card")
+
+    def test_render_design_rule_change_shows_its_entry_reason(self):
+        page = self.copy / "design-package/design-specs-review.html"
+        code, lines = run("render", "--catalog", "design-catalog", "--drafts", "design-package/proposed-design-specs",
+                          "--authoring", "design-package/design-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        li = re.search(r'<li class="mod" data-rid="UI-NOTES-02-01">.*?</li>', html, re.S)
+        self.assertIsNotNone(li, "the changed rule renders as modified")
+        self.assertIn('<span class="why">— ', li.group(0), "a changed rule carries its own entry's reason")
+        self.assertIn("badge follows the 2026 guidance", li.group(0))
+
+    def test_render_removed_table_column_shows_its_old_cells(self):
+        full = "\n| Stage | Holds | Terminal |\n|---|---|---|\n| Archived | finished work | Yes, for good |\n| Deleted | removed notes | Yes, for good |\n"
+        narrow = "\n| Stage | Holds |\n|---|---|\n| Archived | finished work |\n| Deleted | removed notes |\n"
+        for path, table in ((self.copy / "catalog/domains/workflow-stage.md", full), (self.copy / "package/proposed-product-specs/domains/workflow-stage.md", narrow)):
+            text = path.read_text()
+            i = text.index("### STAGE-03\n"); j = text.index("\n\n", i) + 1
+            path.write_text(text[:j] + table + text[j:])
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        self.assertRegex(html, r'<del[^>]*>Yes, for good</del>', "the removed column's old cells show as deletions")
+
+    def test_render_rule_with_table_only_change_shows_its_reason(self):
+        rule = "- **01** The title is the note's first line, truncated to one line.\n"
+        table = "\n  | Length | Shown |\n  | --- | --- |\n  | Short | whole |\n  | Long | {cut} |\n"
+        for path, cut in ((self.copy / "design-catalog/screens/notes.md", "first line"), (self.copy / "design-package/proposed-design-specs/screens/notes.md", "first 40 characters")):
+            text = path.read_text(); assert text.count(rule) == 1
+            path.write_text(text.replace(rule, rule + table.format(cut=cut), 1))
+        authoring = self.copy / "design-package/design-specs-authoring.md"
+        text = authoring.read_text()
+        text = text.replace("- S1 modify rule: [UI-NOTES-01.02]", "- S10 modify rule: [UI-NOTES-01.01]\n  - **Justification** Long titles were cut at a line, which varies by device; Supervisor input\n  - **Touches** [notes][s-notes]\n\n- S1 modify rule: [UI-NOTES-01.02]", 1)
+        text = text.replace("[UI-NOTES-01.02]: proposed-design-specs/screens/notes.md#ui-notes-01", "[UI-NOTES-01.01]: proposed-design-specs/screens/notes.md#ui-notes-01\n[UI-NOTES-01.02]: proposed-design-specs/screens/notes.md#ui-notes-01", 1)
+        authoring.write_text(text)
+        page = self.copy / "design-package/design-specs-review.html"
+        code, lines = run("render", "--catalog", "design-catalog", "--drafts", "design-package/proposed-design-specs",
+                          "--authoring", "design-package/design-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        li = re.search(r'<li class="[^"]*" data-rid="UI-NOTES-01-01">.*?</li>', html, re.S)
+        self.assertIsNotNone(li, "rule 01 renders")
+        self.assertRegex(li.group(0), r'<ins[^>]*>40\s*characters', "its table change renders as a diff")
+        self.assertIn("varies by device", li.group(0), "a rule whose table alone changed shows its entry's reason")
+
+    def test_render_topic_citation_reaches_its_heading_and_an_unshown_section_reaches_the_artifact(self):
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        self.assertIn('<h3 class="section" id="stage-definitions">', html, "a Discussion topic heading carries its anchor")
+        authoring = self.copy / "package/product-specs-authoring.md"
+        authoring.write_text(authoring.read_text().replace("[D1]: #stage-definitions", "[D1]: #assumptions-and-todos", 1))
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        card = re.search(r'id="stage-01".*?<div class="why"><b>Why</b> (.*?)</div>', html, re.S)
+        self.assertIsNotNone(card)
+        self.assertRegex(card.group(1), r'href="[^"]*product-specs-authoring\.md#assumptions-and-todos"', "a citation to a section the page omits links to the artifact at that section")
+
+    def test_render_citation_into_another_artifact_keeps_that_artifact(self):
+        authoring = self.copy / "package/product-specs-authoring.md"
+        authoring.write_text(authoring.read_text().replace("[D1]: #stage-definitions", "[D1]: change-requests/001/product-specs-authoring.md#stage-definitions", 1))
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        self.assertIn('<h3 class="section" id="stage-definitions">', html, "the page has a same-named local topic")
+        card = re.search(r'id="stage-01".*?<div class="why"><b>Why</b> (.*?)</div>', html, re.S)
+        self.assertIsNotNone(card)
+        self.assertRegex(card.group(1), r'href="[^"]*change-requests/001/product-specs-authoring\.md#stage-definitions"', "a citation into another artifact is not shortened to the same-named local anchor")
+
+    def test_render_id_reference_defined_in_another_artifact_keeps_that_artifact(self):
+        authoring = self.copy / "package/product-specs-authoring.md"
+        text = authoring.read_text()
+        self.assertIn("[STAGE-01]: proposed-product-specs/domains/workflow-stage.md#stage-01", text)
+        authoring.write_text(text.replace("[STAGE-01]: proposed-product-specs/domains/workflow-stage.md#stage-01", "[STAGE-01]: change-requests/001/proposed-product-specs/domains/workflow-stage.md#stage-01", 1))
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        d1 = re.search(r'<details class="item request discussion[^"]*" id="d1".*?</details>', html, re.S)
+        self.assertIsNotNone(d1)
+        self.assertRegex(d1.group(0), r'href="[^"]*change-requests/001/proposed-product-specs/domains/workflow-stage\.md#stage-01"', "an ID reference the artifact defines in another document keeps that document, though the page has an item of that ID")
+
+    def test_render_gap_tooltip_keeps_the_items_nested_bullets(self):
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        tip = re.search(r'<template id="tip-gap-[^"]*-d2">.*?</template>', html, re.S)
+        self.assertIsNotNone(tip, "the open Tradeoff D2 has a gap tooltip")
+        self.assertIn("Missing expiration leaves a Submitted suggestion active", tip.group(0), "the tooltip carries the item's alternatives, not only the Options label")
+
+    def test_render_gap_tooltip_resolves_citations_as_its_own_artifact_defines_them(self):
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        tip = re.search(r'<template id="tip-gap-[^"]*-d2">.*?</template>', html, re.S)
+        self.assertIsNotNone(tip, "the open Tradeoff D2 has a gap tooltip")
+        self.assertRegex(tip.group(0), r'href="[^"]*change-requests/001/product-specs-authoring\.md"', "a reference-style citation in the owning item keeps its link in the tooltip, resolved by the artifact's own definitions")
+
+    def test_target_identity_qualifies_headings_by_document_but_not_item_ids(self):
+        spec = importlib.util.spec_from_file_location("st", TOOL); st = importlib.util.module_from_spec(spec); spec.loader.exec_module(st)
+        self.assertEqual(st.target_identity("../a.md#stage-01"), st.target_identity("../b.md#stage-01"), "a spec item's ID is the same item wherever its file sits")
+        self.assertNotEqual(st.target_identity("../first-review.md#decision"), st.target_identity("../second-review.md#decision"), "a heading belongs to its document")
+
+    def test_render_same_id_in_another_document_gets_its_own_tooltip(self):
+        authoring = self.copy / "package/product-specs-authoring.md"
+        authoring.write_text(authoring.read_text().replace("[STAGE-01]: proposed-product-specs/domains/workflow-stage.md#stage-01", "[STAGE-01]: change-requests/001/proposed-product-specs/domains/workflow-stage.md#stage-01", 1))
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        d1 = re.search(r'<details class="item request discussion[^"]*" id="d1".*?</details>', html, re.S).group(0)
+        link = re.search(r'<a class="ref" href="[^"]*change-requests/001/[^"]*#stage-01"([^>]*)>STAGE-01</a>', d1)
+        self.assertIsNotNone(link, "the citation links to the other document")
+        tipid = re.search(r'data-tip="([^"]+)"', link.group(1))
+        self.assertIsNotNone(tipid, "it carries a tooltip")
+        self.assertNotEqual(tipid.group(1), "tip-stage-01", "not the page's own STAGE-01 tooltip")
+        self.assertIn(f'<template id="{tipid.group(1)}">', html, "the other document's item has its own popover")
+
+    def test_render_term_defined_in_another_glossary_shows_no_local_definition(self):
+        other = self.copy / "package/other-glossary.md"
+        other.write_text("# Other Glossary\n\n### Notebook\nA different definition kept elsewhere.\n")
+        authoring = self.copy / "package/product-specs-authoring.md"
+        text = authoring.read_text()
+        self.assertIn("[g-notebook]: proposed-product-specs/glossary.md#notebook", text)
+        authoring.write_text(text.replace("[g-notebook]: proposed-product-specs/glossary.md#notebook", "[g-notebook]: other-glossary.md#notebook", 1))
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        card = re.search(r'<div class="item request"><div class="head">.*?</div>(.*?)</div>', html, re.S).group(1)
+        link = re.search(r'<a class="term" href="[^"]*other-glossary\.md#notebook"([^>]*)>notebook</a>', card)
+        self.assertIsNotNone(link, "the Goal's term links to the other glossary")
+        self.assertNotIn('data-tip="tip-g-notebook"', link.group(1), "it does not show the local glossary's definition on hover")
+
+    def test_render_deleted_text_keeps_the_old_files_citations(self):
+        base = self.copy / "catalog/domains/workflow-stage.md"
+        draft = self.copy / "package/proposed-product-specs/domains/workflow-stage.md"
+        bt = base.read_text(); dt = draft.read_text()
+        self.assertIn("### STAGE-03\n", bt)
+        i = bt.index("### STAGE-03\n"); j = bt.index("\n\n", i)
+        base.write_text(bt[:j] + " See [the review][r]." + bt[j:] + "\n[r]: ../old-review.md#x\n")
+        draft.write_text(dt + "\n[r]: ../new-review.md#x\n")
+        page = self.copy / "package/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text()
+        card = re.search(r'id="stage-03".*?</details>', html, re.S).group(0)
+        deleted = re.search(r'<del[^>]*>.*?the review.*?</del>', card, re.S)
+        self.assertIsNotNone(deleted, "the dropped citation renders as deleted text")
+        self.assertRegex(deleted.group(0), r'href="[^"]*catalog/old-review\.md#x"', "deleted text links where the old file linked, from the old file's folder")
+        self.assertNotIn("new-review", deleted.group(0))
 
     def test_render_moved_glossary_entry_diffs_its_note(self):
         page = self.copy / "glossary-move/page.html"

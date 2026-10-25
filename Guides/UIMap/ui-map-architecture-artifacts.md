@@ -2,11 +2,13 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture-artifacts
 Managed-Source: Guides/UIMap/ui-map-architecture-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-25
 
 # UI Map Architecture Artifact Formats
 
 Print `📖 SKAI guide: ui-map-architecture-artifacts` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 The typed formats the architecture skill produces and consumes. This is the consumer-facing layer: a downstream reader resolves any field or value here without reading the authoring method ([`ui-map-architecture.md`](ui-map-architecture.md)). For the YAML map format itself, see [`ui-map-guide.md`](ui-map-guide.md).
 
@@ -27,7 +29,7 @@ Implementation-side artifact formats (code change items, build evidence) live in
   - **Description** what changes. Single operation: 1-2 lines.
     Multiple operations of the same kind under one identity: a sub-list,
     one bullet per operation. Avoid prose that buries per-operation detail.
-  - **Justification** <Source>: <reference or rationale>
+  - **Justification** <why the change is needed>; <Source>: <reference>
   - **Touches** scenes / routes / map areas affected
 ```
 
@@ -35,7 +37,10 @@ Implementation-side artifact formats (code change items, build evidence) live in
 - **Type** — `<operation> <element>`.
   - operations: `add` | `remove` | `move` | `modify`
   - map elements: `domain` | `scene` | `route` | `scene-attribute`
-- **Source** (the leading token of Justification) — one of: `Upstream requirement` | `Supervisor input` | `Resolved decision` | `Agent proposal` | `Guide convention` | `Project convention` | `Map` | `Migration mapping` | `Change request`. When the source is a spec, requirement, or change request, the Justification is just the citation. `Resolved decision: D#` cites a resolved Discussion item — the `D#` item's Decision line shows whether the outcome was supervisor-directed, approved as proposed, or revised. `Agent proposal` is an agent-originated map choice that did not go through Discussion, and carries a real rationale. `Project convention` means the project's README or equivalent project-conventions doc is the authority.
+- **Source** (the token after the reason) — one of: `Upstream requirement` | `Supervisor input` | `Resolved decision` | `Agent proposal` | `Guide convention` | `Project convention` | `Map` | `Migration mapping` | `Change request`. A Justification is a reason a reader follows without opening anything, then its source. `Resolved decision: D#` cites a resolved Discussion item — the `D#` item's Decision line shows whether the outcome was supervisor-directed, approved as proposed, or revised. `Agent proposal` is an agent-originated map choice that did not go through Discussion. `Project convention` means the project's README or equivalent project-conventions doc is the authority.
+
+  ❌ `- **Description** add scene share_sheet under notes` / `- **Justification** Resolved decision: D01`
+  ✅ `- **Description** A note gains a Share sheet, opened from its toolbar and dismissed back to the note.` / `- **Justification** Sharing is a side task, not a place in the note's flow, so it opens as a sheet; Resolved decision: D01`
 
 Entries are written top-down in structural order — domain-level changes first, then scenes, then routes — mirroring the map and the rendered diagram. Items carry no checkbox: the change is realized by the proposed map and render that accompany the section.
 

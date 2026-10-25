@@ -1391,3 +1391,799 @@ Process reflection: twelve rounds, the last four almost entirely in the tool, ea
 next until the layer model was made explicit (`LAYERS`, `logical_path`) in r9; a tool change of this
 size should get that design step before the rounds, not during them.
 
+## Plain Language In The Spec, UI Map And Work-Spec Guides — 2026-10-25
+
+Target: the product specs guides (5), design specs guides (4), UI Map guides (10) and work-spec
+guides (2), 313,953 bytes on 2026-10-25. Standard: `writing-style-design.md` Requirements 2–6, with
+the supervisor's ruling of 2026-10-25 that a spec change item's Justification is a reason in plain
+words, then its source (`product-specs-system-design.md` and `design-specs-design.md` § Amendment —
+2026-10-25, plain language). Question for every guide: where do its instructions or its examples
+produce writing for a person that is not in plain language, or that says nothing the reader can
+use? Both halves matter: an agent imitates the examples a guide gives it, so a fix goes in the
+instruction and the example. Method (agreed 2026-10-25): one Astra cold pass with that question as
+the inventory, run as three reads so each family is read whole (spec guides; UI Map guides;
+work-spec guides), then repairs through the process as one series; the proposed Justification edit
+goes to the pass for assessment. Record below.
+
+### Refinement — series PL (2026-10-25)
+
+#### Round 1 (prompts `refine/pl1/prompt-specs.txt`, `prompt-uimap.txt`, `prompt-workspec.txt`; reports `review-specs.md`, `review-uimap.md`, `review-workspec.md`)
+
+Three reads of one round, same prompt but for the target list, the simulation steps and, for the spec
+guides only, the observed failures (four facts: the Offers change list's justifications, an Offers
+requirement sentence, Discussion-gate summaries from skai#97, the CR-001 V06 entry as it stood on
+2026-10-24) and the proposed Justification edits A–C for assessment. Report charter: instructions or
+examples that produce or permit text for a person that is not plain or says nothing useful.
+Excluded surfaces: the refinement records, release notes, internal and templates. Launched 2026-10-25.
+
+Work-spec read (returned first): F1 the image-loading example in both guides models the form but
+not the substance (an unnamed "transformation", a reason with no source, a Done-when that says
+nothing with its identifier removed, an API comment silent on the change from optional to throwing)
+— accept, example replaced across both guides, paid for by the example's duplicate Unit Testing
+routing; F2 the no-items Discussion sentence ("review the API Sketch as the proposed contract") and
+the plan gate's "link or summarize" let the agent point instead of state — accept, both sharpened to
+state the change and the fact that settles it. Both divergent · normal · speculative = 2.5; read
+subtotal 5. Open question on gap closure wording ("answered, placeholder adopted, or omitted") left
+to known-gaps, as the reviewer did. Pair at 32,566 / 32,600.
+
+Spec read: F1 both artifacts guides make a citation sufficient ("for a spec the Justification is the
+citation"; "Entries carry no text"; the folded entry's `Change request:` prefix is checked by
+`startswith` in the tool) — accept, verified; edits A and C amended per the report (A also narrows
+"no text" to copying spec text and repairs the Implementation example; C names the shared behavior
+and its source), B endorsed; the provenance token moves after the entry's own reason and source and
+the checker matches it anywhere. F2 the Tradeoff example ("Proposal B." / "Why Theme follows each
+device's appearance") and the Resolution sentence "Decision says answered, placeholder adopted, or
+omitted" (owned by process-flow § Structured discussion items, inlined in five guides) — accept;
+example rewritten, the owner sentence sharpened to the outcome in words plus which of the three it
+was, swept to every inlined copy. F3 "Package prose may name frames, nodes and files" in
+design-specs-authoring and design-specs.md — accept, narrowed to where the reader must go. F4 the
+gap footnote form names the owner by ID with no words for the question — settled 2026-10-24 (the
+question stays with its owner; the chip carries its tooltip), omitted from the prompt's settled
+list; noise, and put to the supervisor as a question under today's ruling. F5 design-specs.md
+Restatement ("shrink to the citation"; "Headings as [UI-LIST-01-02]"; the glossary attribution) —
+accept, examples keep a readable subject before the citation. F6 C4 Writing style and V3 Product
+language check content rules only; the C4 failure example says FAILED and a path — accept, both
+apply the writing guide and the example names the defect. F7 gate wording ("The package returns to
+authoring", "advance to Completion", "base written, archival incomplete") — accept, cosmetic.
+Scored: F1 divergent · normal · verified = 5; F2, F3, F5, F6 divergent · normal · speculative = 2.5
+each; F7 cosmetic · normal · speculative = 1; F4 noise. Read subtotal 16.
+
+UI Map read: F1 the architecture artifacts guide's "the Justification is just the citation",
+"reference or rationale", `Resolved decision: D#` as a whole example; implementation's `Realizes`
+"anchors why" — accept. F2 the Code Changes gate says "to implement" in Plan mode too; "The app
+conforms to the official UI Map" after a scoped audit; completion lines report state — accept. F3
+the domain line example and the Discussion example (`A (modal)`, a Proposal of `share_sheet`) teach
+shorthand against the guide's own Writing style section — accept. F4 the copied annotation "Both
+surfaced from the library toolbar" in the format guide and the demo — one defect with F3 (examples).
+F5 evidence brackets as the whole record — accept, cosmetic. F6 eight guides without the pointer —
+accept for all eight (the standard says every guide whose agent writes for a person; no cap on the
+set). Scored: F1, F2, F3+F4 divergent · normal · speculative = 2.5 each; F5 cosmetic · normal ·
+speculative = 1; F6 divergent · off-normal · speculative = 1.875. Read subtotal 10.375. The
+product-specs baseline guide, which writes the product paragraph and is read only from authoring,
+keeps no pointer: log-only.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+
+spec F1 5 · spec F2+F3+F5+F6 10 · spec F7 1 · spec F4 noise (settled 2026-10-24) · uimap F1+F2+F3(+F4) 7.5 ·
+uimap F5 1 · uimap F6 1.875 · workspec F1+F2 5 = 31.375.
+
+Decisions taken in triage (supervisor may overrule): the provenance token on a folded entry follows
+the entry's own reason and source (`<reason>; <Source>: <ref>; Change request: <nnn> R<n>`), in the
+shared guide, both spec promotion guides, design promotion and the checker. Ruled (supervisor,
+2026-10-25): the gap footnote keeps its settled form. The gap's Discussion item is the source of
+truth; the footnote's Placeholder clause states the placeholder as it relates to this item; the
+owner link, with its tooltip, is for anyone who wants more. A footnote never carries the question.
+F4 stays noise; the next prompt lists this among the settled dispositions.
+
+### Drafts and author check — 2026-10-25
+
+Repairs drafted for every accepted r1 finding. Core owners: process-flow's Resolution step says the
+Decision states the outcome in words and which of answered, placeholder adopted or omitted it was,
+swept to the six inlined copies (design-authoring, design-specs-authoring, product-specs-authoring,
+work-spec-creation, ui-map-architecture, ui-map-implementation); the shared guide's rule 5, both
+spec promotion guides, design-promotion and the checker put the provenance token after the entry's
+own reason and source (`"Change request:" in why`). Spec guides: both artifacts guides' templates
+read `<why the change is needed>; <Source>: <reference>`, "entries carry no text" is "copy no spec
+text", the citation-only sentence is gone, every example carries a reason, the leaked-detail pair
+reordered; the Tradeoff example rewritten in product words with a first-person recommendation; the
+no-items sentence states what settled the drafts; the frame/node/file permission narrowed to where
+the reader must go; Restatement never shrinks to a bare citation, with the heading and glossary
+examples repaired; C4 and V3 apply the writing guide and the C4 failure example names the defect;
+gate lines say what the agent does next ("Write <N> requirements into <paths>", "I am reopening the
+package to fix it", "close the discussion; I then finish the package for your review", "the specs
+are written but the package is not yet archived"). UI Map: the architecture format's citation-only
+sentence gone, a ❌/✅ Description and Justification pair added, `Realizes` traces and the
+Description explains, the domain line and the Discussion example in product words (the name-only
+proposal deleted, the Tradeoff shown resolved), the annotation names Profile and Search in the format
+guide and the demo's YAML and render, evidence lines open with what the run established, the Code
+Changes gate has a Build and a Plan line, completion lines say what is in place and what is left,
+the pointer added to the eight guides without it (and to the two spec artifacts guides). Work-spec:
+the image-loading example names the behavior, the reason and the API change across both guides, the
+no-items sentence and the plan gate state the change. Maintainer rule: `maintain-skai.md` § Common
+house style, the guide-authoring sanity scan, the review template's failure-mode examples.
+
+Author check against the standard: writing-style-design Requirements 2–6 applied to every new
+sentence (read with IDs removed), Requirement 10 present in the three maintainer surfaces; the two
+spec amendments (reason then source; the citation sentence gone; examples show a reason) ✓; the gap
+footnote form untouched ✓. Sanity scan: `Managed-Updated-At` 2026-10-25 on every edited guide; no
+"human"; gate prefixes intact; pointer grep: every target guide carries it (still without it, and
+logged for a later pass: the Figma designer guide, the Test guides, the debugging guide, the Core
+reference guides, product-specs-baseline). Tests: spec-tool 18 OK, design-tool OK.
+
+Sizes before compression (cap, delta): process-flow 21,637 (21,550, +87); change-requests 2,971
+(2,950, +21); product-specs-artifacts 5,596 (5,350); -authoring 20,603 (20,350, +253); -promotion
+16,575 (16,550, +25); design-authoring 16,065 (16,000, +65); design-promotion 11,950 (12,000);
+design-specs set 50,278 (60,000); work-spec pair 33,027 (32,600, +427); UI Map set 179,836 (no cap).
+Caps are reset by the supervisor after compression, as the process says.
+
+### Compression — 2026-10-25 (Astra, scratchpad `compress11/`, four runs, removals counted)
+
+Work-spec pair (returned first): 33,027 → 32,095 by Astra; installed 31,813 after rejecting three
+of its moves: links lifted out of their sentences to dangle after them (ten places, restored
+inline), the verbatim known-gaps pointer sentence paraphrased (restored byte for byte in both
+guides), and reason sentences put into the `Realizes` trace field with first person in the task
+`Work` lines (restored: Realizes traces, Work is the work). Its documented duplicate removals
+accepted (stable-ID reminders, the planned-gate timing sentence, "do not edit the design from this
+skill"); its four lost-item flags kept as they stand; its cut list (213 bytes) not taken. The pair
+is under its 32,600 cap.
+
+Core and Design run: change-requests 2,971 → 2,957 (installed, then 2,949 after one trim);
+design-authoring 16,065 → 14,801, design-promotion 11,950 → 11,330 and process-flow 21,637 → 17,762
+rejected. Reasons: process-flow is the canonical reference whose gate and marker boilerplate the
+gated-workflows template mirrors into every guide, and an 18 percent restructure of the owner is a
+periodic-restructure pass of its own (refinement guide § Across passes), not a repair in this series;
+the two design outputs rewrote that same inlined boilerplate and re-inlined the shared guide's rule 6
+into design-promotion C3, which the CA cross-check settled the other way (the design guides point at
+the shared guide). Hand trims instead: the swept Resolution sentence shortened to "Decision states
+the outcome in words and which it was: answered, placeholder adopted, or omitted." in the owner and
+all six copies; process-flow's "appended, not substituted" clause (Astra's own duplicate finding)
+removed; design-authoring's duplicate feedback reminder in Phases removed and "actually" dropped from
+its gate-persistence sentence. Result: process-flow 21,522 / 21,550; change-requests 2,949 / 2,950;
+design-authoring 15,995 / 16,000; design-promotion 11,950 / 12,000.
+
+Spec run (seven guides, 93,053 → 87,656) and UI Map run (ten guides, 179,836 → 168,356): installed,
+with the same corrections as the work-spec run where they recurred: the verbatim known-gaps pointer
+sentence paraphrased in four guides (design-specs-authoring, product-specs-authoring,
+ui-map-architecture, ui-map-implementation), restored byte for byte; the swept Resolution sentence
+brought to the short form in the two UI Map guides. Checked by script on every installed file: no
+links lifted out of their sentences, the writing-style pointer count unchanged, every gate and
+completion template line present (the one `⏳ GATE:` occurrence Astra dropped per guide was the
+prose mention in "No fabricated gates", not a template), every example string this series added
+still present. Astra's documented duplicate removals accepted; its lost-item flags kept; its cut lists
+not taken. The worked examples were not changed by these two runs.
+
+Compressed sizes for the supervisor to set caps against: product-specs-artifacts 5,487 (cap 5,350);
+product-specs-authoring 18,945 (20,350); product-specs-promotion 15,599 (16,550); design-specs set
+47,721 (60,000); work-spec pair 31,789 (32,600); UI Map set 168,384 (no cap yet): architecture 32,694,
+architecture-artifacts 5,550, implementation 47,954, implementation-artifacts 6,322, guide 15,088,
+demo 10,959, swiftui 9,535, swiftui-placeholders 14,278, compose 10,628, compose-placeholders 15,376.
+
+Ruled (supervisor, 2026-10-25): no aggressive compression of the UI Map guides at this time; they
+are the only guides with an extensive regression test, and broad rewording risks the behavior it
+covers with no round here to catch it. Astra's UI Map output reverted; the ten guides hold this
+series' repairs only (the short Decision sentence kept in the two method guides). UI Map set
+179,788; the sizes line above is superseded for that set.
+
+Caps set (supervisor, 2026-10-25): product-specs-artifacts 5,450; -authoring 18,900; -promotion
+15,550; design-specs set 47,500; work-spec pair 31,700; process-flow 21,500; change-requests 2,950;
+design-authoring 16,000; design-promotion 12,000; UI Map set no cap. Provenance tag order confirmed
+("seems fine"). Trimmed under the caps by hand before round 2: wording in the two promotion guides'
+gate notes and archive-failure sentences, the Tradeoff example's own sentences in
+product-specs-authoring, process-flow's redundant "Guides keep their tool-neutral vocabulary", the
+design-specs auto paragraph's restatement of the general auto rule, two of Astra's work-spec cut-list
+items (the renumbering reminder and the Plan completion preamble, both stated in Task format and
+Advance intent), and the two design-specs example phrasings.
+
+Size guard before round 2: process-flow 21,480 / 21,500; change-requests 2,949 / 2,950;
+design-authoring 15,995 / 16,000; design-promotion 11,950 / 12,000; product-specs-artifacts 5,443 /
+5,450; -authoring 18,899 / 18,900; -promotion 15,538 / 15,550; -catalog 10,483 / 10,500; design-specs
+set 47,482 / 47,500; work-spec pair 31,671 / 31,700; UI Map set 179,788 (no cap). Last trims:
+"proceed to Completion" in the two blocked Discussion gates became "Resolve them and I finish the
+package"; the design-specs gate note lost its restatement of the no-items case and "so the supervisor
+reviews it"; product promotion's gate note lost "and the unchecked checklist".
+
+#### Round 2 (prompts `refine/pl2/prompt-specs.txt`, `prompt-uimap.txt`, `prompt-workspec.txt`; reports `review-*.md`)
+
+Same three reads. Settled dispositions quote round 1's findings-log rows verbatim, plus the gap
+footnote ruling, the provenance tag order, the UI Map guides uncompressed and the caps. Recently
+revised names every repair and, for the spec and work-spec reads, warns that compression re-worded
+sentences throughout. The proposed-edits slot is gone (applied); the observed failures stay as
+evidence. Launched 2026-10-25.
+
+Round 2 results. Spec read: F1 the review page drops the no-items sentence (`parse_discussion`
+skips prose with no item; the card says only "no discussion items") — accept, verified, tool: the
+card now shows the sentence (`discussion_note`, both renderers; test). F2 an intro covered through a
+requirement entry's Touches renders with no reason (`why_for`'s fallback took file-level entries
+only, while `check-changes` accepts any covering entry) — accept, verified, tool: the fallback takes
+every covering entry, attributed by ID when several (test); CA r9 F4 had logged this once, second
+sighting. F3 evidence examples put bookkeeping before the result — accept, cosmetic: the evidence
+form reads `<the result, in words>; <command or inspection>` in both promotion guides and the seven
+examples lead with the result. F4 reconciliation kept justifications for matching IDs even when the
+reason no longer explains the difference — accept: "a justification only while it still explains
+the current difference" in both authoring guides. F5 product authoring Completion did not say whether
+promotion can follow — accept: Completion says whether promotion can follow now or waits on shipping.
+UI Map read: F1 the empty-Discussion sentence claimed the inputs determined the map while the guide
+lets the agent pick immaterial defaults — accept: the sentence says no choice needs the supervisor's
+decision and the map is on the preview; the example and the gate paragraph follow; the same class
+swept to design-authoring's no-items sentence; the domain line's "single screens" became "collapsed
+to their root screens" (the reviewer's open note). F2 the Code Changes gate summary listed only
+path, counts and links — accept, cosmetic: it leads with what the items change in the app, with a
+❌/✅ pair. Work-spec read: F1 evidence examples and the requested-stop line carried only metadata
+— accept, cosmetic: the result in words leads the evidence line, the stop line names what the next
+task delivers. F2 the Why templates and the worked Why gave a reason without its source — accept,
+cosmetic: `<reason, then its source>` in the templates; the owner (process-flow § Structured
+discussion items) now defines Why as "the reason, then its source" and its two examples cite the
+designs; the design-authoring, product-specs-authoring and ui-map-architecture example Whys cite
+theirs. Open question (spec read): the amendment's "source as a link" against the design-source rule
+(a screen by product name, no design-tool link) — the link is to the item, requirement or decision
+where one exists; a design source stays a product name; noted in the amendment, no guide change.
+Scored: spec F1, F2 divergent · normal · verified = 5 each; spec F5, uimap F1 divergent · normal ·
+speculative = 2.5 each; spec F4 divergent · off-normal · speculative = 1.875; spec F3, uimap F2,
+workspec F1, F2 cosmetic · normal · speculative = 1 each.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+
+spec F1 5 · spec F2 5 · spec F3 1 · spec F4 1.875 · spec F5 2.5 · uimap F1 2.5 · uimap F2 1 ·
+workspec F1 1 · workspec F2 1 = 20.875. Who the findings are about: five of nine are classes of
+round 1's repairs applied in one guide but not its siblings (evidence lines, the no-items sentence,
+Why sources); this round swept each class across every owner.
+
+After the round-2 tool fixes the Offers pages were re-rendered (context repo, uncommitted): the
+Offers specs page (26 gaps, 18 resolved), the rework request 001 page, the Offers design page and
+CR-001's page; the rework base's own page is step 5d's. Tests: spec-tool 20 OK (two added: the
+no-items sentence renders; an intro covered through Touches shows the covering entry's reason),
+design-tool OK. Size guard before round 3: every capped guide under its cap (process-flow 21,480;
+change-requests 2,949; design-authoring 15,995; design-promotion 11,950; product-specs-artifacts
+5,443; -authoring 18,872; -promotion 15,544; -catalog 10,483; design-specs set 47,489; work-spec pair
+31,692; UI Map set 180,263, no cap).
+
+#### Round 3 (prompts `refine/pl3/prompt-*.txt`; reports `review-*.md`)
+
+Same three reads; settled dispositions quote rounds 1 and 2 from the findings log; recently revised
+names the round-2 repairs and the two renderer fixes. Work-spec read (returned first): no findings;
+every writing moment walked as smooth; the remaining risk named is an agent skipping the shared
+self-check, which the reviewer calls noncompliance with an existing rule, not a guide defect. Read
+subtotal 0.
+
+UI Map read: no findings; the six walks smooth or usable; tooling claims (schema validation, note
+pass-through) verified against the renderer and viewer. One open note: architecture's reconciliation
+sentence still kept a matching change's justification unconditionally, the class round 2 repaired in
+the two spec authoring guides (spec F4); repaired now as that sweep's last sibling ("and its
+justification only while it still explains why the change is needed"). The reviewer's other notes
+(top-level YAML TODOs stay out of the viewer; older context not treated as current) need no change.
+Read subtotal 0. Because the UI Map text changed after this read, the UI Map family gets a round-4
+read over the current text; the work-spec pair's round-3 read already stands over unchanged text.
+
+Spec read: F1 two rendering paths lose what the author wrote — a product index line covered through
+`Touches` renders with no reason (the index-line caller passes no file to `why_for`), and a
+justification's source link is resolved with the draft's link definitions after `render_tree`
+switches the resolver, so a defined `[D02]` renders as a bare span — accept, verified, tool. F2 the
+leaked-detail paragraph diagnosed the requirement as wrong from a reason alone — accept: "read the
+requirement and the reason, and fix whichever holds the mechanism", the ✅ example shortened to pay.
+Open note: design-specs-authoring's "with no text inline" (round 1 F1's class) — "omitting spec
+text". Scored: F1 divergent · normal · verified = 5; F2 divergent · normal · speculative = 2.5.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+
+spec F1 5 · spec F2 2.5 · uimap none (one swept note) · workspec none = 7.5. Both live defects are
+in the handoff from the artifact to the page; the guides' text drew no finding in two of three reads.
+Round 4: the spec family (text and tool changed) and the UI Map family (text changed after its
+read); the work-spec pair's round-3 read stands over unchanged text.
+
+#### Round 4 (UI Map read: prompt `refine/pl4/prompt-uimap.txt`, report `review-uimap.md`)
+
+UI Map read over the current text: no findings; the seven walks smooth or sufficient; the renderer's
+validation and note pass-through verified by inspection; the remaining risk named is the operator
+skipping the shared self-check. The UI Map family converges by stop rule (a) at this read; the
+work-spec pair converged at its round-3 read (text unchanged since). The spec family's round-4 read
+follows the round-3 tool fixes.
+
+Round-3 tool fixes installed: index lines pass their file to `why_for`, so an index line covered
+through Touches shows the covering entry's reason; justifications render through the authoring
+artifact's link definitions (`inline_why`, `WHY_RESOLVER`) at every Why site (card, intro, file).
+Tests: spec-tool 22 OK (two added: a cited decision in a justification stays a link inside a draft
+card; an index line covered through Touches shows its covering reason), design-tool OK. The two
+Offers spec pages re-rendered. Size guard: product-specs-artifacts 5,431 / 5,450; design-specs set
+47,488 / 47,500; the rest unchanged since round 3. Round-4 spec read launched (prompt
+`refine/pl4/prompt-specs.txt`).
+
+#### Round 4 (spec read: prompt `refine/pl4/prompt-specs.txt`, report `review-specs.md`)
+
+F1 the ✅ example in the leaked-detail paragraph ("The list reorders itself whenever either source
+changes; Implementation") describes behavior, not why the requirement changes — the round-3 trim had
+cut the clause that carried the reason — accept: the example is gone; the paragraph ends "a reason
+says why the requirement changes, not what the app does". F2 the review page omits Assumptions and
+TODOs and Out of scope — settled: the supervisor ruled on 2026-10-23 that the page shows the package
+card, the Discussion and the change cards, and that Inputs, Assumptions and TODOs, Out of scope and
+the Decision Log stay in the artifact (skai#99 prototype conventions; G18); omitted from the prompt's
+settled list; noise, and the reviewer's view (an unchanged concept inventory and a folded-request
+note never reach the page's reader) is reported to the supervisor once. Scored: F1 divergent ·
+normal · speculative = 2.5; F2 noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+
+r4 = the UI Map read (0) and the spec read (F1 2.5 · F2 noise). Round 5: the spec family only.
+
+#### Round 5 (spec read: prompt `refine/pl5/prompt-specs.txt`, report `review-specs.md`)
+
+F1 an added file covered only through another entry's Touches (the root-creation entry the artifacts
+guide permits, a folder entry) renders its heading with no reason: the file-heading call to `why_for`
+passed no file, so the Touches fallback never ran — accept, verified (the reviewer exercised it in
+memory: validate and check-changes clean, both files rendered, no reason), tool: the heading lookup
+passes the file (test: two added files covered by one entry's Touches both show its reason). No guide
+finding; the eight walks usable. Scored: F1 divergent · off-normal · verified = 3.75.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+
+Rounds 3–5's live findings are all in the renderer's reason lookups, one coverage path at a time
+(intro, index line, citation links, added file); as in series CA, a tool change of this kind should
+get its design step (every coverage path check-changes accepts, enumerated) before the rounds, not
+during them. Round 6: the spec family.
+The heading fallback applies to added files only: a modified file's heading keeps its file-level entry
+or none, since each changed item below it carries its own reason. Tests 23 OK, design-tool OK; the
+two Offers spec pages re-rendered. Round-6 spec read launched (prompt `refine/pl6/prompt-specs.txt`).
+
+#### Round 6 (spec read: prompt `refine/pl6/prompt-specs.txt`, report `review-specs.md`)
+
+F1 a section's orientation text is compared only when the section exists in the base: a new
+section's sentence renders as unchanged prose with no reason, a removed section's sentence vanishes,
+and when that is the file's only edit the file is skipped as unchanged; the checker consumes the
+same entries, so it misses it too — accept, verified (exercised in memory by the reviewer). No guide
+finding; every walk usable. Scored: divergent · normal · verified = 5.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r6 | 5 | 1 | 0 | 1 | 0 | 0 |
+
+Consolidation trigger: four rounds in a row have each found one more path where the page and
+checker account for a difference incompletely (an intro covered through Touches, an index line's
+reason and a citation's links, an added file's heading, now section prose added or removed). Rather
+than patch the sixth instance, this repair enumerates every prose comparison the renderer makes
+(file intro, section orientation text, index line, glossary entry, item, rule) against the three
+cases (added, modified, removed) and the reason lookup, and fixes the class.
+Class fix installed: `render_spec` emits a new section's orientation text as an added prose card and a
+removed section's as a missing one, each with the reason of the entry naming the section or, failing
+that, of the entries whose Touches name the file; the intro already handled all three cases, index
+lines and glossary entries handle add, modify and remove, items and rules likewise. Tests 25 OK (two
+added), design-tool OK; the Offers spec pages re-rendered and `check-changes` on the Offers package
+still clean. Round-7 spec read launched (prompt `refine/pl7/prompt-specs.txt`).
+
+#### Round 7 (spec read: prompt `refine/pl7/prompt-specs.txt`, report `review-specs.md`)
+
+F1 the glossary's introductory prose is parsed but never compared: `render_glossary` builds entries
+from terms only and never calls the intro comparison the spec and index renderers share, so a
+changed glossary intro reaches neither the page nor `check-changes`, and an intro-only edit skips
+the file — accept, verified (exercised in memory by the reviewer). The round-6 enumeration missed
+this branch: it checked the intro comparison, not every file type's call to it. No guide finding;
+every walk usable. Scored: divergent · normal · verified = 5.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r6 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r7 | 5 | 1 | 0 | 1 | 0 | 0 |
+Fix installed: `render_glossary` opens with the shared intro comparison (`rel` passed from the call
+site), so a glossary intro added, changed or removed is an entry for the page and the checker like any
+other file's. Tests 26 OK (one added), design-tool OK; the Offers spec pages re-rendered; the Offers
+`check-changes` clean. Round-8 spec read launched (prompt `refine/pl8/prompt-specs.txt`).
+
+#### Round 8 (spec read: prompt `refine/pl8/prompt-specs.txt`, report `review-specs.md`)
+
+F1 the renderer picks a reason by name alone, so a glossary term sharing a section's name lends its
+reason to that section's orientation text; the checker matches by kind (`kind_matches`), the renderer
+did not — accept, verified (reproduced in memory by the reviewer). F2 a changed prose paragraph and
+its reason are sibling elements, and the page filter hides the paragraph but not the reason, which
+then sits beside content it does not explain — accept, verified. Open note: a section with
+orientation text and no item under it is never visited by the renderer (a branch of round 6's
+repair); fixed with it. No guide finding; every walk usable. Scored: F1 divergent · normal ·
+verified = 5; F2 divergent · off-normal · verified = 3.75.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r6 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r7 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r8 | 8.75 | 2 | 0 | 2 | 0 | 0 |
+Fixes installed: `why_for` takes the entry's kind and matches as the checker does (a same-named
+glossary term, item or index line lends no reason; section lines and intros take only covering
+entries through Touches); a changed prose paragraph and its reason now form one card (`<div
+class="item prose modified">`), which the page script already treats as a card and filters whole, with
+one neutralizing style rule added in place to `spec-review.v1.css` (allowed by the versioning rule:
+pages already rendered are unaffected); a section with orientation text and no item under it is
+rendered with its heading. Tests 28 OK (two added, three patterns updated to the card markup),
+design-tool OK; the Offers spec pages re-rendered, `check-changes` clean. Round-9 spec read launched
+(prompt `refine/pl9/prompt-specs.txt`).
+
+#### Round 9 (spec read: prompt `refine/pl9/prompt-specs.txt`, report `review-specs.md`)
+
+F1 a design spec's rule-level change entries never show their reasons on the page: the rule list
+renders with no reason input and the item card's lookup takes item-kind entries only — accept,
+verified. F2 when a retained table row loses a column, the changed-row comparison iterates to the
+new row's length, so the removed cell's text never reaches the diff (the header comparison pads
+both sides) — accept, verified. No guide finding; every walk coherent. Scored: F1, F2 divergent ·
+normal · verified = 5 each.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r6 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r7 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r8 | 8.75 | 2 | 0 | 2 | 0 | 0 |
+| r9 | 10 | 2 | 0 | 2 | 0 | 0 |
+Fixes installed: each changed rule shows its own entry's reason (`RULE_CHANGES` set at render time,
+`why_for` by kind "rule", an inline why span on the rule's line); a changed table row is compared
+with both sides padded, so a removed column's cells show as deletions. Tests 30 OK (two added: the
+design fixture's rule change shows its reason; a planted table losing a column shows its old cells),
+design-tool OK; the Offers spec pages re-rendered, `check-changes` clean. Round-10 spec read launched
+(prompt `refine/pl10/prompt-specs.txt`).
+
+#### Round 10 (spec read: prompt `refine/pl10/prompt-specs.txt`, report `review-specs.md`)
+
+F1 a rule's reason is looked up only when the rule gets a visual change marker, so a rule whose
+table alone changed, or a rule inside an item added to an existing file (markers suppressed), shows
+no reason although its entry supplies one — accept, verified (in-memory probes by the reviewer, with
+a sentence-change control that worked). No guide finding; every walk usable. Scored: divergent ·
+normal · verified = 5.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r6 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r7 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r8 | 8.75 | 2 | 0 | 2 | 0 | 0 |
+| r9 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r10 | 5 | 1 | 0 | 1 | 0 | 0 |
+Fix installed: a rule's reason is looked up whenever an entry names the rule, with or without a visual
+marker (a table-only change, a rule inside an added item). Tests 31 OK (one added: a rule whose
+table alone changed shows its entry's reason beside the table diff), design-tool OK; the Offers pages
+hold no design specs, so no re-render. Round-11 spec read launched (prompt
+`refine/pl11/prompt-specs.txt`).
+
+#### Round 11 (spec read: prompt `refine/pl11/prompt-specs.txt`, report `review-specs.md`)
+
+F1 the retirement examples the shape guide shows ("Superseded by [REMIND-01]", "Superseded by **01**")
+teach a pointer where the content guides ask for the successor named; the Offers drafts carry the
+same form — accept: Stability in both content guides says the successor is named in product words,
+then cited; the shape guide's two examples repaired (routed to its owner, `spec-format-design.md`).
+F2 a justification citing a Discussion topic by its anchor (`[D02]: #missed-reminders`, the form
+authoring permits) renders as a link to nowhere: topic headings carry no id, cards are `d02`, and
+a fragment to an artifact section the page omits has no destination either — accept, verified:
+topic headings get their anchor as id; a fragment that matches nothing on the page links to the
+authoring artifact itself at that fragment. Scored: F1 divergent · off-normal · speculative = 1.875;
+F2 divergent · normal · verified = 5.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r6 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r7 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r8 | 8.75 | 2 | 0 | 2 | 0 | 0 |
+| r9 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r10 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r11 | 6.875 | 2 | 0 | 2 | 0 | 0 |
+Fixes installed: Stability in `product-specs-catalog.md` and `design-specs.md` says the retired body is a
+sentence saying in product words what replaced it, then the citation (both trimmed back under cap);
+the shape guide's two retirement examples read "Thirty-day removal is now rule **01**" and "Overdue
+reminders are now defined in [REMIND-01]" (routed to its owner; 8,700 cap held). Renderer: Discussion
+topic headings carry their anchor as id and the page's anchor set includes topics and cards; a
+fragment-only citation matching nothing on the page links to the authoring artifact at that fragment
+(the resolver now knows its document; the justification resolver carries it), in both renderers.
+Tests 32 OK (one added), design-tool OK; the four Offers pages re-rendered, `check-changes` clean.
+Round-12 spec read launched (prompt `refine/pl12/prompt-specs.txt`).
+
+#### Round 12 (spec read: prompt `refine/pl12/prompt-specs.txt`, report `review-specs.md`)
+
+F1 the link resolver shortens any target whose fragment matches a page anchor to that local anchor,
+whatever document the target names, so a citation of an archived request's decision topic that
+shares a name with a base topic lands on the base's — accept, verified (in-memory probe by the
+reviewer). No guide finding; every walk usable. Scored: divergent · off-normal · verified = 3.75.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r6 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r7 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r8 | 8.75 | 2 | 0 | 2 | 0 | 0 |
+| r9 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r10 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r11 | 6.875 | 2 | 0 | 2 | 0 | 0 |
+| r12 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+Fix installed: `href_for` shortens a target to a local anchor only when `on_page` holds (a page-local
+fragment, the authoring artifact being rendered, or a file under one of the projection's roots); a
+citation into any other document keeps that document and its fragment. Tests 33 OK (one added: a
+citation into another artifact sharing a topic name keeps that artifact), design-tool OK; the four
+Offers pages re-rendered, `check-changes` clean. Round-13 spec read launched (prompt
+`refine/pl13/prompt-specs.txt`).
+
+#### Round 13 (spec read: prompt `refine/pl13/prompt-specs.txt`, report `review-specs.md`)
+
+No findings within the charter; the seven walks usable; the reviewer names the existing controls
+that now reject the observed failures. One open note, a verified residual of round 12: the resolver's
+ID and glossary-term shortcuts return a local anchor before the document check, so a reference named
+like an item but defined to point at another document is still shortened; fixed (the shortcuts
+apply only when the reference's document is one the page represents; a bare reference with no
+definition stays the page's own), with a test. Scored: 0; no noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r6 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r7 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r8 | 8.75 | 2 | 0 | 2 | 0 | 0 |
+| r9 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r10 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r11 | 6.875 | 2 | 0 | 2 | 0 | 0 |
+| r12 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r13 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+Because the tool changed after this read, one more spec read confirms the final state before the
+series closes; the guides' text did not change.
+
+#### Round 14 (spec read: prompt `refine/pl14/prompt-specs.txt`, report `review-specs.md`)
+
+F1 the gap tooltip (the owner's text on hover) renders each top-level bullet of the owning item and
+drops the nested ones, so a Tradeoff's Options label appears with no alternatives under it, while
+the Discussion card shows them — accept, verified (in-memory reproduction by the reviewer). No
+guide finding; the eight walks usable. Scored: cosmetic · off-normal · verified = 1.5.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r6 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r7 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r8 | 8.75 | 2 | 0 | 2 | 0 | 0 |
+| r9 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r10 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r11 | 6.875 | 2 | 0 | 2 | 0 | 0 |
+| r12 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r13 | 0 | 0 | 0 | 0 | 0 | 0 |
+| r14 | 1.5 | 1 | 0 | 0 | 1 | 0 |
+Fix installed: one `bullet_list` renders a Discussion item's sub-bullets with their nested bullets for
+the card and for every tooltip of the item. Tests 35 OK (one added: the open Tradeoff's gap tooltip
+carries its alternatives), design-tool OK; the four Offers pages re-rendered, `check-changes` clean.
+Round-15 spec read launched (prompt `refine/pl15/prompt-specs.txt`).
+
+#### Round 15 (spec read: prompt `refine/pl15/prompt-specs.txt`, report `review-specs.md`)
+
+F1 popovers render copied text under whatever resolver is current (the last draft's): a gap owner's
+tooltip loses a reference-style source link or, when the draft defines the same label differently,
+links elsewhere; the same holds for the spec and glossary popovers — accept, verified (in-memory
+reproduction by the reviewer with the real functions). No guide finding; the seven walks usable.
+Scored: divergent · off-normal · verified = 3.75.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r6 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r7 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r8 | 8.75 | 2 | 0 | 2 | 0 | 0 |
+| r9 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r10 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r11 | 6.875 | 2 | 0 | 2 | 0 | 0 |
+| r12 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r13 | 0 | 0 | 0 | 0 | 0 | 0 |
+| r14 | 1.5 | 1 | 0 | 0 | 1 | 0 |
+| r15 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+Fix installed: `rendered_under` renders copied text under its own document's link definitions and
+location; the justification resolver uses it, items and glossary terms remember their source file
+when collected, gap owners carry their artifact's definitions and path, and every popover (gap owner,
+item, glossary term) renders under its source. Tests 36 OK (one added: the open Tradeoff's gap
+tooltip keeps a reference-style citation into another artifact), design-tool OK; the four Offers
+pages re-rendered, `check-changes` clean. Round-16 spec read launched (prompt
+`refine/pl16/prompt-specs.txt`).
+
+#### Round 16 (spec read: prompt `refine/pl16/prompt-specs.txt`, report `review-specs.md`)
+
+F1 the tool identifies a source by its ID or heading alone in three places: two documents holding
+the same item ID share one tooltip (the last collected wins); a fragment-only link inside an external
+document's hover text jumps to the page's anchor of that name; and a local target with a fragment
+compares by the fragment alone, so re-pointing a citation from one review document to another with
+the same heading counts as unchanged (and an honest `modify` entry then fails the check) — accept,
+verified (three in-memory probes by the reviewer). No guide finding; every walk usable. Scored:
+divergent · normal · verified = 5. The consolidated repair: identity is document-qualified except
+for a spec item's own ID, which is stable across moves and layers by design (CA's churn guard).
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r6 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r7 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r8 | 8.75 | 2 | 0 | 2 | 0 | 0 |
+| r9 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r10 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r11 | 6.875 | 2 | 0 | 2 | 0 | 0 |
+| r12 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r13 | 0 | 0 | 0 | 0 | 0 | 0 |
+| r14 | 1.5 | 1 | 0 | 0 | 1 | 0 |
+| r15 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r16 | 5 | 1 | 0 | 1 | 0 | 0 |
+Fix installed: a target's identity is its document plus fragment unless the fragment is a spec item's
+own ID (stable across moves and layers); items collected from a document outside the projection keep
+their own popovers (`ext_items`, `ext_tip_id`), chosen by both the explicit-link and bare-ID linkers
+when a reference's definition points at that document; a fragment-only link is page-local only when
+the document being rendered is the page's own (`doc_on_page`), so external hover text links back to
+its document; the tool's render-contract docstring says so. Tests 38 OK (two added: heading anchors
+are document-qualified while item IDs are not; a same-ID item in another document gets its own
+tooltip), design-tool OK; the four Offers pages re-rendered, `check-changes` clean. Round-17 spec
+read launched (prompt `refine/pl17/prompt-specs.txt`).
+
+#### Round 17 (spec read: prompt `refine/pl17/prompt-specs.txt`, report `review-specs.md`)
+
+No findings within the charter; the eight walks usable; the reviewer separates a clean read of the
+instructions from evidence that a fresh run applies them, which is the next test (Tim reading
+artifacts). One residual of round 16's identity repair under open questions: a term citation whose
+definition points at another document's glossary linked there but showed the local same-named term's
+definition on hover (`name in gloss` chose the local tooltip); fixed: the local definition shows only
+when the reference's definition is the page's own, with a test. Scored: 0; no noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r6 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r7 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r8 | 8.75 | 2 | 0 | 2 | 0 | 0 |
+| r9 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r10 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r11 | 6.875 | 2 | 0 | 2 | 0 | 0 |
+| r12 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r13 | 0 | 0 | 0 | 0 | 0 | 0 |
+| r14 | 1.5 | 1 | 0 | 0 | 1 | 0 |
+| r15 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r16 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r17 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+The tool changed after this read (the residual), so one more spec read confirms the final state.
+Residual fix installed: a term shows the local glossary definition on hover only when the reference's
+definition is the page's own, for explicit term links and autolinked bare terms alike. Tests 39 OK
+(one added), design-tool OK; the four Offers pages re-rendered, `check-changes` clean. Round-18 spec
+read launched (prompt `refine/pl18/prompt-specs.txt`).
+
+#### Round 18 (spec read: prompt `refine/pl18/prompt-specs.txt`, report `review-specs.md`)
+
+F1 deleted text resolves its citations with the new document's definitions and location: whole
+deletions (removed table rows, retired items, removed glossary entries, removed rules) render under
+the draft's resolver, and word-level deletions swap in the base's root-relative definitions while
+the resolver still stands at the draft's folder, so a struck-through citation links to the new
+source or to a path that does not exist — accept, verified (two in-memory reproductions by the
+reviewer). No guide finding; every walk coherent. Scored: divergent · normal · verified = 5.
+Consolidated repair: one old-document context (the base file's own definitions and path) for every
+old-side fragment, whole or word-level.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.375 | 13 | 0 | 11 | 2 | 1 |
+| r2 | 20.875 | 9 | 0 | 5 | 4 | 0 |
+| r3 | 7.5 | 2 | 0 | 2 | 0 | 0 |
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 1 |
+| r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r6 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r7 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r8 | 8.75 | 2 | 0 | 2 | 0 | 0 |
+| r9 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r10 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r11 | 6.875 | 2 | 0 | 2 | 0 | 0 |
+| r12 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r13 | 0 | 0 | 0 | 0 | 0 | 0 |
+| r14 | 1.5 | 1 | 0 | 0 | 1 | 0 |
+| r15 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+| r16 | 5 | 1 | 0 | 1 | 0 | 0 |
+| r17 | 0 | 0 | 0 | 0 | 0 | 0 |
+| r18 | 5 | 1 | 0 | 1 | 0 | 0 |
+Fix installed: `OLD_CTX` holds the base file's own definitions and location per diffed file;
+`inline_old` and `under_old` render every old-side fragment in it (word-level deletions, removed
+table rows, retired items with their tables and rules, removed glossary entries, removed and retired
+rules, removed index lines). Tests 40 OK (one added: a citation dropped from a requirement links
+where the old file linked, from the old file's folder, not to the draft's redefinition), design-tool
+OK; the four Offers pages re-rendered, `check-changes` clean. Round-19 spec read launched (prompt
+`refine/pl19/prompt-specs.txt`).
+
+#### Correction — convergence (2026-10-25)
+
+Series PL converged by stop rule (a) at round 13 for the spec family (round 17 confirmed it), at
+round 4 for the UI Map family and at round 3 for the work-spec pair; the guides' text has not changed
+since round 11. Rounds 14 to 18 should not have run: each followed a zero-score or clean read whose
+parked residual I repaired in the renderer and then re-read "to confirm", treating a verified defect
+in a context surface as a live finding under another heading. The process's disposition for those is
+`logged — follow-up`. The renderer repairs of rounds 14 to 18 stand as tested tool work (40 tests OK)
+done outside the series, recorded here for the release notes; round 19, already running when the
+supervisor stopped the series, is logged when it returns and not acted on here. Supervisor, 2026-10-25:
+"Next time hit zero... STOP!" Final series table: r1 31.375, r2 20.875, r3 7.5, r4 2.5 (+ UI Map 0),
+r5 3.75, r6 5, r7 5, r8 8.75, r9 10, r10 5, r11 6.875, r12 3.75, r13 0 (terminal), r14 1.5, r15 3.75,
+r16 5, r17 0, r18 5 — rounds after 13 are tool work, not the series' measure.
+
+## Maintenance retro — plain language in the spec, UI Map and work-spec guides, series PL — 2026-10-25
+
+Inventory: 21 guides' formats, examples and reader-facing lines (ProductSpecs 4, DesignSpecs 4, UIMap
+10, Spec 2, plus `process-flow.md`, `change-requests.md`, `spec-file-shape.md`, `design-authoring.md`,
+`design-promotion.md`); `spec-tool.py` and `design-tool.py` renderers with one additive rule in
+`spec-review.v1.css`; `maintain-skai.md`, the guide-authoring sanity scan and the cold-review template
+(the rule for guide writers); standards amended (`writing-style-design.md` requirement 10 and caps;
+`product-specs-system-design.md`, `design-specs-design.md`, `work-spec-process-design.md`,
+`design-process-design.md`, `change-requests-design.md`). Host-install-visible (guides and renderer).
+Bookkeeping: two release entries with migrations, two CHANGELOG lines; `Managed-Updated-At`
+2026-10-25 on every edited guide (checked); manifest unchanged (no asset added or moved); README
+unchanged (no phase or path changed; its Code Changes line names no gate wording). Tests: spec-tool
+40 OK, design-tool OK, ui-map-render OK. Consistency scan: the stale phrases this series removed
+("the Justification is the citation", "carry no text", "Superseded by [ID]", "advance to Completion",
+"Promote <N> requirements", "say next to implement", `**Why** <rationale>`, the "Both surfaced"
+annotation) → 0 in Guides, README and Templates; every target guide carries the writing-style
+pointer (25 guides in all). Follow-ups, logged: `design-promotion.md`'s Promotion Checks gate still
+reads "Promote <N> changes from <package> into <production | its base>" (clear enough in context;
+the spec promotion gates say "Write <N> … into <paths>"); the renderer's moved-glossary-entry
+comparison and rendering context (round 19) and any further coverage paths belong to a
+renderer-hardening effort with a comparison × case × document-context test matrix, not to cold
+reads of guides; the Figma designer guide, the Test guides, the debugging guide, the Core reference
+guides and `product-specs-baseline.md` still carry no writing-style pointer (a later pass decides
+which write for a person). Process reflection: the series' binding target converged at round 13;
+rounds 14–18 ran because I repaired a context surface after clean rounds and re-read, and the
+reviewer, told to inspect the renderer, found one more path each time. A zero round ends a series;
+a defect in a context surface is logged. Retro complete apart from the follow-ups above.

@@ -8,7 +8,9 @@ Managed-Updated-At: 2026-10-25
 
 Print `📖 SKAI guide: design-specs-artifacts` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
-The typed formats the design-spec workflows produce and consume. Content rules and checks:
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
+
+Typed formats for design-spec workflows. Content rules and checks:
 [`design-specs.md`](design-specs.md); shape and tool: [`spec-file-shape.md`](../Core/spec-file-shape.md).
 The package mirrors the product spec package
 ([`product-specs-artifacts.md`](../ProductSpecs/product-specs-artifacts.md)); only differences are here.
@@ -17,9 +19,8 @@ The package mirrors the product spec package
 
 `skai/changes/<change-id>/design-specs/`; after promotion, `skai/promoted/<change-id>/design-specs/`.
 For the **base** and requests, read [`change-requests.md`](../Core/change-requests.md).
-Packages are independent except for their base and draft requirements cited from active product
-spec packages until promotion repoints them. An input citation, such as a request in another
-package, is not a dependency.
+Packages depend only on their base and cited draft requirements in active product spec packages
+until promotion repoints them. Input citations, such as requests in other packages, are not dependencies.
 
 The layout is the product spec package's, with `design-specs-authoring.md` (`## Spec Changes`),
 `proposed-design-specs/**` (touched files only, each whole),
@@ -30,17 +31,17 @@ Promotion's own failed check is not a request: it blocks and returns the package
 
 ## Spec Change Items
 
-`## Spec Changes` lists each base-to-draft difference in held files by prose and resolved target
-identity as one typed entry. Entries carry no text; the page shows each difference under its justification.
+`## Spec Changes` gives each base-to-draft difference in held files one typed entry, by prose and
+resolved target identity. Entries omit spec text; the page shows each difference under its justification.
 
 ```
 - S<n> <operation> <object>: <identity>
-  - **Justification** <Source>: <reference or rationale>
+  - **Justification** <why the change is needed>; <Source>: <reference>
   - **Touches** draft-file links; an intro may ride here, an index line only with the new file it describes
 ```
 
-- **ID** `S01`, `S02`, …: never renumbered or reused; package-local — work specs cite `UI-*`, never
-  `S`. Entries run root, glossary, then folder, file and item order; no checkbox.
+- **ID** `S01`, `S02`, …: package-local, never renumbered or reused; work specs cite `UI-*`, never
+  `S`. Order entries by root, glossary, folder, file and item; no checkbox.
 - **Operation** `add | modify | retire | move` × **object** `spec file | item | rule | index line |
   glossary entry | known-difference note`. Only items move; a rule changing parent retires and is
   re-added; files never retire. [Modify vs. Retire](design-specs.md#modify-vs-retire) decides; a
@@ -50,18 +51,18 @@ identity as one typed entry. Entries carry no text; the page shows each differen
   promotion verifies identical prose and resolved targets and repoints incoming links; move plus
   modify keeps one contract, the move verified first. Draft every design-spec file whose links a move or
   retirement changes, in Touches after it.
-- **Source** as the product spec guide; `Catalog` means existing specs or requirements.
+- **Source** as the product spec guide, after the reason; `Catalog` is existing specs or requirements.
 
 `check-changes` confirms the list matches the projection.
 
-**Granularity follows the file.** A new spec file is one entry, its index line in `Touches`;
-incoming moves are listed separately. Root creation is one entry (root index, glossary, three
-folder indexes). In an existing file, each changed item, rule, glossary entry, index line or
-known-difference note is its own entry.
+**Granularity follows the file.** A new spec file gets one entry, its index line in `Touches`;
+list incoming moves separately. Root creation gets one entry (root index, glossary, three folder
+indexes). In existing files, each changed item, rule, glossary entry, index line or known-difference
+note gets an entry.
 
 ```markdown
 - S02 move item: [UI-NOTES-05]
-  - **Justification** Catalog: reuse on a second screen would duplicate the rule.
+  - **Justification** The list screen now shows pinned notes the same way, and a second copy of the rule would drift; Catalog: [UI-NOTES-05]
   - **Touches** [notes][s-notes] → [list-screen][s-list]
 
 [UI-NOTES-05]: proposed-design-specs/screens/list-screen.md#ui-notes-05

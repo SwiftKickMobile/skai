@@ -192,12 +192,14 @@ def render(authoring, specs, out):
     else:  # inherited gaps show even with no Discussion item
         state = f"no discussion items; {gaps} carried" if n_gap else "no discussion items"
     goal = section(text, "Goal")
+    note = st.discussion_note(authoring, disc)
     head = (f'<div class="item request"><div class="head"><span class="status">{html.escape(state)}</span></div>'
-            + (f"<p>{links.show(st.inline(links.hide(goal), gloss, auto=True))}</p>" if goal else "") + "</div>")
+            + (f"<p>{links.show(st.inline(links.hide(goal), gloss, auto=True))}</p>" if goal else "")
+            + (f'<p class="note">{links.show(st.inline(links.hide(note), gloss, auto=True))}</p>' if note else "") + "</div>")
     body = head
     if disc:
         body += '<section class="discussion"><h2>Discussion</h2>' + "".join(
-            (f'<h3 class="section">{html.escape(topic)}</h3>' if topic else "") + "".join(st.render_discussion_item(it, gloss) for it in its)
+            (f'<h3 class="section" id="{st.anchor(topic)}">{html.escape(topic)}</h3>' if topic else "") + "".join(st.render_discussion_item(it, gloss) for it in its)
             for topic, its in disc) + "</section>"
     if changes:
         cards, last = [], None

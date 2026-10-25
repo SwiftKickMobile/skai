@@ -93,3 +93,7 @@ size-budget rule.
 The guide does not say how a type's drafts or frames fold, what a change item looks like, how a page
 is rendered, or what readiness checks; each type's guides own those and cite this one. It has no
 gates and invokes no skill.
+
+## Size Budget — 2026-10-25
+
+Cap **2,950** holds (supervisor, 2026-10-25, series PL); the provenance tag on a folded entry now follows the entry's own reason and source.

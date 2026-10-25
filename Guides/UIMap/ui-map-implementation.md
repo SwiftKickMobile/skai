@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation
 Managed-Source: Guides/UIMap/ui-map-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-24
+Managed-Updated-At: 2026-10-25
 
 # UI Map Implementation
 
@@ -253,7 +253,7 @@ A finding that the *map* itself is wrong is not a separate Kind: it is an ordina
 
 A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 
-Sub-bullet labels are **bold** with no separator after: `Concern` always, then either `Proposal` or `Question`; `Options` for a Tradeoff; `Detail` when helpful; `Why` for the rationale; `Gap` last for unchecked gaps (placeholder or "no placeholder; waiting on <what>"); `Decision` added on resolution. On the supervisor's explicit approval, check the box (`- [x]`) and append `- **Decision** <succinct resolution>.`. For gaps, remove **Gap**; Decision says answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep entries after item removal. Remove a resolved item nothing current cites or needs. Keep sibling items tight: no blank lines between `- [ ]` items under one heading.
+Sub-bullet labels are **bold** with no separator after: `Concern` always, then either `Proposal` or `Question`; `Options` for a Tradeoff; `Detail` when helpful; `Why` for the rationale; `Gap` last for unchecked gaps (placeholder or "no placeholder; waiting on <what>"); `Decision` added on resolution. On the supervisor's explicit approval, check the box (`- [x]`) and append `- **Decision** <succinct resolution>.`. For gaps, remove **Gap**; Decision states the outcome in words and which it was: answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep entries after item removal. Remove a resolved item nothing current cites or needs. Keep sibling items tight: no blank lines between `- [ ]` items under one heading.
 
 ### Organization and gate
 
@@ -345,9 +345,10 @@ This item exists only when there is a proposed map to promote. In a conformance 
 
 ### Code Changes gate
 
-When Code Changes is ready, summarize the artifact path, item count by disposition, the change-request links, and the Evidence plan. Then STOP:
+When Code Changes is ready, say first what the items change in the app (the screens and routes they add, move or scaffold) and what is left to others, then the artifact path, item count by disposition, change-request links and Evidence plan. ❌ "Code Changes ready: 6 items (4 implement, 2 handoff) at skai/changes/offers/ui-map/ui-map-implementation.md." ✅ "Code Changes ready: the Offers tab gains its hub and three customer screens; the two backend changes are handed off; 6 items (4 implement, 2 handoff) at skai/changes/offers/ui-map/ui-map-implementation.md." Then STOP:
 
-`⏳ GATE: Next: Code Changes ready. Review it, then say "next" to implement. Or say what to change.`
+- Build: `⏳ GATE: Next: Code Changes ready: <N> items to build. Review them, then say "next" to build them. Or say what to change.`
+- Plan: `⏳ GATE: Next: Code Changes ready as the plan. Say "next" to make the proposed map official (or finish, when there is none); building is left to a later run. Or say what to change.`
 
 On advance intent, proceed to *Implement*. In **Plan** mode the only executable item, when a proposed map exists, is the terminal promote; perform and check it, then complete. Without a proposed map, complete with the official map unchanged. In **Build** mode, execute unchecked `implement` / `placeholder` items and block if any `handoff` item remains unchecked.
 
@@ -357,7 +358,7 @@ Execute the unchecked `## Code Changes` items this mode owns, top-down. In **Pla
 
 Per item:
 
-1. Read the item. **Description** is what to do; **Realizes** anchors why; **Touches** lists the files/paths affected.
+1. Read the item. **Description** is what to do and why; **Realizes** traces it to its source; **Touches** lists the files/paths affected.
 2. Apply the change. `planned` and `handoff` items are not built here.
 3. If a mechanical glitch surfaces, fix it inline when allowed below.
 4. If anything else surfaces — map mismatch, structural mismatch, ambiguity, a directly blocking feature dependency, project constraint — STOP at a blocked gate.
@@ -373,10 +374,10 @@ On resume, re-audit every unchecked `handoff` item. If external work has made th
 
 **Reaching a new scene from an existing real screen.** When the selected placeholder guide or project conventions define this mapping, a `wire-route` item registers the destination on the real nav host and adds the defined temporary entry trigger so the skeleton is click-through-able; both injected blocks carry the change-id scaffold marker. If no trigger mapping is available, STOP in Discussion before writing Code Changes under *Finding disposition*; do not hand-roll or omit it.
 
-**Chunk boundaries.** At the end of each domain or natural chunk for large change sets, run the project's build command from `skai/integration.md`. Record the result inline in `## Evidence`:
+**Chunk boundaries.** At the end of each domain or natural chunk for large change sets, run the project's build command from `skai/integration.md`. Record the result inline in `## Evidence`, a sentence saying what the build established, then the bracket:
 
 ```
-[evidence: <command>; exit <code>; output: <scratch path, if captured>]
+The Tickets domain builds after the move. [evidence: <command>; exit <code>; output: <scratch path, if captured>]
 ```
 
 Captured output goes under the scratch root `skai/integration.md` names (default
@@ -446,13 +447,13 @@ and link the artifact at `skai/promoted/<change-id>/ui-map/`.
 
 **Plan** completes right after the Code Changes gate (the spec review was the sign-off): when a proposed map exists, perform and check the promote; otherwise leave the official map unchanged. Leave `planned` and `handoff` items unchecked and finish — the spec is the deliverable.
 
-- With a proposed map: `🏁 Complete. The UI Map implementation plan is ready; the official map is promoted.`
-- Without a proposed map: `🏁 Complete. The UI Map implementation plan is ready; the official map is unchanged.`
+- With a proposed map: `🏁 Complete. The plan is written and the proposed map is now the official map; building its <N> items is left to a later run.`
+- Without a proposed map: `🏁 Complete. The plan is written and the official map is unchanged; building its <N> items is left to a later run.`
 
 **Build** completes once the fresh completion build is green and no `handoff` item remains unchecked: when a proposed map exists, perform and check the promote; otherwise leave the official map unchanged. Then finish.
 
-- With a proposed map: `🏁 Complete. The UI Map implementation is done; the official map is promoted.`
-- Without a proposed map: `🏁 Complete. The app conforms to the official UI Map; no map change to promote.`
+- With a proposed map: `🏁 Complete. <What was built, in a phrase> is built and the fresh build passes; the proposed map is now the official map.`
+- Without a proposed map: `🏁 Complete. <The scope audited> matches the official map; nothing in the map changes.`
 
 **A Build with unchecked `handoff` items does not complete.** It ends at a blocked gate reporting what was checked, what remains unchecked, and why UI Map implementation does not own it, and holds the promote when one exists — the promote is the last item, so the run stops before it. Whoever continues the Build — this session, or a later one reading the artifact's `Mode` — resolves the handoff work, re-audits, checks the same item without changing its Disposition, then the effort completes.
 
