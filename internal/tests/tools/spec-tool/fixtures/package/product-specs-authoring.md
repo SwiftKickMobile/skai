@@ -149,5 +149,5 @@ Scoped change.
 [SUGGESTION-08]: proposed-product-specs/domains/suggestion.md#suggestion-08
 [g-notebook]: proposed-product-specs/glossary.md#notebook
 [g-active-suggestion]: proposed-product-specs/glossary.md#active-suggestion
-[request-001]: change-requests/001/request.md
+[request-001]: change-requests/001/product-specs-authoring.md
 [D1]: #stage-definitions

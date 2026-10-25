@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-authoring
 Managed-Source: Guides/Design/design-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-24
+Managed-Updated-At: 2026-10-25
 
 # Design Authoring
 
@@ -10,19 +10,16 @@ Print `📖 SKAI guide: design-authoring` now, as a line of its own. Read this g
 
 ## Purpose
 
-Settle decisions with the supervisor; draw and list a **change package** ready for
-[`design-promotion.md`](design-promotion.md). The **base** is production by default, another open
-package for a **change request**; only the base differs, even for requests against requests.
+Settle decisions with the supervisor; draw and list a **change package** against a **base** per
+[`change-requests.md`](../Core/change-requests.md), ready for [`design-promotion.md`](design-promotion.md).
 
-Edit only the package and drawings; carry input changes at *Completion*. For conventions, load [`figma-designer-guide.md`](figma-designer-guide.md) for Figma.
+Edit only the package and drawings; carry input changes at *Completion*. For Figma, load [`figma-designer-guide.md`](figma-designer-guide.md).
 
 Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## The change package
 
-Packages live at `skai/changes/<change-id>/design/` against production; requests at
-`<base>/change-requests/<nnn>/`, in filing order (`001`, `002`, …), nesting as
-`<base>/change-requests/001/change-requests/001/`. Both hold:
+Against production: `skai/changes/<change-id>/design/`. Contents:
 
 | Path | What it is |
 | --- | --- |
@@ -31,16 +28,13 @@ Packages live at `skai/changes/<change-id>/design/` against production; requests
 | `design-promotion.md` | promotion's artifact; may be absent |
 | `evidence/` | promotion's check output; may be absent |
 | `working-docs/` | working documents |
-| `change-requests/` | open requests; may be absent |
-| `promoted-change-requests/` | promoted requests; may be absent |
 
 Draw against production on the **change page** the tool guide names; requests use a **request section**
 `CR-<nnn> — <name>` on the base's page for additions and changes only. Change screens on copies of
 base frames, never in place. Other types for the same change share its `<change-id>` and
 update freely; promotion archives each type independently.
 
-Use the input's change ID; otherwise propose a short kebab-case default and block before
-creating the artifact; a request takes the base's next free number.
+Use the input's change ID; otherwise propose a short kebab-case default and block before creation.
 
 ### Artifact skeleton
 
@@ -150,15 +144,13 @@ The workflow starts on an explicit signal — "design X", "mock up X", "backfill
 On the signal:
 
 1. Read the tool guide.
-2. If a package for this work is named or in context and promotion has not taken it up — no
-   `design-promotion.md`, or one that returned it to authoring — reopen it rather than creating a
-   second. A package promotion holds is promotion's; a closed one opens a new package. A request
-   signal names the base, not a package to reopen: create the request unless an existing request
-   for this work is named or in context.
+2. Reopen a named or contextual package for this work if it has no `design-promotion.md` or was
+   returned to authoring; promotion holds its packages, closed ones need new packages.
+   A request signal follows the shared guide: reopen or create `<base>/change-requests/<nnn>/`.
 3. Otherwise resolve the path, create the artifact, and record `## Goal` and `## Inputs`.
 4. Open the first Discussion phase.
 
-Any author reopens the same package under the same rules and may change anything in it. On reopen, a resolved `- [x] D<n>` keeps its number, Concern, Options and
+On reopen, a resolved `- [x] D<n>` keeps its number, Concern, Options and
 Proposal; *Resolution* governs its state; new items continue the numbering.
 
 **A backfill** (designs drawn from an existing app) is a change like any other; its items are the
@@ -176,7 +168,7 @@ Item line: `- [ ] D<n> [Kind] <summary>`, where `[Kind]` is `[Question]`, `[Prop
 
 A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 Mirror all gaps in the design file per the tool guide once placeholders are drawn; remove
-mirrors when owning items close. Requests inherit base gaps; their own enter the base at promotion.
+mirrors when owning items close.
 
 **Every item carries a recommendation**, in words. An item that can only be judged visually says
 so, and the supervisor resolves it by approving the recommended option as a trial
@@ -254,12 +246,11 @@ Several changes: sub-IDs:
 
 ## Completion
 
-On Review's `next`, reconcile the drawings against every input but the base. For each changed by decisions, file a
-request with drafts through its process; if none, tell the supervisor what it needs. Update
-`## Assumptions and TODOs` and `## Out of scope`; name requests or needs, statuses and downstream
+On Review's `next`, reconcile drawings against every input but the base; file against each the
+decisions changed, with drafts, per the shared guide. Update
+`## Assumptions and TODOs` and `## Out of scope`; name requests or needs, outcomes and downstream
 work owed (design specs, say). End with
-`🏁 Complete. Let me know if anything needs adjustment.` Promotion is invoked separately;
-a request ruling contradicting the designs reopens the package.
+`🏁 Complete. Let me know if anything needs adjustment.` Invoke promotion separately.
 
 ## Artifact maintenance
 

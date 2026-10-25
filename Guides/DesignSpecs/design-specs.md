@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs
 Managed-Source: Guides/DesignSpecs/design-specs.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-24
+Managed-Updated-At: 2026-10-25
 
 # Design Specs
 
@@ -21,10 +21,11 @@ index form, the validating tool — is [`spec-file-shape.md`](../Core/spec-file-
 never restated. [`design-specs-authoring.md`](design-specs-authoring.md) drafts;
 [`design-specs-promotion.md`](design-specs-promotion.md) promotes.
 
-**Check changed items and every touched file whole.** Do not re-examine untouched canonical files;
-an unrelated defect found there is routed as
-[`design-specs-artifacts.md`](design-specs-artifacts.md) § Change Requests says; only a contradiction
-that would make the write inconsistent blocks. Work-spec implementation may update or remove
+**Inspect changed items and every touched file whole; block only on what this package changed.**
+A fault already in content it did not change, in a held file or not, starts a package against the
+base ([`change-requests.md`](../Core/change-requests.md)); only a contradiction that would make
+the write inconsistent blocks. `validate` faults in held files and conflicts the projection
+introduces always block. Work-spec implementation may update or remove
 known-difference notes after verified fixes; spec text and IDs are otherwise read-only.
 
 ### What Belongs Here
@@ -121,8 +122,8 @@ inherited rule stands.
 
 Form and anchors are the shape guide's; `UI-` distinguishes spec IDs from requirements. Prefixes
 uniquely name the thing (screen, family, shared piece), never the file, with its kind if the noun
-is abstract (`UI-DEFAULT-FOLDER`, not `UI-DEFAULT`). Next number: the prefix's canonical maximum
-plus one; two packages colliding surface at the later promotion.
+is abstract (`UI-DEFAULT-FOLDER`, not `UI-DEFAULT`). Next number: one above the prefix's maximum
+in the base, its unpromoted IDs included; two packages colliding surface at the later promotion.
 
 ### Stability
 
@@ -208,8 +209,7 @@ of the change.
 
 Before authoring's Discussion gate advances and before promotion writes, run the spec tool's
 `validate` over the drafts projected on canon: a fault in a file the package holds, or a conflict
-the projection introduces, blocks; a fault in an untouched canonical file is reported and routed
-as § Change Requests says. Then these ten checks, enumerated only here, over the scope in *Purpose*.
+the projection introduces, blocks; a fault in an untouched canonical file is reported and starts a package against the base. Then these ten checks, enumerated only here, over the scope in *Purpose*.
 
 - `V1 Restatement` — requirement-citing binding prose adds a screen binding beyond the cited
   requirement. Nonbinding orientation and routing are `V9`'s.
@@ -224,7 +224,7 @@ as § Change Requests says. Then these ten checks, enumerated only here, over th
   access blocks.
 - `V6 Links` — definitions reach intended items, not just files; overrides link superseded rules
   and parents never name overrides; pending specs use `(spec pending: <file>)`; tracking links
-  identify issues. At promotion, all cited requirements are canonical.
+  identify issues.
 - `V7 One home` — no requirement rule restated in a spec, no spec rule copied into another file
   without a declared override; the copy is the defect.
 - `V8 IDs and prefixes` — every rewritten-file ID remains in its draft, retired in place per

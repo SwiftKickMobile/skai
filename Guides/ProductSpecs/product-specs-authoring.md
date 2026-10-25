@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-authoring
 Managed-Source: Guides/ProductSpecs/product-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-24
+Managed-Updated-At: 2026-10-25
 
 # Product Specs Authoring
 
@@ -17,7 +17,7 @@ Edit only the package and drafts, not canon. Adjacent findings go in Discussion 
 requirement decisions, Assumptions and TODOs if nonblocking, Out of scope if excluded;
 adjacent edits need separate authorization. Before drafting, read
 [`product-specs-catalog.md`](product-specs-catalog.md) for content rules;
-[`product-specs-artifacts.md`](product-specs-artifacts.md) for packages, change items and requests;
+[`product-specs-artifacts.md`](product-specs-artifacts.md) for packages and change items;
 [`spec-file-shape.md`](../Core/spec-file-shape.md) for file shape and the spec tool.
 
 Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
@@ -25,26 +25,25 @@ Everything you write for a person follows [`writing-style.md`](../Core/writing-s
 ## The change package
 
 [`product-specs-artifacts.md`](product-specs-artifacts.md) § The Package owns the path and contents:
-this workflow's artifact `product-specs-authoring.md`, the drafts under `proposed-product-specs/`,
-the rendered page `product-specs-review.html`, and what change requests and promotion add.
+`product-specs-authoring.md`, drafts in `proposed-product-specs/`, `product-specs-review.html`,
+requests and promotion artifacts; read [`change-requests.md`](../Core/change-requests.md) for the **base**.
 
-Use a supplied change ID; otherwise propose a short kebab-case ID and block before creation (from a
-branch, its final component). Check the active and promoted paths:
+Against production, use a supplied change ID or propose a short kebab-case one (from a branch,
+its final component) and block before creation. Check the active and promoted paths:
 reopen unpromoted work; a recorded `C7` write with repair or archival pending returns to promotion,
 not drafting; a closed `C7` ID/type pair needs a new ID. Create the artifact with Goal and Inputs
 before drafting.
 
 Sibling types for the same change are independent: each in
 its canonical repository, linked by resolved paths, archived on its own, updating freely while the
-change is open. A consumer wanting this package changed files a change request (*Reopening*), never
-edits it.
+change is open. A consumer wanting it changed files a request against it.
 
 ### What `proposed-product-specs/` holds
 
-Only touched files, mirroring catalog paths, each drafted **whole** — carrying unchanged
-requirements, index lines and glossary entries. Reuse an existing draft; initialize a missing draft
-by copying the catalog file, or draft it fresh when the catalog lacks it. Per file, whatever the
-mode: a new scope still copies the root and index files it rewrites.
+Draft only touched files, **whole**, at catalog paths, keeping unchanged requirements, index lines
+and glossary entries. Reuse drafts; copy missing ones from the base's drafts, following bases to
+the catalog, or write fresh if absent throughout. In every mode, a new scope copies the root and
+index files it rewrites.
 
 A new catalog needs `_product-specs.md`, `glossary.md` and an index per populated scope; a new scope
 carries each created folder's index and the root index. Absent files stay untouched; a package
@@ -70,12 +69,12 @@ is a blocked gate.
 
 ## Modes
 
-- **Baseline** — the catalog holds none of the files this package writes; everything is an addition.
-- **Scoped change** — the catalog already holds files this package modifies, retires or adds to.
+- **Baseline** — the base holds none of the files this package writes; everything is an addition.
+- **Scoped change** — the base already holds files this package modifies, retires or adds to.
 
-**Mode is inferred, never declared by a caller.** Read the catalog: a package may be baseline for
+**Mode is inferred, never declared by a caller.** Read the base: a package may be baseline for
 one scope and a scoped change overall — in doubt, scoped change, which handles a baseline with
-explicit items. A change request is input on reopen, not a mode.
+explicit items.
 
 ## Gates
 
@@ -109,7 +108,7 @@ Workflow-specific gate notes:
   - Blocked: `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to Completion.`
   - Planned: `⏳ GATE: Next: Discussion complete<; N open gaps carried>. Say "next" to advance to Completion.`
   Before emitting the planned gate, run the **pre-gate pass** once (under `auto` too, which bypasses
-  the gate, not the pass): the tool's `validate` over the drafts projected on the catalog (what
+  the gate, not the pass): the tool's `validate` over the drafts projected on the base (what
   blocks is the catalog guide's), then `check-changes` on `## Requirement Changes`, then promotion's
   `C1`–`C5` in [`product-specs-promotion.md`](product-specs-promotion.md), enumerated only there.
   One evidence line per check under `## Verification`,
@@ -149,7 +148,7 @@ Progress tracking:
 **Workflow-specific marker lifecycle.** This workflow owns exactly one marker: the `- [ ] D<n>` items
 in `## Discussion`. Each is resolved individually, on the supervisor's explicit approval of *that
 item*, by checking its box and appending `- **Decision** <resolution>.` Advance intent at the
-Discussion gate does not clear them; by then they are already clear. Gaps stay unchecked; they block promotion. `## Requirement Changes` items
+Discussion gate does not clear them; by then they are already clear. Gaps stay unchecked; they block promotion into production. `## Requirement Changes` items
 carry no checkbox — the drafts realize the change — and nothing under `proposed-product-specs/**`
 carries a progress marker: those files are drafts of canon and must read as canon. Discussion
 links to drafts; requirements carry no Discussion citations but a gap footnote's `D#`.
@@ -160,16 +159,16 @@ awaiting confirmation included — are supervisor decisions.
 
 ## Initiation
 
-The workflow starts on an explicit signal — "write", "backfill" or "update the requirements for X".
-Whatever came before is context the agent digests; there is no declared entry point or mode.
+Start on an explicit signal: "write", "backfill", "update the requirements for X" or
+"request a change to <package>". Earlier context sets no entry point or mode.
 
 1. When the catalog does not exist yet, follow [`artifact-hosting.md`](../Core/artifact-hosting.md)
    to settle where it lives and link it from the README.
 2. Read [`product-specs-catalog.md`](product-specs-catalog.md) and the existing catalog.
-3. If an unpromoted package for this work is named or in context — including one seeded by another
-   workflow — reopen it rather than creating a second (*Reopening*).
-4. Otherwise resolve the change ID, check its paths, create the artifact with `## Goal` and
-   `## Inputs`.
+3. For a request, reopen or create `<base>/change-requests/<nnn>/` per the shared guide; otherwise
+   reopen unpromoted work named or in context, including another workflow's seed (*Reopening*).
+4. For other new packages, resolve the change ID and check its paths; create the artifact with
+   `## Goal` and `## Inputs`.
 5. Infer the mode. Baseline: read [`product-specs-baseline.md`](product-specs-baseline.md) before
    reading the implementation.
 6. Draft (*Drafting*), starting with the concept inventory, and seed `## Discussion`.
@@ -181,20 +180,12 @@ package may hold only drafts and `## Discussion`: complete Goal, Inputs and Mode
 finding (the package's `product-specs-promotion.md` Evidence) is fixed in the drafts, not made a
 Discussion item unless the fix is itself a decision.
 
-**Re-read the catalog on every reopen.** Re-derive the mode and the change list from the current
-catalog, not from the artifact.
+**Re-read the base on every reopen.** Re-derive mode and list from it, promoted requests'
+drafts too.
 
 **Resolved decisions keep their history.** A resolved `- [x] D<n>` keeps its number, Concern,
 Options and Proposal; *Resolution* governs its state; new items continue the numbering. Keep its
 draft links current.
-
-**Change requests** arrive as input on reopen, in the form and lifecycle of
-[`product-specs-artifacts.md`](product-specs-artifacts.md) § Change Requests. The supervisor reads
-each and says what to do with it; the agent applies that — for an incorporation the drafts and
-`## Requirement Changes`, then `Incorporated`; otherwise the status and the supervisor's reason in
-`Reviewer Response` — and re-renders its page. Until told, leave a `Proposed` request alone,
-summarizing open requests when asked; never reject or supersede one on its own, and raise no
-Discussion item to drive the ruling.
 
 ## Drafting
 
@@ -205,13 +196,13 @@ into a draft.
 ### Concept inventory
 
 Before any app behavior, list the concepts the change touches and check each against the company's
-own vocabulary, the catalog's `domains/` and the glossary. A concept that is absent, or whose
+own vocabulary and the base's `domains/` and glossary (its drafts over the catalog). A concept that is absent, or whose
 meaning changes, is drafted first, in `domains/` and the glossary, and brought to `## Discussion` as one
 `[Proposal]` item naming them: an open non-gap item holds behavior depending on them at the
 blocked gate, `auto` included; one the supervisor has already settled is recorded
 as *Resolution*'s checked item and drafting continues. An inventory that finds every concept
-canonical says so under `## Assumptions and TODOs`. ❌ sharing requirements
-drafted before the catalog had a Collaborator, each rewritten once it landed · ✅ Collaborator
+already in the base says so under `## Assumptions and TODOs`. ❌ sharing requirements
+drafted before the base had a Collaborator, each rewritten once it landed · ✅ Collaborator
 and its roles confirmed, then the sharing behavior on them.
 
 `## Situations` (optional) states the situations the requirements serve in the product manager's
@@ -239,9 +230,8 @@ changed contract retires it and adds a new one. **Before modifying or retiring a
 entry, run the tool's `references`** (the ID, or the term for every linked occurrence) over the
 catalog, the design specs and the active packages and decide per citation whether it still holds: a
 catalog citation that does not is re-pointed by drafting its file into the package; one in the
-design specs by a change request against their open package, else as input for design specs
-authoring ([§ Change Requests](../DesignSpecs/design-specs-artifacts.md#change-requests)); one in
-a work spec or another package is not the author's to edit — name it in the sweep for that
+design specs by a package against their open package, else as input for design specs authoring;
+one in a work spec or another package is not the author's to edit — name it in the sweep for that
 artifact's owner. Record the sweep under `## Verification`. A call that could
 go either way is a Discussion item: it burns an ID and re-points every work spec citing it.
 
@@ -305,11 +295,9 @@ the item's links aligned with the drafts.
 
 ## Requirement Changes
 
-`## Requirement Changes` is maintained with the drafts, from the first draft on: whenever a draft
-changes, the list states exactly the catalog-to-drafts difference, one typed item per difference,
-compared and granulated as [`product-specs-artifacts.md`](product-specs-artifacts.md) says. It is
-never deferred past the gate: the rendered page takes each change's reason from it, and
-`check-changes` confirms it in the pre-gate pass.
+Maintain `## Requirement Changes` from the first draft: each draft edit updates the base-to-drafts
+difference at [`product-specs-artifacts.md`](product-specs-artifacts.md)'s granularity. Never defer
+past the gate: the page takes each change's reason from it; the pre-gate `check-changes` confirms it.
 
 On reopen, recompute the difference and reconcile the existing items against it — never reset the
 section: an item that still matches keeps its `R#` and justification, a new difference gets a new
@@ -321,9 +309,7 @@ After the Discussion gate advances: bring `## Assumptions and TODOs` and `## Out
 date, validate and render once more, and end with
 `🏁 Complete. Let me know if anything needs adjustment.`
 
-Promotion is invoked separately. A package recording shipping behavior, or approved intended
-behavior with confirmed known-difference notes, may promote on supervisor approval; other future
-behavior waits until it ships. Say which applies at completion.
+Promotion is invoked separately; when a package may promote is its guide's *When promotion happens*.
 
 ## Artifact maintenance
 

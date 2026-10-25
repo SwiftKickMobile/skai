@@ -175,6 +175,12 @@
       "tags": ["core"]
     },
     {
+      "id": "guide.change-requests",
+      "type": "guide",
+      "sourcePath": "Guides/Core/change-requests.md",
+      "tags": ["core"]
+    },
+    {
       "id": "guide.artifact-hosting",
       "type": "guide",
       "sourcePath": "Guides/Core/artifact-hosting.md",

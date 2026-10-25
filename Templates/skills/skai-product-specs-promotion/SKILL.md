@@ -1,6 +1,6 @@
 ---
 name: skai-product-specs-promotion
-description: Promotes an approved product spec package into the catalog (readiness, checks with evidence, change requests for catalog defects). Use to promote product specs or land a product spec package.
+description: Promotes an approved product spec package into the catalog (readiness, checks with evidence; a defect in the base starts a package against it). Use to promote product specs or land a product spec package.
 ---
 
 # SKAI: Product specs promotion

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-promotion
 Managed-Source: Guides/Design/design-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-24
+Managed-Updated-At: 2026-10-25
 
 # Design Promotion
 
@@ -10,8 +10,8 @@ Print `📖 SKAI guide: design-promotion` now, as a line of its own. Read this g
 
 ## Purpose
 
-Move a completed package's changes into its **base** ([`design-authoring.md`](design-authoring.md)):
-change page to production, or request section to parent package.
+Fold the completed package ([`design-authoring.md`](design-authoring.md)) into its **base** per
+[`change-requests.md`](../Core/change-requests.md): change page to production, request section to parent package.
 After supervisor confirmation, delete drafts and archive the package.
 
 Refactor the base to absorb drafts; any redesign returns to authoring. For Figma, load
@@ -63,11 +63,11 @@ Workflow-specific gate notes:
   - `⏳ GATE: Next: Review <production | the base's drawings and Design Changes>. Say "next" to confirm and delete <the change page | the request section> <name>, or what to change.`
 
 Workflow-specific blocked gates:
-- A readiness failure (conditions 1–3, or 5 when a ruling invalidates mockups), a `C1` or `C2`
+- A readiness failure (conditions 1–3, or 5 when an outcome invalidates mockups), a `C1` or `C2`
   failure, or a design change the supervisor asks for at either gate: only authoring resolves them; each takes:
   `⏳ GATE: Blocked: <C1 | C2 | readiness condition | requested design change> — <what failed>. The package returns to authoring; re-run promotion once it is resolved.`
-- An existing promoted path (condition 4) or unruled request (condition 5) takes the standard
-  blocked gate naming it; use the input's process for rulings.
+- An existing promoted path (condition 4) or a request without an outcome (condition 5) takes the
+  standard blocked gate naming it.
 - A `C3` (base) or `C4` (links) fault is a promotion mistake repaired in place, never by
   redesigning; one needing access or a library the agent lacks takes the standard blocked line.
 
@@ -115,16 +115,14 @@ readiness screen is for a new run.
 
 Render the page, then verify before writing the checks:
 
-1. All non-gap `- [ ]` items in `## Discussion` are resolved; into production, no open gap items
-   or footnotes ([`known-gaps.md`](../Core/known-gaps.md)); into a package, `C3` carries both.
+1. Into production: no open `- [ ]` item, gap, footnote ([`known-gaps.md`](../Core/known-gaps.md))
+   or request under the package; into a package, carry them per `C3`.
 2. `## Design Changes` is current, Review advanced and inputs reconciled (authoring's *Completion*).
 3. `add` and `modify` entries link drafts on the change page or request section, unless the
    no-mockups ruling under `## Assumptions and TODOs` leaves them unlinked; unlinked entries never
    enter production. `remove` entries name the base design.
 4. The promoted path (*C6*) does not exist.
-5. Requests filed against inputs (under `## Assumptions and TODOs`) have rulings from their
-   processes. Apply them to the package: invalidation returns it to authoring; otherwise do
-   nothing. Unruled requests block now and at the base write.
+5. Every request this package filed against an input has its outcome applied ([`change-requests.md`](../Core/change-requests.md)), now and at the base write.
 
 A failure is a blocked gate, recorded in `## Evidence` instead of a checks section.
 
@@ -136,7 +134,7 @@ Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution or
   check; drafts follow the guide and, into production, mirror no gap. A script covers what it tests; inspect the rest.
 - `C2 Inventory matches the drawings` — per section, each linked `## Design Changes` entry has a
   draft; every screen draft of this package has an entry.
-- `C3 The base absorbs the package` — with condition 5 still met by current statuses, per entry:
+- `C3 The base absorbs the package` — with condition 5 still met, per entry:
   update changed screens in the base to match drafts, keeping identities; place new screens or
   states and integrate needed components per the tool guide; delete removed designs. Into
   production, the per-screen sections do not survive: every column is regrouped into
@@ -147,9 +145,8 @@ Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution or
   - Append entries with footnotes (`base D04` becomes `D04`) to its `## Design Changes`: next `V`
     numbers, Descriptions kept, Justifications `Change request: <nnn> V<n>; <the entry's own>`. Undrawn entries stay unlinked
     and return the base to Mockups to draw them.
-  - Append its own open gap items to the base's `## Discussion`: next `D` numbers, Gap lines and
-    mirrors kept; log `gap`.
-  - Name the promoted request in its `## Assumptions and TODOs`.
+  - Carry open items, gaps and requests into the base per the shared guide, mirrors kept,
+    logging `gap` for gaps; name the request in its `## Assumptions and TODOs`.
 - `C4 Links point at the base` — repoint `add` and `modify` links, including appended entries,
   to the base's drawings; a `remove` entry keeps its name; re-render every page whose
   artifact changed, the promoting package's included.

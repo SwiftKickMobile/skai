@@ -17,7 +17,7 @@ Bring the notes list's date format, badge table and stale notice in line with th
   - **Justification** Resolved decision: [D1]
   - **Touches** [notes][s-notes]
 
-- S2 modify item: [UI-NOTES-02]
+- S2 modify rule: [UI-NOTES-02.01]
   - **Justification** Design: `notes — badge counts`; the badge follows the 2026 guidance.
   - **Touches** [notes][s-notes]
 
@@ -55,6 +55,7 @@ Bring the notes list's date format, badge table and stale notice in line with th
 
 [UI-NOTES-01.02]: proposed-design-specs/screens/notes.md#ui-notes-01
 [UI-NOTES-02]: proposed-design-specs/screens/notes.md#ui-notes-02
+[UI-NOTES-02.01]: proposed-design-specs/screens/notes.md#ui-notes-02
 [UI-NOTES-03]: proposed-design-specs/screens/notes.md#ui-notes-03-retired
 [UI-LIST-01]: proposed-design-specs/screens/list-screen.md#ui-list-01
 [UI-NOTES-04]: proposed-design-specs/screens/list-screen.md#ui-notes-04

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-authoring
 Managed-Source: Guides/DesignSpecs/design-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-24
+Managed-Updated-At: 2026-10-25
 
 # Design Specs Authoring
 
@@ -22,15 +22,17 @@ Everything you write for a person follows [`writing-style.md`](../Core/writing-s
 ## The Change Package
 
 [Artifact formats § The Package](design-specs-artifacts.md#the-package) owns contents, path and
-decoupling. Use the supplied change ID; otherwise propose a short kebab-case ID and block before
-creation (from a branch, its final component). Check active and promoted paths: reopen unpromoted work; use new IDs for promoted ID/type pairs.
+decoupling; read [`change-requests.md`](../Core/change-requests.md) for the **base**.
+For a production base, use the supplied change ID or propose a short kebab-case ID (from a branch,
+its final component) and block before creation. Check active and promoted paths: reopen unpromoted work; use new IDs for promoted ID/type pairs.
 Create the artifact with Goal/Inputs before drafting. Sibling types update freely while the change
-is open; consumers file change requests, never edit it.
+is open; a consumer wanting it changed files a request against it.
 
 ### What `proposed-design-specs/` Holds
 
-Draft whole files at touched paths only. Reuse drafts; start missing ones from canon, or create
-if canon is absent. Keep unchanged items, index lines and glossary entries. New specs roots need
+Draft whole files at touched paths only. Reuse drafts; copy missing ones from the base's drafts,
+following bases to canon, or create if absent throughout. Keep unchanged items, index lines and
+glossary entries. New specs roots need
 the root index, glossary and all three folder indexes. Leave absent files untouched; delete none.
 Restructure via `move` items; keep unmoved source content.
 
@@ -50,11 +52,11 @@ Restructure via `move` items; keep unmoved source content.
 ## Decision Log
 ```
 
-The page link sits directly under the title, here and in every request's `request.md`.
+The page link sits directly under the title.
 
 ## Modes
 
-Infer from the specs, never declaration: **Baseline** if nothing exists for the touched screens (all
+Infer from the base, never declaration: **Baseline** if nothing exists for the touched screens (all
 additions); otherwise **Scoped change**. In doubt, use Scoped change.
 
 ## Gates
@@ -89,11 +91,12 @@ Workflow-specific gate notes:
   - Blocked: `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to Completion.`
   - Planned: `⏳ GATE: Next: Discussion complete<; N open gaps carried>. Say "next" to advance to Completion.`
   Before emitting the planned gate, run the **pre-gate pass** once (under `auto` too, which bypasses
-  the gate, not the pass): the tool's `validate` over the drafts projected on canon (what blocks is
+  the gate, not the pass): the tool's `validate` over the drafts projected on the base (what blocks is
   the content guide's), then `V1`–`V10` in [`design-specs.md`](design-specs.md) § Verification
   Checks, then `check-changes` on `## Spec Changes`. One evidence line per check under
   `## Verification`, in promotion's evidence form; a check with no line has not run. `V5` means
-  looking at the design file; a drawing not found is a Discussion item, not a failed gate. The gate
+  looking at the design file; a drawing not found for a state this package's changes prescribe is
+  a Discussion item, not a failed gate. The gate
   presents what the supervisor reviews; fix the artifact before gating.
 - An item resolved by a drawing (*Undrawn States*, *Design vs. App Differences*) stays open until
   the drawing exists and the agent has seen it; one holding a requirements gap (*Requirements
@@ -133,7 +136,7 @@ Progress tracking:
 **Workflow-specific marker lifecycle.** This workflow owns exactly one marker: the `- [ ] D<n>` items
 in `## Discussion`. Each is resolved individually, on the supervisor's explicit approval of *that
 item*, by checking its box and appending `- **Decision** <resolution>.` Advance intent at the
-Discussion gate does not clear them; by the time that gate is reached they are already clear. Gaps stay unchecked and block promotion.
+Discussion gate does not clear them; by the time that gate is reached they are already clear. Gaps stay unchecked and block promotion into production.
 `## Spec Changes` items carry no checkbox, and nothing under `proposed-design-specs/**` carries a
 progress marker — those files are drafts of canon and must read as canon. Discussion
 links to drafts; specs carry no Discussion citations but a gap footnote's `D#`.
@@ -143,13 +146,15 @@ It never bypasses the Discussion blocked gate: unresolved items are supervisor d
 
 ## Initiation
 
-Begin on explicit intent to write, backfill or audit specs; whatever came before is context.
+Begin on explicit intent to write, backfill or audit specs, or to request a change to a package;
+whatever came before is context.
 
 1. For first specs, follow [artifact hosting](../Core/artifact-hosting.md) and add the README link.
 2. Read [content rules](design-specs.md), existing specs, affected requirements and the design tool
    guide ([Figma](../Design/figma-designer-guide.md)).
-3. Reopen a named or contextual unpromoted package; otherwise resolve the ID, check its paths and
-   create the artifact with Goal/Inputs.
+3. For a request, reopen or create `<base>/change-requests/<nnn>/` per the shared guide; otherwise
+   reopen named or contextual unpromoted work, or resolve the ID and check its paths for a new
+   package. Create the artifact with Goal/Inputs.
 4. Infer mode; read *Working a Baseline* before code.
 5. Draft under `proposed-design-specs/` and seed Discussion.
 
@@ -160,11 +165,8 @@ Reopening follows product specs authoring
 `design-specs-promotion.md` for its promotion artifact.
 
 **Audit:** on an audit request or changed guides, before any edit run `V1`–`V10` over every
-draft. Record each failure with a proposed fix in Discussion; block until resolved, then fix.
-
-**Change requests** arrive as input on reopen
-([artifact formats § Change Requests](design-specs-artifacts.md#change-requests)), handled as that
-§ Reopening says.
+draft. A failure in what this package changed is a Discussion item with a proposed fix, blocking
+until resolved; one already in unchanged content starts a package against the base.
 
 ## Drafting
 
@@ -218,12 +220,11 @@ above.
 
 ### Requirements Gaps
 
-Never quietly specify a screen-independent promise or narrow a requirement. With a product spec
-package open for the subject, file a change request against it in the form of
-[`product-specs-artifacts.md` § Change Requests](../ProductSpecs/product-specs-artifacts.md#change-requests),
-with drafts, never editing that package; the gap is a Discussion item linking the request (a **Gap** line to carry it), drafted per *Drafting* and resolved when the outcome is applied to the draft: on `Incorporated` the spec cites the
-requirement's draft ID and promotion waits for its promotion; otherwise the supervisor's reason decides whether that draft behavior is kept, revised,
-removed or still waits. With none open, the gap is input for product specs authoring, resolved the same way.
+Never quietly specify a screen-independent promise or narrow a requirement. Start a product-specs
+package with drafts against the subject's open package; with none open, send the gap to product
+specs authoring. Link the work in a Discussion item (**Gap** to carry it); draft per *Drafting*.
+Apply the recorded outcome — keep, revise, remove or wait — before resolving it. After promotion into the product
+spec package, cite the requirement's draft ID.
 
 ## Discussion
 
@@ -241,7 +242,7 @@ Concerns must make sense without ID links. Package prose may name frames, nodes 
 ### What Earns an Item
 
 Only supervisor-dependent spec changes: design/app differences, undrawn states, requirements gaps
-awaiting a ruling, ambiguous modify/retire or placement calls, unresolved product intent, and audit
+awaiting a decision, ambiguous modify/retire or placement calls, unresolved product intent, and audit
 failures. Draft determined behavior directly; record givens as assumptions. A decision the
 supervisor supplies without an item is recorded as a checked item with its Decision line.
 
@@ -257,11 +258,10 @@ known-difference note. Maintain draft links.
 
 ## Spec Changes
 
-`## Spec Changes` is maintained with the drafts, from the first draft on: whenever a draft changes,
-the list states exactly the canon-to-drafts difference, one typed item per difference, compared and
-granulated as [artifact formats](design-specs-artifacts.md) says, no text inline. Never deferred
-past the gate: the rendered page takes each change's reason from it, and `check-changes` confirms
-it in the pre-gate pass.
+Maintain `## Spec Changes` from the first draft: each draft edit updates the base-to-drafts
+difference at [artifact formats](design-specs-artifacts.md)'s granularity, with no text inline.
+Never defer past the gate: the page takes each change's reason from it; the pre-gate `check-changes`
+confirms it.
 
 On reopen, reconcile the recomputed diff: retain matching `S#` items and justifications, add new
 differences, remove vanished ones. Never reset the section.

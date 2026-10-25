@@ -121,3 +121,53 @@ round. Size 11,264 → 11,812 bytes against the 12,000 cap.
 | 2026-10-24 r2 | F3: request page rendered footnotes without owner links or a gaps tile | closed — tool | request owners from its package; fixture, test |
 | 2026-10-24 r3 | Terminal round: no accepted findings; a resolved chip is not proof of ownership (past-a-rule) | converged; logged | stop rule (a); series GO: 2.5, 8.25, 0 |
 
+## 2026-10-25 — change requests as authoring against a base, spec guides (series CA)
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-10-25 r1 | F1 validate skipped a request's bases | closed — tool | infer_bases in validate |
+| 2026-10-25 r1 | F2 base check-changes right after the fold | closed | reconciliation on reopen |
+| 2026-10-25 r1 | F3 folded citations re-read as the base's | closed | shared rules 5–6; checker skips `Change request:` entries |
+| 2026-10-25 r1 | F4 item moves compared against the catalog | closed — tool | layered baseline |
+| 2026-10-25 r1 | F5 rule 9 included the base | closed | "but your base" |
+| 2026-10-25 r1 | F6 promotion artifact path hardcoded | closed | beside the authoring artifact |
+| 2026-10-25 r1 | F7 base contradiction returned the package | closed | own blocked-gate bullet |
+| 2026-10-25 r1 | F8 docstring request page; "unruled"/"statuses" | closed | deleted; reworded |
+| 2026-10-25 r1 | F9 migration not discoverable on reopen | logged | release work |
+| 2026-10-25 r1 | shipping and canonical-citation rules read as binding folds into packages | closed | scoped "into production" |
+| 2026-10-25 r2 | F1 Completion's shipping rule unscoped | closed | points at promotion's rule |
+| 2026-10-25 r2 | F2 validate's baseline was the first root only | closed — tool | every root but the last |
+| 2026-10-25 r2 | F3 unchanged inherited footnote read as modified | closed — tool | footnote set compared |
+| 2026-10-25 r2 | F4 design-spec rule entries checked at item grain | closed — tool | rule-level entries and checks |
+| 2026-10-25 r2 | F5 known-gaps rule 8 competed with filing triggers | closed | reworded |
+| 2026-10-25 r2 | F6 ancestor-owned gap in a nested request | logged | wait for occurrence |
+| 2026-10-25 r3 | F1 design-specs V6 and § IDs assumed production | closed | V6 sentence deleted; IDs from the base |
+| 2026-10-25 r3 | F2 link regression compared against the first root only | closed — tool | baseline of every root but the last |
+| 2026-10-25 r3 | F3 `base D3` not said to become `D3` on fold | closed | rule 6 |
+| 2026-10-25 r3 | F4 redundant parent entry beside rule entries allowed | logged | — |
+| 2026-10-25 r4 | F1 untouched-base exemption covered introduced conflicts | closed | "already in" |
+| 2026-10-25 r4 | F2 Requirements Gaps waited for upstream promotion unconditionally | closed | clause deleted |
+| 2026-10-25 r4 | F3 C1 overclaimed check-changes on missing items | closed | reworded |
+| 2026-10-25 r4 | F4 design-specs.md routed to the removed § Change Requests | closed | shared guide |
+| 2026-10-25 r5 | F1 link targets compared by file name | closed — tool | normalized relative path |
+| 2026-10-25 r5 | F2 concept inventory against the catalog | closed | the base |
+| 2026-10-25 r5 | F3 authoring and promotion disagreed on unchanged content | closed | scope owned by design-specs.md |
+| 2026-10-25 r6 | F1 Audit blocked on inherited defects | closed | scoped |
+| 2026-10-25 r6 | F2 `Base decision: D#` rejected by the checker | closed — tool | stripped before the check |
+| 2026-10-25 r6 | F3 file identity by name; moves compared unrebased links | closed — tool | paths; rebased link definitions |
+| 2026-10-25 r6 | F4 catalog citation fallback skipped the base; stale routing | closed | reworded |
+| 2026-10-25 r7 | F1 index-line identities lost their path | closed — tool | paths kept for index types |
+| 2026-10-25 r7 | F2 rule tables compared as raw text | closed — tool | resolved-cell comparison |
+| 2026-10-25 r7 | F3 citation fallback one level deep | closed | base chain |
+| 2026-10-25 r8 | F1 link identity by spelling; base targets unmatched | closed — tool | rebased and re-rooted link definitions |
+| 2026-10-25 r8 | F2 design index lines rode in Touches | closed | own entry unless with the new file |
+| 2026-10-25 r9 | F1 links into the catalog normalized differently per layer | closed — tool | layer-aware logical paths |
+| 2026-10-25 r9 | F2 validate read a cross-layer link from disk | closed — tool | resolves through the projection |
+| 2026-10-25 r9 | F3 index rider needed only a file-typed entry | closed — tool | the described file |
+| 2026-10-25 r9 | F4 intro rider renders without a reason | logged | — |
+| 2026-10-25 r10 | F1 external URLs identified by fragment | closed — tool | whole destination |
+| 2026-10-25 r10 | F2 file links keyed by label collided | closed — tool | place only |
+| 2026-10-25 r11 | F1 index rider accepted existing files | closed — tool | added files only |
+| 2026-10-25 r11 | request fixture's glossary links | closed — fixture | base's glossary; validate in the test |
+| 2026-10-25 r12 | Terminal round: no findings | converged | stop rule (a); series CA: 31.25, 19.375, 11.25, 10, 10, 14.375, 11.875, 10, 11.25, 10, 1.25, 0 |
+

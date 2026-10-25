@@ -122,8 +122,8 @@ One unreadable entry must never cost the owner sight of the stage it belongs to.
 [LIST-03]: ../apps/lumennotes/reminder-list.md#list-03
 [LIST-09]: ../apps/lumennotes/reminder-list.md#list-09
 [NOTEBOOK-02]: notebook.md#notebook-02
-[g-notebook]: ../glossary.md#notebook
-[g-inbox-stage]: ../glossary.md#inbox-stage
-[g-workflow-entry]: ../glossary.md#workflow-entry
-[g-active-suggestion]: ../glossary.md#active-suggestion
-[g-terminal-stage]: ../glossary.md#terminal-stage
+[g-notebook]: ../../../../proposed-product-specs/glossary.md#notebook
+[g-inbox-stage]: ../../../../proposed-product-specs/glossary.md#inbox-stage
+[g-workflow-entry]: ../../../../proposed-product-specs/glossary.md#workflow-entry
+[g-active-suggestion]: ../../../../proposed-product-specs/glossary.md#active-suggestion
+[g-terminal-stage]: ../../../../proposed-product-specs/glossary.md#terminal-stage

@@ -372,3 +372,12 @@ to the new shared `writing-style.md`, reached by the pointer sentence process-fl
 
 Cap: **16,850 bytes** for `design-authoring.md` (compressed 16,786, installed 16,865 after plain-language corrections; supervisor, 2026-10-24), replacing 16,550.
 
+## Adopts — 2026-10-25 (the shared change requests guide)
+
+`design-authoring.md` points at [`change-requests.md`](../../Guides/Core/change-requests.md) for the
+base, the request paths and folders, the request signal and filing against inputs, keeping only what
+is the design tool's (the request section, copies of base frames, the fold of frames). `design-promotion.md`
+readiness 5 points at the shared rule on requests filed against inputs; readiness 1 and C3 carry the
+2026-10-25 ruling that into a package open items, gaps and requests move up a level. Caps (supervisor,
+2026-10-25): `design-authoring.md` **16,000** (was 16,850), `design-promotion.md` **12,000** (was 12,100).
+

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-promotion
 Managed-Source: Guides/ProductSpecs/product-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-24
+Managed-Updated-At: 2026-10-25
 
 # Product Specs Promotion
 
@@ -10,34 +10,32 @@ Print `📖 SKAI guide: product-specs-promotion` now, as a line of its own. Read
 
 ## Purpose
 
-Write approved packages to product specs. Only promotion writes contracts except verified
+Fold the approved package into its **base** per [`change-requests.md`](../Core/change-requests.md). Only promotion writes contracts except verified
 work-spec known-difference cleanup. Validate text; prepare destination links; preserve prose,
-IDs, notes and drafts. Return package wording defects to authoring; route existing spec defects
-via *Raising a change request*.
+IDs, notes and drafts. Return package wording defects to authoring; a defect in the base starts a package against it.
 
-In chat, link requirement and Discussion IDs inline to exact targets via real anchors or verified file/line links.
+In chat, link requirement and Discussion IDs to their exact targets (real anchors or verified file/line links).
 
-Content: [`product-specs-catalog.md`](product-specs-catalog.md). Package, items, requests, review: [`product-specs-artifacts.md`](product-specs-artifacts.md). File shape/tool:
+Content: [`product-specs-catalog.md`](product-specs-catalog.md). Package, items, review: [`product-specs-artifacts.md`](product-specs-artifacts.md). File shape/tool:
 [`spec-file-shape.md`](../Core/spec-file-shape.md).
 
 Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## When promotion happens
 
-Promote shipping behavior on supervisor approval, and approved intended behavior whose confirmed
-known-difference notes name the affected implementations. Other future behavior waits until
+Into production, promote shipping behavior on supervisor approval, and approved intended behavior whose confirmed
+known-difference notes name the affected implementations. Other future behavior waits for
 shipment.
 
 ## The promotion artifact
 
-Write `skai/changes/<change-id>/product-specs/product-specs-promotion.md` beside the authoring artifact:
+Write `product-specs-promotion.md` beside the authoring artifact:
 
 ```
 # Product Specs Promotion — <name>
 [Review page](product-specs-review.html)
-## Inputs               the package being promoted; the product specs it targets
+## Inputs               the package being promoted; its base
 ## Promotion Checks     - [ ] C<n> items, unchecked until executed
-## Change Requests      links to any request this run filed; may be absent
 ## Evidence             the verification trail
 ```
 
@@ -66,16 +64,17 @@ If an unexpected blocker prevents continued work, use the blocked gate line and 
 
 Workflow-specific gate notes:
 - Promotion Checks is the single review point: after readiness and the unchecked checklist, before
-  canon changes. `next` executes the checks, writes canon and archives the package. Summarize the
+  the base changes. `next` executes the checks, writes the base and archives the package. Summarize the
   destination files and **every requirement in those whole-file writes**, carried-forward ones
   included, not the checklist or change-item count.
   - `⏳ GATE: Next: Promote <N> requirements to <paths>. Say "next" or what to change.`
 
 Workflow-specific blocked gates:
-- A readiness failure, a `C1`–`C5` failure, requested draft edits, or a contradiction in the
-  product specs that would make the write inconsistent return the package to authoring. Record the
-  cause and use:
-  `⏳ GATE: Blocked: <C# | readiness condition | requested wording | catalog contradiction> failed — <what failed>. The package returns to authoring; re-run promotion once it is resolved.`
+- A readiness failure, a `C1`–`C5` failure or requested draft edits return the package to
+  authoring; record the cause and use:
+  `⏳ GATE: Blocked: <C# | readiness condition | requested wording> failed — <what failed>. The package returns to authoring; re-run promotion once it is resolved.`
+- A base contradiction that would make the write inconsistent takes the standard blocked gate; a
+  package against the base fixes it.
 - An archive collision, inaccessible references or an archival failure use the standard blocked
   gate; recovery follows *Archive the package*.
 
@@ -121,30 +120,29 @@ the write is the supervisor's.
 The package is the one named or already in context, never its siblings or promoted history.
 Before fresh readiness, inspect existing promotion Evidence. A recorded `C7` write awaiting
 confirmation/repair resumes `C7` in place, even unchecked: retain `C1`–`C6`, repair/verify without
-rewording, check `C7`, archive. Changed drafts, intervening canon or uncertain outcomes block; never
+rewording, check `C7`, archive. Changed drafts, intervening base edits or uncertain outcomes block; never
 assume an unrecorded write. Checked `C7` resumes incomplete archival only, from the active or
 promoted location. An archived package is never re-promoted.
 
-Before a canonical write, ensure `skai/promoted/<change-id>/product-specs/` is absent and identify
-live incoming references from the catalog/app repositories, related packages and work specs; a
-collision or an inaccessible required reference blocks; never overwrite or merge a destination.
+Before the write, ensure the promoted path (`skai/promoted/<change-id>/product-specs/`, or
+`<base>/promoted-change-requests/<nnn>/`) is absent and identify live incoming references from the
+catalog/app repositories, related packages and work specs; a collision or an inaccessible required
+reference blocks; never overwrite or merge a destination.
 
 ### Readiness screen
 
 Run `validate <catalog root> <drafts>`, `check-changes` and `render` first, so the supervisor
 reviews the current page, then verify before writing `## Promotion Checks`:
 
-1. Every `- [ ]` item in `## Discussion` is resolved, gaps included
-   ([`known-gaps.md`](../Core/known-gaps.md)).
+1. Into production: no open `- [ ]` item in `## Discussion`, gap
+   ([`known-gaps.md`](../Core/known-gaps.md)) or request under the package. Into a package, `C7` carries them.
 2. `validate` reports no fault in a file the package holds and no conflict the projection
-   introduces; a fault it notes in an untouched canonical file never blocks and becomes a change
-   request (*Raising a change request*).
+   introduces; a fault already in an untouched base file never blocks: start a package against the base.
 3. `check-changes` passes: every change has a `## Requirement Changes` entry, or rides in one's
-   Touches, at the artifacts guide's granularity, with the right operation; no entry names an
+   Touches, at the artifacts guide's grain, with the right operation; no entry names an
    unchanged or absent target.
 4. Every modified or retired ID or glossary entry has its sweep under `## Verification`.
-5. No request remains `Proposed`, except one this run filed under *Raising a change request*,
-   now and when the write begins.
+5. Every request this package filed against an input has its outcome applied ([`change-requests.md`](../Core/change-requests.md)), now and at the base write.
 
 On failure, record the condition in `## Evidence`, not a checks section, and return to authoring.
 
@@ -152,16 +150,14 @@ On failure, record the condition in `## Evidence`, not a checks section, and ret
 
 Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution order.
 
-Verify changed content at its projected canonical location; unchanged content and untouched
-canonical files do not block. Where the tool covers a check, its readiness output is the evidence;
-the rest is inspection.
+Verify changed content at its projected base location; unchanged content never blocks. Where the tool covers a check, its readiness output is the evidence; else inspect.
 
 - `C1 IDs are append-only` — every ID in a rewritten file remains in its draft, heading the promise
-  it headed in canon: `check-changes` names any item missing from a draft, `validate` any
-  duplicate or revived ID; inspect that none is renumbered (two live promises exchanging IDs pass
-  both). Whole-file drafting carries non-ID content forward; no separate check.
+  it headed in the base: `validate` names any duplicate or revived ID, `check-changes` an item
+  missing with no retire entry; inspect that every ID is kept, none renumbered (two live
+  promises exchanging IDs pass both). Whole-file drafting carries non-ID content forward; no separate check.
 - `C2 Prefixes do not collide` — no prefix introduced here is claimed by another file in the
-  product specs or this package, and every prefix is recorded on its file's index line (`validate`
+  base or this package, and every prefix is recorded on its file's index line (`validate`
   checks only the line's shape).
 - `C3 Cross-references resolve` — `validate` has every link defined and used; inspect that citations
   in changed requirements, indexes, glossary entries and known-difference notes reach the intended
@@ -173,19 +169,19 @@ the rest is inspection.
 - `C5 Traversal` — index lines name the questions their files answer; every cross-cutting term
   introduced here has a glossary entry pointing at the requirements that govern it, and `validate`
   has every term linked; no behavioral claim sits in unnumbered prose.
-- `C6 Prepare destination links` — prepare each file's reference definitions for its canonical
-  location: package draft targets map to their canonical destinations; untouched dependencies keep
-  their catalog targets. Preserve prose, IDs, notes and target identities; leave the drafts
-  unchanged. Record adjusted definitions, or that none needed it.
-- `C7 Write the catalog` — condition 5 still holding by current statuses, write the
-  prepared whole files to the resolved catalog root, creating it
-  when absent, leaving files outside the package untouched. Confirm destination links reach their
-  targets and no Discussion citations, checkboxes or `🟡` remain; only retirement marks and
-  known-difference notes accompany the contract: read the written text back and run
-  `validate <catalog root>` (a fault readiness did not note is `C7`'s, wherever reported). No
-  render after the write: the page keeps the approved diff. Repair mechanical faults in place,
-  never reword; record the write outcome, then the confirmation/repair results, retaining
-  failures. Check `C7` only after confirmation succeeds, then archive.
+- `C6 Prepare destination links` — map draft targets to base destinations in each file's reference
+  definitions; untouched dependencies keep their targets. Preserve prose, IDs, notes and target
+  identities; leave drafts unchanged. Record adjusted definitions or that none needed it.
+- `C7 Write the base` — recheck conditions 1 and 5; write prepared whole files to the base,
+  creating the root and files if absent; leave other files untouched. Into production: confirm
+  destination links, no Discussion citations, checkboxes or `🟡`, and only retirement marks and
+  known-difference notes beside contracts; read back and run `validate <catalog root>` (a fault
+  readiness missed is `C7`'s, wherever reported). Keep the approved diff; do not render after
+  writing. Into a package: replace its drafts; append entries to its `## Requirement Changes`
+  with its next `R` numbers and `Change request: <nnn> R<n>; <the entry's own>`; carry open work and
+  name the request in `## Assumptions and TODOs` as the shared guide says; validate and
+  render the base, whose author reconciles its list on reopen. Repair mechanically, never reword; record the write outcome,
+  then confirmation/repair results, keeping failures. Check `C7` only on confirmed success, then archive.
 - `C8 Archive the package` — *Archive the package* below; promotion completes only after verified
   write and archival.
 
@@ -220,22 +216,14 @@ Persist/link full failure output at a run-and-check-specific path, never overwri
 run; `output` on success only if persisted. Silence is not a pass: unresolved paths fail; an empty
 subject records why.
 
-## Raising a change request
-
-A contradiction or inconsistency in the existing product specs — a fault `validate` notes in an
-untouched file included — needs a change request, not draft edits. File it in this package's
-`change-requests/<nnn>/` as [`product-specs-artifacts.md`](product-specs-artifacts.md) § Change
-Requests says, link it under `## Change Requests`, and block only if the write itself would
-contradict canon. Otherwise continue and check the passing check with its linked request.
-A request filed here rides to completion still `Proposed`.
-
 ## Archive the package
 
 After verified `C7`, execute `C8`:
 
-1. Move `skai/changes/<change-id>/product-specs/` intact, rendered pages and `working-docs/`
-   included, to `skai/promoted/<change-id>/product-specs/` in the catalog repository. Leave sibling
-   types untouched; remove the change-ID grouping directory only if empty.
+1. Move the package intact (pages, `working-docs/`, `change-requests/`,
+   `promoted-change-requests/`): `skai/changes/<change-id>/product-specs/` to
+   `skai/promoted/<change-id>/product-specs/` in the catalog repository; a request to
+   `<base>/promoted-change-requests/<nnn>/`. Leave siblings; remove only empty grouping directories.
 2. Repair live incoming links across those repositories, related packages and work specs, and
    relative links inside moved files, preserving target identities, prose, IDs, decisions and
    recorded results; annotate historical paths with current locations. Inaccessible or unrepaired
@@ -243,7 +231,7 @@ After verified `C7`, execute `C8`:
 3. Verify archived files/links, absence of the active type path and preserved siblings; record move
    and link evidence, then check `C8` in the archived `product-specs-promotion.md`.
 
-After a failure, report canon promoted but archival incomplete and use the standard blocked gate;
+After a failure, report the base written but archival incomplete and use the standard blocked gate;
 resume unfinished archival only, at either package path, never overwriting a destination or
 repeating `C7`.
 
@@ -255,13 +243,11 @@ repeating `C7`.
 
 ## Completion
 
-`C7` plus `C8` with evidence means canon is written and the package is archived at
-`skai/promoted/<change-id>/product-specs/`. Link its artifact and emit
+With `C7` and `C8` evidenced, link the archived artifact and emit
 `🏁 Complete. Let me know if anything needs adjustment.`
 
 `C7` alone closes the proposal to authoring; a migrated historical `C7`-only package needs its
 separately recorded relocation instead of `C8`. Promoted drafts are never reopened or re-promoted.
-Name any still-Proposed request with its archived link.
 
 ## Project Addendum
 

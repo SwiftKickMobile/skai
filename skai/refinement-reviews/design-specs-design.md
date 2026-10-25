@@ -270,3 +270,15 @@ Slice 3 (2026-10-20): design specs authoring's *Drafting* adopts the gap footnot
 ## Adopts — 2026-10-21 (working docs placement)
 
 Working documents serving a package live in its `working-docs/` folder and archive with it at promotion (`design-specs-artifacts.md` layout, `design-specs-promotion.md` § Archive the Package; caps held; skai#92, `Guides/Core/working-doc-conventions.md`); build and test output goes to the scratch root, never the package.
+
+## Amendment — 2026-10-25 (change requests: authoring against a base)
+
+Design specs adopt [`product-specs-system-design.md`](product-specs-system-design.md) § Amendment —
+2026-10-25 and the shared [`change-requests-design.md`](change-requests-design.md) with `S` for `R`
+and `C3`/`C4` for `C7`/`C8`: `design-specs-artifacts.md` § Change Requests and its `request.md`
+layout go; § The Package names the base and the two request folders and cites the shared guide;
+`design-specs-authoring.md` § Requirements Gaps files "a package against the open product specs
+package" instead of a request in the old form; `design-specs-promotion.md` § Raising a Change Request
+becomes "start a package against the base". Supersedes § Decisions — 2026-10-19 where they conflict.
+The set's cap of 60,000 holds unless compression says otherwise.
+

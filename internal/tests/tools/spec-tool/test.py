@@ -1,7 +1,7 @@
 """Automated test for Bin/spec-tool.py against the sample files in fixtures/.
 
 Run after any change to spec-tool.py: python3 internal/tests/tools/spec-tool/test.py
-Commands that write (render, render-request, convert, link-terms) run on a temporary copy, so the
+Commands that write (render, convert, link-terms) run on a temporary copy, so the
 fixtures stay as committed.
 """
 from pathlib import Path
@@ -153,8 +153,9 @@ class CheckChanges(unittest.TestCase):
                           "--authoring", "broken-package/design-specs-authoring.md")
         self.assertEqual(code, 1)
         found = issues(lines)
-        self.assertEqual(len(found), 3, found)
+        self.assertEqual(len(found), 4, found)
         self.assertTrue(any("no ## Decision Log section" in i for i in found))
+        self.assertTrue(any("rule UI-NOTES-02-01 is modified but no change-list entry names it" in i for i in found))  # design specs list every changed rule
         self.assertTrue(any("_screens.md" in i and "intro is modified" in i for i in found))
         self.assertTrue(any("index line list-screen is added" in i for i in found))
 
@@ -220,17 +221,21 @@ class Writers(unittest.TestCase):
         self.assertEqual(code, 0, lines)
         self.assertTrue(page.exists())
 
-    def test_render_requests_beside_request_md(self):
-        for number in ["001", "002"]:
-            page = self.copy / f"package/change-requests/{number}/request-review.html"
-            page.unlink()
-            code, lines = run("render-request", "--catalog", "catalog", "--package-drafts", "package/proposed-product-specs",
-                              "--request", f"package/change-requests/{number}", fixtures=self.copy)
-            self.assertEqual(code, 0, lines)
-            self.assertTrue(page.exists(), number)
-            if number == "001":  # a footnote naming the package's item: owner chip resolved, gaps counted
-                self.assertIn("tip-gap-base-d3", page.read_text(encoding="utf-8"))
-                self.assertTrue(any("'gaps': 1" in ln for ln in lines), lines)
+    def test_request_package_renders_and_checks_against_its_base(self):
+        drafts = "package/change-requests/001/proposed-product-specs"
+        page = self.copy / "package/change-requests/001/product-specs-review.html"
+        code, lines = run("render", "--catalog", "catalog", "--drafts", drafts, fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = page.read_text(encoding="utf-8")
+        self.assertIn("Change Package: package | 001", html)  # the base's id, then the request's number
+        self.assertIn("tip-gap-base-d3", html)  # a footnote naming the base's item resolves to it
+        self.assertTrue(any("'gaps': 1" in ln for ln in lines), lines)
+        code, lines = run("check-changes", "--catalog", "catalog", "--drafts", drafts,
+                          "--authoring", "package/change-requests/001/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        code, lines = run("validate", "catalog", drafts, fixtures=self.copy)  # the base's drafts come in between on their own
+        self.assertEqual(code, 0, lines)
+        self.assertEqual(issues(lines), [], lines)
 
     def test_convert_old_shape_validates_and_is_idempotent(self):
         code, lines = run("convert", "old-shape", fixtures=self.copy)

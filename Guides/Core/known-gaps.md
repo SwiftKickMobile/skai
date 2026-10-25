@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.known-gaps
 Managed-Source: Guides/Core/known-gaps.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-24
+Managed-Updated-At: 2026-10-25
 
 # Known Gaps
 
@@ -17,7 +17,7 @@ How to work with a **gap**: something that must be decided before the work ships
 5. **Inherit upstream gaps.** With a placeholder, proceed without a decision; clear its marker when the owning item closes (7). Without a placeholder, raise a Discussion item recommending one of: request a placeholder upstream (a change request), omit the dependent part (Out of scope), or wait at a blocked gate for an answer. The supervisor rules.
 6. **Promotion into production needs zero open gaps: items and marks.** An open gap fails readiness: the blocked gate lists them and the package returns to authoring, where its own are resolved (4) and inherited marks wait on their owners (5, 7). Promotion never resolves a gap; a workflow that promotes into another open package carries them into it, as its guide says.
 7. **Use the normal input catch-up and Discussion rules.** Adopted upstream as written: nothing changes; clear the mark. An answer differing from the placeholder may undercut an approved decision. Omitted upstream: remove the dependent part from your drafts too.
-8. **Work through the supervisor.** There is no owner field: skai knows only the supervisor. The question may name who is awaited; guides and tools never read that name. Leave change requests and promotion for the supervisor to start; a decision you cannot make returns to your workflow's gate.
+8. **Work through the supervisor.** There is no owner field: skai knows only the supervisor. The question may name who is awaited; guides and tools never read that name. Leave promotion for the supervisor to start and file requests when your workflow says; a decision you cannot make returns to your workflow's gate.
 
 ## Project Addendum
 

@@ -522,3 +522,58 @@ The authoring skeleton places `## Verification` after `## Out of scope`, just be
 ## Adopts — 2026-10-24 (writing for people)
 
 `process-flow.md` gains § Writing for people, owner of the pointer sentence every guide that writes for a person inlines (`writing-style-design.md`). Cap **21,550 bytes** (compressed 21,578; supervisor, 2026-10-24), replacing 21,200.
+
+## Amendment — 2026-10-25 (change requests: authoring against a base)
+
+Inventory for the product specs guides, per skai#90; the shared model is
+[`change-requests-design.md`](change-requests-design.md) (skai#99; the design guides' model of
+2026-10-23, supervisor-confirmed 2026-10-25: authoring is relative to a base; a request is authoring
+not relative to production; promotion folds the request into the base and archives it under the
+base; the supervisor edits a request before promotion to accept part of it; the Decision Log is the
+trail). Supersedes P10's change request clause and § Decisions — 2026-10-19 items 1–3 where they
+conflict: there is no ruling step, no status field, no "proposer never edits"; "a request carries
+drafts" survives as "a request is a package, with drafts".
+
+**product-specs-artifacts.md must say:** the package layout gains `change-requests/<nnn>/` and
+`promoted-change-requests/<nnn>/` as folders holding packages of this same layout; `request.md`, its
+status and response fields, `request-review.html` and § Change Requests go; a one-sentence pointer
+to the shared guide takes their place; the `Change request` Source token's meaning becomes the
+provenance note promotion writes (`Change request: <nnn> R<n>; …`); `Base decision: D#` cites an item of
+the request's base (the tool accepts `base D<n>` in a justification).
+
+**product-specs-authoring.md must say:** the base (production, or the package a request is filed
+against) is named where the package is introduced, citing the shared guide; drafts are drafted whole
+on top of the base's drafts (a request initializes a missing draft from its base's draft, then the
+catalog); the change list states the difference between the base and the drafts; Initiation gains
+the request signal and path; § Reopening loses its change request paragraph (requests are packages
+to reopen like any other); the scoped-change sweep's "a change request against their open package"
+becomes "a package against that open package".
+
+**product-specs-promotion.md must say:** promotion folds the package into its base; readiness
+condition 5 becomes the open-requests rule the supervisor sets; condition 2's catalog fault and
+§ Raising a change request become "start a package against the base" (whatever the base is);
+`## Change Requests` in the promotion artifact goes; into a package, `C6`–`C8` become: write the
+request's drafts over the base's (whole files), append the change items with provenance, carry open
+gap items, name the request in the base's Assumptions, re-render the base, archive at
+`<base>/promoted-change-requests/<nnn>/`; the base's author then reconciles the base's list on
+reopen as § Requirement Changes already says.
+
+Both promotion guides' readiness gains condition 5: every request the package filed against an
+input has its outcome applied (the shared guide's rule 9).
+
+**Tool (`spec-tool.py`):** `render` and `check-changes` find a request's base from its folder
+(`change-requests/` or `promoted-change-requests/` above the type folder) and layer it under the
+catalog transitively, `--base` staying as an override; the page's top bar reads
+`Change Package: <change-id> | <nnn>`; `render-request`, `parse_request` and their test go; a request
+fixture becomes a package fixture.
+
+**Migration:** each existing `request.md` becomes a package: its Goal, its Requested Changes as
+`## Requirement Changes`, its open questions as Discussion items with Gap lines where the drafts hold
+a placeholder, its reference sweep under `## Verification`; drafts stay; `request.md` and
+`request-review.html` are removed; the page rendered. One exists (SalesPro,
+`product-specs-rework/product-specs/change-requests/001`).
+
+Caps (supervisor, 2026-10-25, a little under the compressed sizes): `product-specs-artifacts.md` **5,350**
+(was 6,500), `product-specs-authoring.md` **20,350** (was 21,300), `product-specs-promotion.md` **16,550**
+(was 17,000). The design specs set keeps 60,000.
+

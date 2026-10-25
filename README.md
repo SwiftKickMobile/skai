@@ -312,6 +312,7 @@ Draft requirements into a change package under `skai/changes/<change-id>/product
 
 - Guide [`Guides/ProductSpecs/product-specs-authoring.md`](Guides/ProductSpecs/product-specs-authoring.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
+- Requests [`Guides/Core/change-requests.md`](Guides/Core/change-requests.md) — read when a package's base is another package: filing, authoring and promoting a change request
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 - Baseline [`Guides/ProductSpecs/product-specs-baseline.md`](Guides/ProductSpecs/product-specs-baseline.md) — read when authoring infers Baseline mode
 - Hosting [`Guides/Core/artifact-hosting.md`](Guides/Core/artifact-hosting.md) — read when the artifact does not exist yet: which repository it goes in, and the README link
@@ -337,6 +338,7 @@ requirement text and IDs remain unchanged.
 
 - Guide [`Guides/ProductSpecs/product-specs-promotion.md`](Guides/ProductSpecs/product-specs-promotion.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
+- Requests [`Guides/Core/change-requests.md`](Guides/Core/change-requests.md) — read when a package's base is another package: filing, authoring and promoting a change request
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when readiness finds an open gap; the package returns to authoring to resolve it
 
 **Prerequisites:** A change package at `skai/changes/<change-id>/product-specs/` whose discussion is fully resolved and whose requirement change items match its drafts.
@@ -384,6 +386,7 @@ Draft design specs -- the rules joining a screen's design to the requirements: w
 
 - Guide [`Guides/DesignSpecs/design-specs-authoring.md`](Guides/DesignSpecs/design-specs-authoring.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
+- Requests [`Guides/Core/change-requests.md`](Guides/Core/change-requests.md) — read when a package's base is another package: filing, authoring and promoting a change request
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 - Shape [`Guides/Core/spec-file-shape.md`](Guides/Core/spec-file-shape.md) — the file shape product specs and design specs share, and the `Bin/spec-tool.py` commands that validate, cross-reference and render it (cited by the content, authoring and promotion guides)
 - Gap footnotes [`Guides/Core/spec-file-gaps.md`](Guides/Core/spec-file-gaps.md) — read when a spec draft or a design change list carries a placeholder for an open gap: the footnote form, the spec tool's checks and the page
@@ -404,6 +407,7 @@ Write an approved design-spec package into the canonical specs and archive it to
 
 - Guide [`Guides/DesignSpecs/design-specs-promotion.md`](Guides/DesignSpecs/design-specs-promotion.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
+- Requests [`Guides/Core/change-requests.md`](Guides/Core/change-requests.md) — read when a package's base is another package: filing, authoring and promoting a change request
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when readiness finds an open gap; the package returns to authoring to resolve it
 
 **Prerequisites:** A package whose Discussion is resolved and whose Spec Changes are written, citing only canonical requirements.
@@ -411,7 +415,7 @@ Write an approved design-spec package into the canonical specs and archive it to
 **Phases:**
 
 1. **Promotion checks.** Agent screens the package for readiness, then writes an unchecked checklist: the ten verification checks, destination link preparation, the write, archival. Gate: supervisor reviews what will become canon.
-2. **Execute.** Agent runs the checks with evidence, writes the specs, moves the package to its promoted path and repairs references. A failing check returns the package to authoring; when the existing specs are the problem, the agent raises a change request instead.
+2. **Execute.** Agent runs the checks with evidence, writes the specs, moves the package to its promoted path and repairs references. A failing check returns the package to authoring; when the existing specs are the problem, the agent starts a package against them instead.
 
 ### Unit testing (skill `skai-unit-testing`)
 

@@ -80,12 +80,10 @@ Usage:
         folder (the drafts' parent) as product-specs-review.html or design-specs-review.html; a
         legacy proposed-requirements drafts folder is a product-specs package.
 
-    python3 spec-tool.py render-request --catalog DIR --package-drafts DIR --request DIR [--out FILE.html]
-        A change request's own page, relative to the package it targets (falling back to the
-        catalog). --package-drafts may be the legacy proposed-requirements folder. The request's
-        own drafts are <request>/proposed-product-specs or <request>/proposed-design-specs,
-        whichever exists (requests are new, so they have no legacy name). Without --out it is
-        written beside request.md as request-review.html.
+    A change request is a package whose base is another package: drafts under
+        <base>/change-requests/<nnn>/ or <base>/promoted-change-requests/<nnn>/ layer on the base's
+        drafts of the same name (and the base's own bases), read from the folder by render and
+        check-changes; --base overrides. The page title chains the ids: "Change Package: offers | 001".
 
     python3 spec-tool.py check-changes --catalog DIR --drafts DIR --authoring FILE
         The list-matches-diff check: every added, modified, retired or missing item, glossary
@@ -145,7 +143,7 @@ GLOSSARY TERMS (what "every occurrence in spec prose" covers, for validate and l
     check do not look for them, references does not find them, and the note's text is never
     linked.
 
-CHANGE LISTS (what render, render-request and check-changes read from the authoring artifact)
+CHANGE LISTS (what render and check-changes read from the authoring artifact)
 
     Entries are "- R<n> <type>: <identity>" (product) or "- S<n> <operation> <object>: <identity>"
     (design), each followed by its indented "**Justification**" field and optional "**Touches**".
@@ -215,27 +213,21 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     file-level entry (add file or modify file) whose Touches names the file, if there is one; an
     index line shows only the reason of the entry for the file it links; neither ever aggregates
     the reasons of the changes inside a file.
- 4. Request page: title "Change Request: <nnn>" with "Change Package: <id>" beneath; the same card
-    with status, title, goal and reviewer response; the Documents box; the request's drafts
-    diffed against the package's drafts, falling back to the catalog, each requested change's
-    justification under its card. A request without drafts shows, after the card, one card per
-    requested change: its type, its identity (linked where the request's definitions resolve
-    it) and its justification.
- 5. Status is a small colored square, never a text pill: green added, amber modified, red retired
+ 4. Status is a small colored square, never a text pill: green added, amber modified, red retired
     or removed, gray unchanged. It leads the file heading, item, rule or table row it marks. Rows
     and rules inside an item that is itself new carry no square. A card's status, discussion-kind
     or request-type badge is not a change marker and may be a text pill.
- 6. Cards are white on a very light gray page with a soft shadow; popovers and summary boxes are
+ 5. Cards are white on a very light gray page with a soft shadow; popovers and summary boxes are
     white too. Section headings and descriptive text are normal weight and color; section
     headings are uppercase. Rule numbers and tables are body size. A glossary entry's Also
     called note is a muted callout under its definition, styled as a known difference is, its
     text never linked.
- 7. Whole deletions (retired items, removed rows, rules, entries) are gray strikethrough with no
+ 6. Whole deletions (retired items, removed rows, rules, entries) are gray strikethrough with no
     tint, including the ID. A retired or missing item's collapsed card holds its whole old body
     (statement, tables, rules, known differences) struck through, with no squares inside, then
     the retirement statement. Inside a modified block, removed words carry a light red tint with
     strikethrough and added words a light green tint, at normal weight.
- 8. Every citation and glossary term that resolves is a link: citations as chips, glossary terms
+ 7. Every citation and glossary term that resolves is a link: citations as chips, glossary terms
     as body-colored text with a dashed underline, both with the link pointer. In artifact prose (Discussion, Situations,
     justifications, a request's head) a bare ID and every glossary term are linked the same way at
     render time, outside links and code. Resting the pointer on one for about 400 ms (keyboard focus: at once) opens a popover card with the full cited
@@ -243,7 +235,7 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     from outside the roots gets its popover too when its link definition finds the file on disk. Citations that
     cannot resolve are plain muted text, never styled as links. The browser's own tooltip is not
     used.
- 9. Dark mode follows the system setting with the same relationships.
+ 8. Dark mode follows the system setting with the same relationships.
 """
 
 import argparse
@@ -771,8 +763,9 @@ def term_pattern(term):
 def validate(roots):
     """Later roots overlay earlier ones: a file at the same relative path replaces the earlier
     file for the ID-uniqueness check, which is how a package's drafts project onto the catalog."""
+    LAYERS[:] = [Path(r).resolve() for r in roots]
     specs, by_rel, canonical, replaced = [], {}, set(), {}  # replaced: rel -> the earlier file a later root overlays
-    catalog_by_rel = {}  # the first root alone: what a link resolved to before the projection
+    catalog_by_rel, baseline_by_rel, first = {}, {}, set()  # the first root alone; the baseline (every root but the last): what a link resolved to before the projection
     for n, root in enumerate(roots):
         for p in sorted(Path(root).rglob("*.md")):
             s = parse(p)
@@ -783,11 +776,13 @@ def validate(roots):
             by_rel[rel] = s
             if n == 0:
                 catalog_by_rel[rel] = s
-                if len(roots) > 1:
-                    canonical.add(id(s))
+                first.add(id(s))
+            if n < len(roots) - 1:
+                canonical.add(id(s))  # the baseline: every root but the last (canon, then a request's bases)
+                baseline_by_rel[rel] = s
     shape = [i for s in specs for i in s.issues]  # per-file checks: notes outside the drafts
     for s in specs:  # canon carries no gap: a single root is canon; under a projection, the first root is
-        if s.kind == "spec" and (len(roots) == 1 or id(s) in canonical):
+        if s.kind == "spec" and (len(roots) == 1 or id(s) in first):
             shape += [Issue(s.path, g.line, f"gap footnote [^{g.label}] in a canonical file; canon carries none") for it in s.items for g in it.gaps]
     cross = []  # whole-projection checks: block unless both sides are untouched canonical files
     projected = set(id(s) for s in by_rel.values())
@@ -860,8 +855,8 @@ def validate(roots):
                 if id(s) not in canonical and canonical and Path(path).name == "glossary.md" and id(found) in canonical and not (s.path.parent / path).resolve().is_file():
                     shape.append(Issue(s.path, s.linkdef_lines[name], f"[{name}] points at {path}, which the package does not hold; the glossary is at {Path(os.path.relpath(found.path.resolve(), s.path.parent.resolve())).as_posix()}"))
                 continue
-            if id(s) in canonical and resolve_link(s, rel, path, frag, catalog_by_rel)[1] is None:
-                cross.append(Issue(s.path, s.linkdef_lines[name], f"[{name}] points at {target}, which the drafts {projection_fate(frag, found, by_rel)}; the catalog resolves it"))
+            if id(s) in canonical and resolve_link(s, rel, path, frag, baseline_by_rel)[1] is None:
+                cross.append(Issue(s.path, s.linkdef_lines[name], f"[{name}] points at {target}, which the drafts {projection_fate(frag, found, by_rel)}; the base resolves it"))
             else:
                 shape.append(Issue(s.path, s.linkdef_lines[name], f"[{name}] {why}"))
 
@@ -901,7 +896,8 @@ def resolve_link(spec, rel, path, frag, lookup):
         found = lookup.get(rel)
         if found is None and rel.startswith(".."):
             disk = (spec.path.parent / path).resolve()
-            found = parse(disk) if disk.is_file() else None
+            lp = logical_path(disk)  # into another layer: what the projection holds there, not the file on disk
+            found = lookup.get(lp) if lp else (parse(disk) if disk.is_file() else None)
         if found is None:
             return None, f"points at {path}, which does not exist"
     else:
@@ -1231,14 +1227,32 @@ def strip_gloss(s):
 
 
 LINKS = {"old": {}, "new": {}}  # link definitions of the two files being diffed
+LAYERS = []  # the resolved roots of the projection in play (catalog, bases, drafts), set by validate, render and check-changes
+
+
+def logical_path(physical):
+    """A file's place in the projection: its path relative to whichever layer root holds it
+    (catalog, a base's drafts or the drafts), so the same file reads the same from every layer;
+    None when the file lies outside every layer."""
+    physical = Path(physical).resolve()
+    for root in LAYERS:
+        try:
+            return physical.relative_to(root).as_posix()
+        except ValueError:
+            continue
+    return None
 
 
 def target_identity(target):
-    """What a link definition points at, independent of where the file sits: the anchor, else
-    the file name, else the URL."""
+    """What a link definition points at: the anchor, else the file the relative path reaches
+    (normalized, so `./a.md` and `a.md` agree while `../shared/a.md` and `../screens/a.md` differ;
+    a base file and its draft sit at the same relative place, so the same target reads the same),
+    else the URL."""
+    if target.startswith(("http:", "https:", "mailto:")):
+        return target  # an external destination is identified whole, anchor included
     if "#" in target:
         return target.split("#", 1)[1]
-    return Path(target).name if target and not target.startswith(("http:", "https:")) else target
+    return os.path.normpath(target).replace(os.sep, "/") if target else target
 
 
 def diff_key(text, side):
@@ -1426,23 +1440,6 @@ def gap_owners(authoring, disc):
     return owners
 
 
-def request_gap_owners(package_dir, request_dir):
-    """Owners for a change request's page: the request has no Discussion of its own, so "base" is
-    the package it is filed against and "product specs" whatever that package's artifact links."""
-    package_dir, request_dir = Path(package_dir).resolve(), Path(request_dir).resolve()
-    base = next((package_dir / n for n in ("product-specs-authoring.md", "design-specs-authoring.md") if (package_dir / n).exists()), None)
-    owners = {"": ("", {})}
-    if not base:
-        return owners
-    found = gap_owners(base, parse_discussion(base.read_text(encoding="utf-8")))
-    rel = lambda p: os.path.relpath(p, request_dir).replace(os.sep, "/")
-    owners["base"] = (rel(base.with_name(base.name.replace("-authoring.md", "-review.html"))), found[""][1])
-    if "specs" in found:
-        page, items = found["specs"]
-        owners["product specs"] = owners["specs"] = (rel((package_dir / page).resolve()), items)
-    return owners
-
-
 def scope_key(scope):
     return scope.replace(" ", "-") or "own"
 
@@ -1514,7 +1511,7 @@ def render_item(old: Item, new: Item, gloss, why):
                     changed = True
                     body = word_diff(a.text if a else "", b.text if b else "", gloss)
                     parts.append(f'<blockquote class="mod"><b>Known difference — {html.escape(app)}:</b> {body}</blockquote>')
-            changed = changed or bool(new.gaps)
+            changed = changed or {(g.scope, g.did, g.placeholder) for g in new.gaps} != {(g.scope, g.did, g.placeholder) for g in old.gaps}  # a footnote gained, lost or reworded is a change; one carried unchanged is not
             status = "modified" if changed else "unchanged"
     iid = new.id if new else old.id
     aid = anchor(iid) + ("-retired" if (new and new.retired) else "")
@@ -1583,6 +1580,7 @@ class Entry:
     line: int
     path: Path = None
     file: str = ""  # draft-relative path of the file it belongs to
+    own: bool = True  # a modified item whose own prose, tables, notes and gaps are unchanged (only its rules moved) is not own
 
 
 def render_glossary(old: Spec, new: Spec, gloss, changes, elsewhere=None):
@@ -1645,8 +1643,9 @@ def render_index(old: Spec, new: Spec, gloss, changes, rel):
     fmt = lambda v: (f"`{v[0]}` " if v[0] else "") + v[1]
     for name in [x[0] for x in new.items] + [k for k in o if k not in n]:
         a, b = o.get(name), n.get(name)
-        ot, nt = (target_identity(s.linkdefs.get(name, "")) if s else "" for s in (old, new))
-        keys = {anchor(name), Path((new if b else old).linkdefs.get(name, "")).name}
+        ot, nt = (target_identity(LINKS[side].get(name, "")) for side in ("old", "new"))
+        tgt = LINKS["new" if b else "old"].get(name, "").split("#")[0]
+        keys = {anchor(name)} | ({tgt} if tgt else set())  # the file described, by its root-relative path
         why = why_for(changes, keys)  # the entry for the linked file, never every entry touching the index
         if a and b and same(fmt(a), fmt(b)) and ot == nt:
             status, body = "unchanged", ""
@@ -1687,7 +1686,7 @@ def parse_changes(text, linkdefs, base_dir, drafts):
         t = change_field("Touches", block)
         identity = c.group("identity").strip()
         # a linked identity keys a file only when the entry is about a file; "[Stale notice][s-glossary]" keys the term, not glossary.md
-        name, keys = identity_keys(identity, linkdefs, base_dir, drafts, paths=bool(re.search(r"file|folder", c.group("type"))) or not LINK_USE_RE.fullmatch(identity))
+        name, keys = identity_keys(identity, linkdefs, base_dir, drafts, paths=bool(re.search(r"file|folder|index", c.group("type"))) or not LINK_USE_RE.fullmatch(identity))  # an index line is identified by the file it describes
         touched = set()
         pieces = [m.group(0) for m in LINK_USE_RE.finditer(t)] + re.split(r"[\s,]+|→|->", LINK_USE_RE.sub(" ", t))
         for piece in pieces:
@@ -1714,19 +1713,22 @@ def identity_keys(identity, linkdefs, base_dir, drafts, paths=True):
     m = LINK_USE_RE.fullmatch(identity)
     label = m.group(1) if m else identity
     target = linkdefs.get(m.group(2) or label, "") if m else identity
-    keys = {label, anchor(label)}
+    path, frag = target.split("#", 1) if "#" in target else (target, "")
+    # a link to a spec file (not an index) identifies that file by its place, never by its label:
+    # two files both linked as "Notes" must not collide
+    keys = set() if (m and path and not frag and paths and not Path(path).name.startswith("_")) else {label, anchor(label)}
     rid = re.match(rf"({ID_RE})(?:[-.]\d{{2}})*$", label)
     if rid:
         keys.add(anchor(rid.group(1)))
-    path, frag = target.split("#", 1) if "#" in target else (target, "")
     if frag:
         keys.add(re.sub(r"-retired$", "", frag))
     elif path and paths:
-        keys.add(Path(path).name)
         try:
             keys.add((base_dir / path).resolve().relative_to(drafts.resolve()).as_posix())
         except ValueError:
-            pass
+            lp = logical_path(base_dir / path)  # a link into a base's drafts or the catalog: the same file in another layer
+            if lp:
+                keys.add(lp)
     return label, keys
 
 
@@ -1856,6 +1858,46 @@ ASSETS = ("spec-review.v1.css", "spec-review.v1.js")  # beside this script, link
 BUCKET = {"added": "added", "modified": "modified", "retired": "retired", "missing": "retired", "removed": "retired", "unchanged": "unchanged"}
 
 
+def tables_same(a, b):
+    """Two table lists read the same: cells compared as the renderer compares them, by text and
+    resolved link target (the old side in the old file's link definitions, the new in the new's)."""
+    cells = lambda t: [t.header] + list(t.rows)
+    return len(a) == len(b) and all(len(cells(x)) == len(cells(y)) and all(
+        len(r) == len(q) and all(same(c, d) for c, d in zip(r, q)) for r, q in zip(cells(x), cells(y))) for x, y in zip(a, b))
+
+
+def rule_entries(old_rules, new_rules, parent):
+    """One Entry per rule (and child rule) of an item, keyed by its ID-NN anchor, with the rule's
+    own status: added, removed, retired, modified (its text or tables), else unchanged. A change in a
+    child rule is the child's, not the parent's."""
+    o = {r.num: r for r in old_rules}
+    n = {r.num: r for r in new_rules}
+    out = []
+    for num in sorted(set(o) | set(n)):
+        orule, nrule = o.get(num), n.get(num)
+        rid = f"{parent}-{num}"
+        if orule and nrule:
+            status = ("retired" if nrule.retired and not orule.retired
+                      else "modified" if not same(orule.text, nrule.text) or not tables_same(orule.tables, nrule.tables) else "unchanged")
+            out.append(Entry("", "rule", rid, {anchor(rid)}, status, nrule.line))
+            out += rule_entries(orule.children, nrule.children, rid)
+        elif nrule:
+            out.append(Entry("", "rule", rid, {anchor(rid)}, "added", nrule.line))
+            out += rule_entries([], nrule.children, rid)
+        else:
+            out.append(Entry("", "rule", rid, {anchor(rid)}, "removed", orule.line))
+    return out
+
+
+def item_own_changed(old, new):
+    """Whether an item changed in anything but its rules: statement, tables, known differences,
+    gap footnotes or retirement."""
+    return (old is None or new is None or old.retired != new.retired
+            or not same(" ".join(old.statement), " ".join(new.statement)) or not tables_same(old.tables, new.tables)
+            or {(k.app, collapse(diff_key(k.text, "old"))) for k in old.knowns} != {(k.app, collapse(diff_key(k.text, "new"))) for k in new.knowns}
+            or {(g.scope, g.did, g.placeholder) for g in old.gaps} != {(g.scope, g.did, g.placeholder) for g in new.gaps})
+
+
 def render_tree(bases, drafts, gloss, changes, prefix=""):
     """Diff every file under drafts against the first base root that has it.
     Returns (sections, toc, totals, entries); entries include one per file."""
@@ -1864,10 +1906,11 @@ def render_tree(bases, drafts, gloss, changes, prefix=""):
     for draft in sorted(drafts.rglob("*.md")):
         rel = draft.relative_to(drafts).as_posix()
         new = parse(draft)
-        base = next((b / rel for b in bases if (b / rel).exists()), None)
+        broot = next((b for b in bases if (b / rel).exists()), None)
+        base = broot / rel if broot else None
         old = parse(base) if base else None
         set_resolver(new.linkdefs, draft.resolve())
-        LINKS["old"], LINKS["new"] = (old.linkdefs if old else {}), new.linkdefs
+        LINKS["old"], LINKS["new"] = (rebased_linkdefs(old, broot) if old else {}), rebased_linkdefs(new, drafts)  # root-relative, so a target reads the same from any layer
         if new.kind == "glossary":
             entries = render_glossary(old, new, gloss, changes, {t: v for t, v in baseline_entries(bases).items() if v[2] != rel})
         elif new.kind == "index":
@@ -1880,7 +1923,7 @@ def render_tree(bases, drafts, gloss, changes, prefix=""):
                 totals[BUCKET[e.status]] += 1
         n_changed = sum(1 for e in entries if e.status != "unchanged")
         kind = "added" if old is None else ("modified" if n_changed else "unchanged")
-        all_entries += [Entry("", "file", rel, {rel, Path(rel).name}, kind, 1, draft, rel)] + entries
+        all_entries += [Entry("", "file", rel, {rel}, kind, 1, draft, rel)] + entries
         if kind == "unchanged":
             continue
         totals["added files"] += kind == "added"
@@ -1934,7 +1977,8 @@ def render_spec(old: Spec, new: Spec, gloss, changes, prefix, rel):
         status, h = render_item(o.get(it.id), it, gloss, why_for(changes, {anchor(it.id)}))
         if prefix:
             h = h.replace(' id="', f' id="{prefix}', 1)
-        out.append(Entry(h, "item", it.id, {anchor(it.id)}, status, it.line))
+        out.append(Entry(h, "item", it.id, {anchor(it.id)}, status, it.line, own=status != "modified" or item_own_changed(o.get(it.id), it)))
+        out += rule_entries(o[it.id].rules if it.id in o else [], it.rules, it.id)
     for k, it in o.items():
         if k not in {it.id for it in new.items}:
             out.append(Entry(render_item(it, None, gloss, why_for(changes, {anchor(k)}))[1], "item", k, {anchor(k)}, "missing", it.line))
@@ -1963,26 +2007,6 @@ def prose_card(body, modified=False, why="", gloss=None):
 def prose_line(raw, after):
     """1-based line of the first non-blank line after index `after`."""
     return next((i + 1 for i in range(after + 1, len(raw)) if raw[i].strip()), after + 1)
-
-
-def parse_request(path, drafts):
-    """request.md: 'Label: value' header lines, a title, '## Goal', and '## Requested Changes' in the
-    same typed format as a package's change list. Returns (fields, title, goal, changes, linkdefs)."""
-    text = path.read_text(encoding="utf-8")
-    fields, body = {}, []
-    for line in text.splitlines():
-        m = re.match(r"^(Change Request Status|Reviewer Response):\s*(.*)$", line)
-        if m and not body:
-            fields[m.group(1)] = m.group(2).strip()
-        else:
-            body.append(line)
-    text = "\n".join(body)
-    tm = re.search(r"^# (.+)$", text, re.M)
-    title = tm.group(1).strip() if tm else ""
-    gm = re.search(r"^## Goal\s*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
-    goal = norm(LINKDEF_RE.sub("", gm.group(1))) if gm else ""
-    linkdefs = {m.group("name"): m.group("target") for m in map(LINKDEF_RE.match, body) if m}
-    return fields, title, goal, parse_changes(text, linkdefs, path.resolve().parent, Path(drafts)), linkdefs
 
 
 def asset_links(out):
@@ -2047,51 +2071,35 @@ def prepare(catalog, bases, drafts, out):
     return gloss
 
 
-DRAFT_FOLDERS = ("proposed-product-specs", "proposed-design-specs")
-
-
-def render_request(catalog, package_drafts, request_dir, out):
-    """A change request's own page: its header and body, then its proposed drafts diffed against the package."""
-    catalog, package_drafts, request_dir = Path(catalog), Path(package_drafts), Path(request_dir)
-    out = Path(out) if out else request_dir / "request-review.html"
-    cr_drafts = next((request_dir / d for d in DRAFT_FOLDERS if (request_dir / d).exists()), None)
-    fields, title, goal, changes, linkdefs = parse_request(request_dir / "request.md", cr_drafts or package_drafts)
-    gloss = prepare(catalog, [package_drafts], cr_drafts, out)
-    set_resolver(linkdefs, (request_dir / "request.md").resolve())
-    RESOLVER["gap_owners"] = request_gap_owners(package_drafts.parent, request_dir)
-    status = fields.get("Change Request Status", "Proposed")
-    response = fields.get("Reviewer Response", "")
-    head = (f'<div class="item request"><div class="head"><span class="status">{html.escape(status)}</span>'
-            f'<span class="title">{html.escape(title)}</span></div>'
-            + (f"<p>{inline(goal, gloss, auto=True)}</p>" if goal else ""))
-    head += f'<div class="why"><b>Reviewer response</b> {inline(response, gloss, auto=True) if response else "<i>none yet</i>"}</div></div>'
-    sections, toc, totals = [], [], {"added files": 0, "added": 0, "modified": 0, "retired": 0, "unchanged": 0}
-    if cr_drafts:
-        sections, toc, totals, _ = render_tree([package_drafts, catalog], cr_drafts, gloss, changes)
-        totals["gaps"] = sum(1 for d in sorted(cr_drafts.rglob("*.md")) for it in (lambda sp: sp.items if sp.kind == "spec" else [])(parse(d)) if it.gaps)
-    else:
-        # no drafts: one card per requested change, so the page still says what is asked
-        sections = [f'<div class="item request"><div class="head"><span class="status">{html.escape(c.type)}</span>'
-                    f'<span class="id">{inline(c.identity, gloss)}</span></div>'
-                    f'<div class="why"><b>Why</b> {inline(c.why, gloss, auto=True) if c.why else "<i>none given</i>"}</div></div>' for c in changes]
-    page = page_shell(f"Change Request: {request_dir.name}", totals, head + toc_html(toc), sections, gloss, out,
-                      subtitle=f"Change Package: {package_id(package_drafts)}")
-    out.write_text(page, encoding="utf-8")
-    print(f"wrote {out}: {totals}")
+def infer_bases(drafts):
+    """A request's bases, root first, read from its folder: drafts under
+    `<base>/change-requests/<nnn>/` or `<base>/promoted-change-requests/<nnn>/` layer on the base's
+    drafts of the same name, and the base's own bases before those."""
+    drafts, bases = Path(drafts).resolve(), []
+    while drafts.parent.parent.name in ("change-requests", "promoted-change-requests"):
+        drafts = drafts.parent.parent.parent / drafts.name
+        bases.insert(0, drafts)
+    return bases
 
 
 def package_id(drafts):
-    """The change id: the folder above product-specs/, design-specs/ or the legacy requirements/,
-    else the drafts' parent."""
-    parent = drafts.resolve().parent
-    return parent.parent.name if parent.name in ("product-specs", "design-specs", "requirements") else parent.name
+    """The change id, then each request number down the chain, joined by ` | `: the folder above
+    product-specs/, design-specs/ or the legacy requirements/ (else the drafts' parent), and the
+    `<nnn>` of every change-requests/ or promoted-change-requests/ level under it."""
+    parent, numbers = drafts.resolve().parent, []
+    while parent.parent.name in ("change-requests", "promoted-change-requests"):
+        numbers.insert(0, parent.name)
+        parent = parent.parent.parent
+    root = parent.parent.name if parent.name in ("product-specs", "design-specs", "requirements") else parent.name
+    return " | ".join([root] + numbers)
 
 
 def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
     """bases: further base roots layered over the catalog in order, each overlaying the last, so a
     package can be drafted on another open package's drafts (the drafts diff against the top layer
     that holds each file)."""
-    catalog, drafts, bases = Path(catalog), Path(drafts), [Path(b) for b in bases]
+    catalog, drafts, bases = Path(catalog), Path(drafts), [Path(b) for b in bases] or infer_bases(drafts)
+    LAYERS[:] = [p.resolve() for p in [catalog, *bases, drafts]]
     design = drafts.name == "proposed-design-specs"
     out = Path(out) if out else drafts.parent / ("design-specs-review.html" if design else "product-specs-review.html")
     if not authoring and not no_authoring:
@@ -2206,6 +2214,8 @@ def kind_matches(change_type, what):
         return what == "index line"
     if re.search(r"file|folder", change_type):
         return what == "file"
+    if re.search(r"rule|sub-item", change_type):  # sub-item: older name for rule
+        return what == "rule"
     return what == "item"
 
 
@@ -2214,14 +2224,15 @@ def check_changes(catalog, drafts, authoring, bases=()):
     projection has a change-list entry naming it; every added file has one naming it or its path
     in Touches (its contents ride on it); intro, section and index lines may also ride in Touches;
     no entry names something unchanged or absent."""
-    catalog, drafts, authoring, bases = Path(catalog), Path(drafts), Path(authoring), [Path(b) for b in bases]
+    catalog, drafts, authoring, bases = Path(catalog), Path(drafts), Path(authoring), [Path(b) for b in bases] or infer_bases(drafts)
+    LAYERS[:] = [p.resolve() for p in [catalog, *bases, drafts]]
     _, _, _, changes, _, _ = parse_authoring(authoring, drafts)
     text = authoring.read_text(encoding="utf-8")
     log_issues = check_decision_log(authoring, text)
     disc_items = {it["id"]: it for _, its in parse_discussion(text) for it in its}
     known = set(disc_items)
     log_issues += [Issue(authoring, c.line, f"{c.cid} cites {did}, which is not in ## Discussion")
-                   for c in changes for did in sorted(set(re.findall(r"\bD\d+\b", c.why))) if did not in known]
+                   for c in changes for did in sorted(set(re.findall(r"(?<!base )(?<!specs )\bD\d+\b", re.sub(r"Base decision: D\d+", "", c.why)))) if did not in known and not c.why.lstrip().startswith("Change request:")]  # a folded entry's citation stays the request's  # a scoped item (base D4, product specs D21) is another artifact's
     # every gap footnote in the drafts names an open gap item, and every open gap item is marked
     open_gaps = {d for d, it in disc_items.items() if it["gap"] and not it["done"]}
     marked = set()
@@ -2242,6 +2253,8 @@ def check_changes(catalog, drafts, authoring, bases=()):
     bad_rules = [c for c in changes if c.rule and c.rule not in rules]
     issues = [Issue(authoring, c.line, f"{c.cid} names rule {c.rule}, which is not in the drafts") for c in bad_rules]
     changes = [c for c in changes if c not in bad_rules]
+    design = drafts.name == "proposed-design-specs"  # design specs list every changed rule; product specs list requirements
+    missing_items = {e.name for e in entries if e.what == "item" and e.status in ("missing", "retired")}
     matched, covering, actual = set(), set(), {}  # actual: cid -> {(what, name, status)} it names
     for e in entries:
         if e.what == "section":
@@ -2258,7 +2271,16 @@ def check_changes(catalog, drafts, authoring, bases=()):
                 actual.setdefault(c.cid, set()).add((e.what, e.name, e.status))
         if hits or (e.file in added_files and e.what != "file") or (e.what == "file" and e.status == "modified"):
             continue
+        if e.what == "rule" and not design:
+            continue  # product specs list at requirement grain: a changed rule rides on its item's entry
+        if e.what == "rule" and design and rule_parent(e.name) in missing_items:
+            continue  # the item itself is missing or retired; its entry covers its rules
+        if e.what == "item" and design and not e.own and all(
+                any(c.keys & r.keys and kind_matches(c.type, "rule") for c in changes) for r in entries if r.what == "rule" and r.status != "unchanged" and rule_parent(r.name) == e.name):
+            continue  # only its rules changed, and each has its own entry
         riders = [c for c in changes if c.touched & {e.file, Path(e.file).name}] if e.what in ("file", "intro", "section line", "index line") else []
+        if e.what == "index line" and design:
+            riders = [c for c in riders if re.search(r"file|folder", c.type) and c.keys & e.keys & added_files]  # design specs: an index line rides only with the new file it describes
         covering |= {c.cid for c in riders}
         if not riders:
             issues.append(Issue(e.path, e.line, f"{describe(e.what, e.name)} is {e.status} but no change-list entry names it"))
@@ -2273,8 +2295,8 @@ def check_changes(catalog, drafts, authoring, bases=()):
             continue
         op = c.type.split()[0]
         found = {s for _, _, s in actual[c.cid]}
-        if re.search(r"rule|sub-item|known-difference", c.type):  # sub-item: older name for rule
-            ok = found <= {"modified"}  # a change inside an existing item shows as that item modified
+        if "known-difference" in c.type:
+            ok = found <= {"modified"}  # a note inside an existing item shows as that item modified
         elif op == "move" or (op == "modify" and any(c.keys & m.keys for m in moves)):
             ok = found in ({"added", "missing"}, {"added", "removed"})  # an item leaves a file; a glossary entry leaves a glossary file
         else:
@@ -2287,12 +2309,17 @@ def check_changes(catalog, drafts, authoring, bases=()):
             continue  # not a move; reported above
         for what, name in {(w, n) for w, n, _ in actual[m.cid] if w in ("item", "glossary entry")}:
             modifies = [c for c in changes if c.type.split()[0] == "modify" and c.keys & m.keys]
-            status = moved_item_status(name, catalog, drafts) if what == "item" else moved_entry_status(name, [*reversed(bases), catalog], drafts)
+            status = (moved_item_status if what == "item" else moved_entry_status)(name, [*reversed(bases), catalog], drafts)
             if status == "modified" and not modifies:
                 issues.append(Issue(authoring, m.line, f"{m.cid} declares move but {what} {name} also changed; a modify entry is needed"))
             for c in modifies if status == "unchanged" else []:
                 issues.append(Issue(authoring, c.line, f"{c.cid} declares modify but moved {what} {name} is unchanged"))
     return issues + log_issues
+
+
+def rule_parent(rid):
+    """The item an ID-NN or ID-NN-NN rule belongs to."""
+    return re.match(ID_RE, rid).group(0)
 
 
 def describe(what, name):
@@ -2320,22 +2347,40 @@ def moved_entry_status(term, baseline, drafts):
     return "unchanged" if old is None or new is None or (same(old[0], new[0]) and old[1] == new[1]) else "modified"
 
 
-def moved_item_status(iid, catalog, drafts):
-    """Whether an item that left one file for another changed on the way: the catalog's copy
-    diffed against the draft's, each read with its own link definitions."""
+def moved_item_status(iid, baseline, drafts):
+    """Whether an item that left one file for another changed on the way: the baseline's copy (the
+    first root in `baseline` that holds it: the nearest base, then the catalog) diffed against the
+    draft's, each read with its own link definitions."""
     def find(root):
         for p in sorted(Path(root).rglob("*.md")):
             s = parse(p)
             for it in (s.items if s.kind == "spec" else []):
                 if it.id == iid:
-                    return it, s
-        return None, None
-    old, os_ = find(catalog)
-    new, ns = find(drafts)
+                    return it, s, root
+        return None, None, None
+    old, os_, oroot = next(((it, sp, r) for root in baseline for it, sp, r in [find(root)] if it), (None, None, None))
+    new, ns, nroot = find(drafts)
     if not old or not new:
         return "unchanged"
-    LINKS["old"], LINKS["new"] = os_.linkdefs, ns.linkdefs
+    LINKS["old"], LINKS["new"] = rebased_linkdefs(os_, oroot), rebased_linkdefs(ns, nroot)  # the two files sit in different folders
     return render_item(old, new, {}, "")[0]
+
+
+def rebased_linkdefs(spec, root):
+    """A file's link definitions with each local target made root-relative, so two files in
+    different folders compare by what they point at, not by how they spell the way there."""
+    folder = os.path.dirname(Path(spec.path).resolve().relative_to(Path(root).resolve()).as_posix())
+    def rebase(target):
+        if not target or target.startswith(("http:", "https:")):
+            return target
+        path, _, frag = target.partition("#")
+        if not path:
+            return "#" + frag if frag else ""
+        rel = os.path.normpath(os.path.join(folder, path)).replace(os.sep, "/")
+        if rel.startswith(".."):  # the link leaves this root: the same file in another layer, or something external
+            rel = logical_path(Path(spec.path).parent / path) or rel
+        return rel + ("#" + frag if frag else "")
+    return {name: rebase(target) for name, target in spec.linkdefs.items()}
 
 
 def rule_ids(spec):
@@ -2355,15 +2400,14 @@ def main(argv):
     lt = sub.add_parser("link-terms"); lt.add_argument("roots", nargs="+")
     cv = sub.add_parser("convert"); cv.add_argument("roots", nargs="+")
     d = sub.add_parser("render"); d.add_argument("--catalog", required=True); d.add_argument("--drafts", required=True)
-    d.add_argument("--base", action="append", default=[], help="a further base root layered over the catalog (repeatable, later wins)")
+    d.add_argument("--base", action="append", default=[], help="a base root layered over the catalog (repeatable, later wins); a request's bases are read from its folder when omitted")
     d.add_argument("--authoring"); d.add_argument("--no-authoring", action="store_true"); d.add_argument("--out")
-    q = sub.add_parser("render-request"); q.add_argument("--catalog", required=True); q.add_argument("--package-drafts", required=True)
-    q.add_argument("--request", required=True); q.add_argument("--out")
     c = sub.add_parser("check-changes"); c.add_argument("--catalog", required=True); c.add_argument("--drafts", required=True)
-    c.add_argument("--authoring", required=True); c.add_argument("--base", action="append", default=[], help="a further base root layered over the catalog (repeatable, later wins)")
+    c.add_argument("--authoring", required=True); c.add_argument("--base", action="append", default=[], help="a base root layered over the catalog (repeatable, later wins); a request's bases are read from its folder when omitted")
     a = ap.parse_args(argv)
     if a.cmd == "validate":
-        specs, issues = validate(a.roots)
+        roots = a.roots[:-1] + [str(b) for b in infer_bases(a.roots[-1]) if str(b) not in a.roots] + a.roots[-1:]  # a request's drafts bring their bases
+        specs, issues = validate(roots)
         for i in sorted(issues, key=lambda x: (str(x.path), x.line)):
             print(i)
         blocking = [i for i in issues if not i.note]
@@ -2388,9 +2432,6 @@ def main(argv):
         if a.authoring and a.no_authoring:
             ap.error("--authoring and --no-authoring exclude each other")
         render(a.catalog, a.drafts, a.authoring, a.out, a.no_authoring, a.base)
-        return 0
-    if a.cmd == "render-request":
-        render_request(a.catalog, a.package_drafts, a.request, a.out)
         return 0
 
 

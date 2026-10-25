@@ -985,3 +985,409 @@ gap-guide lines still describe it). Tests: spec-tool 18 OK, design-tool OK. Cons
 Process reflection: I shortcut the process on a one-clause change and had to be told; rule saved to
 memory. Twice a paraphrased disposition in a prompt produced noise; prompts now quote the record.
 
+## Change Requests As Authoring Against A Base, Spec Guides — 2026-10-25
+
+Inventory: `change-requests-design.md` (new standard for `Guides/Core/change-requests.md`);
+`product-specs-system-design.md` and `design-specs-design.md` § Amendment — 2026-10-25; skai#99.
+Obsolescence sweep (to remove): `request.md` with its status and response fields,
+`request-review.html`, § Change Requests in both artifacts guides, § Raising a change request in both
+promotion guides, `## Change Requests` in both promotion artifacts, readiness condition 5's "Proposed",
+authoring § Reopening's change request paragraph, design-specs § Requirements Gaps' request form,
+`spec-file-shape.md`'s `render-request` row, `spec-tool.py` `render-request`/`parse_request` and
+the request test and fixture (`request.md` under two fixtures), README phase lines naming
+`Incorporated`, skill descriptions saying "change requests for catalog defects",
+`change-packages.md`'s change request paragraph. Design guides' request passages are the
+cross-check reference. Three decisions put to the supervisor before drafting (ending without
+promotion; open requests at promotion; UI Map scope).
+
+Rulings (supervisor, 2026-10-25): no rule for ending without promotion; into production nothing open,
+into a package open items, gaps and requests move up a level (a request open against the promoted
+request is re-filed against the base); UI Map guides out of this pass and the shared guide names no
+users. Drafts written: `Guides/Core/change-requests.md` (2,990); both artifacts guides, both
+authoring and both promotion guides of the spec types; `design-promotion.md` readiness 1 and C3;
+`spec-file-shape.md` command table; README (Requests line under the four spec skills; design specs
+promotion phase); the two promotion skill descriptions; `change-packages.md`; manifest. Tool:
+`spec-tool.py` infers a request's bases from its folder (`render`, `check-changes`; `--base`
+overrides), the page title chains `<change-id> | <nnn>`, a justification may cite `base D<n>`;
+`render-request`, `parse_request` and yesterday's `request_gap_owners` removed; the request fixture
+is a package fixture (`change-requests/001/product-specs-authoring.md`), the two other request
+fixtures removed; 18 tests OK, design-tool and figma-page-check OK; the Offers pages render.
+
+Author check against the three standards: shared guide requirements 1–9 each present (1 the model
+sentence; 2 paths and the two folders; 3 the signal, the next free number, a defect in a base starts a
+package against it; 4 no roles and selective acceptance; 5 the fold with the open-work ruling; 6 gaps
+as rule 5's "nothing open" and known-gaps; 7 the record in Discussion and the log; 8 one renderer,
+the chained title; 9 numbered, one example) ✓; product-specs amendment: artifacts (layout, § Change
+Requests pointer, Source token), authoring (base, drafts from the base, request signal and path,
+Reopening paragraph gone, sweep wording, base-to-drafts list), promotion (fold, readiness 1 and 2,
+condition 5 gone, C6/C7/C8, Raising gone, artifact's Change Requests gone) ✓; design-specs
+amendment mirrored with S and C3/C4 ✓; tool and migration items ✓ (migration pending step 9).
+Obsolescence grep (`Raising a`, `` `Proposed` ``, `request.md`, `Reviewer Response`, `render-request`,
+`Incorporated`) over Guides, README, Templates, change-packages.md and the tool, UI Map excluded → 0.
+
+Cross-check against the design guides' request passages (for the supervisor, after compression):
+1. The design guides carry their own copy of what the shared guide now says (paths, numbering,
+   nesting, the two folders, no roles, the request signal, selective acceptance): about 700 bytes in
+   `design-authoring.md` § The change package and § Initiation, and the fold's bookkeeping in
+   `design-promotion.md` C3, could become one pointer sentence each. Opportunity, not a divergence.
+2. Design readiness 5 (requests the package filed against its inputs must be ruled) has no spec
+   counterpart; product specs packages have no formal upstream, and design-specs promotion already
+   requires every cited requirement to be canonical. No change proposed.
+3. Design Completion reconciles inputs on Review's "next"; spec authoring Completion does not.
+   Specs sit upstream of designs, so downstream reconciles; no change proposed.
+4. Provenance tokens agree (`Change request: <nnn> V<n>` / `R<n>` / `S<n>`); page titles agree
+   (`Design Change: offers | 001` / `Change Package: offers | 001`); initiation wording agrees.
+5. The open-work ruling is applied to both sides (design readiness 1 and C3; spec readiness 1 and
+   C7/C3).
+
+Compression (Astra, `compress9/`, eight guides, removals counted): change-requests 2,990 → 2,728;
+product-specs-artifacts 6,782 → 5,341 (−1,441); -authoring 21,288 → 20,366 (−922); -promotion 16,997 →
+16,381 (−616); design-specs-artifacts 4,944 → 4,213 (−731); -authoring 17,783 → 17,438 (−345);
+-promotion 12,775 → 12,602 (−173); design-promotion 12,086 → 12,145 (+59). Astra's report, acted on:
+the six spec guides now point at the shared guide instead of repeating its definition (requirement 1);
+drafts initialize through successive bases to canon; the write, review and recovery wording targets
+the base; request initiation reopens-or-creates before the ordinary branch; the shared guide regained
+"drafts replace the base's", "requests inherit the base's open gaps", the originator's record,
+"layer request pages on the base's drafts" and "read whenever a base is in play"; both authoring
+guides' "gaps block promotion" narrowed to production; § Change Requests in both artifacts guides
+folded into The Package; root creation kept in C7/C3. Kept against its report: `Base decision: D#`
+(needed: the tool accepts `base D<n>`; added to the amendment); "log `gap` for gaps" rather than
+"log each transfer" (the log has no state for a carried open item); "a consumer wanting it changed
+files a request against it" rather than "consumers may request any change". Installed with those
+corrections: change-requests 2,728; product-specs-artifacts 5,373; -authoring 20,390; -promotion
+16,381; design-specs-artifacts 4,213; -authoring 17,462; -promotion 12,602 (set 50,160 / 60,000);
+design-promotion 12,129. Tests OK.
+
+Rulings on the cross-check (supervisor, 2026-10-25): item 1 done (design-authoring points at the
+shared guide for the shared part; the design tool's details stay); item 2 generalized into the shared
+guide's rule 9 (decisions that change an input file against it, no later than the review gate; outcomes
+applied before promotion), pointed at by design-promotion readiness 5 and a new readiness 5 in both
+spec promotion guides; item 3 explained as timing (design batches at the Review gate because decisions
+settle only after the mockups are reviewed; specs file as each gap is settled in Discussion), covered
+by the same rule. Second compression (Astra, `compress10/`, five guides): change-requests 3,074 →
+2,985; design-authoring 16,549 → 15,962 (−888 against the committed guide); design-promotion 12,044 →
+11,933; product-specs-promotion 16,512 → 16,412; design-specs-promotion 12,733 → 12,627. Astra restored
+the write-time check of the inputs rule (`C7`/`C3` "recheck conditions 1 and 5"), the design guides'
+first-mention citations of the shared guide, "under the same rules", "open" and "archived" on the two
+folders, and a complete-sentence lead for rule 9; it also replaced several sentences with "per shared
+rule N", which I rewrote as plain sentences with the link (a sentence must read with its references
+deleted; rule numbers are brittle). Installed: change-requests 2,985; design-authoring 16,021;
+design-promotion 12,002; product-specs-promotion 16,578; design-specs-promotion 12,793 (set 50,351).
+Tests OK.
+
+Caps set (supervisor, 2026-10-25): change-requests 2,950; product-specs-artifacts 5,350; -authoring
+20,350; -promotion 16,550; design-authoring 16,000; design-promotion 12,000; design-specs set 60,000
+holds. Trimmed under them; cold series CA follows.
+
+### Refinement — series CA (2026-10-25)
+
+#### Round 1 (prompt `refine/ca1/prompt.txt`; report `review-r1.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 readiness ran `validate <canon> <drafts>`, skipping a request's intervening bases, while render and check-changes infer them | accept (tool) | spec-tool validate | `validate` brings a request's bases in between its roots; the shape guide's row says so | explicit roots still honored |
+| F2 the fold ran `check-changes` on the base right after appending the request's entries, which describe the request-to-base difference, not the base's | accept | both spec promotion fold branches | validate and render the base; its author reconciles the list on reopen | the request's own pre-write check |
+| F3 a folded entry's justification citing the request's `D<n>` was read as the base's; carried footnotes and items renumber | accept | shared rules 5–6; spec-tool check | the shared guide: a cited decision stays the request's, carried items and footnotes take the base's numbers; the checker skips `D` citations in entries that start `Change request:` | provenance note, Descriptions |
+| F4 item-move verification compared against the catalog, not the layered base | accept (tool) | spec-tool `moved_item_status` | the nearest base that holds the item, then the catalog | move/modify distinction |
+| F5 rule 9 said "each input"; the base is an input | accept | shared rule 9 | "each input but your base" | design Completion's reconcile wording |
+| F6 both spec promotion guides hardcoded the production path for the promotion artifact | accept | both artifact sections | "beside the authoring artifact" | names, checks, recovery |
+| F7 the blocked-gate list sent a base contradiction to "return the package to authoring" | accept | both spec promotion gates | its own bullet: standard blocked gate; a package against the base fixes it | package defects still return |
+| F8 the tool docstring (the shape guide's "render spec") still described the request page; "unruled"/"statuses" wording | accept | spec-tool docstring; shared rule 9; design-promotion gates and C3 | paragraph deleted, items renumbered; "one without an outcome blocks"; "with condition 5 still met" | supervisor decisions, blocking on no outcome |
+| F9 migration not discoverable from Reopening | log-only | — | release work; wait for recurrence | — |
+| open question: the shipping restriction and the canonical-citation requirement read as binding folds into packages too | accept (mine) | ps-promotion § When promotion happens; ds-promotion readiness tail | "Into production, …" | production rules unchanged |
+
+Arithmetic: F1 5 · F2 5 · F3 5 · F4 3.75 · F5 2.5 · F6 2.5 · F7 1.875 · F8 3.75 · the open question
+1.875 (divergent · off-normal · speculative) · no noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.25 | 9 | 0 | 9 | 0 | 0 |
+
+Repairs installed under the caps (change-requests 2,940 / 2,950; product-specs-promotion 16,550 /
+16,550; design-specs set 50,406 / 60,000; design-promotion 11,956 / 12,000); tests OK.
+
+#### Round 2 (prompt `refine/ca2/prompt.txt`; report `review-r2.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 authoring's Completion still said other future behavior waits until it ships, unqualified, while promotion now scopes that to production | accept | ps-authoring § Completion | the eligibility policy is promotion's *When promotion happens*; Completion points there | separate promotion invocation |
+| F2 `validate` gave baseline treatment to the first root only, so an untouched base draft's fault blocked a request | accept (tool) | spec-tool validate | every root but the last is the baseline (notes); the no-gap-in-canon check stays on the first root | request faults block |
+| F3 a requirement carrying an unchanged inherited footnote rendered as modified (`changed or bool(new.gaps)`) and so demanded a change entry | accept (tool) | spec-tool render_item | changed when the footnote set differs between base and draft | adding a footnote is a change; gaps counted and shown |
+| F4 the design-spec checker mapped rule entries to their parent item: two changed rules covered by one entry; an unchanged rule passed; the operation tested the parent | accept (tool) | spec-tool render_tree, check_changes, kind_matches | rule-level entries with their own status; rule-typed entries match rules only; design specs require an entry per changed rule, an item whose only change is its rules needs none; product specs keep requirement grain; the design fixture's S2 became `modify rule`, the broken-list test expects the rule issue | known-difference notes at item level; product specs grain |
+| F5 known-gaps rule 8 "leave change requests and promotion for the supervisor to start" competed with filing on the workflow's trigger | accept | known-gaps rule 8 | "leave promotion for the supervisor to start and file requests when your workflow says" | supervisor owns decisions |
+| F6 a nested request inheriting an ancestor-owned gap cannot name the owner the renderer resolves | log-only | — | wait for an occurrence | — |
+
+Arithmetic: F1 divergent · normal · speculative 2.5 · F2 5 · F3 5 · F4 5 · F5 divergent · off-normal ·
+speculative 1.875 · no noise. Also reworded on its open question: design-authoring Completion
+"statuses" → "outcomes".
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.25 | 9 | 0 | 9 | 0 | 0 |
+| r2 | 19.375 | 5 | 0 | 5 | 0 | 0 |
+
+Repairs installed under the caps (known-gaps 3,289 / 3,300; design-authoring 16,000 / 16,000); tests
+OK (spec-tool 18, design-tool, figma-page-check); the Offers package validates and check-changes clean
+with the layered validate.
+
+#### Round 3 (prompt `refine/ca3/prompt.txt`; report `review-r3.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 design-specs V6 said "at promotion, all cited requirements are canonical" and § IDs "the prefix's canonical maximum plus one", both production assumptions a request trips over | accept | design-specs.md V6, § IDs | V6's sentence deleted (readiness owns it, scoped to production); IDs count from the base, its unpromoted IDs included | production still waits for canonical contracts |
+| F2 `validate`'s link-regression check compared against the first root only, so a link a request broke that the base had introduced was a note, not a block | accept (tool) | spec-tool validate | the baseline (every root but the last) is what the projection is compared against; message says "the base resolves it" | untouched base faults stay notes; the no-gap check stays on the first root |
+| F3 rule 6's "footnotes follow" did not say that `base D3` becomes `D3` when folded into the base | accept | shared rule 6 | "footnotes follow: a carried item's new number, `base D3` becoming `D3`"; paid by trims to rules 3–4 and the example | folded justifications keep citing the request's decisions |
+| F4 the checker allows a redundant parent-item entry beside its rule entries | log-only | — | wait for a reason to forbid it | — |
+
+Arithmetic: F1 divergent · normal · speculative 2.5 · F2 5 · F3 divergent · off-normal · verified 3.75 · no
+noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.25 | 9 | 0 | 9 | 0 | 0 |
+| r2 | 19.375 | 5 | 0 | 5 | 0 | 0 |
+| r3 | 11.25 | 3 | 0 | 3 | 0 | 0 |
+
+Repairs installed under the caps (change-requests 2943 / 2,950; design-specs set 50,386 / 60,000); tests OK.
+
+#### Round 4 (prompt `refine/ca4/prompt.txt`; report `review-r4.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 "an untouched base file's fault never blocks" exempted the very conflict the validator now blocks (a request retiring a target a base file still cites) | accept | both spec promotion readiness 2 and checks preambles | "a fault already in an untouched base file never blocks"; preambles say unchanged content never blocks | no cleanup of untouched base files |
+| F2 design-specs § Requirements Gaps said "wait for its promotion" after a request folds upstream, an unconditional wait readiness already scopes to production | accept | ds-authoring § Requirements Gaps | clause deleted | outcomes applied before promotion |
+| F3 C1 credited `check-changes` with naming every missing item; a deletion declared as a retirement passes | accept | ps-promotion C1 | `check-changes` names an item missing with no retire entry; inspection covers kept IDs | append-only IDs |
+| F4 design-specs.md still routed defects to the removed § Change Requests (two places) | accept (my sweep miss; Astra log-only) | design-specs.md Purpose and § Verification Checks | both route to a package against the base | only a write-inconsistent contradiction blocks |
+
+Arithmetic: F1 divergent · normal · verified 5 · F2 divergent · off-normal · speculative 1.875 · F3
+divergent · past-a-rule · verified 1.25 · F4 divergent · off-normal · speculative 1.875 · no noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.25 | 9 | 0 | 9 | 0 | 0 |
+| r2 | 19.375 | 5 | 0 | 5 | 0 | 0 |
+| r3 | 11.25 | 3 | 0 | 3 | 0 | 0 |
+| r4 | 10 | 4 | 0 | 4 | 0 | 0 |
+
+Repairs installed under the caps (product-specs-promotion 16546 / 16,550; design-specs set 50,361 / 60,000);
+tests OK.
+
+#### Round 5 (prompt `refine/ca5/prompt.txt`; report `review-r5.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 the tool reduced an anchorless link target to its file name, so a citation retargeted from `../shared/details.md` to `../screens/details.md` compared unchanged and its change entry was rejected | accept (tool) | spec-tool `target_identity` | the normalized relative path (a base file and its draft sit at the same place, so a same target still reads the same) | anchors, URLs, glossary-link presentation |
+| F2 product-specs § Concept inventory checked concepts against the catalog and called a complete inventory "canonical"; a request's concepts live in its base | accept | ps-authoring § Concept inventory | the base's `domains/` and glossary; "already in the base" | confirmation of new or changed concepts |
+| F3 design-specs authoring made a missing drawing for unchanged content a blocking item while promotion said unchanged content never blocks | accept | design-specs.md Purpose scope; ds-authoring V5 sentence; ds-promotion preamble | the content guide owns the scope: inspect touched files whole, block only on what this package changed; a missing drawing blocks for states this package's changes prescribe; promotion points at that scope | validate faults in held files and projection conflicts block |
+
+Arithmetic: F1 divergent · normal · verified 5 · F2 divergent · normal · speculative 2.5 · F3 divergent ·
+normal · speculative 2.5 · no noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.25 | 9 | 0 | 9 | 0 | 0 |
+| r2 | 19.375 | 5 | 0 | 5 | 0 | 0 |
+| r3 | 11.25 | 3 | 0 | 3 | 0 | 0 |
+| r4 | 10 | 4 | 0 | 4 | 0 | 0 |
+| r5 | 10 | 3 | 0 | 3 | 0 | 0 |
+
+Repairs installed under the caps (product-specs-authoring 20,229 / 20,350; design-specs set 50,522 /
+60,000); tests OK; the Offers package still checks clean.
+
+#### Round 6 (prompt `refine/ca6/prompt.txt`; report `review-r6.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 design-specs § Audit still made every failure a blocking item, against Purpose's scope | accept | ds-authoring § Audit | a failure in what this package changed blocks; one already in unchanged content starts a package against the base | audits before editing; validate faults block |
+| F2 the checker accepted `base D1` but not the documented `Base decision: D1` | accept (tool) | spec-tool check | `Base decision: D<n>` stripped before the local-citation check | local citations checked; folded entries exempt |
+| F3 identity keys still aliased files by name (`screens/notes.md` = `shared/notes.md`); a moved item compared its link definitions without their folders | accept (tool) | spec-tool identity_keys, file entries, index keys, moved_item_status | draft-relative paths only; index entries keyed by the file described; link definitions rebased to root-relative paths before diffing a moved item | item IDs, legitimate rebases, granularity |
+| F4 the catalog guide's citation fallback skipped the base ("the draft, otherwise the canonical file") and still routed defects to the removed § Change Requests | accept | ps-catalog Purpose and § Requirements | "the package's draft, else its base's, else the canonical file"; routing to the shared guide; paid by trims | inline citations; touched files only |
+
+Arithmetic: F1 divergent · off-normal · speculative 1.875 · F2 5 · F3 5 · F4 divergent · normal ·
+speculative 2.5 · no noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.25 | 9 | 0 | 9 | 0 | 0 |
+| r2 | 19.375 | 5 | 0 | 5 | 0 | 0 |
+| r3 | 11.25 | 3 | 0 | 3 | 0 | 0 |
+| r4 | 10 | 4 | 0 | 4 | 0 | 0 |
+| r5 | 10 | 3 | 0 | 3 | 0 | 0 |
+| r6 | 14.375 | 4 | 0 | 4 | 0 | 0 |
+
+Repairs installed under the caps (catalog 10499 / 10,500; design-specs set under 60,000); tests OK; the
+Offers package checks clean. Noted for the conformance pass: the product-specs-rework package (the
+Offers specs' base) fails check-changes on a missing `## Decision Log`, a shape it predates.
+
+#### Round 7 (prompt `refine/ca7/prompt.txt`; report `review-r7.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 a linked `modify index line` identity lost its file path (paths kept for file and folder types only), so a conforming entry was rejected after r6 keyed index entries by path | accept (tool) | spec-tool parse_changes | index-typed entries keep the path | type-sensitive matching |
+| F2 rule tables were compared as raw text while the renderer compares resolved targets, so a reference change inside a table left the rule "unchanged" | accept (tool) | spec-tool tables_same | cells compared with `same()` under the two files' link definitions | table structure; rule-level entries |
+| F3 the catalog guide's new citation fallback read one level deep ("else its base's") in a recursive model | accept | ps-catalog § Requirements | "else the nearest base's up the chain"; paid by two trims | package first, canon last |
+
+Arithmetic: F1 5 · F2 5 · F3 divergent · off-normal · speculative 1.875 · no noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.25 | 9 | 0 | 9 | 0 | 0 |
+| r2 | 19.375 | 5 | 0 | 5 | 0 | 0 |
+| r3 | 11.25 | 3 | 0 | 3 | 0 | 0 |
+| r4 | 10 | 4 | 0 | 4 | 0 | 0 |
+| r5 | 10 | 3 | 0 | 3 | 0 | 0 |
+| r6 | 14.375 | 4 | 0 | 4 | 0 | 0 |
+| r7 | 11.875 | 3 | 0 | 3 | 0 | 0 |
+
+Repairs installed under the caps (catalog 10483 / 10,500); tests OK.
+
+#### Round 8 (prompt `refine/ca8/prompt.txt`; report `review-r8.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 link identity still depended on spelling and on the target sitting inside the request's drafts: a request index linking the same base file by a different relative path showed as modified, and a linked identity reaching a base file matched nothing | accept (tool) | spec-tool render_tree, render_index, rebased_linkdefs, identity_keys | both sides' link definitions rebased to root-relative paths before any diff; a path that leaves its root into another layer's drafts folder re-rooted to that layer's relative path, in diffs and in identity keys | genuinely different targets detected; touched files only |
+| F2 design-specs let an index line ride in Touches on any entry while the granularity paragraph demanded its own entry; the checker followed the template | accept | ds-artifacts Touches line; spec-tool riders | an index line rides only with the new file it describes; the checker enforces that for design specs | product specs Touches unchanged; intro coverage |
+
+Arithmetic: F1 5 · F2 5 · no noise. (A renamed variable broke the renderer for one run; caught by the
+tests before launch.)
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.25 | 9 | 0 | 9 | 0 | 0 |
+| r2 | 19.375 | 5 | 0 | 5 | 0 | 0 |
+| r3 | 11.25 | 3 | 0 | 3 | 0 | 0 |
+| r4 | 10 | 4 | 0 | 4 | 0 | 0 |
+| r5 | 10 | 3 | 0 | 3 | 0 | 0 |
+| r6 | 14.375 | 4 | 0 | 4 | 0 | 0 |
+| r7 | 11.875 | 3 | 0 | 3 | 0 | 0 |
+| r8 | 10 | 2 | 0 | 2 | 0 | 0 |
+
+Repairs installed under the caps; tests OK; the Offers package checks clean and renders.
+
+#### Round 9 (prompt `refine/ca9/prompt.txt`; report `review-r9.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 a link that left the drafts for the catalog normalized to a different `../` spelling from each layer, so an unchanged index line in a request read as modified; the marker-based re-rooting covered drafts folders only | accept (tool) | spec-tool `logical_path`, rebased_linkdefs, identity_keys | the projection's layers (catalog, bases, drafts) are known to the tool; a path leaving its root is read as its place in whichever layer holds it, no folder-name guessing | genuine retargets visible; external paths unchanged |
+| F2 `validate` followed a link into an earlier layer to the file on disk, so a request retiring an item a base file cites passed | accept (tool) | spec-tool resolve_link | a link landing in a layer resolves through the projection, not the disk | external links still read from disk |
+| F3 the design index-line rider check tested the entry's type only, so an unrelated index edit rode on any new file | accept (tool) | spec-tool riders | the rider's file must be the file the index line describes | product specs Touches; root creation |
+| F4 an intro riding in Touches on a `modify item` entry passes but renders without a reason | log-only | — | attribution of a shared intro waits for a rule | the no-aggregation rule |
+
+Arithmetic: F1 5 · F2 5 · F3 divergent · past-a-rule · verified 1.25 · no noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.25 | 9 | 0 | 9 | 0 | 0 |
+| r2 | 19.375 | 5 | 0 | 5 | 0 | 0 |
+| r3 | 11.25 | 3 | 0 | 3 | 0 | 0 |
+| r4 | 10 | 4 | 0 | 4 | 0 | 0 |
+| r5 | 10 | 3 | 0 | 3 | 0 | 0 |
+| r6 | 14.375 | 4 | 0 | 4 | 0 | 0 |
+| r7 | 11.875 | 3 | 0 | 3 | 0 | 0 |
+| r8 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r9 | 11.25 | 3 | 0 | 3 | 0 | 0 |
+
+Repairs installed; tests OK; the Offers package validates and checks clean. No guide text changed this
+round.
+
+#### Round 10 (prompt `refine/ca10/prompt.txt`; report `review-r10.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 an anchored external URL was identified by its fragment alone, so a tracking link changing from issue 123 to 456 compared unchanged | accept (tool) | spec-tool `target_identity` | an external destination is identified whole | local anchors identify spec IDs |
+| F2 a link to a spec file carried its label as an identity key, so two files both linked as "Notes" collided in index checks | accept (tool) | spec-tool `identity_keys` | a link to a non-index file keys by its place only; labels stay for index files and bare names | the new-file index rider; cross-layer equivalence |
+
+Arithmetic: F1 5 · F2 5 · no noise.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.25 | 9 | 0 | 9 | 0 | 0 |
+| r2 | 19.375 | 5 | 0 | 5 | 0 | 0 |
+| r3 | 11.25 | 3 | 0 | 3 | 0 | 0 |
+| r4 | 10 | 4 | 0 | 4 | 0 | 0 |
+| r5 | 10 | 3 | 0 | 3 | 0 | 0 |
+| r6 | 14.375 | 4 | 0 | 4 | 0 | 0 |
+| r7 | 11.875 | 3 | 0 | 3 | 0 | 0 |
+| r8 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r9 | 11.25 | 3 | 0 | 3 | 0 | 0 |
+| r10 | 10 | 2 | 0 | 2 | 0 | 0 |
+
+Repairs installed; tests OK; the Offers package checks clean. Guide text unchanged since r8; every
+finding since r9 is in the tool's identity and layer handling, found by the reviewer running the code.
+
+#### Round 11 (prompt `refine/ca11/prompt.txt`; report `review-r11.md`)
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 the design index-line rider accepted any file entry for the described file, added or not | accept (tool) | spec-tool riders | the described file must be added in the projection | product specs Touches; new-file riders |
+
+Arithmetic: F1 divergent · past-a-rule · verified 1.25 · no noise. On its open question: the request
+fixture's glossary links pointed at a glossary the request does not hold; repointed to the base's
+glossary where it sits, and the test now validates the request as well as checking it.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.25 | 9 | 0 | 9 | 0 | 0 |
+| r2 | 19.375 | 5 | 0 | 5 | 0 | 0 |
+| r3 | 11.25 | 3 | 0 | 3 | 0 | 0 |
+| r4 | 10 | 4 | 0 | 4 | 0 | 0 |
+| r5 | 10 | 3 | 0 | 3 | 0 | 0 |
+| r6 | 14.375 | 4 | 0 | 4 | 0 | 0 |
+| r7 | 11.875 | 3 | 0 | 3 | 0 | 0 |
+| r8 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r9 | 11.25 | 3 | 0 | 3 | 0 | 0 |
+| r10 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r11 | 1.25 | 1 | 0 | 1 | 0 | 0 |
+
+Verdict this round: usable by a fresh LLM today; the guides unchanged since r8.
+
+#### Round 12 (prompt `refine/ca12/prompt.txt`; report `review-r12.md`)
+
+No findings; six walks and the design adoption clean; the tooling claims confirmed by inspection
+(transitive bases, chained page ids, base-decision citations, the index rider, the fixture's glossary
+links, no request command). Open: the manual fold's bookkeeping and unmigrated artifacts, neither a
+guide defect.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r1 | 31.25 | 9 | 0 | 9 | 0 | 0 |
+| r2 | 19.375 | 5 | 0 | 5 | 0 | 0 |
+| r3 | 11.25 | 3 | 0 | 3 | 0 | 0 |
+| r4 | 10 | 4 | 0 | 4 | 0 | 0 |
+| r5 | 10 | 3 | 0 | 3 | 0 | 0 |
+| r6 | 14.375 | 4 | 0 | 4 | 0 | 0 |
+| r7 | 11.875 | 3 | 0 | 3 | 0 | 0 |
+| r8 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r9 | 11.25 | 3 | 0 | 3 | 0 | 0 |
+| r10 | 10 | 2 | 0 | 2 | 0 | 0 |
+| r11 | 1.25 | 1 | 0 | 1 | 0 | 0 |
+| r12 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+Converged by stop rule (a). Final sizes: change-requests 2,943 / 2,950; product-specs-artifacts 5,350 /
+5,350; -authoring 20,229 / 20,350; -promotion 16,546 / 16,550; -catalog 10,483 / 10,500; design-specs set
+50,633 / 60,000; design-authoring 16,000 / 16,000; design-promotion 11,956 / 12,000; known-gaps 3,289 /
+3,300. Guide text last changed in r8; r9–r11 were the spec tool's identity and layer handling.
+
+## Maintenance retro — change requests as authoring against a base, spec guides — 2026-10-25
+
+Inventory: new `Guides/Core/change-requests.md` (`guide.change-requests`); both artifacts guides, both
+authoring and both promotion guides of the spec types, `design-specs.md`, `product-specs-catalog.md`,
+`known-gaps.md` rule 8, `spec-file-shape.md`'s command table; `design-authoring.md` and
+`design-promotion.md` adopting the shared guide and the open-work ruling; `spec-tool.py` (base
+inference, chained titles, layer-aware links and validation, rule-level design checks, base-decision
+citations, request renderer removed); fixtures and tests (request fixture as a package; two old request
+fixtures removed); README, skill descriptions, manifest, `change-packages.md`. Host-install-visible.
+Bookkeeping: two release entries plus one for the tool, three CHANGELOG lines; `Managed-Updated-At`
+2026-10-25 on every edited guide; manifest has the new guide. Tests: spec-tool 18 OK, design-tool OK,
+figma-page-check OK; the Offers package validates and checks clean under the layered validate.
+Consistency: stale-model grep (`Raising a`, `` `Proposed` ``, `request.md`, `Reviewer Response`,
+`render-request`, `Incorporated`, `request-review`) → 0 outside the UI Map guides, which keep their
+model until their refinement. Change-package verification: the request layout is in the shared guide;
+promotion archives a request under its base; collisions and recovery unchanged; migration guidance
+covers the one old-form request and re-runs safely. Follow-ups: UI Map guides (their own pass); the
+conformance pass over the Offers package (plan step 5d), where the product-specs-rework package's
+missing `## Decision Log` belongs; host skill copies stale until the update runbook runs.
+Process reflection: twelve rounds, the last four almost entirely in the tool, each tool fix opening the
+next until the layer model was made explicit (`LAYERS`, `logical_path`) in r9; a tool change of this
+size should get that design step before the rounds, not during them.
+

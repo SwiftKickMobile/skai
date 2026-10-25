@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-artifacts
 Managed-Source: Guides/DesignSpecs/design-specs-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-25
 
 # Design Spec Artifact Formats
 
@@ -16,28 +16,27 @@ The package mirrors the product spec package
 ## The Package
 
 `skai/changes/<change-id>/design-specs/`; after promotion, `skai/promoted/<change-id>/design-specs/`.
-Packages are independent: never depend on another package's lifecycle or drafts — except a draft
-requirement cited from an active product spec package until promotion repoints it, and a change
-request filed against that package. Citing where input came from, such as a request in another
+For the **base** and requests, read [`change-requests.md`](../Core/change-requests.md).
+Packages are independent except for their base and draft requirements cited from active product
+spec packages until promotion repoints them. An input citation, such as a request in another
 package, is not a dependency.
 
 The layout is the product spec package's, with `design-specs-authoring.md` (`## Spec Changes`),
 `proposed-design-specs/**` (touched files only, each whole),
-`design-specs-review.html`, `change-requests/<nnn>/request.md` with its
-`proposed-design-specs/**` beside it, `design-specs-promotion.md`, and `working-docs/`. The review page and each
-request's `request-review.html` follow the product spec guide's render and link rules. Checked
-`C3` in the promotion artifact means the specs are written, `C4` the package archived.
+`design-specs-review.html`, `change-requests/<nnn>/` and `promoted-change-requests/<nnn>/` holding
+requests of this layout, `design-specs-promotion.md`, and `working-docs/`. The page follows the
+product spec guide's render/link rules. Checked `C3` means the base is written; `C4`, archived.
+Promotion's own failed check is not a request: it blocks and returns the package to authoring.
 
 ## Spec Change Items
 
-`## Spec Changes` lists exactly the canon/draft differences in package-held files, one typed entry
-per difference, by prose and resolved target identity; the rendered page shows each difference
-under its justification, so an entry carries no text of its own.
+`## Spec Changes` lists each base-to-draft difference in held files by prose and resolved target
+identity as one typed entry. Entries carry no text; the page shows each difference under its justification.
 
 ```
 - S<n> <operation> <object>: <identity>
   - **Justification** <Source>: <reference or rationale>
-  - **Touches** draft-file links; an intro or index line is an entry or a line here
+  - **Touches** draft-file links; an intro may ride here, an index line only with the new file it describes
 ```
 
 - **ID** `S01`, `S02`, …: never renumbered or reused; package-local — work specs cite `UI-*`, never
@@ -69,18 +68,6 @@ known-difference note is its own entry.
 [s-notes]: proposed-design-specs/screens/notes.md
 [s-list]: proposed-design-specs/screens/list-screen.md
 ```
-
-## Change Requests
-
-Any downstream consumer — work specs, tests, promotion — files a change request for any reason,
-against the open package for the subject — with none open, a change package is opened through
-authoring instead. Promotion's own failed check is not a request: it blocks and returns the
-package to authoring. The proposer never edits the package.
-
-`change-requests/<nnn>/request.md` takes the product spec guide's form — status, response, title,
-Goal, Requested Changes as `S<n>` entries, drafts beside it as that guide says — and its
-lifecycle — only the supervisor's instruction moves the status, `Incorporated` once drafts and
-Spec Changes reflect it.
 
 ## Project Addendum
 

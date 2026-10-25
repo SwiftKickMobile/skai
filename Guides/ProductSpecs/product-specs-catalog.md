@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-catalog
 Managed-Source: Guides/ProductSpecs/product-specs-catalog.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-24
+Managed-Updated-At: 2026-10-25
 
 # Product Specs Catalog
 
@@ -21,8 +21,8 @@ a workflow.
 [`product-specs-authoring.md`](product-specs-authoring.md) drafts into a change package;
 [`product-specs-promotion.md`](product-specs-promotion.md) writes the catalog. Work-spec implementation
 may update or remove known-difference notes after verified fixes; other text and IDs are
-read-only. Rules apply to new or changed content: a defect in an untouched canonical
-file never blocks a package but is for the artifacts guide § Change Requests; release migrations are separate.
+read-only. Rules bind new or changed content: a defect in an untouched canonical
+file never blocks a package; a package against the base fixes it ([`change-requests.md`](../Core/change-requests.md)); release migrations are separate.
 
 The catalog holds behavior that survives a future rewrite. A constraint that exists only for the
 duration of one change — migration steps, refactor decisions, intermediate constructs — belongs in
@@ -106,17 +106,17 @@ A requirement is one `###` item: a statement, then any rules and tables, in the 
 Judgment the shape does not settle:
 
 - **One item per claim, not per row.** Rules and tables are how a product manager conveys an
-  enumeration — states, fields, statuses — and the constraints around it. ❌ three requirements
+  enumeration (states, fields, statuses) and its constraints. ❌ three requirements
   for three reminder states · ✅ one item whose table lists the states, with a rule for each
-  state-specific constraint. Most requirements are still one statement.
+  state-specific constraint. Most requirements are one statement.
 - **Every behavioral claim has an ID.** Intro, index and glossary prose orients. A root index
   reading *"The location list syncs across the user's devices"* has smuggled a requirement into
-  prose nothing can cite, modify or test against. Give it an ID and a home.
-- **Cite dependencies inline, where they apply.** Resolve each target before linking: within a
-  package, the draft when one exists, otherwise the canonical file. Headings and recorded tool
-  output are not citations.
+  prose nothing can cite, modify or test against. Give it an ID.
+- **Cite dependencies inline, where they apply.** Resolve targets before linking: the
+  package's draft, else the nearest base's up the chain, else the canonical file. Headings and tool output are not
+  citations.
 - **Known differences** record a confirmed implementation gap under the affected requirement:
-  the current behavior, the gap, a tracking issue when one exists. An observation, never an
+  the current behavior, the gap, a tracking issue if any; an observation, never an
   exception, and the catalog's only implementation note. Suspected differences stay Discussion
   items until the supervisor resolves them.
 - No other status anywhere: `(retired)` is the one marker.
