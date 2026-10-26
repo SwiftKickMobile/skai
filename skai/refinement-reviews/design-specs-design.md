@@ -291,3 +291,11 @@ source as a link; `design-specs-artifacts.md`'s Source line ("as the product spe
 the rule and its example shows a reason before the source. Same plain-language pass, same standard.
 
 Cap (supervisor, 2026-10-25, series PL): the design specs set **47,500** combined (was 60,000), a little under the compressed 47,721.
+
+## Amendment — 2026-10-26 (what a design spec item is)
+
+Inventory for `design-specs.md` § Items, added to the definition: an item states what the screen must show or do for its requirement that no other item already states. Not an item: a sentence that binds nothing on the screen, or one that exists only to carry a footnote; a condition under which something must stay absent binds and is an item (round 1, F2). The product specs catalog guide gets the same definition for a requirement the same day (`product-specs-system-design.md` § Amendment — 2026-10-26); the known-gaps guide gets the matching test for a gap.
+
+Evidence: Offers OFFER-ACTIVITY-03 (product specs, 2026-10-22) existed to hold a gap footnote and said only that the hub owes a notification nothing; the design specs guide defines an item by its heading, opening sentence, rules and data, so the same empty item would pass here too.
+
+Size: the guide 14,947 → draft 15,142 → compressed by Astra to 15,116; the set 47,495 → 47,664. Cap (supervisor, 2026-10-26): the set **47,650** (was 47,500), a little under the compressed size. Cold series RG with the two other amendments of the same date.

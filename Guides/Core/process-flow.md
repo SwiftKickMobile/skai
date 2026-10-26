@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.process-flow
 Managed-Source: Guides/Core/process-flow.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-10-26
 
 # Process flow (house style reference)
 
@@ -248,7 +248,7 @@ Sub-bullet labels are **bold** with no separator after the label. Standard label
 - **Options** (for `[Tradeoff]`) — the considered alternatives.
 - **Detail** (when needed) — elaboration on the concern.
 - **Why** — the reason, then its source.
-- **Gap** — for an item awaiting knowledge from outside this work; keep it unchecked, with `- **Gap** <placeholder: what stands in until it is answered, or "no placeholder; waiting on <what>">` last. Gaps block promotion.
+- **Gap** — for an item awaiting knowledge from outside this work; keep it unchecked, with `- **Gap** <the placeholder alone, or "no placeholder">` last; what is unknown goes in Concern. Gaps block promotion.
 - **Decision** (added on resolution) — see below.
 
 Inlined verbatim beside each Discussion-phase guide's Discussion rules; the sanity scan checks it:
@@ -279,7 +279,7 @@ A discussion phase is gated by the state of its items, not by a separate phase-c
 
   `⏳ GATE: Next: Discussion complete<; N open gaps carried>. Say "next" to advance to <next phase>.`
 
-The discussion-resolution gate is itself the first planned gate — there is no separate "draft is ready, please review" gate before the discussion begins. The drafting response ends with either the blocked gate (typical) or the planned gate (when the draft produced zero items).
+The discussion-resolution gate is itself the first planned gate — there is no separate "draft is ready, please review" gate before the discussion begins. The drafting response ends with either the blocked gate (typical) or the planned gate.
 
 This pattern makes the discussion-phase state explicit at every turn: the agent is either blocked on the supervisor's decisions or asking permission to advance. There is no in-between "discussion still going, no gate" state.
 
@@ -319,21 +319,21 @@ After resolution:
     - B — pushed screen
   - **Proposal** A (modal) — sharing is a transient side-task, not a destination in the note's flow.
   - **Why** A sheet dismisses back to where you were; a push implies a place in the navigation; the designs show no share screen.
-  - **Decision** A — modal sheet. Aligns with the agent's recommended pick.
+  - **Decision** A — modal sheet, the agent's recommended pick.
 ```
 
 A gap and the log after D01 was decided:
 
 ```
 - [ ] D02 [Proposal] Which formats share a note?
-  - **Concern** Product must choose PDF or text before export ships.
-  - **Proposal** PDF: all target apps open it.
-  - **Gap** PDF until product decides.
+  - **Concern** Export cannot ship until the print partner's format is known; nobody here knows it yet.
+  - **Proposal** PDF for now: the apps we know open it.
+  - **Gap** PDF.
 
 ## Decision Log
 
 - D01 decided — A, modal sheet.
-- D02 gap — PDF until product decides.
+- D02 gap — placeholder PDF.
 ```
 
 ## Writing for people

@@ -409,7 +409,7 @@ promotion readiness rule are a later slice and amend this spec again.
 
 1. **A gap item stays open with a Gap line.** An item that cannot be resolved because something
    outside the work is not yet known carries `- **Gap** <placeholder: what stands where until it is
-   answered, or "no placeholder; waiting on <what>">` as its last sub-bullet and keeps its box unchecked
+   answered, or "no placeholder">` as its last sub-bullet and keeps its box unchecked
    (supervisor, 2026-10-20: a gap without a placeholder says so in the same field; free text, no
    new field). An open gap item does not count
    toward the discussion-phase blocked gate: with only gap items open the planned gate is emitted,
@@ -458,7 +458,8 @@ Discussion-phase guide; these are the rules that go beyond the format.
    `## Decision Log` disagrees with its Discussion (section missing once items exist, not last,
    malformed entry, last entry not matching the item's state, two Decision lines, checked with a Gap
    line, a change entry citing a `D#` the Discussion lacks; an entry whose item was removed is allowed); `render` shows gap items with state "gap", counts gaps on the
-   card, and renders the log after the Discussion. The artifact reference says so.
+   card; the page rendered the log after the Discussion until 2026-10-21, when the supervisor took
+   it off the page (bookkeeping for reopen and the tool, not reading). The artifact reference says so.
 4. **Caps (supervisor, 2026-10-20).** Set a little under each file's compressed size, so the next
    round earns its bytes (not old cap plus addition): `product-specs-authoring.md` 21,300;
    `product-specs-artifacts.md` 6,800; `product-specs-promotion.md` 17,000 (unchanged);
@@ -595,3 +596,15 @@ Caps (supervisor, 2026-10-25, series PL, a little under the compressed sizes): `
 Clarification (2026-10-25, series PL r2): "its source as a link" means linked where a link exists (a
 Discussion item, a requirement, a decision); a `Design` source stays the screen or state by product
 name, never a design-tool link, as before.
+
+## Amendment — 2026-10-26 (what a requirement is)
+
+Inventory for `product-specs-catalog.md` § Requirements, added to the definition sentence: a requirement states something the product must do or must not do that no other item already requires. Not a requirement: a statement of absence ("nothing is scoped to the notification"), a restatement of another item, a sentence that exists only to carry a footnote. One ❌/✅ example at the definition.
+
+Evidence: Offers OFFER-ACTIVITY-03 (2026-10-22) existed to hold a gap footnote and said only that the hub owes a notification nothing; it passed the guide's shape and granularity tests and ten cold conformance rounds, because nothing in the guide said what a claim is. Supervisor, 2026-10-26: "Requirements state what is required, not what isn't required."
+
+Size: draft 10,715, compressed by Astra to 10,507 (the definition merged into the existing sentence; the ID example, the known-differences bullet and the temporal-reference example trimmed; one compression change rejected, "suspected gaps" for "suspected differences", since gap is a term of its own). Cap (supervisor, 2026-10-26): **10,500**, a little under the compressed size. Cold series RG with the known-gaps and design specs guides' amendments of the same date.
+
+## Amendment — 2026-10-26 (no-placeholder Gap line)
+
+The Gap line's no-placeholder form is "no placeholder" (was "no placeholder; waiting on <what>", 2026-10-21): what is awaited belongs in the Concern, and no line of an item names who is to answer (supervisor, 2026-10-26; `known-gaps-design.md` § Amendment — 2026-10-26, the Gap line). Changed in `process-flow.md` § Sub-bullet labels, the maintainer reference and the seven inlined copies (product specs, design specs, design, work spec creation, UI Map architecture and implementation). Deletions only; process-flow 21,530 bytes (cap 21,550 held). Cold series GL.

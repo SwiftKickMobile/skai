@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.work-spec-creation
 Managed-Source: Guides/Spec/work-spec-creation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-10-26
 
 # Work Spec Design
 
@@ -151,12 +151,12 @@ Organize Discussion by design topic, never by workflow category. Use:
 
 If there are no items, `## Discussion` holds one sentence stating the change and the input fact that settles it; omit it when an item exists.
 
-Keep gaps unchecked with `- **Gap** <placeholder, or "no placeholder; waiting on <what>">` last.
+Keep gaps unchecked with `- **Gap** <the placeholder alone, or "no placeholder">` last.
 A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 
 Use `[Question]` for the rare case with no defensible recommendation. Its `**Question**` names the needed input;
-its `**Proposal**` states the provisional resolution used by the API Sketch, or a **Gap** line records
-that none exists. All other items are `[Proposal]` or `[Tradeoff]`.
+its `**Proposal**` states the provisional resolution used by the API Sketch, when there is one.
+All other items are `[Proposal]` or `[Tradeoff]`.
 
 Give a choice a discussion ID (`D#`) only when supervisor review has leverage: it creates a long-lived
 contract, has broad impact, is costly to reverse, commits to an external system, or materially constrains

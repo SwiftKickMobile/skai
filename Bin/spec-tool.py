@@ -75,7 +75,10 @@ Usage:
         the other legacy names for one release after the rename; the new name wins when both exist), or
         design-specs-authoring.md when the drafts folder is proposed-design-specs; --authoring
         points elsewhere, and a missing artifact is an error, so a review render always carries
-        the card, discussion and justifications. --no-authoring renders a bare drafts-to-catalog
+        the card, discussion and justifications. One rule for every reference on the page: a chip (an
+    item ID, a Discussion item, a glossary term, a footnote's owner) always opens a tooltip on
+    hover; a reference the page cannot explain is drawn as a plain link, or plain text, never as
+    a chip. --no-authoring renders a bare drafts-to-catalog
         comparison, never the committed page. Without --out the page is written into the package
         folder (the drafts' parent) as product-specs-review.html or design-specs-review.html; a
         legacy proposed-requirements drafts folder is a product-specs package.
@@ -1248,8 +1251,13 @@ def inline(s, gloss=None, auto=False):
         href = href_for(name)
         if gloss and name in gloss:
             tip = f' data-tip="tip-{name}"' if external_doc(name) is None else ""  # a term defined to point at another document's glossary shows no local definition
-            return (f'<a class="term" href="{href}"{tip}>{label}</a>' if href
-                    else f'<span class="term"{tip}>{label}</span>')
+            return chip("term", label, href, tip)
+        m3 = re.fullmatch(r"(?:(base|product specs|specs)\s+)?(D\d+)", name, re.I) or re.fullmatch(r"D\d+", label)
+        if m3:
+            scope, did = (m3.group(1), m3.group(2)) if m3.re.groups == 2 else (None, m3.group(0))
+            ref_chip = item_ref_chip(did, scope, RESOLVER["linkdefs"].get(name, "") or ("#" if not ref else ""), label)
+            if ref_chip:
+                return ref_chip
         m2 = re.match(rf"({ID_RE})((?:-\d{{2}})*)$", name)
         tip = ""
         if m2:
@@ -1258,7 +1266,7 @@ def inline(s, gloss=None, auto=False):
                 tip = f' data-tip="{ext_tip_id(ext, m2.group(1))}" data-rule="{m2.group(2).lstrip("-")}"'
             elif ext is None and m2.group(1) in RESOLVER.get("items", {}):
                 tip = f' data-tip="tip-{anchor(m2.group(1))}" data-rule="{m2.group(2).lstrip("-")}"'
-        return f'<a class="ref" href="{href}"{tip}>{label}</a>' if href else f'<span class="ref"{tip}>{label}</span>'
+        return chip("ref", label, href, tip)
     s = LINK_USE_RE.sub(link, s)
     return autolink(s, gloss) if auto else s
 
@@ -1298,13 +1306,14 @@ def autolink(h, gloss):
             else:
                 return None
             href = href_for(base + rule)
-            return f'<a class="ref" href="{href}"{tip}>{m.group(0)}</a>' if href else f'<span class="ref"{tip}>{m.group(0)}</span>'
+            return chip("ref", m.group(0), href, tip)
         apply(re.compile(rf"(?<![\w-])({ID_RE})((?:-\d{{2}})*)(?![\w-])"), make_id)
+        apply(ITEM_REF_RE, lambda m: item_ref_chip(m.group("did"), m.group("scope"), None, m.group(0)))
         for term, key in terms:
             def make_term(m, key=key):
                 href = href_for(key)
                 tip = f' data-tip="tip-{key}"' if external_doc(key) is None else ""  # as for an explicit term link: no local definition for a term defined elsewhere
-                return f'<a class="term" href="{href}"{tip}>{m.group(0)}</a>' if href else f'<span class="term"{tip}>{m.group(0)}</span>'
+                return chip("term", m.group(0), href, tip) if tip else None
             apply(term_pattern(term), make_term)
         out.append("".join(t for t, _ in runs))
     return "".join(out)
@@ -1558,16 +1567,49 @@ def scope_key(scope):
     return scope.replace(" ", "-") or "own"
 
 
+def chip(kind, label, href, tip):
+    """The one way a reference is drawn. A chip (`ref` for an item, `term` for a glossary term)
+    always carries a tooltip, so a reader can trust every chip to explain itself on hover; a
+    reference the page cannot explain is a plain link when it has somewhere to go, else plain text."""
+    if tip:
+        return f'<a class="{kind}" href="{href}"{tip}>{label}</a>' if href else f'<span class="{kind}"{tip}>{label}</span>'
+    return f'<a class="link" href="{href}">{label}</a>' if href else label
+
+
+ITEM_REF_RE = re.compile(r"(?<![\w-])(?:(?P<scope>base|product specs|specs)\s+)?(?P<did>D\d+)(?![\w-])", re.I)
+
+
+def item_ref_chip(did, scope=None, target=None, label=None):
+    """A Discussion item cited in prose or linked, this artifact's own or another's, as the same
+    chip a gap footnote's owner gets: linked to the item on its page, with its tooltip when that
+    artifact was read. `scope` is the written scope word ("base", "product specs"); with none, a
+    link `target` into another artifact picks the scope whose artifact it reaches, and an item
+    this artifact holds is its own. None when nothing on the page knows the item."""
+    owners = RESOLVER.get("gap_owners", {})
+    if not owners:
+        return None
+    key = (scope or "").strip().lower()
+    if not key and target and not target.startswith("#") and RESOLVER.get("base") is not None:
+        path = (RESOLVER["base"] / target.split("#", 1)[0]).resolve()
+        key = next((k for k, info in owners.items() if k and len(info) > 3 and info[3] is not None and Path(info[3]).resolve() == path), "")
+    info = owners.get(key)
+    if info is None or did not in info[1]:
+        return None
+    chip = gap_owner_chip(key, did, owners)
+    return chip if label is None or label == did else chip.replace(f">{did}</a>", f">{html.escape(label)}</a>", 1)
+
+
 def gap_owner_chip(scope, did, owners):
     """The owning item as a chip showing its ID: linked to it on this page or on its artifact's
     review page, with its tooltip when that artifact was read; named only when it was not."""
+    scope = "product specs" if scope == "specs" else scope  # the alias shares the product specs' templates
     info = owners.get(scope)
     if info is None:
-        return f'<span class="ref">{did}</span>'
+        return did
     page, items = info[0], info[1]
     href = f"{page}#{did.lower()}"
     tip = f' data-tip="tip-gap-{scope_key(scope)}-{did.lower()}"' if did in items else ""
-    return f'<a class="ref" href="{html.escape(href)}"{tip}>{did}</a>'
+    return chip("ref", did, html.escape(href), tip)
 
 
 def render_gaps(it, aid, gloss):
@@ -1865,11 +1907,17 @@ def why_for(changes, keys, file="", what=None):
     """The joined justifications of every change-list entry naming one of the keys and, when
     `what` is given, of that kind (as check-changes matches: a glossary term, an item and an index
     line sharing a name never lend each other a reason); when none does and `file` is given, of
-    every entry whose Touches names that file, each with its ID, so an intro, section line or
-    covered file shows the reasons of the entries that cover it, as check-changes accepts them."""
+    the one entry whose Touches names that file, so an intro, section line or covered file shows
+    the reason of the entry that covers it, as check-changes accepts it; when several entries cover
+    the file, one line names them and the reasons stay on the items they change."""
     hits = [c for c in changes if c.keys & keys and c.why and (what is None or kind_matches(c.type, what))]
     if not hits and file:
-        hits = [c for c in changes if c.touched & {file, Path(file).name} and c.why]
+        cover = [c for c in changes if c.touched & {file, Path(file).name} and c.why]
+        if len(cover) == 1:
+            return cover[0].why
+        if cover:  # several entries cover the file: one line naming them, never their reasons pasted together
+            return "Changed with this file's entries " + ", ".join(dict.fromkeys(c.cid for c in cover)) + "; their reasons are on the items they change."
+        return ""
     if len(hits) == 1:
         return hits[0].why
     return "; ".join(f"{c.cid} {c.why}" for c in hits)
@@ -2357,7 +2405,7 @@ def render_markdown(text, gloss):
             while stack < depth:
                 out.append("<ul>")
                 stack += 1
-            out.append(f"<li>{inline(b.group(2).strip(), gloss)}</li>")
+            out.append(f"<li>{inline(b.group(2).strip(), gloss, auto=True)}</li>")
         elif stack and line.startswith(" "):  # continuation of the last bullet
             out[-1] = out[-1][:-5] + " " + inline(line.strip(), gloss) + "</li>"
         else:

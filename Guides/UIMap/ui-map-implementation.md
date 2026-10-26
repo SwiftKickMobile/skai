@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation
 Managed-Source: Guides/UIMap/ui-map-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-10-26
 
 # UI Map Implementation
 
@@ -253,7 +253,7 @@ A finding that the *map* itself is wrong is not a separate Kind: it is an ordina
 
 A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 
-Sub-bullet labels are **bold** with no separator after: `Concern` always, then either `Proposal` or `Question`; `Options` for a Tradeoff; `Detail` when helpful; `Why` for the rationale; `Gap` last for unchecked gaps (placeholder or "no placeholder; waiting on <what>"); `Decision` added on resolution. On the supervisor's explicit approval, check the box (`- [x]`) and append `- **Decision** <succinct resolution>.`. For gaps, remove **Gap**; Decision states the outcome in words and which it was: answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep entries after item removal. Remove a resolved item nothing current cites or needs. Keep sibling items tight: no blank lines between `- [ ]` items under one heading.
+Sub-bullet labels are **bold** with no separator after: `Concern` always, then either `Proposal` or `Question`; `Options` for a Tradeoff; `Detail` when helpful; `Why` for the rationale; `Gap` last for unchecked gaps (the placeholder alone, or "no placeholder"); `Decision` added on resolution. On the supervisor's explicit approval, check the box (`- [x]`) and append `- **Decision** <succinct resolution>.`. For gaps, remove **Gap**; Decision states the outcome in words and which it was: answered, placeholder adopted, or omitted. At most one Decision: replace it and log `decided` on change; only withdrawal without replacement reopens (remove Decision, uncheck, log `reopened`). End with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per state change; keep entries after item removal. Remove a resolved item nothing current cites or needs. Keep sibling items tight: no blank lines between `- [ ]` items under one heading.
 
 ### Organization and gate
 

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs
 Managed-Source: Guides/DesignSpecs/design-specs.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-10-26
 
 # Design Specs
 
@@ -28,7 +28,7 @@ known-difference notes after verified fixes; spec text and IDs are otherwise rea
 
 ### What Belongs Here
 
-One home per fact. **Requirements** own screen-independent promises and thresholds; **design** owns
+One home per fact. **Requirements** own product guarantees and thresholds, navigation included; **design** owns
 appearance and drawn copy; **specs** own how screens present promises — conditions and states, formatting
 constants (rounding, a `1 min` floor), variable copy, controls by function, destinations. Cite requirements without restating them
 (*Restatement*). A spec that narrows a requirement, such as hiding a notice in an unmentioned
@@ -87,7 +87,9 @@ requirement terms themselves (*overdue*, *stale*) get no entry.
 
 ## Items
 
-An item has one `###` heading with its ID in the shape guide's form. Its opening sentence names
+An item is one `###` heading with its ID in the shape guide's form. It states what the screen
+must show, do or withhold for its requirement and no other item states; a sentence binding
+nothing, or only carrying a footnote, is not one. Its opening sentence names
 its subject and links the requirement it presents — ✅ "The [reminder
 badge][g-reminder-badge] shows the note's reminder state ([REMIND-02]):" — then its rules; data
 (mappings, strings) goes in tables, never under rule numbers.
@@ -95,13 +97,13 @@ A `##` part groups items and may open with one nonbinding orientation line; what
 belongs under an item.
 
 - **Contract unit:** an item is its rules and its data; data edits follow *Modify vs. Retire*.
-- **Conditions:** exhaustive and unambiguous; state precedence for overlaps ("the first that holds").
+- **Conditions:** exhaustive and unambiguous; give precedence for overlaps ("the first that holds").
 - **Known differences:** only observed app/spec differences, under the affected item with a tracking
-  issue when available; gaps, not exceptions. Platform words belong only here.
+  issue when there is one; differences, not exceptions. Platform words belong only here.
 - **Pending references:** name unwritten specs inline, unlinked: `(spec pending: <file>)`. A
-  pending destination does not block promotion; a depended-on global pattern does.
+  pending destination never blocks promotion; a depended-on global pattern does.
 - **Links:** link requirement IDs, drafts in active product spec packages included; promotion
-  repoints them once canonical. Never link into the design tool.
+  re-points them once canonical. Never link into the design tool.
 - **Every binding claim has an ID.** Intros, indexes and glossary entries orient; what a screen
   must show or do belongs under an ID.
 
@@ -204,32 +206,31 @@ Before authoring's Discussion gate advances and before promotion writes, run the
 the projection introduces, blocks; a fault in an untouched canonical file is reported and starts a package against the base. Then these ten checks, enumerated only here, over the scope in *Purpose*.
 
 - `V1 Restatement` — requirement-citing binding prose adds a screen binding beyond the cited
-  requirement. Nonbinding orientation and routing are `V9`'s.
-- `V2 Appearance` — inspect sentences, including glossary entries, against *Never Appearance*'s
-  redesign test. Evidence names inspected sentences, never a word list.
+  requirement. Orientation and routing are `V9`'s.
+- `V2 Appearance` — inspect sentences, glossary entries included, against *Never Appearance*'s
+  redesign test. Evidence names the sentences inspected, never a word list.
 - `V3 Product language` — no design-tool or code identifier or mechanism anywhere in spec text;
   platform names only in known-difference and Also called notes (*Product Language Only*); changed sentences read as the writing guide says.
-- `V4 Static copy` — quoted strings are formats, data-dependent or undrawn copy.
+- `V4 Static copy` — quoted strings: formats, data-dependent or undrawn copy.
 - `V5 Drawn state` — find every prescribed screen state or component variant by product name in
   production or approved change-page mockups ([Figma](../Design/figma-designer-guide.md)), from
-  any package; unapproved drafts do not count. Unstyled standard system UI is exempt; unavailable
-  access blocks.
-- `V6 Links` — definitions reach intended items, not just files; overrides link superseded rules
-  and parents never name overrides; pending specs use `(spec pending: <file>)`; tracking links
+  any package; unapproved drafts do not count. Unstyled standard system UI is exempt; no access
+  blocks.
+- `V6 Links` — definitions reach intended items, not just files; overrides link superseded rules,
+  parents never name overrides; pending specs use `(spec pending: <file>)`; tracking links
   identify issues.
-- `V7 One home` — no requirement rule restated in a spec, no spec rule copied into another file
+- `V7 One home` — no requirement rule restated in a spec, no spec rule copied to another file
   without a declared override; the copy is the defect.
 - `V8 IDs and prefixes` — every rewritten-file ID remains in its draft, retired in place per
   *Stability*, or at its declared move destination; no renumbering or retired-ID reuse. Each
   prefix names one thing and appears on file index lines.
 - `V9 Indexes, glossary and shape` — each file's index line names answered questions and prefixes,
-  without status. Every named thing has a glossary entry under its governing item's home: meaning,
+  without status. Each named thing has a glossary entry under its governing item's home: meaning,
   purpose and routing, no inventory, position, appearance or binding, any detail supported by the
-  items it links. Each live item opens with its statement and requirement link, a retired one
-  carries the retirement form; orientation prose binds nothing.
+  items it links. Each live item meets *Items* and opens with its statement and requirement link, a retired one carries the retirement form; orientation prose binds nothing.
 - `V10 Completeness` — every binding required by inputs (requirements, drawings, the app in a
   backfill) traces to a governing item; omissions fail. Conditions are exhaustive and unambiguous,
-  with precedence for overlaps. For each item, check that motion or polish a careful developer
+  with precedence for overlaps. For each item, check motion or polish a careful developer
   would not ship unasked is specified: inspect app code in a backfill, otherwise the designer's
   statements. Unstated motion is a Discussion item, never assumed absent.
 

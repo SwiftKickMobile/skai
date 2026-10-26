@@ -9,6 +9,7 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- 2026-10-26: Definitions of a requirement, a design spec item and a gap in the spec guides; the review page names a file's covering entries instead of pasting their reasons; review pages draw a chip only where it has a tooltip, Discussion items included.
 - **Plain language in every guide's own examples.** The spec, UI Map and work-spec guides' templates and worked examples now read as the writing guide says: a change's reason in words before its source, decisions that state the outcome, gate and evidence lines that say what happens next or what a run established, retirements that name what replaced them; and a rule for guide writers that an example must pass the writing guide, since an agent copies the example in front of it.
 - **The review page shows what the author wrote.** Reasons reach every covered change (intros, index lines, added files, rules, section text), deleted text and popovers cite what their own document cited, same-named things in other documents keep their own links and hover text, and a prose change filters together with its reason.
 - **Writing style guide.** One short guide says how an agent writes anything a person reads: sentences that stand alone without their IDs, reasons in words, the thing named rather than the sample that shows it, everyday words instead of the guides' own vocabulary, first person. Every workflow guide points at it.
@@ -30,7 +31,7 @@ Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 - **Fix.** Open gap items on the review page no longer shrink to the footnote's type size.
 - **Decision Log off the page.** The review page no longer shows the Decision Log; it stays in the artifact.
 - **Verification at the end.** The authoring artifact's Verification section now comes after the content sections, just before the Decision Log.
-- **Known gaps, wording.** A gap that has no placeholder yet now says "no placeholder; waiting on …" instead of "none; waiting on …".
+- **Known gaps, wording.** A gap that has no placeholder yet now says "no placeholder" instead of "none; waiting on …", and no line of an item names who is to answer.
 - **Known gaps, part four.** On a Figma change page, each open design gap is marked with an annotation on the drawn placeholder, removed when the gap closes; promotion refuses drafts that still carry one.
 - **Working documents.** Working documents now live beside what they serve — a change package's notes in that package's `working-docs/` folder, archived with it at promotion, everything else in a session folder with no branch level — and they are committed. Output captured to verify a build or test goes to a scratch folder outside the repository (`/tmp/skai/` by default, set in `skai/integration.md`), and documents record only the command, the result and where the output was. The update asks before moving existing working documents.
 - **Known gaps, part three.** A placeholder in a spec draft is marked with a footnote that names its Discussion item; the tool checks the footnotes against the items, refuses any footnote in canon, and lists the gaps on the review page.

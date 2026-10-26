@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-catalog
 Managed-Source: Guides/ProductSpecs/product-specs-catalog.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-10-26
 
 # Product Specs Catalog
 
@@ -102,23 +102,19 @@ what marks a defined term, so terms stay in sentence case; `link-terms` writes t
 
 ## Requirements
 
-A requirement is one `###` item: a statement, then any rules and tables, in the shape guide's form.
+A requirement is a `###` item: what the product must or must not do that no other item requires, then any rules and tables, in the shape guide's form.
+❌ Absence (*"The notification requires nothing"*) or text only for a footnote. ✅ *"Tapping the digest must open the Offers tab."*
 Judgment the shape does not settle:
 
 - **One item per claim, not per row.** Rules and tables are how a product manager conveys an
   enumeration (states, fields, statuses) and its constraints. ❌ three requirements
   for three reminder states · ✅ one item whose table lists the states, with a rule for each
-  state-specific constraint. Most requirements are one statement.
-- **Every behavioral claim has an ID.** Intro, index and glossary prose orients. A root index
-  reading *"The location list syncs across the user's devices"* has smuggled a requirement into
-  prose nothing can cite, modify or test against. Give it an ID.
+  state-specific constraint.
+- **Every behavioral claim has an ID.** Intro, index and glossary prose orients. Give a root index's *"The location list syncs across the user's devices"* an ID to cite, modify or test it.
 - **Cite dependencies inline, where they apply.** Resolve targets before linking: the
   package's draft, else the nearest base's up the chain, else the canonical file. Headings and tool output are not
   citations.
-- **Known differences** record a confirmed implementation gap under the affected requirement:
-  the current behavior, the gap, a tracking issue if any; an observation, never an
-  exception, and the catalog's only implementation note. Suspected differences stay Discussion
-  items until the supervisor resolves them.
+- **Known differences** are the only implementation notes: current behavior, the confirmed difference and any tracking issue under its requirement; observations, never exceptions. Suspected differences stay Discussion items until the supervisor resolves them.
 - No other status anywhere: `(retired)` is the one marker.
 
 ## IDs
@@ -174,8 +170,7 @@ detect and report circular references in templated documents."*
 ### Nothing that decays
 
 Requirements must make sense years later without knowing the original change.
-❌ *"Must behave identically to the app as it existed before modes were introduced"* — a temporal
-reference; state the behavior. ❌ *"(The former relaunch caption is dropped while the design is
+❌ *"Must behave as before modes existed"* — a temporal reference; state the behavior. ❌ *"(The former relaunch caption is dropped while the design is
 reconsidered.)"* — workflow state; it belongs in the package's Discussion. The known-difference
 note is the only exception.
 

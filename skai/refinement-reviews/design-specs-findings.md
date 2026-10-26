@@ -67,3 +67,5 @@ Pass 1 closed by supervisor ruling after round 15 (stop rule b): no unimplemente
 
 Pass 1 re-converged by a clean round: round 18 (series B) after the post-backfill repairs (evidence per check, three examples, r16–r17 fixes). Rounds 16–18: 2.5 · 4.375 · 0. Size 59,958.
 | 2026-10-15 backfill b1–b3 | Authors' self-checks passed while a cold reviewer found 10–13 defects per bucket; proposed a required delegated cold check before the Discussion gate | rejected (supervisor) | Review mechanics are not baked into the guide; whether and when to run a cold check is a supervisory decision per package. Do not re-raise |
+| 2026-10-26 RG r1 | the item definition's exclusion of "what is not shown" rejected legitimate prohibitions; V9 tested form only | closed | Items: show, do or withhold; a sentence binding nothing is not one; V9 tests Items |
+| 2026-10-26 RG r3 | design-specs.md assigned requirements "screen-independent promises" while the catalog keeps navigation guarantees | closed | product guarantees and thresholds, navigation included; the authoring trigger follows |

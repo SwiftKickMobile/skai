@@ -60,8 +60,8 @@ Written 2026-10-20 from the known-gaps planning (SwiftKickMobile/skai#82).
    carries the **Gap** line (all artifact kinds); a spec file marks the placeholder with the
    footnote form the spec-file shape defines; a UI Map proposal and a Figma change page mirror
    each open gap as their own guides say. The guide never restates another guide's syntax.
-8. **No owner field.** skai knows only the supervisor. The question's free text may name whoever
-   is waited on; the guide and tools never read it.
+8. **No owner field.** skai knows only the supervisor, and the artifacts are workflow-agnostic:
+   nothing in an item records who is to answer. The Concern states what is not yet known.
 9. **Agent-facing, short, plain.** Rules in numbered form with a bold lead sentence, LumenNotes
    examples, no narrative about why the mechanism exists beyond one sentence of purpose. Read whole
    when triggered, so it stays small; if it ever needs splitting, split by trigger (inherited gaps
@@ -118,3 +118,15 @@ replacing 3,400.
 The marker's form for footnoting artifacts is `spec-file-gaps.md`'s (2026-10-24); rule 3 keeps
 naming the guides.
 
+
+## Amendment — 2026-10-26 (a gap is a decision outside the author's authority)
+
+Inventory for rule 1, added to the guide at its definition: a gap is a decision the work needs before shipping that nobody in the work can make yet, because the answer is not yet known outside it (the purpose section's "open question that must be decided before the work ships", with the authority test made explicit). A decision within the author's authority is made and recorded and stands for review with the package; a decision the supervisor can make now is an ordinary Discussion item and blocks as usual (round 1, F1). Naming what the answer waits on is optional (rule 8 already allows the question to name who is awaited; no owner field) — withdrawn the same day, see the next amendment. The existing ❌/✅ example stays, reworded to show the authority test.
+
+Evidence: the Offers package (2026-10-22 to 25) carried D29 ("does the hub owe the digest anything") and D25 ("is the status always one of six") as gaps although the supervisor, acting as product, had decided both; the guide's rule 1 let any unmade decision be parked as a gap. Supervisor, 2026-10-26: gaps are for decisions the author cannot make (a threshold the stakeholder owns, data that may not exist); the rest are requirements awaiting the package's review.
+
+Size: draft 3,399, compressed by Astra to 3,296 (the opening's definition merged into rule 1; rule 8's redundant clause dropped). Cap (supervisor, 2026-10-26): **3,290**, a little under the compressed size. Cold series RG with the catalog and design specs guides' amendments of the same date.
+
+## Amendment — 2026-10-26 (the Gap line is the placeholder only)
+
+Supervisor, 2026-10-26, from the Offers packages' content audit: once the no-placeholder form named what is awaited, Gap lines grew who is to answer, names, dates and narrative, and Decision lines followed; the artifacts are workflow-agnostic and skai knows only the supervisor. Two changes. Rule 8 drops "the question may name what the answer awaits": nothing in an item records who is to answer; the Concern states what is not yet known (requirement 8 reworded). The Gap line's no-placeholder form, owned by process-flow (`product-specs-system-design.md` § Decisions — 2026-10-20, item 1, amended the same day), becomes "no placeholder", in the maintainer reference and every inlined copy alike. Deletions only: known-gaps 3,211 bytes (cap 3,290 held); no compression round. Cold series GL.

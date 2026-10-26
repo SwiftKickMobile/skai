@@ -299,3 +299,6 @@ r3 score 0 (0 defects); no irreversible, cosmetic, or noise findings. All three 
 Four-guide total 10,962/11,000 words, net -237 from 11,199; Baseline separately -3 words.
 Synthetic migration/link/cleanup rehearsals and bookkeeping checks passed. Convergence is by a
 fresh clean round, not merely the score. No binding-target edit followed that review.
+| 2026-10-26 RG r1 | the catalog's requirement definition gained a substantive test that promotion's C4 did not apply | closed | C4 names the requirement definition |
+| 2026-10-26 RG r3 | the authoring guides' Discussion eligibility and no-items sentences left no room for a decision within the author's authority | closed (routed) | what the supervisor must settle; draft settled behavior and your own authorized choices; no-items says nothing waits on the supervisor |
+| 2026-10-26 RG r4 | the content guides' known-differences bullets called a difference a gap | closed | difference terminology in both bullets |

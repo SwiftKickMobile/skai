@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-authoring
 Managed-Source: Guides/DesignSpecs/design-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-10-26
 
 # Design Specs Authoring
 
@@ -161,8 +161,8 @@ Work screen by screen: open drawings, requirements and, for backfills, the app a
 record uncertainties. Seek decisions only after the last screen.
 
 Answer app-behavior questions from code and requirements; ask only about product intent. Draft uncertain
-items under the recommended reading or gap placeholder. Footnote with the item ID per the shape guide,
-even with no placeholder and dependent text omitted; link from Discussion's Concern or Proposal.
+items under the recommended reading or gap placeholder; a gap's placeholder, or its omitted text, is
+footnoted with the item ID per the shape guide; link every item from Discussion's Concern or Proposal.
 
 Unobserved platform/service differences are package Assumptions; write specs for every app.
 Only observed differences become known-difference notes.
@@ -206,8 +206,8 @@ above.
 
 ### Requirements Gaps
 
-Never quietly specify a screen-independent promise or narrow a requirement. Draft a product-specs
-package against the subject's open package; if none is open, send the gap to product specs authoring. Link the work in a Discussion item (**Gap** to carry it); draft per *Drafting*.
+Never quietly add a product guarantee or narrow one. Draft a product-specs
+package against the subject's open package; if none is open, send the gap to product specs authoring. Link the work in a Discussion item; draft per *Drafting*.
 Apply the recorded outcome — keep, revise, remove or wait — before resolving it. After promotion into the product
 spec package, cite the requirement's draft ID.
 
@@ -217,7 +217,7 @@ Group items under `###` topics, never in aggregator sections.
 
 Use `- [ ] D<n> [Kind] <summary>`, with Kind `[Question]`, `[Proposal]` or `[Tradeoff]`.
 Bold sub-bullet labels, without separators: **Concern** (required), **Proposal**, **Question**,
-**Options**, **Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "no placeholder; waiting on <what>"), **Decision**. Recommend when possible; Tradeoffs name
+**Options**, **Detail**, **Why**, **Gap** last for unchecked gaps (the placeholder alone, or "no placeholder"), **Decision**. Recommend when possible; Tradeoffs name
 the preferred option and why. Reserve Questions for cases with no basis.
 
 A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
@@ -228,11 +228,11 @@ Name a frame, node or file only where the reader must go to it.
 
 Only supervisor-dependent spec changes: design/app differences, undrawn states, requirements gaps
 awaiting a decision, ambiguous modify/retire or placement calls, unresolved product intent, and audit
-failures. Draft determined behavior directly; record givens as assumptions. A decision the
+failures. Draft settled behavior and your authorized choices directly; record givens as assumptions. A decision the
 supervisor supplies without an item is recorded as a checked item with its Decision line.
 
-With no items, Discussion is one sentence saying which input settled the specs and that the drafts
-follow it; omit it when items exist. An undrawn-state item proposes
+With no items, Discussion is one sentence saying nothing waits on the supervisor and what the drafts
+follow; omit it when items exist. An undrawn-state item proposes
 the drawing by product name.
 
 ### Resolution

@@ -20,7 +20,7 @@ h1{font-size:20px;margin:0;font-weight:600}.subtitle{font-size:18px;margin:0 0 8
 .rid{font-weight:700;font-family:ui-monospace,Menlo,monospace;margin-right:4px}
 a.ref{background:var(--ref);color:var(--refc);border-radius:4px;padding:0 4px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;white-space:nowrap;text-decoration:none}a.ref:hover{text-decoration:underline}
 span.ref{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--muted);white-space:nowrap}
-span.term{color:inherit;border-bottom:1px dashed var(--muted)}
+span.term{color:inherit;border-bottom:1px dashed var(--muted)}a.link,a.link:visited{color:inherit;text-decoration:underline;text-decoration-color:var(--muted)}
 .item:target{outline:2px solid var(--refc)}
 details.item{padding:6px 14px}details.item summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:center}details.item.unchanged summary .badge{background:var(--tag-neutral)}details.item[open]{padding:15px}details.item[open]>:last-child,details.item[open]>ul>li:last-child{margin-bottom:0}details.item[open] summary{margin-bottom:4px}
 .term,a.term,a.term:visited{color:inherit;border-bottom:1px dashed var(--muted);cursor:pointer;text-decoration:none}

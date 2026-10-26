@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-authoring
 Managed-Source: Guides/Design/design-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-10-26
 
 # Design Authoring
 
@@ -164,7 +164,7 @@ topics, never in aggregator sections.
 
 Item line: `- [ ] D<n> [Kind] <summary>`, where `[Kind]` is `[Question]`, `[Proposal]`, or
 `[Tradeoff]`. Sub-bullet labels are bold with no separator: **Concern** (always), **Proposal**,
-**Question**, **Options**, **Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "no placeholder; waiting on <what>"), and **Decision** on resolution.
+**Question**, **Options**, **Detail**, **Why**, **Gap** last for unchecked gaps (the placeholder alone, or "no placeholder"), and **Decision** on resolution.
 
 A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 Mirror all gaps in the design file per the tool guide once placeholders are drawn; remove

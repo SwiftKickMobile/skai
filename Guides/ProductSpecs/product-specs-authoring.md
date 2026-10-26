@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-authoring
 Managed-Source: Guides/ProductSpecs/product-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-10-26
 
 # Product Specs Authoring
 
@@ -98,7 +98,7 @@ For an unexpected blocker, use the blocked gate line and STOP until the supervis
 Workflow-specific gate notes:
 - While any non-gap `- [ ]` item remains in `## Discussion`, end every response with the blocked
   gate and remaining count. Once every subject this package covers is drafted and every non-gap item is resolved — or drafting
-  produced no items because the inputs fully specify the requirements — emit the planned
+  produced no items because nothing waits on the supervisor — emit the planned
   gate advancing to Completion; there is no separate "draft is ready" gate.
   - Blocked: `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them and I finish the package.`
   - Planned: `⏳ GATE: Next: Discussion complete<; N open gaps carried>. Say "next" to close the discussion; I then finish the package for your review.`
@@ -224,25 +224,25 @@ Group items under `###` topics, never in aggregator sections.
 
 Item line: `- [ ] D<n> [Kind] <summary>`, with Kind `[Question]`, `[Proposal]` or `[Tradeoff]`.
 Bold sub-bullet labels, no separator: **Concern** (always), **Proposal**, **Question**, **Options**,
-**Detail**, **Why**, **Gap** last for unchecked gaps (placeholder or "no placeholder; waiting on <what>"), **Decision** on resolution. Recommend when possible; Tradeoffs name the
+**Detail**, **Why**, **Gap** last for unchecked gaps (the placeholder alone, or "no placeholder"), **Decision** on resolution. Recommend when possible; Tradeoffs name the
 preferred option and why; reserve Questions for cases with no basis to recommend.
 
 A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 
 ### What earns an item
 
-Uncertainties that change a requirement: conflicting sources, apparent defects, undefined
-boundaries, genuine placement or scope choices, implemented behavior absent from designs, the
-inventory's new or changed concepts. Draft fully specified behavior directly; assumptions record
-what is taken as given.
+What the supervisor must settle: conflicting sources, apparent defects, undefined
+boundaries, placement or scope choices beyond your authority, implemented behavior absent from
+designs, the inventory's new or changed concepts. Draft settled behavior and your own authorized
+choices directly; assumptions record what is taken as given.
 
-With no items, Discussion is one sentence saying which input settled the requirements and that the
-drafts follow it; omit it when items exist.
+With no items, Discussion is one sentence saying nothing waits on the supervisor and which inputs
+the drafts follow; omit it when items exist.
 
 ### Draft the requirement anyway
 
-Open items never leave holes in drafts: write the recommended requirement or gap placeholder, footnoted
-with the item ID per the shape guide, even with no placeholder and dependent text omitted. Link every
+Open items never leave holes in drafts: write the recommended requirement or gap placeholder; a gap's
+placeholder, or its omitted dependent text, is footnoted with the item ID per the shape guide. Link every
 affected draft requirement by ID from Concern or Proposal. The item explains uncertainty; the draft
 reads as complete.
 

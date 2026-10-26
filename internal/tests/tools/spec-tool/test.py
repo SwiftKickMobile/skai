@@ -7,6 +7,7 @@ fixtures stay as committed.
 from pathlib import Path
 import os
 import re
+import html as html_mod
 import urllib.parse
 import shutil
 import subprocess
@@ -224,7 +225,10 @@ class Writers(unittest.TestCase):
         card = re.search(r'<div class="item prose modified"><p class="intro modified">.*?Stages are listed first.*?</p>(<div class="why">.*?</div>)?</div>', html, re.S)
         self.assertIsNotNone(card, "the changed intro renders as modified")
         self.assertIsNotNone(card.group(1), "an intro covered through a requirement entry's Touches shows that entry's reason")
-        self.assertIn("R1 ", card.group(1) + " ", "several covering entries are attributed by ID" if card.group(1).count("R") > 1 else "")
+        why = html_mod.unescape(re.sub(r"<[^>]+>", "", card.group(1)))
+        if why.count("R") > 1:
+            self.assertIn("Changed with this file's entries", why, "several covering entries are named in one line, their reasons never pasted together")
+            self.assertNotIn("; R", why, "no concatenated reasons")
 
     def test_render_justification_citation_stays_a_link_inside_a_draft_card(self):
         page = self.copy / "package/product-specs-review.html"
@@ -234,7 +238,7 @@ class Writers(unittest.TestCase):
         html = page.read_text()
         card = re.search(r'id="stage-01".*?<div class="why"><b>Why</b> (.*?)</div>', html, re.S)
         self.assertIsNotNone(card, "STAGE-01 card with a Why")
-        self.assertRegex(card.group(1), r'<a [^>]*href="[^"]*#stage-definitions"[^>]*>D1</a>', "the cited decision resolves through the authoring artifact's definitions, not the draft's")
+        self.assertRegex(card.group(1), r'<a class="ref" href="#d1" data-tip="tip-gap-own-d1">D1</a>', "the cited decision is the item itself: a chip linked to its card, with the item's tooltip")
 
     def test_render_index_line_covered_through_touches_shows_the_covering_reason(self):
         index = ("# Domains\n\n- [workflow-stage] -- `STAGE-` -- the stages a notebook moves through\n"
@@ -284,7 +288,7 @@ class Writers(unittest.TestCase):
         cards = [m for m in re.finditer(r'<div class="item prose modified"><p class="intro modified"><span class="badge modified"></span>(.*?)</p>(<div class="why">.*?</div>)?</div>', html, re.S) if "Spillover notes" in m.group(1)]
         self.assertEqual(len(cards), 1, "the new section's orientation text renders as a changed prose card")
         self.assertIsNotNone(cards[0].group(2), "it carries the covering entry's reason")
-        self.assertIn("no home", cards[0].group(2))
+        self.assertTrue("no home" in cards[0].group(2) or "Changed with this file" in cards[0].group(2), "one covering entry lends its reason; several are named in one line")
 
     def test_render_removed_section_orientation_text_shows_as_missing(self):
         base = self.copy / "catalog/domains/workflow-stage.md"
@@ -329,7 +333,7 @@ class Writers(unittest.TestCase):
         self.assertEqual(len(cards), 1, "the changed section prose renders as one card holding text and reason")
         self.assertIsNotNone(cards[0].group(2))
         self.assertNotIn("whole set was missing", cards[0].group(2), "a glossary entry sharing the section's name lends it no reason")
-        self.assertIn("R1 ", cards[0].group(2) + " ", "the reason comes from the entries covering the file through Touches")
+        self.assertIn("R1", cards[0].group(2), "the reason comes from the entries covering the file through Touches, named in one line")
 
     def test_render_section_with_orientation_text_and_no_items(self):
         draft = self.copy / "package/proposed-product-specs/domains/workflow-stage.md"
@@ -396,14 +400,13 @@ class Writers(unittest.TestCase):
         html = page.read_text()
         self.assertIn('<h3 class="section" id="stage-definitions">', html, "a Discussion topic heading carries its anchor")
         authoring = self.copy / "package/product-specs-authoring.md"
-        authoring.write_text(authoring.read_text().replace("[D1]: #stage-definitions", "[D1]: #assumptions-and-todos", 1))
+        text = authoring.read_text().replace("  - **Proposal** A.\n", "  - **Proposal** A; see [the assumptions][assumptions].\n", 1) + "[assumptions]: #assumptions-and-todos\n"
+        authoring.write_text(text)
         code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
                           "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
         html = page.read_text()
-        card = re.search(r'id="stage-01".*?<div class="why"><b>Why</b> (.*?)</div>', html, re.S)
-        self.assertIsNotNone(card)
-        self.assertRegex(card.group(1), r'href="[^"]*product-specs-authoring\.md#assumptions-and-todos"', "a citation to a section the page omits links to the artifact at that section")
+        self.assertRegex(html, r'<a class="link" href="[^"]*product-specs-authoring\.md#assumptions-and-todos">the assumptions</a>', "a citation to a section the page omits is a plain link to the artifact at that section, not a chip")
 
     def test_render_citation_into_another_artifact_keeps_that_artifact(self):
         authoring = self.copy / "package/product-specs-authoring.md"
@@ -485,10 +488,8 @@ class Writers(unittest.TestCase):
                           "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
         html = page.read_text()
-        card = re.search(r'<div class="item request"><div class="head">.*?</div>(.*?)</div>', html, re.S).group(1)
-        link = re.search(r'<a class="term" href="[^"]*other-glossary\.md#notebook"([^>]*)>notebook</a>', card)
-        self.assertIsNotNone(link, "the Goal's term links to the other glossary")
-        self.assertNotIn('data-tip="tip-g-notebook"', link.group(1), "it does not show the local glossary's definition on hover")
+        self.assertIn('<a class="link" href="other-glossary.md#notebook">notebook</a>', html, "the Goal's term is a plain link to the other glossary: no tooltip, so no chip")
+        self.assertNotRegex(html, r'<a class="term" href="[^"]*other-glossary\.md#notebook"', "a term the page cannot explain is not drawn as a term chip")
 
     def test_render_deleted_text_keeps_the_old_files_citations(self):
         base = self.copy / "catalog/domains/workflow-stage.md"
@@ -524,6 +525,22 @@ class Writers(unittest.TestCase):
         self.assertIn("pitch (the web app).</ins>", card)
         self.assertNotIn("<del", card.split("<blockquote")[0], "the unchanged definition is not marked")
 
+
+    def test_render_every_chip_has_a_tooltip_and_item_references_are_chips(self):
+        for args, page in [(("--catalog", "catalog", "--drafts", "package/proposed-product-specs", "--authoring", "package/product-specs-authoring.md"), "package/product-specs-review.html"),
+                           (("--catalog", "catalog", "--drafts", "package/change-requests/001/proposed-product-specs", "--authoring", "package/change-requests/001/product-specs-authoring.md"), "package/change-requests/001/product-specs-review.html")]:
+            code, lines = run("render", *args, fixtures=self.copy)
+            self.assertEqual(code, 0, lines)
+            html = (self.copy / page).read_text()
+            bare = re.findall(r'<(?:a|span) class="(?:ref|term)"(?![^>]*data-tip)[^>]*>[^<]*<', html)
+            self.assertEqual(bare, [], f"{page}: every chip carries a tooltip; a reference the page cannot explain is a plain link or text")
+        html = (self.copy / "package/product-specs-review.html").read_text()
+        self.assertIn('under option A of <a class="ref" href="#d2" data-tip="tip-gap-own-d2">D2</a>', html, "a bare item reference in prose is the same chip as a footnote owner")
+        self.assertIn('<a class="ref" href="#d1" data-tip="tip-gap-own-d1">D1</a>', html, "a linked item reference is the same chip")
+        for tip in set(re.findall(r'data-tip="(tip-gap-[^"]+)"', html)):
+            self.assertIn(f'<template id="{tip}">', html, f"every item chip's tooltip has its template ({tip})")
+
+
     def test_render_design_package_page(self):
         page = self.copy / "design-package/design-specs-review.html"
         page.unlink()
@@ -531,6 +548,9 @@ class Writers(unittest.TestCase):
                           "--authoring", "design-package/design-specs-authoring.md", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
         self.assertTrue(page.exists())
+        html = page.read_text()
+        bare = re.findall(r'<(?:a|span) class="(?:ref|term)"(?![^>]*data-tip)[^>]*>[^<]*<', html)
+        self.assertEqual(bare, [], "design page: every chip carries a tooltip")
 
     def test_request_package_renders_and_checks_against_its_base(self):
         drafts = "package/change-requests/001/proposed-product-specs"

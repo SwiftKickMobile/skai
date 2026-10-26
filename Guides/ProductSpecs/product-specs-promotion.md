@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-promotion
 Managed-Source: Guides/ProductSpecs/product-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-10-26
 
 # Product Specs Promotion
 
@@ -153,9 +153,9 @@ Verify changed content at its projected base location; unchanged content never b
   checks only the line's shape).
 - `C3 Cross-references resolve` — `validate` has every link defined and used. Inspect citations in
   changed requirements, indexes, glossary entries and known-difference notes: they reach intended IDs
-  at projected locations (including untouched dependencies), not merely files; tracking links identify issues.
-- `C4 Writing style` — inspect changed requirement and glossary prose against the catalog guide's
-  writing rules and the writing guide; known-difference notes are not the contract; index lines and headers are `C5`'s.
+  at projected locations (untouched dependencies too), not files alone; tracking links identify issues.
+- `C4 Writing style` — changed requirement and glossary prose against the catalog guide's
+  requirement definition, writing rules and the writing guide; known-difference notes are not the contract; indexes and headers are `C5`'s.
 - `C5 Traversal` — index lines name the questions their files answer; every cross-cutting term
   introduced here has a glossary entry pointing at the requirements that govern it, and `validate`
   has every term linked; no behavioral claim sits in unnumbered prose.
