@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.designer-guide
 Managed-Source: Guides/Design/figma-designer-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-24
+Managed-Updated-At: 2026-10-28
 
 # Figma Designer Guide
 
@@ -79,7 +79,8 @@ designer makes them; the guide does not.
 1. **Screens go right, states go down.** Within a Section each distinct screen is its own column, in
    the order a user meets them (notebooks → notes → note editor). A screen's states, and crops of
    them, stack below it; a tall screen spills into a second column beside it. Columns are 50px
-   apart; states are 100px apart. Names carry no concept prefix.
+   apart; states are 100px apart. Canvas order runs down a column, then across columns. Names
+   carry no concept prefix.
 
 2. **Choose states for the screen, not screens for states.** A state is drawn when the screen is
    naturally in that situation: its main use, a mode, a lifecycle point, empty, error, loading. A
@@ -230,12 +231,12 @@ designer makes them; the guide does not.
 
 ## Gaps
 
-Own gaps are open Discussion items whose **Gap** line names the placeholder; inherited gaps
-are footnotes on the change list entry whose frame uses it. Once drawn, each frame's placeholder
-node gets one Dev Mode annotation of three lines: `Gap: <the question>`,
-`Placeholder: <what is drawn>`, `Owner: <the owning item: product specs D21, or this package's D04>`.
-Update when the placeholder changes; remove when the owning item closes; `Production` never
-carries one. Use the node's Plugin API `annotations` (the connector has no comment tool), keeping others.
+Gaps are items or footnotes per design authoring. Once drawn, each gap gets one Dev Mode annotation
+across the package's drawings (its change page or request Section, whatever their screen Sections), on
+its placeholder node in the first frame drawing it in canvas order; move it when that changes. Three lines: `<owning item ID>: <the question>`, `Placeholder: <what is drawn>`,
+`Owner: <owning artifact path relative to skai/changes/>`. Use node `annotations`, keeping others, in the
+file's yellow `Gap` category (`figma.annotations`; create it if missing). Update on placeholder changes;
+remove when the owning item closes; never in `Production`.
 
 ## Working a backfill
 

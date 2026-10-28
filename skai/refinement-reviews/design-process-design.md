@@ -384,3 +384,14 @@ readiness 5 points at the shared rule on requests filed against inputs; readines
 ## Size Budgets — 2026-10-25
 
 Series PL (plain language): `design-authoring.md` **16,000** and `design-promotion.md` **12,000** hold (supervisor, 2026-10-25); the Resolution sentence swept from process-flow and the provenance tag order fit under them by hand trims.
+
+## Amendment — 2026-10-28 (an inherited gap's footnote once)
+
+Supervisor, 2026-10-28 (the Offers CR-001 review; SK-01 of that review): an inherited gap's
+footnote goes only on the first entry or sub-change, in list order, whose change rests on that
+placeholder; a later entry building on the same placeholder carries none. This matches the Figma
+annotation, which marks each gap once at its first occurrence in canvas order, the order the
+change list follows (`figma-designer-guide-design.md` § Amendment — 2026-10-28). The rest of the
+2026-10-24 footnote rule (on a change that rests on the placeholder, never on what a frame merely
+keeps; the Placeholder clause is the provisional answer) stands.
+Cap: `design-authoring.md` **16,000** holds (compressed 15,992; supervisor, 2026-10-28).

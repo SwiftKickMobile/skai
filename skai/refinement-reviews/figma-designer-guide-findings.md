@@ -107,3 +107,9 @@ for both guides against the 19,000 cap; 16,674 after merging the shorter Project
 | 2026-10-21 gaps r1 | F1 § Gaps said "the artifact's gap line verbatim", but the Gap sub-bullet carries no item ID (lost in compression) | closed | text is `D<n> — <placeholder>`: the item's ID, then its Gap line's value unchanged |
 | 2026-10-21 gaps r2 | F1 one placeholder drawn in several drawings has no deterministic annotation host | logged | no occurrence; blocked-gate route covers it; worked example on the placement sentence if it recurs, guide and amendment together |
 | 2026-10-21 gaps r2 | Terminal round: no new live findings | converged | stop rule (a) |
+| 2026-10-28 GA r1 | F1 § Gaps restated footnote placement and disagreed with design authoring | closed | the summary removed; § Gaps points at design authoring |
+| 2026-10-28 GA r1 | F2 "per package section" read as one annotation per screen Section | closed | scope is the package's drawings (change page or request Section), whatever their screen Sections |
+| 2026-10-28 GA r2 | F1 the pair over its 18,000 cap after round 1's repair | closed | opening and category sentence shortened; 17,983 |
+| 2026-10-28 GA r2 | F2 canvas order undefined where § Gaps uses it | closed | supervisor ruling: down a column, then across columns, in the layout ordering rule |
+| 2026-10-28 GA r3 | F2 a package drawn on two concept pages has no first occurrence | logged | no occurrence; blocked gate covers it; sharpen the layout rule after a ruling if it occurs |
+| 2026-10-28 GA r5 | Terminal by ruling: three logged branches stay unimplemented | converged | stop rule (b), supervisor 2026-10-28 |

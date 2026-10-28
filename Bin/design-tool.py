@@ -73,7 +73,7 @@ def parse_changes(text):
     none), `subs` the numbered sub-changes [(num, text, justification)] of a frame changed in
     several ways (the justification is what follows the last ' — ' of the line), `gaps` the
     footnotes defined under the entry, each (label, owning item, the provisional answer the entry
-    builds on); one footnote per entry whose change rests on a gap, the question staying with its owner."""
+    builds on); one footnote per gap, on the first entry whose change rests on it, the question staying with its owner."""
     body = re.search(r"^## Design Changes\s*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
     if not body:
         return []

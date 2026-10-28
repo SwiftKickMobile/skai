@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-authoring
 Managed-Source: Guides/Design/design-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-26
+Managed-Updated-At: 2026-10-28
 
 # Design Authoring
 
@@ -221,7 +221,7 @@ pass and end at the gate *Gates* prescribes.
 
 ## Design Changes
 
-Under `### <screen>` in canvas order (columns left to right), list frames top to bottom, one entry each: `- V<n> <add|modify|remove> <screen|state|component>: <identity>`.
+Under `### <screen>` in canvas order (down a column, then across), one entry per frame: `- V<n> <add|modify|remove> <screen|state|component>: <identity>`.
 Current from the first drawing; with no mockups, from decisions at the Discussion gate.
 
 One sequence per package: `V01`, `V02`, …, never renumber or reuse. New frames take the next `V`
@@ -231,7 +231,7 @@ the frame name linked to its draft (`[name](<link>)`), or the intended name unli
 - **Description** the screen, state or component change in product words, never a visual diff or sample data; about a sentence with mockups; without them, enough to design from.
 - **Justification** a reason sentence, then an input citation, `Resolved decision: D<n>` (this package), `Base decision: D<n>` (its base), or `Supervisor input`.
 
-Inherited gaps are footnotes, not items, on the entry or sub-change whose change rests on a placeholder, never on what a frame merely keeps from the base; the Placeholder clause is the provisional answer, not the frame ([`spec-file-gaps.md`](../Core/spec-file-gaps.md)).
+Inherited gaps get one footnote each, not items, on the first entry or sub-change whose change rests on its placeholder, never on what a frame merely keeps from the base; Placeholder is the provisional answer, not the frame ([`spec-file-gaps.md`](../Core/spec-file-gaps.md)).
 
 Several changes: sub-IDs:
 

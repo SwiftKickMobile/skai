@@ -2187,3 +2187,89 @@ which write for a person). Process reflection: the series' binding target conver
 rounds 14–18 ran because I repaired a context surface after clean rounds and re-read, and the
 reviewer, told to inspect the renderer, found one more path each time. A zero round ends a series;
 a defect in a context surface is logged. Retro complete apart from the follow-ups above.
+
+## Series GA — gap annotations once per gap, with a category (2026-10-28)
+
+Target: `figma-designer-guide.md` § Gaps and `design-authoring.md`'s inherited-gaps sentence, against
+`figma-designer-guide-design.md` and `design-process-design.md` § Amendment — 2026-10-28. Supervisor
+rulings: category `Gap`, yellow; the owning item's ID first, then Placeholder, then Owner as a path
+under `skai/changes`; one annotation and one footnote per gap, at its first occurrence. Compression
+(Astra): pair 18,037, authoring 15,992; caps 18,000 / 16,000 (supervisor); installed 18,002 / 15,992.
+Reviewer: Codex gpt-6-astra, standard full review, prompts and reports under the session scratchpad
+`refine/GA/`.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+
+Round 1 matrix:
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 the Figma guide's own footnote-placement summary ("entry whose frame uses it") contradicts design authoring's (first entry whose change rests on it) | accept | Figma design § Amendment 2026-10-28; figma guide § Gaps | drop the summary; point at design authoring | annotation (first frame) and footnote (first change) stay separate predicates |
+| F2 "per package section" reads as one annotation per screen Section | accept | same | scope = the package's drawings (change page or request Section); screen Sections do not restart the count | request scope separate from its base; node, movement, removal, keep-others |
+
+> F1 divergent · normal · speculative = 2.5 · F2 divergent · normal · speculative = 2.5 · open question (the page's gap count metric) neither
+
+| r1 | 5 | 2 | 0 | 2 | 0 | 0 |
+
+Repairs: cluster 1 (F1) then cluster 2 (F2), each self-checked: no stale footnote sentence remains in the Figma guide (grep), the placement rule stays at its point of use in design authoring, nothing weakened. Pair 18,081 after cluster 2: 81 over the cap (round 2's F1).
+
+Round 2 matrix:
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 the pair at 18,081 against the 18,000 cap, from round 1's cluster 2 | accept | figma guide § Gaps | shorten the opening to a pointer at design authoring; tighten the scope clause | scope, node, three lines, category, lifecycle |
+| F2 "canvas order" is not defined as column-first where § Gaps uses it | accept (supervisor ruling) | figma guide § Canvas layout, § Gaps | the layout ordering rule says: down a column, then across columns | stable V IDs; spatial order, not creation order |
+
+> F1 cosmetic · normal · verified = 2 · F2 divergent · normal · speculative = 2.5
+
+| r2 | 4.5 | 2 | 0 | 1 | 1 | 0 |
+
+Repairs: cluster 1 (F1): self-check: the own/inherited distinction lives in design authoring and the Figma guide only points there; nothing stale. Cluster 2 (F2, after the supervisor defined canvas order mid-round; round 3 was stopped before it reported, so the text it read is gone): one sentence in the layout ordering rule; self-check: design authoring's list rule (columns left to right, frames top to bottom) agrees; § Gaps unchanged. Pair under cap.
+
+Round 3 matrix:
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 design authoring's list rule ("columns left to right, frames top to bottom") can order a spilled screen's frames differently from canvas order, moving the footnote | accept | design-process spec § Amendment 2026-10-28; design authoring § Design Changes | the list rule says canvas order (down a column, then across), one entry per frame | per-screen headings; stable V IDs; footnote eligibility by the change resting on the placeholder |
+| F2 "first" undefined for a package drawn on two concept pages | log only | figma guide § Pages, § Gaps | none; blocked gate covers it; sharpen the layout rule after a ruling if it occurs | once per package, not per page |
+
+> F1 divergent · normal · speculative = 2.5 · F2 divergent · off-normal · speculative = 1.875, logged
+
+| r3 | 4.375 | 2 | 0 | 2 | 0 | 0 |
+
+Repair: one cluster (F1); self-check: the definition stays in the Figma guide, design authoring restates only the phrase; nothing stale; 15,975 of 16,000.
+
+Round 4 matrix:
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 the Discussion gate's "N open gaps carried" is ambiguous before the first drawing: known inherited gaps (three) or represented ones (one) | log only | design authoring § Gates | none; blocked gate covers it; sharpen the gate wording after settling the count's meaning if it recurs | inherited gaps stay footnotes; no premature Design Changes |
+
+> F1 divergent · normal · speculative = 2.5, logged · the renderer docstring's stale "one footnote per entry" wording fixed as tool maintenance, outside the target
+
+| r4 | 2.5 | 1 | 0 | 1 | 0 | 0 |
+
+Round 5 matrix:
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 with no mockups (supervisor-authorized), two new screens resting on one placeholder have no canvas order, so the footnote's entry is undefined | log only | design authoring § Design Changes | none; blocked gate covers it; sharpen the ordering rule if it occurs | canvas order for drawn entries; one footnote per gap |
+
+> F1 divergent · off-normal · speculative = 1.875, logged
+
+| r5 | 1.875 | 1 | 0 | 1 | 0 | 0 |
+
+Rounds 4 and 5 found nothing in the changed passages; each raised one stranded branch elsewhere in the target (the gate's gap count before drawing; ordering without mockups), both routed to the blocked gate by the guide. Convergence by ruling proposed to the supervisor with that ledger plus round 3's concept-pages case.
+
+Series GA converged by ruling (supervisor, 2026-10-28, stop rule b): the three logged branches
+(concept pages, the gate's gap count before drawing, ordering without mockups) stay unimplemented.
+Sizes: pair 17,983 of 18,000; authoring 15,975 of 16,000.
+
+Maintenance retro (2026-10-28, series GA): release entry and changelog line written; `Managed-Updated-At`
+bumped on both guides; the design-tool test's two `D01` assertions updated to the chip the renderer
+has drawn since 19c761c (a pre-existing failure); `design-tool.py` docstring says one footnote per gap.
+Checks: stale annotation phrases (`Gap: <the question>`, `each frame's placeholder`, `per frame that
+stands`) across Guides, Templates and README: 0 occurrences (grep); README's one "canvas order" line
+still true; manifest unchanged (no asset added); the host's Figma addendum carries no annotation rule;
+no gate or skeleton changed. No misses.

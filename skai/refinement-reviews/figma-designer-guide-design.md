@@ -155,3 +155,26 @@ item (`design-process-design.md` § Amendment — 2026-10-23, inherited gaps).
 Gap annotation change, 2026-10-23: the pair 17,897 bytes after compression; cap **17,850 bytes**,
 set by the supervisor 2026-10-23, replacing the 17,900 above.
 
+
+## Amendment — 2026-10-28 (gap annotations: category, ID first, once per gap)
+
+Requirement 12, replacing requirement 11's text and placement (supervisor, 2026-10-28, after the
+Offers CR-001 review with Mofe: the same gap repeated on every frame was overwhelming, and the
+annotations did not use what Figma offers for telling kinds of notes apart). Inventory:
+
+1. A gap annotation is in the file's annotation category named `Gap`, colored yellow; the agent
+   creates the category when the file has none (Plugin API `figma.annotations`
+   `getAnnotationCategoriesAsync` / `addAnnotationCategoryAsync`, the annotation's `categoryId`).
+2. Its text, on three lines: `<owning item ID>: <the question>`, then
+   `Placeholder: <what is drawn>`, then `Owner: <path of the owning artifact relative to
+   skai/changes, starting with the change package's folder>` (for example
+   `offers/product-specs/product-specs-authoring.md`).
+3. Each gap is annotated once in the package's section: on the placeholder node of the first frame,
+   in canvas order, that draws it. A later frame drawing the same placeholder carries none. When the
+   first occurrence changes (a frame added, moved or removed), the annotation moves with it.
+4. Unchanged: added once the frame exists, updated when the placeholder changes, removed when the
+   owning item closes; `Production` never carries one; other annotations on the node are kept.
+Compression (Astra, 2026-10-28): the pair 18,037 bytes; cap **18,000 bytes**, set by the supervisor
+2026-10-28, replacing the 17,850 above; the installed text trimmed to fit.
+Ruling (supervisor, 2026-10-28, series GA round 2's logged finding): canvas order runs down a
+column, then across columns; stated once in the Canvas layout ordering rule, which § Gaps relies on.
