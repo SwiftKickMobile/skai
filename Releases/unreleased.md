@@ -1,1 +1,3 @@
 # Unreleased
+
+- 2026-10-29 **A gap's owner resolves on a package built on another open package** (`spec-tool.py`, `design-tool.py` render): besides a change request's parent folder, a package's base is now the artifact of the same type linked first under its `## Inputs`, so a footnote naming `base D<n>` links to that base's item with its tooltip; a new scope, `base product specs D<n>`, reaches the product specs the base links, for a design package whose own product specs are another package. Before, such owners rendered as plain IDs. **Migration:** none; re-render a page whose footnotes name such owners.

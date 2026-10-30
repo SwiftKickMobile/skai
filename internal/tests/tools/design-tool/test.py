@@ -73,6 +73,14 @@ class Render(unittest.TestCase):
         self.assertIn('<a class="ref" href="../../design-review.html#d02" data-tip="tip-gap-base-d02">D02</a>', page, "a base item shows its ID alone, links to the base's page and carries its tooltip")
         self.assertIn('<template id="tip-gap-base-d02"><div class="pop-src">../../design-review.html</div>', page, "the tooltip of another document's item starts with that document's review page path")
 
+    def test_package_built_on_a_sibling_package_links_its_base(self):
+        artifact = self.copy / "followup/design-authoring.md"
+        code, out = self.render(artifact)
+        self.assertEqual(code, 0, out)
+        page = (artifact.parent / "design-review.html").read_text()
+        self.assertIn('<a class="ref" href="../package/design-review.html#d02" data-tip="tip-gap-base-d02">D02</a>', page, "a package's base named first under Inputs resolves a base owner, linked to the base's page with its tooltip")
+        self.assertIn('<template id="tip-gap-base-d02"><div class="pop-src">../package/design-review.html</div>', page)
+
 
 if __name__ == "__main__":
     unittest.main()

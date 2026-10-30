@@ -1252,7 +1252,7 @@ def inline(s, gloss=None, auto=False):
         if gloss and name in gloss:
             tip = f' data-tip="tip-{name}"' if external_doc(name) is None else ""  # a term defined to point at another document's glossary shows no local definition
             return chip("term", label, href, tip)
-        m3 = re.fullmatch(r"(?:(base|product specs|specs)\s+)?(D\d+)", name, re.I) or re.fullmatch(r"D\d+", label)
+        m3 = re.fullmatch(r"(?:(base product specs|base|product specs|specs)\s+)?(D\d+)", name, re.I) or re.fullmatch(r"D\d+", label)
         if m3:
             scope, did = (m3.group(1), m3.group(2)) if m3.re.groups == 2 else (None, m3.group(0))
             ref_chip = item_ref_chip(did, scope, RESOLVER["linkdefs"].get(name, "") or ("#" if not ref else ""), label)
@@ -1534,8 +1534,9 @@ def gap_notes(notes, aid, gloss):
 def gap_owners(authoring, disc):
     """The artifacts whose Discussion items a gap footnote may name, by scope: "" is this artifact
     (items from `disc`); "base" the parent package of a change request (the folder above
-    `change-requests/` or `promoted-change-requests/`, same artifact name); "product specs" and
-    "specs" the product specs artifact this artifact or its base links. Each maps to (its review
+    `change-requests/` or `promoted-change-requests/`, same artifact name), or else the package
+    of the same type named first under `## Inputs`; "product specs" and "specs" the product specs
+    artifact this artifact or its base links; "base product specs" the one the base links. Each maps to (its review
     page's href relative to this page, "" for this page; {D: item}); the href doubles as the
     source shown in the tooltip."""
     defs = lambda text: {m.group("name"): m.group("target") for m in map(LINKDEF_RE.match, text.splitlines()) if m}
@@ -1545,22 +1546,46 @@ def gap_owners(authoring, disc):
         return owners
     authoring = Path(authoring).resolve()
     folder = authoring.parent
-    base = folder.parent.parent / authoring.name if folder.parent.name in ("change-requests", "promoted-change-requests") else None
+    base = folder.parent.parent / authoring.name if folder.parent.name in ("change-requests", "promoted-change-requests") else input_base(authoring, own_text)
     if base and base.exists():
         base_text = base.read_text(encoding="utf-8")
-        owners["base"] = ("../../" + authoring.name.replace("-authoring.md", "-review.html"), {it["id"]: it for _, its in parse_discussion(base_text) for it in its}, defs(base_text), base.resolve())
-    for src in [authoring] + ([base] if base and base.exists() else []):
+        page = os.path.relpath(base.with_name(authoring.name.replace("-authoring.md", "-review.html")), folder).replace(os.sep, "/")
+        owners["base"] = (page, {it["id"]: it for _, its in parse_discussion(base_text) for it in its}, defs(base_text), base.resolve())
+
+    def linked_specs(src):
         for m in re.finditer(r"\(([^)\s]*product-specs-authoring\.md)\)|\]:\s*(\S*product-specs-authoring\.md)", src.read_text(encoding="utf-8")):
             path = (src.parent / (m.group(1) or m.group(2))).resolve()
-            if path.exists():
+            if path.exists() and path != src.resolve():
                 page = os.path.relpath(path.with_name("product-specs-review.html"), folder).replace(os.sep, "/")
                 specs_text = path.read_text(encoding="utf-8")
-                items = {it["id"]: it for _, its in parse_discussion(specs_text) for it in its}
-                owners["product specs"] = owners["specs"] = (page, items, defs(specs_text), path)
-                break
-        if "specs" in owners:
+                return (page, {it["id"]: it for _, its in parse_discussion(specs_text) for it in its}, defs(specs_text), path)
+        return None
+
+    for src in [authoring] + ([base] if base and base.exists() else []):
+        found = linked_specs(src)
+        if found:
+            owners["product specs"] = owners["specs"] = found
             break
+    if base and base.exists():
+        found = linked_specs(base)
+        if found:
+            owners["base product specs"] = found  # the specs the base builds on, when this package's own differ
     return owners
+
+
+def input_base(authoring, text):
+    """A package's base when it is not a change request's parent: the first artifact of the same
+    name linked under its `## Inputs`, which names the base first; None when there is none."""
+    m = re.search(r"^## Inputs\n(.*?)(?=^## )", text, re.S | re.M)
+    if not m:
+        return None
+    defs = {d.group("name"): d.group("target") for d in map(LINKDEF_RE.match, text.splitlines()) if d}
+    for link in re.finditer(r"\]\(([^)\s]+)\)|\]\[([^\]]+)\]|\[([^\]]+)\](?![(\[])", m.group(1)):
+        target = link.group(1) or defs.get(link.group(2) or link.group(3), "")
+        path = (authoring.parent / target.split("#", 1)[0]).resolve() if target else None
+        if path and path.name == authoring.name and path != authoring and path.exists():
+            return path
+    return None
 
 
 def scope_key(scope):
@@ -1576,7 +1601,7 @@ def chip(kind, label, href, tip):
     return f'<a class="link" href="{href}">{label}</a>' if href else label
 
 
-ITEM_REF_RE = re.compile(r"(?<![\w-])(?:(?P<scope>base|product specs|specs)\s+)?(?P<did>D\d+)(?![\w-])", re.I)
+ITEM_REF_RE = re.compile(r"(?<![\w-])(?:(?P<scope>base product specs|base|product specs|specs)\s+)?(?P<did>D\d+)(?![\w-])", re.I)
 
 
 def item_ref_chip(did, scope=None, target=None, label=None):
