@@ -9,35 +9,17 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
-- **Each gap marked once.** On a Figma change page a gap is annotated once, where it first occurs (down a column, then across), in a yellow `Gap` annotation category that leads with the gap's ID; its footnote in the change list likewise goes on the first entry that rests on it, so a reader sees each gap once rather than on every frame.
-- 2026-10-26: Definitions of a requirement, a design spec item and a gap in the spec guides; the review page names a file's covering entries instead of pasting their reasons; review pages draw a chip only where it has a tooltip, Discussion items included, and keep their filters, expanded items and scroll position on reload.
-- **Plain language in every guide's own examples.** The spec, UI Map and work-spec guides' templates and worked examples now read as the writing guide says: a change's reason in words before its source, decisions that state the outcome, gate and evidence lines that say what happens next or what a run established, retirements that name what replaced them; and a rule for guide writers that an example must pass the writing guide, since an agent copies the example in front of it.
-- **The review page shows what the author wrote.** Reasons reach every covered change (intros, index lines, added files, rules, section text), deleted text and popovers cite what their own document cited, same-named things in other documents keep their own links and hover text, and a prose change filters together with its reason.
-- **Writing style guide.** One short guide says how an agent writes anything a person reads: sentences that stand alone without their IDs, reasons in words, the thing named rather than the sample that shows it, everyday words instead of the guides' own vocabulary, first person. Every workflow guide points at it.
-- **Design change descriptions say what changed.** A change entry names the state or behavior that changed and gives its reason in a sentence; gap footnotes sit only on the entry whose change rests on the placeholder.
-- **A footnote names the item that raised the question.** Never one that merely inherits it; change request pages now link footnote owners and count gaps like package pages.
-- **The spec tool checks a request against the package it is filed against.** Validation, diffs and change-list checks read a request's bases from its folder, identify links by where they point rather than how they are spelled, and list design-spec rule changes one per entry.
-- **Spec change requests work like design ones.** A product or design spec change request is now an ordinary package whose base is the package it is filed against; whoever picks it up authors it, trims it to accept part of it, and promotes it to fold it in. The request file, its status field and its separate page are gone.
-- **Design change requests.** A design package now authors against a base, and a change request is simply a package whose base is another open design package: same artifact, same phases, same page; promotion folds it into the base. Anyone can file one, with or without drawings.
-- **Design Changes is a live typed list.** One entry per change with a description and a justification, kept current while drawing; "approved" is gone, the review gate's "next" is the approval, and completion reconciles the designs against their inputs.
-- **Design packages get a review page.** A new renderer writes `design-review.html` beside the design artifact, sharing the spec pages' look; cards and the top bar sit on a 5 grid.
-- **One gap footnote for every artifact.** Spec drafts and design change lists mark a placeholder the same way, numbered by first use, naming the item that owns the question instead of repeating it; on the page the notes are one line each, with the question a hover away.
-- **Inherited gaps are footnotes, not discussion items.** A design that builds on a spec's placeholder marks the entry that stands on it and names the owner, instead of re-raising the question; the Figma annotation now says what it is: Gap, Placeholder, Owner.
-- **The design change list walks like the canvas.** Headings per screen in canvas order, one entry per frame, several changes to one frame as numbered sub-changes; change pages keep one section per screen, and a new script checks a page's structure against the guide.
-- **State filters partition the discussion.** The review page's tiles are open, gaps and resolved, each its own set; "open" no longer includes gaps.
-- **Glossary alternate terms.** A glossary entry can list what other people call the term ("Also called: bid (Salesforce)"), so an agent reading Slack, email or wiki pages recognizes it; the specs still use only the entry's term, and the spec tool checks and shows the note.
-- **Review pages share one stylesheet, versioned.** The page's styles and script now live in the skai checkout, like the UI Map viewer's, so a style fix reaches every page; a change that would break old pages becomes a new version and old pages keep theirs.
-- **Gaps count and filter.** The review page counts gaps in its header and its count tiles filter the page, several at once; the separate Gaps list is gone.
-- **Quieter term links.** Glossary terms on the review page are body-colored with a thin dashed underline.
-- **Fix.** Open gap items on the review page no longer shrink to the footnote's type size.
-- **Decision Log off the page.** The review page no longer shows the Decision Log; it stays in the artifact.
-- **Verification at the end.** The authoring artifact's Verification section now comes after the content sections, just before the Decision Log.
-- **Known gaps, wording.** A gap that has no placeholder yet now says "no placeholder" instead of "none; waiting on …", and no line of an item names who is to answer.
-- **Known gaps, part four.** On a Figma change page, each open design gap is marked with an annotation on the drawn placeholder, removed when the gap closes; promotion refuses drafts that still carry one.
-- **Working documents.** Working documents now live beside what they serve — a change package's notes in that package's `working-docs/` folder, archived with it at promotion, everything else in a session folder with no branch level — and they are committed. Output captured to verify a build or test goes to a scratch folder outside the repository (`/tmp/skai/` by default, set in `skai/integration.md`), and documents record only the command, the result and where the output was. The update asks before moving existing working documents.
-- **Known gaps, part three.** A placeholder in a spec draft is marked with a footnote that names its Discussion item; the tool checks the footnotes against the items, refuses any footnote in canon, and lists the gaps on the review page.
-- **Known gaps, part two.** Every Discussion-based guide now carries the Gap line, the Decision Log and the pointer to the gaps guide; promotion refuses a package with an open gap; the spec tool checks the log and shows gaps on the review page. Existing packages get a seeded Decision Log at update.
-- **Known gaps, part one.** A new reference guide says how to carry a question that must be decided before shipping as a placeholder, and the Discussion schema gains a Gap line and a per-artifact Decision Log. Nothing changes in installed workflows until the guides adopt it in a later release.
+## Release 16 — 2026-10-29
+
+Technical document: [`Releases/release-16.md`](Releases/release-16.md).
+
+- **Known gaps.** A question nobody in the work can answer yet is carried as a gap with a placeholder: one Gap line on its Discussion item, one footnote form in spec drafts and design change lists naming the item that raised it, one yellow `Gap` annotation per gap on Figma change pages, and a Decision Log closing every Discussion-based artifact. Gaps block promotion into production and move up into a base package.
+- **Change requests are packages.** A design or spec change request is an ordinary package whose base is another open package; anyone can file one, whoever picks it up authors it, and promotion folds it into the base.
+- **Design packages.** Design Changes is a live typed list that walks the canvas, one entry per frame with sub-changes; a new renderer gives design packages a review page, and a new script checks a Figma page's structure.
+- **Writing for people.** A short writing style guide every workflow points at; the guides' own templates and examples now read that way, and say what a requirement, a design spec item and a gap are.
+- **Working documents.** They live beside the package they serve and are committed; captured build and test output goes to a scratch root outside the repository.
+- **Glossary alternate terms.** An entry can list what other people call the term, so an agent reading Slack or email recognizes it.
+- **Review pages.** One versioned stylesheet and script shared by every page; count tiles filter, chips always explain themselves, and the page keeps its state on reload.
 
 ## Release 15 — 2026-10-19
 
