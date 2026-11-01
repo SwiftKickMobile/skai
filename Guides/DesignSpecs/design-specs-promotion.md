@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-promotion
 Managed-Source: Guides/DesignSpecs/design-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-10-31
 
 # Design Specs Promotion
 
@@ -10,7 +10,7 @@ Print `📖 SKAI guide: design-specs-promotion` now, as a line of its own. Read 
 
 ## Purpose
 
-Fold the approved package into its **base** per [`change-requests.md`](../Core/change-requests.md), then archive. Only promotion writes canon except verified work-spec
+Fold the approved package into its **base** per [`change-requests.md`](../Core/change-requests.md), then archive. Only promotion writes canon except verified dev specs
 known-difference cleanup. Validate and prepare destination links; preserve prose, IDs, notes and drafts. Return package defects to authoring; a defect in the base starts a package against it ([`change-requests.md`](../Core/change-requests.md)).
 
 Use [rules/checks](design-specs.md), [formats](design-specs-artifacts.md) and
@@ -109,7 +109,7 @@ never assume unrecorded writes or reopen/promote archived packages.
 
 Before writing, require an absent promoted path (`skai/promoted/<change-id>/design-specs/`, or
 `<base>/promoted-change-requests/<nnn>/`); find live incoming references from specs/app repos,
-related packages and work specs. Collisions or inaccessible required references block; never
+related packages and dev specs. Collisions or inaccessible required references block; never
 overwrite or merge destinations.
 
 ### Readiness Screen
@@ -182,7 +182,7 @@ After verified `C3`, execute `C4`:
    `promoted-change-requests/`): `skai/changes/<change-id>/design-specs/` to
    `skai/promoted/<change-id>/design-specs/`; a request to `<base>/promoted-change-requests/<nnn>/`.
    Preserve siblings; remove only empty grouping directories.
-2. Repair live incoming links (repositories, packages, work specs) and relative links inside moved
+2. Repair live incoming links (repositories, packages, dev specs) and relative links inside moved
    files, preserving target identities, prose, IDs, decisions and recorded results; annotate
    historical paths with current locations. Inaccessible or unrepaired required links block.
 3. Verify archived files/links, the absent active path and preserved siblings; record move/link

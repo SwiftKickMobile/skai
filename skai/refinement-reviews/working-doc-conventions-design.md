@@ -10,7 +10,7 @@ operator reads at runtime.
 - [`Guides/Core/working-doc-conventions.md`](../../Guides/Core/working-doc-conventions.md) — the
   placement rule, the session path formula, the scratch-output rule and the worked examples.
 
-Derivative surfaces that restate a path or the scratch rule at their point of use: the work spec
+Derivative surfaces that restate a path or the scratch rule at their point of use: the dev specs
 guides' path formulas and evidence rule, the UI Map, unit testing, ticket-filing and refinement
 guides' path formulas, the artifact references' `working-docs/` package folder, the promotion guides'
 archival clause, the integration template's **Scratch root** field, and the release entry's
@@ -26,8 +26,8 @@ Backfilled 2026-10-21 from the existing guide after its rewrite for SwiftKickMob
   scratch root).
 - [`Install/component-selection.md`](../../Install/component-selection.md) owns the managed
   `.gitignore` block the guide relies on (the two local config files and `skai/working-docs/` are ignored).
-- [`work-spec-process-design.md`](work-spec-process-design.md) owns the evidence rule's place in
-  work spec implementation; [`product-specs-system-design.md`](product-specs-system-design.md),
+- [`dev-specs-process-design.md`](dev-specs-process-design.md) owns the evidence rule's place in
+  dev specs implementation; [`product-specs-system-design.md`](product-specs-system-design.md),
   [`design-specs-design.md`](design-specs-design.md), [`design-process-design.md`](design-process-design.md)
   and [`ui-map-system-design.md`](ui-map-system-design.md) record each family's adoption of the
   package `working-docs/` folder and its archival.
@@ -45,7 +45,7 @@ Backfilled 2026-10-21 from the existing guide after its rewrite for SwiftKickMob
 2. **The association test is stated once.** A document serves a package when it exists because of
    that package (source notes, reviews, audits, scripts). Notes serving two packages go with the
    upstream one and are linked from the other; sibling packages live in different repositories, so
-   there is no shared change-level folder. A work spec serves a change, not a package, so it is a
+   there is no shared change-level folder. A dev spec serves a change, not a package, so it is a
    session document.
 3. **A package's working documents are committed; session documents are not** (supervisor,
    2026-10-31, reversing 2026-10-21 for session documents). The managed `.gitignore` block ignores

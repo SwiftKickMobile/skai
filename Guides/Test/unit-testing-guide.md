@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.unit-testing
 Managed-Source: Guides/Test/unit-testing-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-31
 
 # Unit Testing Guide
 
@@ -22,7 +22,7 @@ Orchestrates the unit testing workflow. This guide coordinates the overall proce
 When testing multiple types in a single session:
 1. **Plan all test files upfront** - Planning phase creates all test files with 🟡 sections
 2. **Implement one file at a time** - Complete all sections in one file before moving to the next
-3. **Sequential by file** - Aligns with work spec subtask structure
+3. **Sequential by file** - Aligns with dev spec subtask structure
 
 **Sub-guides:**
 - **Planning**: `Guides/Test/unit-test-planning-guide.md`

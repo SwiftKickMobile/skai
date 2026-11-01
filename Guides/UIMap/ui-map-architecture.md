@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture
 Managed-Source: Guides/UIMap/ui-map-architecture.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-26
+Managed-Updated-At: 2026-10-31
 
 # UI Map Architecture
 
@@ -119,7 +119,7 @@ Rules:
 Progress tracking:
 
 - **Two conventions, by artifact type:**
-  - **`- [ ]` / `- [x]` in process artifacts** (markdown workflow docs: work specs, planning docs, working docs, retro outputs, ticket drafts, etc.). Completion is checking the box — the artifact preserves the audit trail of resolved items.
+  - **`- [ ]` / `- [x]` in process artifacts** (markdown workflow docs: dev specs, planning docs, working docs, retro outputs, ticket drafts, etc.). Completion is checking the box — the artifact preserves the audit trail of resolved items.
   - **`🟡` in source files** (test code, application code) seeded or planned by a skai workflow. Completion is **removal** of the marker — the file's remaining work is read by which `🟡`s remain. Canonical in-code case: `Guides/Test/unit-test-planning-guide.md`.
 - Default rule: a progress marker means TODO or pending approval. Do not clear it without supervisor approval.
 - At a planned gate, advance intent is the approval signal for clearing the guide-owned progress markers completed by the phase that just finished.

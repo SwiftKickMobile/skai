@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-authoring
 Managed-Source: Guides/ProductSpecs/product-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-26
+Managed-Updated-At: 2026-10-31
 
 # Product Specs Authoring
 
@@ -215,8 +215,8 @@ entry, run the tool's `references`** (the ID, or the term for every linked occur
 catalog, the design specs and the active packages and decide per citation whether it still holds: a
 catalog citation that does not is re-pointed by drafting its file into the package; one in the
 design specs by a package against their open package, else as input for design specs authoring;
-one in a work spec or another package is not the author's to edit — name it in the sweep for that
-artifact's owner. Record the sweep under `## Verification`. Ambiguous calls become Discussion items: they burn an ID and re-point every work spec citing it.
+one in a dev spec or another package is not the author's to edit — name it in the sweep for that
+artifact's owner. Record the sweep under `## Verification`. Ambiguous calls become Discussion items: they burn an ID and re-point every dev spec citing it.
 
 ## Discussion
 

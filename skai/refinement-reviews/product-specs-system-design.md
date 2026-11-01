@@ -11,7 +11,7 @@ standard, [`spec-format-design.md`](spec-format-design.md). This document is the
 write and cold-review the runtime guides; it is not another guide an executing agent must read.
 
 The catalog exists so an agent implementing, testing, or debugging can learn what the system must do
-without reading code or chat history. Everything below follows from that: stable IDs a work spec can
+without reading code or chat history. Everything below follows from that: stable IDs a dev spec can
 cite, indexes an agent can route by, prose a non-engineer can verify, and a write path narrow enough
 that nothing reaches canon unchecked.
 
@@ -66,7 +66,7 @@ home for a rule are worse than the defect.
 Every project has at most one catalog, at the root the project README links (since Release 13;
 earlier an Integration block named it and a `local | shared | none` shape vocabulary applied), in
 whichever repository the supervisor names for it. IDs need no catalog namespace; citations are linked.
-**Promotion writes requirement contracts.** Authoring and retro never touch the catalog. Work-spec
+**Promotion writes requirement contracts.** Authoring and retro never touch the catalog. Dev specs
 implementation may update/remove confirmed known-difference notes for verified fixes only; contracts
 and IDs remain read-only. Approved release migrations may change link presentation without changing
 contracts. A literal path is never a fallback for an unfilled Integration
@@ -78,7 +78,7 @@ A requirement is a `###` item carrying only its ID, in the shared spec file shap
 ([`spec-format-design.md`](spec-format-design.md)): a statement, then numbered rules cited as `ID-NN`
 (one nesting level, `ID-NN-NN`, and no deeper) and tables whose rows carry no IDs, grouped under
 uncited `##` sections. Rules retire in place like items. IDs are `<PREFIX>-<NN>`,
-append-only **from the moment they are drafted** — a work spec may cite a `(pending)` ID — and never
+append-only **from the moment they are drafted** — a dev spec may cite a `(pending)` ID — and never
 renumbered. A retired requirement keeps its heading and ID with `(retired)` and a pointer to what
 superseded it; nothing else in the catalog carries a status, a checkbox, a `🟡`, or a `(D#)`.
 Modifying keeps the ID; changing the contract retires and adds. Prefixes are unique across the
@@ -187,12 +187,12 @@ revisit only if an observed run actually drops content.
 
 Authoring owns the package and its drafts. Promotion owns the catalog write and its checks.
 **Change requests** (2026-10-18) may be filed by any downstream consumer — design authoring, design
-specs, work specs, tests, promotion — for any reason, against the open package when there is one,
+specs, dev specs, tests, promotion — for any reason, against the open package when there is one,
 otherwise against the catalog, which opens a new package. A request carries a status, a reviewer
 response, a title, a goal, and a `## Requested Changes` list in the same typed format as Requirement
 Changes, optionally with its own `proposed-product-specs/**` drafts in the spec shape. Authoring
 triages each to Incorporated, Rejected or Superseded and records the outcome on the request; the
-proposer never edits the package; a package cannot promote while a request is `Proposed`. Work-spec design invokes authoring for backfill and never places provisional requirements
+proposer never edits the package; a package cannot promote while a request is `Proposed`. Dev specs authoring invokes authoring for backfill and never places provisional requirements
 in a design document; retro seeds a package and hands off. A promoted package is closed; new work on
 the same subject opens a new package. Each workflow points at the others' artifacts rather than
 restating their rules.

@@ -1,9 +1,9 @@
-# Work Specification Process Design
+# Dev Specs Process Design
 
 ## Purpose
 
-This document defines the intended replacement for SKAI's work-specification design (formerly
-creation) and implementation processes. It is the standard used to write and cold-review the runtime
+This document defines the intended replacement for SKAI's dev specs authoring (formerly
+work spec design, or creation) and implementation processes. It is the standard used to write and cold-review the runtime
 guides; it is not another guide an executing agent must read.
 
 The modernization must make the guides smaller and the process more autonomous while preserving
@@ -26,7 +26,7 @@ Use these references when writing and reviewing the replacement guides:
   for focused artifacts, inferred entry conditions, workflow ownership, and verification before a
   canonical write.
 
-This document is authoritative for work-spec behavior. The existing work-spec guides are legacy
+This document is authoritative for dev specs behavior. The existing dev specs guides are legacy
 inputs when they conflict with it. Their API-diff notation, agent-sufficient inputs, task evidence,
 and working-document placement remain useful where this design retains them.
 
@@ -69,14 +69,14 @@ delegate ordinary design work back to the supervisor.
 
 ### P3. The API sketch is the primary review surface
 
-The design document has an early section titled exactly `## API Sketch`. The heading never changes
+The authoring artifact has an early section titled exactly `## API Sketch`. The heading never changes
 to represent status. The sketch always shows the complete current proposal and is updated whenever
 discussion changes the design. API covers production-code definitions visible outside their immediate
 implementation scope, including module-visible definitions. It excludes tests and private or local
 implementation details.
 
 The API sketch is primary, not exclusive. When a material decision cannot be reviewed adequately as
-an API diff, the design document exposes it in the smallest useful form. Use prose by default; create
+an API diff, the authoring artifact exposes it in the smallest useful form. Use prose by default; create
 or invoke another artifact only when the subject has independent structure or ownership, as the UI
 Map and product spec change packages do.
 
@@ -90,9 +90,9 @@ questions—it shows the proposed contract they currently imply.
 
 There are two planned approvals: approval of the resolved design direction and API sketch, then
 approval of the completed design and implementation plan. Open discussion items use the standard blocked
-discussion gate. There are no first-pass/second-pass work-spec gates or default per-task gates.
+discussion gate. There are no first-pass/second-pass dev specs gates or default per-task gates.
 
-The work-spec skills do not define `auto` or `auto to`. A planned gate requires an approval decision
+The dev specs skills do not define `auto` or `auto to`. A planned gate requires an approval decision
 from the supervisor. The supervisor is the actor outside the executing workflow that reviews gates
 and supplies feedback or advance intent; it may be a human or an authorized agent. The executing agent
 does not approve its own gates. Individual skills do not prescribe delegation or escalation behavior.
@@ -100,7 +100,7 @@ A blocked gate is never bypassed.
 
 This is an intentional temporary exception to the current SKAI process-flow template. Removing
 `auto` from the shared house style and migrating other skills are separate follow-up work; a review
-of the replacement work-spec guides must not treat the absence of `auto` as a defect.
+of the replacement dev specs guides must not treat the absence of `auto` as a defect.
 
 ### P6. Design leads implementation
 
@@ -119,14 +119,14 @@ and verification evidence distinguish continuous agent implementation from vibe 
 
 ### P8. Artifacts are agent-sufficient
 
-A fresh implementation agent can execute by reading the design document, work spec, and their
+A fresh implementation agent can execute by reading the authoring artifact, implementation artifact, and their
 explicitly linked inputs. Chat history is useful context, never a hidden dependency.
 
 ### P9. Workflow ownership stays narrow
 
-Work Spec Design owns the technical design. Work Spec Implementation owns the codebase audit, task
+Dev Specs Authoring owns the technical design. Dev Specs Implementation owns the codebase audit, task
 list, code changes, and verification. Product Specs Authoring owns product spec change packages, and
-Product Specs Promotion writes requirement contracts. As approved in issue #53 (2026-10-05), Work Spec Implementation may update/remove known-difference notes only after verifying the affected implementation; requirement text and IDs remain read-only. Each workflow references other artifacts instead
+Product Specs Promotion writes requirement contracts. As approved in issue #53 (2026-10-05), Dev Specs Implementation may update/remove known-difference notes only after verifying the affected implementation; requirement text and IDs remain read-only. Each workflow references other artifacts instead
 of duplicating their content or progress state.
 
 ### P10. Review attention follows leverage
@@ -165,22 +165,22 @@ so explicitly. Its presence is part of the durable handoff proof that the gate a
 contents is optional for a long document, never required boilerplate.
 
 Use cases, relevant data flow, component ownership, compatibility concerns, summarized caller or
-conformer impact, rejected alternatives, risks, and scope boundaries may live in the design document
+conformer impact, rejected alternatives, risks, and scope boundaries may live in the authoring artifact
 when they explain a material design choice. Exhaustive call-site inventories, mechanical file
 operations, and verification transcripts do not.
 
 Other review material is conditional. Examples include a third-party service or library choice, data
 schema or migration, security or privacy boundary, deployment topology, or porting-parity map. Keep
-the decision and its rationale in the design document when prose is sufficient. Link a separate
+the decision and its rationale in the authoring artifact when prose is sufficient. Link a separate
 artifact only when it provides a materially better review surface or belongs to another workflow.
 
-### Work spec
+### Implementation artifact
 
-The work spec contains the goal and inputs, the approved design link, a concise ordered task list,
+The implementation artifact contains the goal and inputs, the approved design link, a concise ordered task list,
 completion criteria and verification for each task, evidence recorded during implementation, and
 explicit deferrals or handoffs that affect completion.
 
-Work Spec Implementation creates and maintains this artifact. Task decomposition belongs to the
+Dev Specs Implementation creates and maintains this artifact. Task decomposition belongs to the
 developer side of the boundary because it depends on auditing the approved design against the actual
 codebase and deciding how to sequence the concrete work.
 
@@ -193,7 +193,7 @@ The runtime guide should define one compact task format and one faithful example
 
 ### Design readiness
 
-A design is ready for Work Spec Implementation when Discussion has no unchecked items, API Sketch
+A design is ready for Dev Specs Implementation when Discussion has no unchecked items, API Sketch
 and Implementation Design are present, no assumption or TODO blocks implementation planning, and
 every required sibling architecture artifact is ready. Before implementation planning begins,
 `skai/integration.md` also defines the required build, test, and runtime commands. This structural
@@ -225,14 +225,14 @@ removed API definition:
 - Use language-tagged code fences.
 
 Declarations and documentation are allowed; implementation bodies are not. This replaces the legacy
-guide's contradictory claim that a design document contains "no code."
+guide's contradictory claim that an authoring artifact contains "no code."
 
 Every gap receives a proposal, so the sketch remains coherent while `D#` items are open. Update it
 before responding whenever a decision changes. If no API changes are needed, say so in the section;
 approving the sketch approves that conclusion.
 
 Do not turn the sketch into an impact report. Supporting evidence and architectural reasoning belong
-in the surrounding design; mechanical impact belongs in the work spec. If detailed planning later
+in the surrounding design; mechanical impact belongs in the implementation artifact. If detailed planning later
 exposes a material API problem, reopen Discussion and obtain API approval again.
 
 The presence of other review material does not add another planned gate. The resolved design
@@ -250,10 +250,10 @@ repository conventions, or existing architecture are encoded directly.
 
 Selecting a third-party service or library is in scope when the change depends on it. The agent
 presents the recommendation and material alternatives here; the API sketch shows the resulting code
-boundary, and the work spec carries the approved adoption work. Procurement, credentials, contracts,
+boundary, and the implementation artifact carries the approved adoption work. Procurement, credentials, contracts,
 or other external actions may remain handoffs or blockers during implementation.
 
-The initial drafting response creates the design document through API Sketch and ends at the
+The initial drafting response creates the authoring artifact through API Sketch and ends at the
 discussion gate—never at a separate draft-review gate. While items remain:
 
 ```text
@@ -271,16 +271,16 @@ rules. Do not add a general phase checklist merely to narrate the workflow.
 
 ## Workflow
 
-The process is implemented by two separate skills. Work Spec Design produces the completed design
-document. Work Spec Implementation consumes it, creates the work spec, and executes it. The boundary
+The process is implemented by two separate skills. Dev Specs Authoring produces the completed authoring
+artifact. Dev Specs Implementation consumes it, creates the implementation artifact, and executes it. The boundary
 supports an architect-to-developer handoff without requiring one: when the initiating request includes
 implementation, the same agent transitions between skills without another supervisor response.
 
 ### 1. Initiate design
 
-The supervisor initiates design or work-spec authoring with any available input. The agent reads that
+The supervisor initiates dev specs authoring with any available input. The agent reads that
 input, relevant repository sources, applicable canonical requirements, and project-specific integration
-information. It chooses a concise spec name when one is evident and creates the design document. Only
+information. It chooses a concise spec name when one is evident and creates the authoring artifact. Only
 a genuinely unresolvable artifact identity blocks creation.
 
 ### 2. Draft and discuss
@@ -289,7 +289,7 @@ The agent writes the design through API Sketch in one pass, supplying a complete
 seeding only material discussion items. Supervisor feedback updates the discussion, design, and sketch
 together. Local approval resolves individual `D#` items; it is not advance intent for the workflow.
 When a required sibling workflow must run during the draft, it temporarily owns the active gate; the
-agent resumes and emits the Work Spec Design gate after the sibling completes.
+agent resumes and emits the Dev Specs Authoring gate after the sibling completes.
 
 ### 3. Approve the design direction and API
 
@@ -302,14 +302,14 @@ The design agent writes Implementation Design and completes the implementation-r
 silently altering the approved API. It uses the explicit empty state when no additional detail is
 needed. A material API or design defect returns to step 2; ordinary implementation details do not.
 
-For a design-only request, the skill completes with the design document ready for a developer. When
-the request also includes implementation, the same agent transitions directly to Work Spec
+For a design-only request, the skill completes with the authoring artifact ready for a developer. When
+the request also includes implementation, the same agent transitions directly to Dev Specs
 Implementation. The skill boundary is not another supervisor gate.
 
 ### 5. Plan implementation
 
 The implementation agent loads the approved design and its inputs, audits them against the current
-codebase, and creates the full work spec in one pass. It makes tasks concrete, follows project
+codebase, and creates the full implementation artifact in one pass. It makes tasks concrete, follows project
 conventions, derives verification from `skai/integration.md`, and confirms that every task has a named
 source and every in-scope design obligation has a task or explicit disposition.
 
@@ -318,7 +318,7 @@ supervisor establishes them through the normal SKAI installation/update process.
 not an exception; the intended commands may name the project structure the setup tasks will create.
 
 If the audit exposes a material problem in the approved design, implementation blocks and returns the
-issue to Work Spec Design. It does not encode a different architecture in the task list.
+issue to Dev Specs Authoring. It does not encode a different architecture in the task list.
 
 The completed implementation plan stops at the second and final planned gate. Its Next action follows
 the initiating request:
@@ -333,7 +333,7 @@ in order, records evidence, and checks each task when its completion criteria an
 It does not wait between tasks.
 
 When implementation is invoked later against an approved design, that explicit request starts at
-step 5 without recreating the design gates. It still creates or refreshes the work spec and stops for
+step 5 without recreating the design gates. It still creates or refreshes the implementation artifact and stops for
 implementation-plan approval before changing code. A material stale-design conflict blocks and
 returns to design.
 
@@ -342,23 +342,23 @@ may bound a run before a stable `T#`, but stepwise approval is not the default.
 
 ## Optional delivery slicing
 
-Most work specs do not use slices. The ordinary design document has no Delivery section, phase
+Most dev specs do not use slices. The ordinary authoring artifact has no Delivery section, phase
 skeleton, or declared sliced mode.
 
 If scope grows beyond one desirable implementation iteration, the agent proposes a cut line as a
 material `D#` item. After approval it adds a compact `## Delivery Slices` section containing the
-current slice's outcome and boundary, its work-spec link, and brief bullets for follow-up slices.
+current slice's outcome and boundary, its implementation artifact link, and brief bullets for follow-up slices.
 
 Only the current slice is planned deeply enough to implement. Future slices remain reminders rather
 than empty mini-plans. The API sketch covers the current slice plus only the future-facing constraints
 needed to avoid an architectural dead end.
 
-One coherent design may link to multiple work specs over time. Beginning a later slice reopens the
-same design document, makes that slice current, and updates Discussion and API Sketch. Work Spec
-Implementation then writes the new slice's work spec. It does not create nested per-phase copies of
+One coherent design may link to multiple implementation artifacts over time. Beginning a later slice reopens the
+same authoring artifact, makes that slice current, and updates Discussion and API Sketch. Dev Specs
+Implementation then writes the new slice's implementation artifact. It does not create nested per-phase copies of
 the workflow.
 
-A whole-app port, greenfield product, or similarly large initiative is not forced into one work spec.
+A whole-app port, greenfield product, or similarly large initiative is not forced into one implementation artifact.
 Use one coherent top-level design, the relevant baseline and target artifacts, and multiple buildable
 slices. For a mobile port those inputs may include a product specs baseline and UI Map; for another
 system they may be different. Slicing is successful decomposition, not a failure of the default
@@ -366,27 +366,27 @@ workflow.
 
 ## Related workflow composition
 
-Invoke sibling SKAI workflows when the work requires the artifact they own. Work Spec Design invokes
-UI Map Architecture when it needs to create or change structural UI design. Work Spec Implementation
+Invoke sibling SKAI workflows when the work requires the artifact they own. Dev Specs Authoring invokes
+UI Map Architecture when it needs to create or change structural UI design. Dev Specs Implementation
 invokes UI Map Implementation when it needs to audit or realize that architecture.
 
 A required sibling may run during the initial design draft. While it is active, only its gate is
 active; the outer skill resumes after sibling completion and then emits its own gate.
 
 UI Map Implementation already supports participation in a larger effort: it separates work it owns
-from `planned` work and `handoff` items for the outer operator. Work Spec Implementation is that
+from `planned` work and `handoff` items for the outer operator. Dev Specs Implementation is that
 operator when it owns the larger feature. It consumes the UI Map implementation artifact when creating
 the overall task list. Each invoked workflow retains ownership of its artifacts and gates, then returns
 its result as an input; this composition is not treated as a human handoff.
 
 ## Product specs boundary
 
-Ordinary work-spec design reads and references applicable canonical requirements but does not invoke
+Ordinary dev specs authoring reads and references applicable canonical requirements but does not invoke
 a product-specs-normalization phase, duplicate their prose, or write the catalog.
 
 Missing behavior that already ships is product specs backfill. When `skai/integration.md` declares a
-product specs catalog, Work Spec Design invokes Product Specs Authoring to create or reopen its change
-package; do not place provisional canonical requirements in the design document or work spec. Each
+product specs catalog, Dev Specs Authoring invokes Product Specs Authoring to create or reopen its change
+package; do not place provisional canonical requirements in the authoring artifact or implementation artifact. Each
 workflow retains its own artifacts and gates. Backfill blocks the design only when its unresolved
 behavior is needed to settle the design. Otherwise, Design records the backfill need for the supervisor
 to orchestrate separately and continues without waiting. If the project keeps no catalog, record the
@@ -394,7 +394,7 @@ missing behavior as a non-blocking assumption.
 
 New behavior being planned does not automatically invoke Product Specs Authoring. It remains grounded
 in the supplied product input and approved design unless the supervisor separately initiates product specs
-work. Product Specs Promotion is never an automatic continuation of work-spec creation or implementation.
+work. Product Specs Promotion is never an automatic continuation of dev specs authoring or implementation.
 
 ## Verification and testing
 
@@ -410,8 +410,8 @@ is the primary verification for view-only changes where practical.
 Do not create automated UI test suites by default. Adding and maintaining such a suite is a material,
 project-specific design decision.
 
-When human testing is known during planning, place one precisely scoped `handoff` task last in the work
-spec. State the scenario, expected result, and evidence needed. The agent completes every preceding
+When human testing is known during planning, place one precisely scoped `handoff` task last in the implementation
+artifact. State the scenario, expected result, and evidence needed. The agent completes every preceding
 task before reaching the final unchecked handoff and blocked gate. Once the supervisor supplies passing
 evidence, the agent records it, checks the task, and completes.
 
@@ -427,14 +427,14 @@ errors caused by the current task. It may resolve implementation-detail mismatch
 behavior, API, architecture, scope, persistence, compatibility, or an explicit constraint.
 
 After plan approval, the agent may add, split, or reorder tasks without another gate when the approved
-design, scope, outcomes, and verification standards remain unchanged; record the reason in the work
-spec. Changing scope, `Done when`, required verification, a deferral, or the approved design/API
+design, scope, outcomes, and verification standards remain unchanged; record the reason in the implementation
+artifact. Changing scope, `Done when`, required verification, a deferral, or the approved design/API
 returns to the applicable approval gate.
 
 The agent blocks when:
 
 - The viable implementation would change an approved API or material design decision.
-- The work spec and repository evidence disagree about intended behavior.
+- The implementation artifact and repository evidence disagree about intended behavior.
 - An unsettled choice would change behavior, architecture, scope, persistence, compatibility, or
   another non-private contract.
 - Required build, test, or evidence tooling is missing or broken.
@@ -451,8 +451,8 @@ A cold reviewer should verify:
 1. Open-ended input produces a complete agent proposal rather than an intake interrogation.
 2. Discussion precedes a stable `## API Sketch`, and feedback keeps the sketch current.
 3. Design/API approval and implementation approval are the only planned gates.
-4. Work Spec Design stops at the technical design boundary, and Work Spec Implementation writes the
-   complete work spec in one pass after auditing the approved design against the codebase.
+4. Dev Specs Authoring stops at the technical design boundary, and Dev Specs Implementation writes the
+   complete implementation artifact in one pass after auditing the approved design against the codebase.
 5. Implementation runs continuously after final approval while preserving material stop conditions.
 6. Optional slicing is invisible in the common case and lightweight when activated.
 7. Product specs work is absent except for correctly routed backfill.
@@ -461,7 +461,7 @@ A cold reviewer should verify:
 9. A fresh agent can execute from the artifacts and linked inputs without chat history.
 10. The same core process handles an existing mobile feature, third-party service adoption, a
     greenfield web product, and a whole-app port without adding unused structure to the mobile case.
-11. Neither work-spec guide defines `auto`; supervisor approval advances planned gates, while blocked
+11. Neither dev specs guide defines `auto`; supervisor approval advances planned gates, while blocked
     gates still stop.
 12. API Sketch covers production interaction surfaces, includes module-visible API, excludes tests
     and implementation-local details, and applies the stated Swift, Kotlin, and JavaScript/TypeScript
@@ -472,10 +472,10 @@ A cold reviewer should verify:
     where practical; automated UI test suites remain opt-in.
 15. Planned human testing is the final handoff task, while an unexpected need for human testing blocks
     immediately with the current task unchecked.
-16. Work Spec Design and Implementation invoke UI Map and product specs workflows when their owned
+16. Dev Specs Authoring and Implementation invoke UI Map and product specs workflows when their owned
     artifacts are needed, preserving sibling ownership and returning their results as inputs.
 17. Required Integration commands exist before implementation planning; missing commands block rather
-    than creating a temporary second source of truth in the work spec.
+    than creating a temporary second source of truth in the implementation artifact.
 18. Mechanical task-list evolution remains autonomous and recorded; changes to approved outcomes,
     verification, scope, deferrals, or design re-gate.
 
@@ -508,3 +508,7 @@ combined cap holds at 32,600 (32,594 after the change).
 ## Size Budget — 2026-10-25
 
 Combined cap reset to **31,700 bytes** (supervisor, 2026-10-25, series PL, plain language in the guides' examples and review text), a little under the compressed 31,789; replaces 32,600.
+
+## Rename — 2026-10-31 (skai#122)
+
+Ruled by the supervisor. Work specs are renamed dev specs, matching product specs and design specs, and "creation" becomes "authoring", the term the other spec types use. Guides move to `Guides/DevSpecs/`: `work-spec-creation.md` becomes `dev-specs-authoring.md` and `work-spec-implementation.md` becomes `dev-specs-implementation.md`; the skills become `skai-dev-specs-authoring` and `skai-dev-specs-implementation`. Each document is named after the skill that writes it and no single document is "the dev spec": the guides call the design document the authoring artifact and the task list the implementation artifact. Their file names (`<spec-name>-design.md`, `<spec-name>-impl.md`) and session location stay until skai#123 moves dev specs into the change package. This target is renamed `dev-specs-process`. Sections above this one use the new names; the Complexity baseline and the dated sections keep the names in force when they were written.

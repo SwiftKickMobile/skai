@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation
 Managed-Source: Guides/UIMap/ui-map-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-26
+Managed-Updated-At: 2026-10-31
 
 # UI Map Implementation
 
@@ -170,7 +170,7 @@ Rules:
 Progress tracking:
 
 - **Two conventions, by artifact type:**
-  - **`- [ ]` / `- [x]` in process artifacts** (markdown workflow docs: work specs, planning docs, working docs, retro outputs, ticket drafts, etc.). Completion is checking the box — the artifact preserves the audit trail of resolved items.
+  - **`- [ ]` / `- [x]` in process artifacts** (markdown workflow docs: dev specs, planning docs, working docs, retro outputs, ticket drafts, etc.). Completion is checking the box — the artifact preserves the audit trail of resolved items.
   - **`🟡` in source files** (test code, application code) seeded or planned by a skai workflow. Completion is **removal** of the marker — the file's remaining work is read by which `🟡`s remain. Canonical in-code case: `Guides/Test/unit-test-planning-guide.md`.
 - Default rule: a progress marker means TODO or pending approval. Do not clear it without supervisor approval.
 - At a planned gate, advance intent is the approval signal for clearing the guide-owned progress markers completed by the phase that just finished.
@@ -417,7 +417,7 @@ After recording successful official-map write/render evidence in the terminal pr
    `skai/promoted/<change-id>/ui-map/` in the map repository. Keep architecture, implementation,
    proposed YAML, render, requests, evidence and `working-docs/` together, including unchecked Plan work. Leave
    `product-specs/` and all other siblings untouched; remove the active grouping directory only if empty.
-2. Repair live incoming links across those resolved repositories, including work specs and related
+2. Repair live incoming links across those resolved repositories, including dev specs and related
    packages. Check relative links inside the moved files and preserve their intended targets. Keep
    decisions, item IDs, YAML and recorded commands/results intact; annotate historical paths with
    their current locations. An inaccessible required reference blocks completion.

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-catalog
 Managed-Source: Guides/ProductSpecs/product-specs-catalog.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-26
+Managed-Updated-At: 2026-10-31
 
 # Product Specs Catalog
 
@@ -19,14 +19,14 @@ differences, links, IDs, glossary and index form, and the validating tool — is
 a workflow.
 
 [`product-specs-authoring.md`](product-specs-authoring.md) drafts into a change package;
-[`product-specs-promotion.md`](product-specs-promotion.md) writes the catalog. Work-spec implementation
+[`product-specs-promotion.md`](product-specs-promotion.md) writes the catalog. Dev specs implementation
 may update or remove known-difference notes after verified fixes; other text and IDs are
 read-only. Rules bind new or changed content: a defect in an untouched canonical
 file never blocks a package; a package against the base fixes it ([`change-requests.md`](../Core/change-requests.md)); release migrations are separate.
 
 The catalog holds behavior that survives a future rewrite. A constraint that exists only for the
 duration of one change — migration steps, refactor decisions, intermediate constructs — belongs in
-the work spec.
+the dev spec.
 
 ## Scopes
 
@@ -125,7 +125,7 @@ and registered on the file's index line; check the indexes before introducing on
 ### Stability
 
 - IDs never change when files move, rename or reorganize.
-- IDs are **append-only from the moment they are drafted**, not from promotion: a work spec may
+- IDs are **append-only from the moment they are drafted**, not from promotion: a dev spec may
   already cite a `(pending)` ID. A retired ID is burned — never reused, never renumbered.
 - A retired requirement keeps its heading and ID in place, its body replaced by a sentence saying in product words what replaced it, then the citation.
   ❌ deleting the heading breaks citations; ❌ leaving the old text under `(retired)` leaves a
@@ -133,7 +133,7 @@ and registered on the file's index line; check the indexes before introducing on
 
 ### Modify vs. retire
 
-Work specs cite these IDs, so the difference matters:
+Dev specs cite these IDs, so the difference matters:
 
 - **Modify — keep the ID.** The same rule, clarified. Anything citing the ID was citing this promise
   and still is.
@@ -163,7 +163,7 @@ Write as a **product manager with no knowledge of the codebase**. Everything you
 
 Plans (`implement`, `add`, `refactor`); data structures, algorithms and execution strategies ("use
 caching", "debounce"); storage mechanisms ("persist as JSON"); concurrency design ("off the main
-thread"); code identifiers, file paths, method and type names; frameworks and tooling. Important technical details belong in the work spec. ❌ *"The
+thread"); code identifiers, file paths, method and type names; frameworks and tooling. Important technical details belong in the dev spec. ❌ *"The
 `AssetCatalog` should DFS templates and throw `CircularReferenceError`."* · ✅ *"The system must
 detect and report circular references in templated documents."*
 

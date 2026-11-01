@@ -2,14 +2,14 @@
   "manifestVersion": 1,
   "repo": "skai",
   "theme": "LumenNotes",
-  "retiredComponents": ["skill.skai-ui-map-planning", "skill.skai-requirements-authoring", "skill.skai-requirements-promotion"],
+  "retiredComponents": ["skill.skai-ui-map-planning", "skill.skai-requirements-authoring", "skill.skai-requirements-promotion", "skill.skai-work-spec-creation", "skill.skai-work-spec-implementation"],
   "componentCategories": [
     {"name": "Setup", "description": "Configure SKAI and keep the project installation up to date."},
     {"name": "Product specs", "description": "Define, review and maintain the project’s product specs: its behavioral requirements."},
     {"name": "Design", "description": "Author design changes in the project’s design file and promote them to production."},
     {"name": "Design specs", "description": "Specify how each screen presents the requirements in its design, and promote the specs."},
     {"name": "UI Map", "description": "Describe screens and routes, then implement the approved map."},
-    {"name": "Work specs", "description": "Design changes and plan their implementation."},
+    {"name": "Dev specs", "description": "Design changes and plan their implementation."},
     {"name": "Testing", "description": "Plan coverage, prepare test infrastructure and write unit tests."},
     {"name": "Debugging", "description": "Find the cause of defects and verify repairs."},
     {"name": "Process", "description": "Review development work and improve guides and practices."},
@@ -247,15 +247,15 @@
       "tags": ["core"]
     },
     {
-      "id": "guide.work-spec-creation",
+      "id": "guide.dev-specs-authoring",
       "type": "guide",
-      "sourcePath": "Guides/Spec/work-spec-creation.md",
+      "sourcePath": "Guides/DevSpecs/dev-specs-authoring.md",
       "tags": ["core"]
     },
     {
-      "id": "guide.work-spec-implementation",
+      "id": "guide.dev-specs-implementation",
       "type": "guide",
-      "sourcePath": "Guides/Spec/work-spec-implementation.md",
+      "sourcePath": "Guides/DevSpecs/dev-specs-implementation.md",
       "tags": ["core"]
     },
     {
@@ -416,21 +416,21 @@
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
-      "id": "skill.skai-work-spec-creation",
-      "label": "Work spec design",
-      "category": "Work specs",
+      "id": "skill.skai-dev-specs-authoring",
+      "label": "Dev specs authoring",
+      "category": "Dev specs",
       "description": "Turn a feature request into a reviewed technical design.",
       "type": "skill",
-      "sourcePath": "Templates/skills/skai-work-spec-creation/SKILL.md",
+      "sourcePath": "Templates/skills/skai-dev-specs-authoring/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
-      "id": "skill.skai-work-spec-implementation",
-      "label": "Work spec implementation",
-      "category": "Work specs",
+      "id": "skill.skai-dev-specs-implementation",
+      "label": "Dev specs implementation",
+      "category": "Dev specs",
       "description": "Plan and carry out the work needed by an approved design.",
       "type": "skill",
-      "sourcePath": "Templates/skills/skai-work-spec-implementation/SKILL.md",
+      "sourcePath": "Templates/skills/skai-dev-specs-implementation/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {

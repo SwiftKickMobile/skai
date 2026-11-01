@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-promotion
 Managed-Source: Guides/ProductSpecs/product-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-26
+Managed-Updated-At: 2026-10-31
 
 # Product Specs Promotion
 
@@ -11,7 +11,7 @@ Print `📖 SKAI guide: product-specs-promotion` now, as a line of its own. Read
 ## Purpose
 
 Fold the approved package into its **base** per [`change-requests.md`](../Core/change-requests.md). Only promotion writes contracts except verified
-work-spec known-difference cleanup. Validate text, prepare destination links and preserve prose,
+dev specs known-difference cleanup. Validate text, prepare destination links and preserve prose,
 IDs, notes and drafts. Return package wording defects to authoring; base defects start a package against it.
 
 In chat, link requirement and Discussion IDs to their exact targets (real anchors or verified file/line links).
@@ -119,7 +119,7 @@ resumes archival only, from the active or promoted location. Never re-promote ar
 
 Before writing, require an absent promoted path (`skai/promoted/<change-id>/product-specs/`, or
 `<base>/promoted-change-requests/<nnn>/`); find live incoming references from catalog/app repositories,
-related packages and work specs. Collisions or inaccessible required references block; never
+related packages and dev specs. Collisions or inaccessible required references block; never
 overwrite or merge destinations.
 
 ### Readiness screen
@@ -213,7 +213,7 @@ After verified `C7`, execute `C8`:
    `promoted-change-requests/`): `skai/changes/<change-id>/product-specs/` to
    `skai/promoted/<change-id>/product-specs/` in the catalog repository; a request to
    `<base>/promoted-change-requests/<nnn>/`. Leave siblings; remove only empty grouping directories.
-2. Repair live incoming links across those repositories, related packages and work specs, and
+2. Repair live incoming links across those repositories, related packages and dev specs, and
    relative links inside moved files, preserving target identities, prose, IDs, decisions and
    recorded results; annotate historical paths with current locations. Inaccessible or unrepaired
    required links block.

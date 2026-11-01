@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.unit-test-infrastructure
 Managed-Source: Guides/Test/unit-test-infrastructure-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-31
 
 # Unit Test Infrastructure Guide
 
@@ -425,7 +425,7 @@ read_file path/to/Mocks/MockService.swift
      [Implementation details will go here]
      ```
 
-**1. Create infrastructure work spec** (if complex, otherwise implement directly):
+**1. Create infrastructure dev spec** (if complex, otherwise implement directly):
    - **Full path**: `skai/working-docs/<session-name>/testing/infrastructure-spec.md`
    - **Example**: `skai/working-docs/login-tests/testing/infrastructure-spec.md`
    - **Structure**: Motivation, Functional Requirements, Relevant Files, Task List
@@ -663,7 +663,7 @@ This document tracks the infrastructure work for implementing unit tests for [se
 
 **Phase 2: Implement** (only if infrastructure needed)
 - Create work document (only now, not in Phase 1)
-- Create infrastructure work spec (if complex)
+- Create infrastructure dev spec (if complex)
 - Implement all tasks
 - Mark tasks complete
 

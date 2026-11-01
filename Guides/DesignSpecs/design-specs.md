@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs
 Managed-Source: Guides/DesignSpecs/design-specs.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-26
+Managed-Updated-At: 2026-10-31
 
 # Design Specs
 
@@ -23,7 +23,7 @@ never restated. [`design-specs-authoring.md`](design-specs-authoring.md) drafts;
 A pre-existing fault in unchanged content, held file or not, starts a package against the
 base ([`change-requests.md`](../Core/change-requests.md)); only a contradiction that would make
 the write inconsistent blocks. `validate` faults in held files and conflicts the projection
-introduces always block. Work-spec implementation may update or remove
+introduces always block. Dev specs implementation may update or remove
 known-difference notes after verified fixes; spec text and IDs are otherwise read-only.
 
 ### What Belongs Here
@@ -35,7 +35,7 @@ constants (rounding, a `1 min` floor), variable copy, controls by function, dest
 case, is a requirements gap, routed as authoring § Requirements Gaps says, never
 specified quietly.
 
-The package's item list is its acceptance criteria, not a fourth artifact. Work specs cite spec IDs.
+The package's item list is its acceptance criteria, not a fourth artifact. Dev specs cite spec IDs.
 Specs apply to every app in the catalog's `apps/` index.
 
 ## Layout

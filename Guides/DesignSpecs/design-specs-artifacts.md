@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-artifacts
 Managed-Source: Guides/DesignSpecs/design-specs-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-10-31
 
 # Design Spec Artifact Formats
 
@@ -40,7 +40,7 @@ resolved target identity. Entries omit spec text; the page shows each difference
   - **Touches** draft-file links; an intro may ride here, an index line only with the new file it describes
 ```
 
-- **ID** `S01`, `S02`, …: package-local, never renumbered or reused; work specs cite `UI-*`, never
+- **ID** `S01`, `S02`, …: package-local, never renumbered or reused; dev specs cite `UI-*`, never
   `S`. Order entries by root, glossary, folder, file and item; no checkbox.
 - **Operation** `add | modify | retire | move` × **object** `spec file | item | rule | index line |
   glossary entry | known-difference note`. Only items move; a rule changing parent retires and is

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-authoring
 Managed-Source: Guides/DesignSpecs/design-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-26
+Managed-Updated-At: 2026-10-31
 
 # Design Specs Authoring
 
@@ -184,7 +184,7 @@ burn IDs and repoint citations. **Before modifying or retiring an ID or a glossa
 tool's `references`** over the specs, the product
 catalog and the active packages and decide per citation whether it still holds: a spec citation
 that does not is repaired by drafting its file; one in
-the product specs by *Requirements Gaps*; one in a work spec or
+the product specs by *Requirements Gaps*; one in a dev spec or
 another package is not the author's to edit — name it in the sweep for its owner. Record the sweep
 under `## Verification`. Moves preserve text; classify edits by that test.
 

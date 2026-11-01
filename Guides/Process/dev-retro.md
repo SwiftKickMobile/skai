@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.dev-retro
 Managed-Source: Guides/Process/dev-retro.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-19
+Managed-Updated-At: 2026-10-31
 
 # Dev-session retro (agent + supervisor)
 
@@ -81,7 +81,7 @@ Workflow-specific advance behavior:
 Read the documents and artifacts that were produced or used during this session, as applicable:
 
 - The **plan** for the session:
-  - work spec doc(s) (if used)
+  - dev spec doc(s) (if used)
   - planning docs / analysis docs (including unit-testing planning + infrastructure + writing work docs)
 - The project's Integration doc:
   - `skai/integration.md`

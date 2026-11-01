@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.process-flow
 Managed-Source: Guides/Core/process-flow.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-26
+Managed-Updated-At: 2026-10-31
 
 # Process flow (house style reference)
 
@@ -126,7 +126,6 @@ Meaning:
 - If the target reference is unclear or there are multiple plausible interpretations, STOP and ask the supervisor what target they mean.
 
 Examples (infer from context):
-- Work spec implementation: `"next auto to task 7"`
 - Unit testing: `"next auto to success tests"`
 - Any workflow with phases: `"next auto to Phase 2"`
 
@@ -142,11 +141,11 @@ Examples (infer from context):
 
 ## Progress markers
 
-Progress markers track TODO state in skai workflow artifacts. This section applies to skai workflow documents (work specs, planning docs, unit test plans, working docs, retro outputs, ticket drafts) and to source files written or planned by a skai workflow, not to arbitrary developer notes.
+Progress markers track TODO state in skai workflow artifacts. This section applies to skai workflow documents (dev specs, planning docs, unit test plans, working docs, retro outputs, ticket drafts) and to source files written or planned by a skai workflow, not to arbitrary developer notes.
 
 Two marker conventions coexist, chosen by artifact type:
 
-- **`- [ ]` / `- [x]` — process artifacts (default).** Markdown task-list checkboxes. Used in any markdown workflow document where the audit trail of completed items should remain visible: work-spec tasks, planning-doc discussion items, work-doc phase checklists, retro suggestions, ticket drafts, change lists, etc. Completion is a check, not a deletion — the artifact keeps a record of every resolved item.
+- **`- [ ]` / `- [x]` — process artifacts (default).** Markdown task-list checkboxes. Used in any markdown workflow document where the audit trail of completed items should remain visible: dev spec tasks, planning-doc discussion items, work-doc phase checklists, retro suggestions, ticket drafts, change lists, etc. Completion is a check, not a deletion — the artifact keeps a record of every resolved item.
 - **`🟡` — in-code progress only.** A literal 🟡 emoji embedded in source files (test code, application code) to mark sections, functions, or lines as TODO. Completion is **removal** of the marker — the file's remaining work is read by which 🟡s remain. The canonical case is the unit test planning workflow ([`unit-test-planning-guide.md`](../Test/unit-test-planning-guide.md)), where section MARKs and test functions are seeded with 🟡 during planning and the markers come off as tests are implemented and pass.
 
 The dividing line is the artifact: process artifacts use `- [ ]`; source files use 🟡. A workflow that produces both (the unit-testing family) uses both — `- [ ]` in the work document, 🟡 in the test files.
@@ -207,7 +206,7 @@ For 🟡 in code, the identifier is whatever stable text already lives on the li
 - **No checkbox inside a heading.** Markdown task lists are scoped to list items; `## - [ ] Foo` renders as plain text, not a checkbox. If a unit of work needs heading-shaped structure for its body, give it a stable-ID heading (`## Ticket: T01 <summary>`) and track state with a `- [ ]` list item elsewhere or with an inline status sub-bullet.
 
 Allowed stable identifiers (choose the best fit per artifact):
-- Work-spec tasks: `- [ ] T01 **Do thing**` (or similar)
+- Dev spec tasks: `- [ ] T01 **Do thing**` (or similar)
 - Discussion items: `- [ ] D01 [Kind] <summary>` (see Structured discussion items below)
 - Audit findings: `- [ ] F01 [Kind] <summary>`
 - Retro suggestions: `- [ ] S01 <suggestion>`
@@ -220,7 +219,7 @@ Tooling expectation:
 
 ## Structured discussion items
 
-Workflows with a "discussion phase" — where the agent proposes and the supervisor refines or redirects — use a structured schema for each discussion item. This schema is canonical for any discussion-based workflow (work-spec planning, UI Map architecture, UI Map implementation, etc.).
+Workflows with a "discussion phase" — where the agent proposes and the supervisor refines or redirects — use a structured schema for each discussion item. This schema is canonical for any discussion-based workflow (dev specs authoring, UI Map architecture, UI Map implementation, etc.).
 
 ### Item line
 

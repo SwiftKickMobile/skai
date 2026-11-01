@@ -1,25 +1,25 @@
 Managed-By: skai
-Managed-Id: guide.work-spec-creation
-Managed-Source: Guides/Spec/work-spec-creation.md
+Managed-Id: guide.dev-specs-authoring
+Managed-Source: Guides/DevSpecs/dev-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-26
+Managed-Updated-At: 2026-10-31
 
-# Work Spec Design
+# Dev Specs Authoring
 
-Print `📖 SKAI guide: work-spec-creation` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: dev-specs-authoring` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 ## Purpose
 
 Turn open-ended input into an approved technical design for a software change, reviewed mainly as
 an API diff with only needed supporting material.
 
-This skill owns the design; [`work-spec-implementation.md`](work-spec-implementation.md) owns task lists and code changes. Continue there or hand the completed design to another developer.
+This skill owns the design; [`dev-specs-implementation.md`](dev-specs-implementation.md) owns task lists and code changes. Continue there or hand the completed design to another developer.
 
 Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## Inputs and initiation
 
-Start when the supervisor asks to design or author a work spec. Input may be conversation, design,
+Start when the supervisor asks to design or author a dev spec. Input may be conversation, design,
 tickets, requirements, specifications, source code, or any combination. There is no intake form or declared mode.
 
 Read the supplied material and inspect the repository for current architecture and conventions.
@@ -40,7 +40,7 @@ Architecture and Constraints, or the relevant `D#`; do not require a transcript 
 Reopen an existing named design in place—including for new implementation evidence or a later slice—
 following *Returning to Discussion*.
 
-## Design artifact
+## Authoring artifact
 
 Use this order:
 
@@ -248,7 +248,7 @@ Show every new, modified, or removed API implied by the design:
 
 Explicitly state when no API changes are needed. Keep caller inventories, impact reports, and
 implementation listings out of the sketch. Put material reasoning in the surrounding design and
-mechanical impact in the work spec.
+mechanical impact in the implementation artifact.
 
 ## Complete the design
 
@@ -272,8 +272,8 @@ Invoke sibling workflows only when their owned artifact is needed:
   orchestration and continue. Without a catalog, record missing behavior as an assumption. Planning
   new behavior does not automatically trigger product specs authoring.
 
-Siblings own their artifacts and gates; link their results without duplicating them. Work Spec Design
-writes only its design document. Sibling packages, canonical requirements, and `skai/integration.md`
+Siblings own their artifacts and gates; link their results without duplicating them. Dev Specs Authoring
+writes only its authoring artifact. Sibling packages, canonical requirements, and `skai/integration.md`
 are read-only.
 
 A required sibling may run after the initial API Sketch but before its gate, or later. On completion,
@@ -287,20 +287,20 @@ the cut as a material discussion item (`D#`). After approval, add `## Delivery S
 (its outcome and boundary) and brief bullets for later slices. Do not create empty future mini-plans.
 
 The API Sketch covers the current slice and only future constraints needed to avoid an architectural
-dead end. One design may produce several work specs over time, named `<spec-name>-<slice-name>-impl.md`
-in the same session folder. Declare each slice's work-spec path in Delivery Slices when it becomes
+dead end. One design may produce several task lists over time, named `<spec-name>-<slice-name>-impl.md`
+in the same session folder. Declare each slice's `-impl.md` path in Delivery Slices when it becomes
 current, before implementation planning.
 
 ## Completion
 
 Complete when the readiness screen passes. If the request was design-only, end with:
 
-`🏁 Complete. The work-spec design is ready for implementation planning.`
+`🏁 Complete. The design is ready for implementation planning.`
 
-If the initiating request includes a work spec or implementation, immediately load [`work-spec-implementation.md`](work-spec-implementation.md) and continue without waiting at the skill boundary.
+If the request also asks for planning or implementation, immediately load [`dev-specs-implementation.md`](dev-specs-implementation.md) and continue without waiting at the skill boundary.
 
 ## Project Addendum
 
-If `<active-project-root>/skai/addenda/work-spec-creation-addendum.md` exists, read it and immediately print
+If `<active-project-root>/skai/addenda/dev-specs-authoring-addendum.md` exists, read it and immediately print
 `  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

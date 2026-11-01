@@ -42,7 +42,7 @@ from the presence of a submodule.
    link when the package is created, pointing at the final location. The link resolves when
    promotion writes the artifact, which creates the root; nothing creates it earlier (supervisor,
    2026-10-13). No temporary link to the change package, so nothing to clean up later.
-5. **No other guide mentions location.** Promotion, implementation, work-spec and retro guides
+5. **No other guide mentions location.** Promotion, implementation, dev specs and retro guides
    rely on the README having been read. Content guides keep their Layout sections (the fixed path
    and file names) and nothing else about location.
 6. **The Integration doc records no artifact locations.** The `requirements` and `design-specs`
@@ -83,7 +83,7 @@ from the presence of a submodule.
 **Target:** the guides that locate or create artifacts — `Guides/ProductSpecs/*.md`,
 `Guides/DesignSpecs/*.md`, `Guides/UIMap/ui-map-architecture.md` and `ui-map-implementation.md`,
 `Guides/Design/design-authoring.md`, `design-promotion.md` and `figma-designer-guide.md`,
-`Guides/Spec/work-spec-creation.md` and `work-spec-implementation.md`, `Guides/Process/dev-retro.md`,
+`Guides/DevSpecs/dev-specs-authoring.md` and `dev-specs-implementation.md`, `Guides/Process/dev-retro.md`,
 the shared instruction block `Templates/agents/instructions-block.md`, and the new shared hosting
 guide under `Guides/Core/`.
 

@@ -30,8 +30,8 @@ Recommended host locations for agent-facing docs:
 - [IDE clutter / autocomplete](#ide-clutter--autocomplete-recommended)
 - [Usage](#usage)
   - [How all workflows work](#how-all-workflows-work)
-  - [Work spec design](#work-spec-design-skill-skai-work-spec-creation)
-  - [Work spec implementation](#work-spec-implementation-skill-skai-work-spec-implementation)
+  - [Dev specs authoring](#dev-specs-authoring-skill-skai-dev-specs-authoring)
+  - [Dev specs implementation](#dev-specs-implementation-skill-skai-dev-specs-implementation)
   - [UI Map architecture](#ui-map-architecture-skill-skai-ui-map-architecture)
   - [UI Map implementation](#ui-map-implementation-skill-skai-ui-map-implementation)
   - [Product specs authoring](#product-specs-authoring-skill-skai-product-specs-authoring)
@@ -221,18 +221,18 @@ After installation, workflows are available as **skills** that your agent activa
 
 **Minimal command structure.** You don't need to memorize strict commands:
 
-1. Start with context that activates a skill/workflow (e.g. "Write a work spec", "Start unit testing", "Start debugging").
+1. Start with context that activates a skill/workflow (e.g. "Write a dev spec", "Start unit testing", "Start debugging").
 2. Progress through steps using **advance intent** (e.g. "begin", "next", "continue", "go ahead").
 3. At certain steps the agent will **stop and wait** at a checkpoint (gate). At checkpoints, the agent ends its output with exactly one of these lines:
    - `⏳ GATE: Next: <thing>. Say "next" or what to change.`
    - `⏳ GATE: Blocked: <reason>. Resolve and say "next" to continue.`
    - `🏁 Complete. Let me know if anything needs adjustment.` (not a gate -- workflow finished)
 4. Saying "next" (or similar) at a checkpoint counts as approval to proceed.
-5. Some workflows support **"auto"** and **"auto to <milestone>"** to bypass planned gates. The work-spec skills intentionally do not: their reduced gate set is advanced by a supervisor, which may be a human or an authorized agent.
+5. Some workflows support **"auto"** and **"auto to <milestone>"** to bypass planned gates. The dev specs skills intentionally do not: their reduced gate set is advanced by a supervisor, which may be a human or an authorized agent.
 
 **Agent note-taking and progress tracking.** The agent keeps structured notes so you can pick up where you left off. Two marker conventions coexist:
 
-- In **process artifacts** (markdown workflow documents — work specs, planning docs, retro outputs, ticket drafts, etc.): the agent uses `- [ ]` / `- [x]` markdown checkboxes with stable letter-led IDs (`D01`, `T01`, `F01`, `S01`, etc.) on each item. Completion is checking the box — the artifact keeps a record of every resolved item.
+- In **process artifacts** (markdown workflow documents — dev specs, planning docs, retro outputs, ticket drafts, etc.): the agent uses `- [ ]` / `- [x]` markdown checkboxes with stable letter-led IDs (`D01`, `T01`, `F01`, `S01`, etc.) on each item. Completion is checking the box — the artifact keeps a record of every resolved item.
 - In **source files** (test code, application code) written or planned by a skai workflow: the agent uses a **🟡** emoji on lines/functions/sections that are TODO. Completion is *removal* of the marker — the file's remaining work is read by which 🟡s remain. The canonical example is the unit test planning workflow, where section MARKs and test functions are seeded with 🟡 and the markers come off as tests are implemented and pass.
 - Markers are cleared only when items are resolved and you give approval at the relevant gate.
 
@@ -242,11 +242,11 @@ After installation, workflows are available as **skills** that your agent activa
 
 **Retros on demand.** At any point you can ask the agent to **"retro"** to check for gaps, update documents, backfill requirements, and reflect on process.
 
-### Work spec design (skill `skai-work-spec-creation`)
+### Dev specs authoring (skill `skai-dev-specs-authoring`)
 
 Turn open-ended feature input into a technical design whose primary review surface is a complete diff of changed production APIs. The agent fills gaps with proposals, keeps the design and API Sketch current through discussion, and invokes UI Map architecture or product specs authoring when their owned artifacts are needed. It does not write the implementation task list or code.
 
-- Guide [`Guides/Spec/work-spec-creation.md`](Guides/Spec/work-spec-creation.md)
+- Guide [`Guides/DevSpecs/dev-specs-authoring.md`](Guides/DevSpecs/dev-specs-authoring.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 
@@ -255,17 +255,17 @@ Turn open-ended feature input into a technical design whose primary review surfa
 **Phases:**
 
 1. **Draft and discuss.** Agent writes the design and API Sketch from the available inputs, filling gaps with recommended `D<n>` proposals. The sketch remains current while the supervisor resolves material decisions. Gate: supervisor approves the resolved design direction and API.
-2. **Complete design.** Agent writes the remaining implementation-relevant design, invokes required sibling workflows, and completes for handoff or transitions directly into Work Spec Implementation. Optional delivery slicing appears only when the scope outgrows one iteration.
+2. **Complete design.** Agent writes the remaining implementation-relevant design, invokes required sibling workflows, and completes for handoff or transitions directly into Dev Specs Implementation. Optional delivery slicing appears only when the scope outgrows one iteration.
 
-### Work spec implementation (skill `skai-work-spec-implementation`)
+### Dev specs implementation (skill `skai-dev-specs-implementation`)
 
-Audit an approved work-spec design against the codebase, create its concrete task list, then implement and verify it continuously after one plan approval. Supports plan-only architect/developer handoff and same-agent design-to-build flow.
+Audit an approved dev specs design against the codebase, create its concrete task list, then implement and verify it continuously after one plan approval. Supports plan-only architect/developer handoff and same-agent design-to-build flow.
 
-- Guide [`Guides/Spec/work-spec-implementation.md`](Guides/Spec/work-spec-implementation.md)
+- Guide [`Guides/DevSpecs/dev-specs-implementation.md`](Guides/DevSpecs/dev-specs-implementation.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 
-**Prerequisites:** A ready work-spec design and project build/test/runtime commands in [`skai/integration.md`](skai/integration.md).
+**Prerequisites:** A ready dev specs design and project build/test/runtime commands in [`skai/integration.md`](skai/integration.md).
 
 **Phases:**
 
@@ -333,7 +333,7 @@ Draft requirements into a change package under `skai/changes/<change-id>/product
 Write an approved change package into the canonical catalog, checking IDs and content and preparing
 links for their canonical destinations. Shipping behavior and approved contracts with confirmed
 known-difference notes may promote on approval; other future behavior waits until shipment.
-Work-spec implementation may later update or remove those notes after verifying a fix, while
+Dev specs implementation may later update or remove those notes after verifying a fix, while
 requirement text and IDs remain unchanged.
 
 - Guide [`Guides/ProductSpecs/product-specs-promotion.md`](Guides/ProductSpecs/product-specs-promotion.md)
@@ -423,7 +423,7 @@ Plan-first testing workflow. The agent creates an orchestration document for the
 
 - Guides [`Guides/Test/unit-testing-guide.md`](Guides/Test/unit-testing-guide.md), [`Guides/Test/unit-test-planning-guide.md`](Guides/Test/unit-test-planning-guide.md), [`Guides/Test/unit-test-infrastructure-guide.md`](Guides/Test/unit-test-infrastructure-guide.md), [`Guides/Test/unit-test-writing-guide.md`](Guides/Test/unit-test-writing-guide.md)
 
-**Prerequisites:** Source code to test. Often triggered by a work spec task, but can be used independently.
+**Prerequisites:** Source code to test. Often triggered by a dev spec task, but can be used independently.
 
 **Phases:**
 
@@ -453,7 +453,7 @@ Completeness backstop that can be used at any point during any workflow. Reviews
 
 - Guide [`Guides/Process/dev-retro.md`](Guides/Process/dev-retro.md)
 
-**Prerequisites:** Work to review. The agent reads work specs, planning docs, evidence artifacts, the product specs, and any open product spec change package.
+**Prerequisites:** Work to review. The agent reads dev specs, planning docs, evidence artifacts, the product specs, and any open product spec change package.
 
 **Phases:**
 

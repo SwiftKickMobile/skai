@@ -1,17 +1,17 @@
 Managed-By: skai
-Managed-Id: guide.work-spec-implementation
-Managed-Source: Guides/Spec/work-spec-implementation.md
+Managed-Id: guide.dev-specs-implementation
+Managed-Source: Guides/DevSpecs/dev-specs-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-10-31
 
-# Work Spec Implementation
+# Dev Specs Implementation
 
-Print `📖 SKAI guide: work-spec-implementation` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+Print `📖 SKAI guide: dev-specs-implementation` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 ## Purpose
 
-Turn a ready design into a task list; get one approval, then implement continuously. Write the work
-spec, code and evidence. The approved design, requirement contracts, `skai/integration.md` and sibling
+Turn a ready design into a task list; get one approval, then implement continuously. Write the
+artifact, code and evidence. The approved design, requirement contracts, `skai/integration.md` and sibling
 artifacts are read-only except sibling task-state updates under *Audit and plan* and verified
 known-difference cleanup under *Completion*.
 
@@ -19,9 +19,9 @@ Everything you write for a person follows [`writing-style.md`](../Core/writing-s
 
 ## Inputs and initiation
 
-Start from the exact design path from [`work-spec-creation.md`](work-spec-creation.md).
-Without a design, load Work Spec Design; return on completion if the request includes a work spec or
-implementation. Readiness requires:
+Start from the exact design path from [`dev-specs-authoring.md`](dev-specs-authoring.md).
+Without a design, load Dev Specs Authoring; return on completion if the request also asks for
+planning or implementation. Readiness requires:
 
 - `## Discussion` has no unchecked non-gap items. A gap on an input you rely on, or an item of yours that cannot be resolved because something outside this work is not yet known, is handled per [`known-gaps.md`](../Core/known-gaps.md).
 - `## API Sketch` and `## Implementation Design` are present.
@@ -31,29 +31,29 @@ implementation. Readiness requires:
 An assumption or TODO blocks if being wrong would change a resolved discussion decision (`D#`) or the
 API Sketch; otherwise record a non-blocking note.
 
-If the design fails readiness, load Work Spec Design to reopen it and end at its Discussion gate.
+If the design fails readiness, load Dev Specs Authoring to reopen it and end at its Discussion gate.
 Missing external inputs block. Never infer approval from chat history or repair the design in the task list.
 
-Before auditing or writing the work spec, require `skai/integration.md` to define needed build, test,
+Before auditing or writing the artifact, require `skai/integration.md` to define needed build, test,
 and runtime commands. Block on missing or unfilled commands; the supervisor establishes them through
 normal SKAI install/update, then resumes planning. This includes greenfield work; commands may name
 the project structure its setup tasks will create.
 
 The supervisor's request sets the endpoint; do not store a mode:
 
-- **Plan**: create the work spec, obtain approval, and finish for handoff without changing code.
-- **Build**: create the work spec, obtain approval, and implement it.
+- **Plan**: create the artifact, obtain approval, and finish for handoff without changing code.
+- **Build**: create the artifact, obtain approval, and implement it.
 
-A request that asks only for a work spec or implementation plan is Plan.
+A request that asks only for an implementation plan is Plan.
 
-On initiation, reopen an existing work spec in place—including after Plan handoff, interruption, a
+On initiation, reopen an existing artifact in place—including after Plan handoff, interruption, a
 bounded stop, or a design return. Re-audit current code and design. Preserve task IDs and checked tasks with current
 evidence; update only changed or stale content. Stop at the implementation-plan gate again before
-changing code. Return material design conflicts to Work Spec Design.
+changing code. Return material design conflicts to Dev Specs Authoring.
 
-## Work spec artifact
+## Implementation artifact
 
-Create beside the design document:
+Create beside the authoring artifact:
 
 ```text
 skai/working-docs/<spec-name>/<spec-name>-impl.md
@@ -62,7 +62,7 @@ skai/working-docs/<spec-name>/<spec-name>-impl.md
 For an activated delivery slice, use the design's declared `<spec-name>-<slice-name>-impl.md`. In
 `## Inputs`, record the exact design path, every sibling artifact a task realizes, and key implementation
 or convention sources a fresh agent must read. If `## Delivery Slices` does not declare the requested
-slice current, load Work Spec Design to make it current, then return. Omit broad file inventories.
+slice current, load Dev Specs Authoring to make it current, then return. Omit broad file inventories.
 
 Use this compact shape:
 
@@ -99,7 +99,7 @@ implementation-plan gate. Later deferrals change scope and block for renewed pla
 handoffs as tasks with a Disposition; do not duplicate them here.
 
 After plan approval, you may add, split, or reorder tasks without another gate if approved design,
-scope, outcomes, and verification standards stay unchanged; record the reason in the work spec.
+scope, outcomes, and verification standards stay unchanged; record the reason in the artifact.
 Changes to scope, `Done when`, required Verification, or a deferral require proposing the exact edit
 at the implementation-plan gate and applying it only after approval. Changes to approved design/API
 return to Design. Checkbox and evidence updates are ordinary execution, not plan changes.
@@ -276,10 +276,10 @@ Stop at a blocked gate when:
 
 Leave the current task unchecked; identify the smallest needed decision or external change. For
 non-design blockers, record `[evidence: blocked — needs <result>]` on the task before waiting and
-the supervisor's resolution there before resuming. Transfer design/API problems to Work Spec Design in the
-same response without a separate implementation-side blocked gate. Design reopens the artifact,
+the supervisor's resolution there before resuming. Transfer design/API problems to Dev Specs Authoring in the
+same response without a separate implementation-side blocked gate. Authoring reopens its artifact,
 records the problem (reopening or adding a `D#`), and ends at its Discussion gate. When the design
-returns ready, re-audit, revise the work spec, and stop at the
+returns ready, re-audit, revise the task list, and stop at the
 implementation-plan gate again.
 
 Do not remove, weaken, or defer a requirement, completion criterion, test, or design decision to make
@@ -300,12 +300,12 @@ and their now-unused link definitions, never requirement text or IDs. Issue clos
 
 For Build, complete when every task is checked, required evidence is current, and no handoff remains:
 
-`🏁 Complete. The work spec is implemented and verified.`
+`🏁 Complete. The change is implemented and verified.`
 
 If any task is unchecked, use the appropriate blocked or requested-boundary gate instead of a completion line.
 
 ## Project Addendum
 
-If `<active-project-root>/skai/addenda/work-spec-implementation-addendum.md` exists, read it and immediately print
+If `<active-project-root>/skai/addenda/dev-specs-implementation-addendum.md` exists, read it and immediately print
 `  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
 guide and win any conflict.

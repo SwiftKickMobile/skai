@@ -9,7 +9,7 @@ All runtime guides live under a topical subdirectory within `Guides/`. Do not pl
 | Subdirectory | Purpose |
 |---|---|
 | `Core/` | Cross-cutting foundations: debugging, working-doc conventions, artifact hosting, update installation |
-| `Spec/` | Work spec design and implementation |
+| `DevSpecs/` | Dev specs authoring and implementation |
 | `Test/` | Unit testing (planning, infrastructure, writing) |
 | `Process/` | Retro, process problem reporting, ticket creation |
 | `UIMap/` | UI Map system: YAML format, platform references, architecture/implementation methods |

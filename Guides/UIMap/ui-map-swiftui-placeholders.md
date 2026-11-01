@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-swiftui-placeholders
 Managed-Source: Guides/UIMap/ui-map-swiftui-placeholders.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-10-31
 
 # UI Map — SwiftUI Placeholder Scenes
 
@@ -241,7 +241,7 @@ The trigger is throwaway — feature work replaces it with the real entry point 
 
 ## Boundary
 
-Placeholders are skeleton + navigation only. If a scaffold seems to require feature content (real UI, business logic, data), the scene is being over-built — stop. Feature work belongs to a separate work spec.
+Placeholders are skeleton + navigation only. If a scaffold seems to require feature content (real UI, business logic, data), the scene is being over-built — stop. Feature work belongs to a separate dev spec.
 
 ## Project Addendum
 

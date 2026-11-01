@@ -1,4 +1,4 @@
-# Findings log — work-spec design and implementation
+# Findings log — dev specs authoring and implementation
 
 | Pass date | Finding | Disposition | Evidence |
 |---|---|---|---|
@@ -147,3 +147,8 @@
 | 2026-09-04 r10 | F9 Revocation rule repeated | rejected | Testing defines relation; implementation loop is required point-of-use restatement. |
 | 2026-09-04 r10 | F10 Sibling-readiness route ambiguity | logged | Both branches stop safely and sibling guide owns resolution. |
 | 2026-09-04 r10 | F11 Runtime gate boilerplate duplicated | rejected | Intentional self-containment required by house style. |
+| 2026-10-31 (supervisor) | Rename: work specs become dev specs, creation becomes authoring (skai#122) | closed | Target renamed from `work-spec-process`; guides `Guides/Spec/work-spec-creation.md` and `work-spec-implementation.md` became `Guides/DevSpecs/dev-specs-authoring.md` and `dev-specs-implementation.md`. Earlier rows keep the old names. |
+| 2026-10-31 r1 (rename) | F1 A behavior task may be checked before its later test task proves it | rejected | Deliberate: the later test is a revocation condition, not a precondition; the task's own verification passes, and a failing test reopens the task or fixes it under the test task (supervisor, 2026-10-31). |
+| 2026-10-31 r1 (rename) | F2 Plan completion leaves every task unchecked, contradicting reopen's preservation of verified tasks | deferred | Pre-existing rule, not part of the rename; filed as skai#124. |
+| 2026-10-31 r1 (rename) | F3 Readiness treats an assumption as blocking only if it changes a `D#` or the API Sketch | deferred | Pre-existing rule, not part of the rename; filed as skai#124. |
+| 2026-10-31 r1 (rename) | F4 "The artifact" in the design-return instruction meant both documents | closed | Now "Authoring reopens its artifact" and "revise the task list". |

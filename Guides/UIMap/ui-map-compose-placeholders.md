@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-compose-placeholders
 Managed-Source: Guides/UIMap/ui-map-compose-placeholders.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-10-31
 
 # UI Map — Jetpack Compose Placeholder Scenes
 
@@ -234,7 +234,7 @@ Until it lands or project conventions provide a compatible trigger, routing a ne
 
 ## Boundary
 
-Placeholders are skeleton + navigation only. If a scaffold seems to require feature content (real UI, business logic, data), the scene is being over-built — stop. Feature work belongs to a separate work spec.
+Placeholders are skeleton + navigation only. If a scaffold seems to require feature content (real UI, business logic, data), the scene is being over-built — stop. Feature work belongs to a separate dev spec.
 
 ## Project Addendum
 
