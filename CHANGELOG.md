@@ -9,6 +9,7 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **Session working documents are gitignored again.** `skai/working-docs/` collects too much transient material to keep; a package's own `working-docs/` folder is still committed.
 - **Gap owners resolve on packages built on other packages.** A footnote's `base D<n>` now links when the base is the package named first under Inputs, not only a change request's parent; `base product specs D<n>` reaches the base's product specs.
 
 ## Release 16 — 2026-10-29

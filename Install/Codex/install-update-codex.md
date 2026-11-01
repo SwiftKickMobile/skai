@@ -111,7 +111,7 @@ If updating the submodule, include an "update review" section:
 6. Create/update ignore files (permission-gated if they already exist and are project-owned):
    - Update `.gitignore` by inserting/updating a managed block:
      - Add `/skai/config.local.json` and `/skai/install-state.local.json` for private user settings/history.
-     - Remove a `skai/working-docs/` line left in the block by an earlier install; working documents are committed.
+     - Add `skai/working-docs/`: session working documents are not committed.
    - If `.cursorignore` exists, propose inserting/updating a managed block to exclude `.agents/**` so Cursor sessions don't ingest Codex-specific assets by default (ask approval before changing).
    - If `.claudeignore` exists, propose inserting/updating a managed block to exclude `.agents/**` so Claude sessions don't ingest Codex-specific assets by default (ask approval before changing).
    - Do NOT exclude `Submodules/skai/**` here; use editor UI excludes for autocomplete/search clutter instead.

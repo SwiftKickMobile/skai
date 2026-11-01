@@ -571,7 +571,7 @@ Update `skai` to the latest release (or a target you name), review what changed,
 
 ### Working documents
 
-- Working documents (plans, specs, source notes, reviews, progress logs) live beside the artifact they serve and are committed ([`Guides/Core/working-doc-conventions.md`](Guides/Core/working-doc-conventions.md)).
+- Working documents (plans, specs, source notes, reviews, progress logs) live beside the artifact they serve ([`Guides/Core/working-doc-conventions.md`](Guides/Core/working-doc-conventions.md)). A package's working documents are committed with it; session folders are gitignored.
 - A document serving a change package goes in that package's `working-docs/` folder (`skai/changes/<change-id>/<type>/working-docs/`) and is archived with it at promotion; any other goes in a session folder, `skai/working-docs/<session-name>/`.
 - Output captured to verify a build or test (command captures, result bundles, screenshots) goes to a scratch root outside the repository, `/tmp/skai/<session-name>/` unless `skai/integration.md` names another; the working document records the command, the result and the scratch path.
 - One exception: the refinement **findings log** at [`skai/refinement-reviews/`](skai/refinement-reviews/) is committed, one file per refined target. It carries what earlier refinement passes decided, so a later pass does not re-argue settled ground.

@@ -3,7 +3,7 @@
 ## Purpose
 
 This document is the standard for SKAI's working-document conventions: where a working document
-lives, that it is committed, where build and test output goes instead, and how an existing host
+lives, which documents are committed, where build and test output goes instead, and how an existing host
 moves onto the rules. It is used to write and cold-review the guide; it is not something an
 operator reads at runtime.
 
@@ -25,7 +25,7 @@ Backfilled 2026-10-21 from the existing guide after its rewrite for SwiftKickMob
   the repository-layout invariants (tests under `internal/tests/`, intermediate build output to the
   scratch root).
 - [`Install/component-selection.md`](../../Install/component-selection.md) owns the managed
-  `.gitignore` block the guide relies on (only the two local config files are ignored).
+  `.gitignore` block the guide relies on (the two local config files and `skai/working-docs/` are ignored).
 - [`work-spec-process-design.md`](work-spec-process-design.md) owns the evidence rule's place in
   work spec implementation; [`product-specs-system-design.md`](product-specs-system-design.md),
   [`design-specs-design.md`](design-specs-design.md), [`design-process-design.md`](design-process-design.md)
@@ -47,8 +47,10 @@ Backfilled 2026-10-21 from the existing guide after its rewrite for SwiftKickMob
    upstream one and are linked from the other; sibling packages live in different repositories, so
    there is no shared change-level folder. A work spec serves a change, not a package, so it is a
    session document.
-3. **Working documents are committed** in host repositories. Nothing in the guide or its derivatives
-   treats them as ephemeral or ignored. skai's own repository is the exception (G15, 2026-10-21): a
+3. **A package's working documents are committed; session documents are not** (supervisor,
+   2026-10-31, reversing 2026-10-21 for session documents). The managed `.gitignore` block ignores
+   `skai/working-docs/`; documents in a package's `working-docs/` folder are committed and archived
+   with it. skai's own repository is the exception (G15, 2026-10-21): a
    library every host checks out whole keeps its working documents ignored and tracks only each
    refinement target's working document, at `skai/refinement-reviews/<target>-refinement.md`.
 4. **Captured verification output never enters the repository.** Command captures, result bundles,
@@ -81,6 +83,8 @@ Backfilled 2026-10-21 from the existing guide after its rewrite for SwiftKickMob
 - Scratch output is not kept; the evidence line is the record (2026-10-21).
 - The scratch root is a skai default with a per-host override in `integration.md` (2026-10-21).
 - Package `evidence/` folders holding promotion check output are unchanged (2026-10-21).
+- Session working documents are ignored again (supervisor, 2026-10-31): too much transient material
+  lands there to keep permanently. Package working documents stay committed.
 - Tests live under `internal/tests/` with no top-level runner and no README; skill tests are
   refinement aids, never regression tests (2026-10-21).
 - An interrupted cross-repository copy stops at the collision rule on rerun; no automatic

@@ -2,18 +2,18 @@ Managed-By: skai
 Managed-Id: guide.working-doc-conventions
 Managed-Source: Guides/Core/working-doc-conventions.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-21
+Managed-Updated-At: 2026-10-31
 
 # Working Document Conventions
 
 Print `📖 SKAI guide: working-doc-conventions` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
-Working documents (planning docs, work specs, source notes, reviews, test work docs) track in-progress work. They are committed like any other file and live beside the artifact they serve.
+Working documents (planning docs, work specs, source notes, reviews, test work docs) track in-progress work and live beside the artifact they serve. A package's working documents are committed with it; session documents are not.
 
 ## Location
 
 - **A document serving a change package** goes in that package's `working-docs/` folder: `skai/changes/<change-id>/<type>/working-docs/`, in the package's canonical repository. Promotion archives it with the package. A document serves a package when it exists because of that package: its source notes, reviews, audits, scripts. Notes serving two packages go with the upstream one and are linked from the other; related packages can live in different repositories, so they have no shared folder.
-- **A document serving no package** goes in a session folder under `skai/working-docs/`. A work spec serves a change, not a package, so it is a session document.
+- **A document serving no package** goes in a session folder under `skai/working-docs/`, which the project's `.gitignore` excludes. A work spec serves a change, not a package, so it is a session document.
 
 **Path formula (no package):** `skai/working-docs/<session-name>/<subpath>/<filename>`
 

@@ -20,3 +20,4 @@ Target: `Guides/Core/working-doc-conventions.md`, with the release entry's migra
 | 2026-10-21 r5 | Open: step 6 does not repeat link verification | logged | step 5 already requires it |
 | 2026-10-21 r5 | Terminal round: no new live findings | converged | stop rule (a), clean round over the current text |
 | 2026-10-21 post-r5 (supervisor) | skai's own working documents must not be committed: the library ships whole to every host; refinement records are tracked | closed | G15: skai's `.gitignore` ignores `skai/working-docs/`; refinement working documents moved to `skai/refinement-reviews/<target>-refinement.md`; maintenance guide and release entry say so; no guide sentence added |
+| 2026-10-31 (supervisor) | Session working documents under `skai/working-docs/` are not committed; package working documents stay committed | closed | Requirement 3 amended; guide, three adapter runbooks, `component-selection.md`, README and release entry updated |
