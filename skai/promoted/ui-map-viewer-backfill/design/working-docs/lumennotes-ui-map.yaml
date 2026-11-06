@@ -1,0 +1,59 @@
+version: 1
+app: LumenNotes
+
+modal_styles: [sheet, full_screen, popover]
+
+domains:
+  app:                                    # collapsed (domain == root scene)
+    child:
+      - library                           # cross-domain ref
+      - login:
+          nav:
+            - welcome:
+                todo: true
+                note: "Onboarding flow not yet built"
+
+  library:                                # collapsed
+    tab:
+      - notes:
+          nav:
+            - note                        # cross-domain ref
+      - folders: {}
+      - trash: {}
+    modal:
+      - profile                           # cross-domain ref
+      - search                            # cross-domain ref (reused)
+    notes:
+      - at: modal
+        text: "Profile and Search open from the Library toolbar"
+
+  note:                                   # collapsed
+    composite:
+      - editor                            # cross-domain ref
+    modal:
+      - tag_picker:
+          modal_style: popover
+      - attachment_viewer:
+          modal_style: full_screen
+      - share_sheet:
+          modal_style: sheet
+      - search                            # cross-domain ref (reused, pointer here)
+
+  other:                                  # not collapsed (no common root)
+    scenes:
+      - profile:
+          modal_style: sheet
+          nav:
+            - web                         # ref to common
+      - search:
+          modal_style: full_screen
+          primary_parent: library         # canonical visual position
+      - editor: {}
+
+common:
+  - web:
+      implements: [privacy_policy, terms_of_service]
+
+todos:
+  - scope: folders
+    note: "Subfolder navigation planned for v2"
