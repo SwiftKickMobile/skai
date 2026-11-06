@@ -94,7 +94,9 @@ Usage:
         (an entry naming it, or naming it in Touches), a changed intro (an index file's reminder
         line too), section line or index line may instead ride in an entry's Touches naming its
         file, and no entry names something unchanged or
-        absent, including a rule (ID-NN, ID-NN-NN) the drafts do not define. The declared
+        absent, including a rule (ID-NN, ID-NN-NN) the drafts do not define. An entry's type must
+        be one its artifacts guide allows: a product change to a rule goes under "modify
+        requirement" on its parent, and a design file never retires. The declared
         operation must match the projection: add names something added, modify something
         modified, retire something retired, removed or missing (an item whose heading is gone,
         as a catalog rework absorbs it), move (design specs) an item missing from
@@ -102,9 +104,8 @@ Usage:
         added in another (keyed by term across files, so a relocation is one move, never a retire
         plus an add; a modify entry rides on it when the definition or Also called note changed on
         the way, compared with the catalog under any --base); a file-typed entry names the file itself (never its index
-        line), so "add file" on a file the catalog already has, or "modify file" on a new one,
-        fails; an entry about a rule ("sub-item" is accepted as the older
-        name) or a known-difference note names an item that shows as modified. A moved item may
+        line), so "add file" on a file the catalog already has, or "modify spec file" on a new one,
+        fails; an entry about a rule or a known-difference note names an item that shows as modified. A moved item may
         change on the way: then a modify entry rides on the move and both are accepted, and a
         move whose item changed without a modify entry fails, as does a modify entry on a moved
         item whose text is the same. The authoring artifact's "## Decision Log" is checked
@@ -2442,6 +2443,13 @@ def render_markdown(text, gloss):
 
 # ---------------------------------------------------------------- list-matches-diff
 
+PRODUCT_CHANGE_TYPES = ("add folder", "add file", "add requirement", "modify requirement", "retire requirement",
+                        "add glossary entry", "modify glossary entry", "retire glossary entry")
+DESIGN_CHANGE_TYPES = tuple(f"{op} {what}" for op in ("add", "modify", "retire")
+                            for what in ("spec file", "item", "rule", "index line", "glossary entry", "known-difference note")
+                            if (op, what) != ("retire", "spec file")) + ("move item", "move glossary entry")
+
+
 def kind_matches(change_type, what):
     """A change entry names only things of its own kind, so a glossary term, an item and an index
     line that share a name never collide: a glossary-typed entry names glossary entries, an
@@ -2453,7 +2461,7 @@ def kind_matches(change_type, what):
         return what == "index line"
     if re.search(r"file|folder", change_type):
         return what == "file"
-    if re.search(r"rule|sub-item", change_type):  # sub-item: older name for rule
+    if "rule" in change_type:
         return what == "rule"
     return what == "item"
 
@@ -2488,11 +2496,15 @@ def check_changes(catalog, drafts, authoring, bases=()):
     gloss = prepare(catalog, bases, drafts, drafts.parent / "product-specs-review.html")
     _, _, _, entries = render_tree([*reversed(bases), catalog], drafts, gloss, changes)
     added_files = {e.name for e in entries if e.what == "file" and e.status == "added"}
-    rules = {rid for d in drafts.rglob("*.md") for rid in rule_ids(parse(d))}
-    bad_rules = [c for c in changes if c.rule and c.rule not in rules]
-    issues = [Issue(authoring, c.line, f"{c.cid} names rule {c.rule}, which is not in the drafts") for c in bad_rules]
-    changes = [c for c in changes if c not in bad_rules]
     design = drafts.name == "proposed-design-specs"  # design specs list every changed rule; product specs list requirements
+    allowed = DESIGN_CHANGE_TYPES if design else PRODUCT_CHANGE_TYPES
+    rule_note = "" if design else "; a change to a rule goes under modify requirement on its parent"
+    bad_types = [c for c in changes if c.type not in allowed]
+    issues = [Issue(authoring, c.line, f"{c.cid} has type \"{c.type}\", which is not allowed: use {', '.join(allowed)}{rule_note}") for c in bad_types]
+    rules = {rid for d in drafts.rglob("*.md") for rid in rule_ids(parse(d))}
+    bad_rules = [c for c in changes if c not in bad_types and c.rule and c.rule not in rules]
+    issues += [Issue(authoring, c.line, f"{c.cid} names rule {c.rule}, which is not in the drafts") for c in bad_rules]
+    changes = [c for c in changes if c not in bad_types and c not in bad_rules]
     missing_items = {e.name for e in entries if e.what == "item" and e.status in ("missing", "retired")}
     matched, covering, actual = set(), set(), {}  # actual: cid -> {(what, name, status)} it names
     for e in entries:

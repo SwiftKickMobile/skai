@@ -138,7 +138,7 @@ class CheckChanges(unittest.TestCase):
         self.assertEqual(sum(any(m in i for m in pairing) for i in found), 2)
         for message in ["R2 names item STAGE-04, which is unchanged", "R3 names STAGE-99, which is not in the drafts",
                         "R4 names rule STAGE-09-07, which is not in the drafts", "R5 declares add", "R6 declares retire",
-                        "R7 declares move", "R8 declares add but file", "R9 declares modify but file"]:
+                        'R7 has type "move requirement"', "R8 declares add but file", 'R9 has type "modify file"']:
             self.assertIn(message, text)
         self.assertTrue(any("but no change-list entry names it" in i for i in found))
         self.assertEqual([i for i in found if "D9" in i and "R1 cites D9" not in i], [],
@@ -172,6 +172,42 @@ class Writers(unittest.TestCase):
 
     def tearDown(self):
         self.directory.cleanup()
+
+    def test_product_change_list_rejects_types_the_guide_does_not_allow(self):
+        authoring = self.copy / "package/product-specs-authoring.md"
+        entry = "- {} {}: [STAGE-09-07]\n  - **Justification** The rule changed; Supervisor input\n\n"
+        authoring.write_text(authoring.read_text().replace("## Requirement Changes\n", "## Requirement Changes\n\n" + entry.format("R90", "add rule") + entry.format("R91", "retire rule"), 1))
+        code, lines = run("check-changes", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 1)
+        found = issues(lines)
+        self.assertEqual(len(found), 2, found)
+        for line, kind in zip(found, ("add rule", "retire rule")):
+            self.assertIn(f'has type "{kind}", which is not allowed', line)
+            self.assertIn("add requirement, modify requirement", line)
+            self.assertIn("a change to a rule goes under modify requirement on its parent", line)
+
+    def test_design_change_list_rejects_types_the_guide_does_not_allow(self):
+        authoring = self.copy / "design-package/design-specs-authoring.md"
+        entry = "- S90 retire spec file: [List Screen][s-list]\n  - **Justification** The screen went away; Supervisor input\n\n"
+        authoring.write_text(authoring.read_text().replace("## Spec Changes\n", "## Spec Changes\n\n" + entry, 1))
+        code, lines = run("check-changes", "--catalog", "design-catalog", "--drafts", "design-package/proposed-design-specs",
+                          "--authoring", "design-package/design-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 1)
+        found = issues(lines)
+        self.assertEqual(len(found), 1, found)
+        self.assertIn('S90 has type "retire spec file"', found[0])
+        self.assertNotIn("modify requirement", found[0])
+
+    def test_design_change_list_rejects_an_allowed_type_the_projection_contradicts(self):
+        authoring = self.copy / "design-package/design-specs-authoring.md"
+        authoring.write_text(authoring.read_text().replace(" modify item:", " move item:", 1).replace("- S4 add spec file:", "- S4 modify spec file:", 1))
+        code, lines = run("check-changes", "--catalog", "design-catalog", "--drafts", "design-package/proposed-design-specs",
+                          "--authoring", "design-package/design-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 1)
+        text = "\n".join(issues(lines))
+        self.assertIn("declares move but", text)
+        self.assertIn("S4 declares modify but file", text)
 
     def test_render_product_package_page(self):
         page = self.copy / "package/product-specs-review.html"
