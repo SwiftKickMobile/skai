@@ -9,6 +9,7 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **Open items stay where they were raised.** Promoting a change request no longer moves or renumbers its open Discussion items and gaps. Items in other packages, the base's included, are cited by link, so moving a package only updates links; the base's page lists open items left in its promoted requests.
 - **`check-changes` catches change types the guides don't allow.** An entry like `retire rule` in a product change list used to pass promotion's readiness check; now it's reported, with the allowed types.
 - **Work specs are now dev specs.** The two skills are `skai-dev-specs-authoring` and `skai-dev-specs-implementation`, matching product specs and design specs; the update carries over each project's skill choices, install history and addenda.
 - **Session working documents are gitignored again.** `skai/working-docs/` collects too much transient material to keep; a package's own `working-docs/` folder is still committed.

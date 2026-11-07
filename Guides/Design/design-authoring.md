@@ -229,7 +229,7 @@ under their screen; new changes take their frame's next sub-ID. Identity: `add` 
 the frame name linked to its draft (`[name](<link>)`), or the intended name unlinked without mockups;
 `remove` uses the base design's name, unlinked. Each entry has:
 - **Description** the screen, state or component change in product words, never a visual diff or sample data; about a sentence with mockups; without them, enough to design from.
-- **Justification** a reason sentence, then an input citation, `Resolved decision: D<n>` (this package), `Base decision: D<n>` (its base), or `Supervisor input`.
+- **Justification** a reason sentence, then an input citation, `Resolved decision: D<n>` (another package's linked), or `Supervisor input`.
 
 Inherited gaps get one footnote each, not items, on the first entry or sub-change whose change rests on its placeholder, never on what a frame merely keeps from the base; Placeholder is the provisional answer, not the frame ([`spec-file-gaps.md`](../Core/spec-file-gaps.md)).
 

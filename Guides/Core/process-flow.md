@@ -264,7 +264,7 @@ The original question/proposal/tradeoff stays visible. The why-this-was-discusse
 
 ### Decision Log
 
-Each Discussion-based artifact has one append-only `## Decision Log`, the last `##` section before trailing link definitions, empty until a state change. Append `- <ID> <state> — <one line>` per change: `decided`, `gap`, or `reopened`; order is history, no dates. The item shows only its current state. Tools check each item's last entry: checked ⇔ `decided`; **Gap** line ⇔ `gap`; otherwise no entry or `reopened`.
+Each Discussion-based artifact has one append-only `## Decision Log`, the last `##` section before trailing link definitions, empty until a state change. Append `- <ID> <state> — <one line>` per change: `decided`, `gap`, or `reopened`, a linked `[<ID>][…]` (`decided` or `reopened`) for another package's item; order is history, no dates. The item shows only its current state. Tools check each item's last entry: checked ⇔ `decided`; **Gap** line ⇔ `gap`; otherwise no entry or `reopened`.
 
 ### Discussion-phase gate behavior
 

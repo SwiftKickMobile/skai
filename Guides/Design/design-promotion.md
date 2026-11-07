@@ -116,7 +116,7 @@ readiness screen is for a new run.
 Render the page, then verify before writing the checks:
 
 1. Into production: no open `- [ ]` item, gap, footnote ([`known-gaps.md`](../Core/known-gaps.md))
-   or request under the package; into a package, carry them per `C3`.
+   or request under the package or its promoted requests.
 2. `## Design Changes` is current, Review advanced and inputs reconciled (authoring's *Completion*).
 3. `add` and `modify` entries link drafts on the change page or request section, unless the
    no-mockups ruling under `## Assumptions and TODOs` leaves them unlinked; unlinked entries never
@@ -142,17 +142,17 @@ Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution or
   Designs outside the inventory change only by the placement and relocation the tool guide's
   rules need to absorb them. Into a package, fold screen sections into same-named base sections
   (create missing ones), and:
-  - Append entries with footnotes (`base D04` becomes `D04`) to its `## Design Changes`: next `V`
+  - Append entries to its `## Design Changes`: next `V`
     numbers, Descriptions kept, each Justification ending `; Change request: <nnn> V<n>`. Undrawn entries stay unlinked
     and return the base to Mockups to draw them.
-  - Carry open items, gaps and requests into the base per the shared guide, mirrors kept,
-    logging `gap` for gaps; name the request in its `## Assumptions and TODOs`.
+  - Fold footnotes and mirrors, decisions on base items (each still open) and open
+    requests per the shared guide; name the request in its `## Assumptions and TODOs`.
 - `C4 Links point at the base` — repoint `add` and `modify` links, including appended entries,
   to the base's drawings; a `remove` entry keeps its name; re-render every page whose
   artifact changed, the promoting package's included.
 - `C5 Delete the drafts` — after Base review advances, delete the change page or request section,
   where one exists.
-- `C6 Archive the package` — move the folder intact with `working-docs/`, `change-requests/`
+- `C6 Archive the package` — move the folder intact with `working-docs/`
   and `promoted-change-requests/` if present: to `skai/promoted/<change-id>/design/` for production,
   leaving siblings and removing an empty `<change-id>` folder; to
   `<base>/promoted-change-requests/<nnn>/` for a package. Repair links into and inside the moved
@@ -181,7 +181,7 @@ it; silence is not a pass: name what was compared and found.
 ## Completion
 
 With `C6` checked, the base holds the changes, drafts are gone and the package is archived.
-Link its artifact, name what the base owes and gaps carried, and end with
+Link its artifact, name what the base owes and gaps left open, and end with
 `🏁 Complete. Let me know if anything needs adjustment.`
 If archival fails after `C5`, report the base promoted but archival incomplete, use the standard
 blocked gate and later resume only the archival.

@@ -604,6 +604,73 @@ class Writers(unittest.TestCase):
         self.assertEqual(code, 0, lines)
         self.assertEqual(issues(lines), [], lines)
 
+    def test_request_deciding_a_base_item_shows_on_the_base_and_needs_it_open(self):
+        request = self.copy / "package/change-requests/001/product-specs-authoring.md"
+        request.write_text(request.read_text().replace("## Decision Log\n", "## Decision Log\n\n- [D2][base D2] decided — Option A: a missing date keeps it active.\n", 1)
+                           + "[base D2]: ../../product-specs-authoring.md#d2\n[base D1]: ../../product-specs-authoring.md#d1\n")
+        code, lines = run("check-changes", "--catalog", "catalog", "--drafts", "package/change-requests/001/proposed-product-specs",
+                          "--authoring", "package/change-requests/001/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        d2 = re.search(r'<details[^>]* id="d2" open>.*?</details>', (self.copy / "package/product-specs-review.html").read_text(), re.S)
+        self.assertIn('Decided in request <a href="change-requests/001/product-specs-review.html">001</a>', d2.group(0), "the base item stays open and shows the request's pending decision")
+        request.write_text(request.read_text().replace("- [D2][base D2] decided", "- [D1][base D1] decided", 1))
+        code, lines = run("check-changes", "--catalog", "catalog", "--drafts", "package/change-requests/001/proposed-product-specs",
+                          "--authoring", "package/change-requests/001/product-specs-authoring.md", fixtures=self.copy)
+        self.assertTrue(any("[D1][base D1] is decided but ../../product-specs-authoring.md has no open item D1" in ln for ln in issues(lines)), lines)
+        request.write_text(request.read_text().replace("- [D1][base D1] decided", "- base D3 decided", 1))  # the older form still reads
+        code, lines = run("check-changes", "--catalog", "catalog", "--drafts", "package/change-requests/001/proposed-product-specs",
+                          "--authoring", "package/change-requests/001/product-specs-authoring.md", fixtures=self.copy)
+        self.assertTrue(any("still marks base D3, which this request decides" in ln for ln in issues(lines)), lines)  # the base's footnotes and the request's own
+
+    def test_open_items_stay_in_a_promoted_request_and_a_footnote_links_them(self):
+        promoted = self.copy / "package/promoted-change-requests/002"
+        promoted.mkdir(parents=True)
+        (promoted / "product-specs-authoring.md").write_text(
+            "# Product Specs Authoring — Reminder Sound\n\n## Goal\n\nPick the reminder sound.\n\n## Discussion\n\n"
+            "- [ ] D5 [Proposal] Which sound a reminder plays\n  - **Concern** It follows D6 and base D1.\n  - **Gap** The default chime stands in until the sound team picks one.\n"
+            "- [x] D6 [Proposal] Reminders play a sound\n  - **Decision** They do.\n\n"
+            "## Decision Log\n\n- D6 decided — They do.\n- D5 gap — The default chime stands in.\n")
+        spec = self.copy / "package/proposed-product-specs/domains/suggestion.md"
+        text = spec.read_text().replace("validity ends[^1] |", "validity ends[^1][^2] |", 1)
+        text = text.replace("Expiration arrives.\n", "Expiration arrives.\n[^2]: **Gap:** [D5][002 D5]. Placeholder: the default chime.\n", 1)
+        spec.write_text(text + "[002 D5]: ../../promoted-change-requests/002/product-specs-authoring.md#d5\n")
+        args = ("--catalog", "catalog", "--drafts", "package/proposed-product-specs", "--authoring", "package/product-specs-authoring.md")
+        code, lines = run("check-changes", *args, fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        code, lines = run("validate", "catalog", "package/proposed-product-specs", fixtures=self.copy)
+        self.assertEqual(issues(lines), [], "a footnote linking another package's item, beside another footnote, validates")
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        page = (self.copy / "package/product-specs-review.html").read_text()
+        self.assertIn('Open in promoted request <a href="promoted-change-requests/002/product-specs-review.html">002</a>', page)
+        self.assertIn('id="r002-d5"', page, "the promoted request's open item shows under its own anchor")
+        d5 = re.search(r'<details[^>]* id="r002-d5".*?</details>', page, re.S).group(0)
+        self.assertRegex(d5, r'href="promoted-change-requests/002/product-specs-review\.html#d6"', "its own items are the request's, not the page's")
+        self.assertRegex(d5, r'<a class="ref" href="#d1" data-tip="tip-gap-own-d1">base D1</a>', "its base is this package")
+        self.assertRegex(page, r'<a class="ref" href="promoted-change-requests/002/product-specs-review\.html#d5" data-tip="(tip-gap-linked-\d+-d5)">D5</a>')
+        self.assertIn('<template id="tip-gap-linked-', page, "the linked owner gets its tooltip")
+        self.assertTrue(any("'gaps': 3" in ln for ln in lines), lines)  # the base's gap item, its footnoted requirement and the promoted request's gap item
+        spec.write_text(spec.read_text().replace("[D5][002 D5]", "[D7][002 D5]", 1))
+        code, lines = run("check-changes", *args, fixtures=self.copy)
+        self.assertTrue(any("links D7, which its target does not hold" in ln for ln in issues(lines)), lines)
+
+    def test_a_link_named_with_a_scope_word_reaches_its_definition(self):
+        promoted = self.copy / "package/promoted-change-requests/009"
+        promoted.mkdir(parents=True)
+        (promoted / "product-specs-authoring.md").write_text(
+            "# Product Specs Authoring — Snooze\n\n## Goal\n\nSnooze.\n\n## Discussion\n\n"
+            "- [ ] D3 [Question] How long a snooze lasts\n\n## Decision Log\n")
+        request = self.copy / "package/change-requests/001/product-specs-authoring.md"
+        request.write_text(request.read_text().replace("the open question base D3", "the open question [D3][base D3]", 1)
+                           + "[base D3]: ../../promoted-change-requests/009/product-specs-authoring.md#d3\n")
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/change-requests/001/proposed-product-specs", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        page = (self.copy / "package/change-requests/001/product-specs-review.html").read_text()
+        self.assertRegex(page, r'<a class="ref" href="\.\./\.\./promoted-change-requests/009/product-specs-review\.html#d3"[^>]*>D3</a>',
+                         "the definition decides, though the package this request sits under has its own D3")
+
     def test_convert_old_shape_validates_and_is_idempotent(self):
         code, lines = run("convert", "old-shape", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
