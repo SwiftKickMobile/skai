@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-swiftui
 Managed-Source: Guides/UIMap/ui-map-swiftui.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-11-07
 
 # UI Map — SwiftUI Reference
 
@@ -21,11 +21,13 @@ Map scene IDs are lower snake case. Convert each word to UpperCamelCase for scen
 ```
 TrailDetail/
   TrailDetailView.swift          // struct TrailDetailView: View
-  TrailDetailViewModel.swift     // route enums at the top, then @Observable class TrailDetailViewModel
+  TrailDetailViewModel.swift     // @Observable class TrailDetailViewModel
+  TrailDetailNavRoute.swift      // enum TrailDetailNavRoute — one file per nav, tab or child route
+  TrailDetailModalRoute.swift    // the scene's modal route enums, together
   Views/                         // optional — TrailDetail's own subviews
 ```
 
-All of a scene's route enums live at the top of its `<Scene>ViewModel.swift`, above the view-model class. Every scene gets a `<Scene>ViewModel` — even a leaf with no routes or state — so each scene's file layout is identical and there is always a consistent home for state the moment any is needed.
+A scene's route enums live in files of their own beside its view model: one `<Scene><Kind>Route.swift` for each nav, tab or child route, and one `<Scene>ModalRoute.swift` holding all of its modal route enums (`<Scene>SheetRoute`, `<Scene>CoverRoute`, `<Scene>PopoverRoute`). A scene with no routes has no route files. This keeps the view model to state and logic, and keeps a navigation change out of its diff. Every scene gets a `<Scene>ViewModel` — even a leaf with no routes or state — so each scene's file layout is identical and there is always a consistent home for state the moment any is needed.
 
 A scene's folder may contain a `Views/` subfolder for the scene's own subviews — small presentational views split out to keep `<Scene>View.swift` uncluttered. `Views/` holds subviews only: never a scene (every scene gets its own folder), and never another scene's subviews.
 

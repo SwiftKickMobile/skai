@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-compose
 Managed-Source: Guides/UIMap/ui-map-compose.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-11-07
 
 # UI Map — Jetpack Compose Reference
 
@@ -21,14 +21,16 @@ Map scene IDs are lower snake case. Remove the underscores from the map ID for t
 ```
 traildetail/
   TrailDetailScreen.kt          // @Composable fun TrailDetailScreen(viewModel: TrailDetailViewModel = hiltViewModel())
-  TrailDetailViewModel.kt       // route enums at the top, then @HiltViewModel class TrailDetailViewModel : ViewModel()
+  TrailDetailViewModel.kt       // @HiltViewModel class TrailDetailViewModel : ViewModel()
+  TrailDetailNavRoute.kt        // sealed class TrailDetailNavRoute — one file per nav, tab or child route
+  TrailDetailModalRoute.kt      // sealed class TrailDetailModalRoute — all of the scene's modal destinations
   TrailDetailViewState.kt       // data class for observable scene state
   TrailDetailViewEvent.kt       // sealed interface — UI inputs to the view model
   TrailDetailViewEffect.kt      // sealed interface — one-shot outputs (navigation, toasts, etc.)
   views/                        // optional — TrailDetail's own subviews
 ```
 
-All of a scene's route enums live at the top of its `<Scene>ViewModel.kt`, above the view-model class. A non-routing scene with no state to manage may omit the view model, view state, event, and effect files entirely — the composable stands alone.
+A scene's route enums live in files of their own beside its view model: one `<Scene><Kind>Route.kt` for each nav, tab or child route, and one `<Scene>ModalRoute.kt` for its modal destinations. A scene with no routes has no route files. This keeps the view model to state and logic, and keeps a navigation change out of its diff. A non-routing scene with no state to manage may omit the view model, view state, event, and effect files entirely — the composable stands alone.
 
 A scene's package may contain a `views/` subpackage for the scene's own subviews — small composables split out to keep `<Scene>Screen.kt` uncluttered. `views/` holds subviews only: never a scene (every scene gets its own package), and never another scene's subviews.
 

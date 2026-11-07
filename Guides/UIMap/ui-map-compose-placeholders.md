@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-compose-placeholders
 Managed-Source: Guides/UIMap/ui-map-compose-placeholders.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-07
 
 # UI Map — Jetpack Compose Placeholder Scenes
 
@@ -72,7 +72,7 @@ You declare only `title` / `domainColor` / `routes` / `tabs` / `embedded` and wi
 
 ## Route enums
 
-Follow the route-type contract in [`ui-map-compose.md`](ui-map-compose.md). Placeholder route declarations live at the top of `<Scene>ViewModel.kt`.
+Follow the route-type contract in [`ui-map-compose.md`](ui-map-compose.md). Placeholder route declarations live in their own files beside the view model, as *Scene file layout* in [`ui-map-compose.md`](ui-map-compose.md) describes: `NoteModalRoute` below is `NoteModalRoute.kt`.
 
 ```kotlin
 sealed class NoteModalRoute : Route {
@@ -83,7 +83,7 @@ sealed class NoteModalRoute : Route {
 
 ## View models and DI
 
-As a placeholder-only convention, every scaffolded scene gets a **minimal** view model (`class FooViewModel : ViewModel()`), empty until it needs state; this does not change the canonical guide's allowance for production stateless leaves to omit one. Route declarations, when present, are the minimal view-model file's only required additional content. Obtain the view model with plain `viewModel()`, not `hiltViewModel()`: a skeleton should not require Hilt wiring. Production scenes follow `ui-map-compose.md`; placeholders skip the production state/event/effect triad and call `navigatePush` directly from the route action.
+As a placeholder-only convention, every scaffolded scene gets a **minimal** view model (`class FooViewModel : ViewModel()`), empty until it needs state; this does not change the canonical guide's allowance for production stateless leaves to omit one. The minimal view-model file holds nothing else; route declarations stay in their own files. Obtain the view model with plain `viewModel()`, not `hiltViewModel()`: a skeleton should not require Hilt wiring. Production scenes follow `ui-map-compose.md`; placeholders skip the production state/event/effect triad and call `navigatePush` directly from the route action.
 
 ## Per route kind
 
