@@ -101,10 +101,15 @@ def parse_changes(text):
 
 
 OWNER_RE = re.compile(r"^(?P<scope>.*?)\s*(?P<did>D\d+)$")
+OWNER_LINK_RE = re.compile(r"^\[(?P<did>D\d+)\](?:\((?P<url>[^)\s]+)\)|\[(?P<ref>[^\]]*)\])$")
 
 
 def owner_ref(owner, owners):
-    """The owning item named in a footnote (`D15`, `base D15`, `product specs D21`) as the spec tool's chip."""
+    """The owning item named in a footnote (`D15`, `base D15`, `product specs D21`, or a link to
+    another package's item, `[D27][001 D27]`) as the spec tool's chip."""
+    m = OWNER_LINK_RE.match(owner)
+    if m:
+        return st.link_owner_chip(m.group("did"), m.group("url") or st.RESOLVER["linkdefs"].get(m.group("ref") or m.group("did"), ""))
     m = OWNER_RE.match(owner)
     return st.gap_owner_chip(m.group("scope").strip().lower(), m.group("did"), owners) if m else html.escape(owner)
 
@@ -179,11 +184,12 @@ def render(authoring, specs, out):
     changes = parse_changes(text)
     owners = st.gap_owners(authoring, disc)
     st.RESOLVER["gap_owners"] = owners
+    discussion, (p_open, p_gap) = st.render_discussion(disc, gloss, authoring)
     items = [it for _, its in disc for it in its]
     n_gap_items = sum(1 for it in items if not it["done"] and it["gap"])
-    n_open = sum(1 for it in items if not it["done"]) - n_gap_items
-    n_gap = n_gap_items + sum(1 for c in changes if c["gaps"])  # open gap items plus footnoted entries
-    n_done = len(items) - n_open - n_gap_items
+    n_done = sum(1 for it in items if it["done"])
+    n_open = len(items) - n_done - n_gap_items + p_open  # promoted requests' open items count too: they stay there
+    n_gap = n_gap_items + p_gap + sum(1 for c in changes if c["gaps"])  # open gap items plus footnoted entries
     gaps = f"{n_gap} gap{'s' if n_gap != 1 else ''}"
     if n_open:
         state = f"{n_open} open" + (f", {gaps}" if n_gap else "")
@@ -196,11 +202,7 @@ def render(authoring, specs, out):
     head = (f'<div class="item request"><div class="head"><span class="status">{html.escape(state)}</span></div>'
             + (f"<p>{links.show(st.inline(links.hide(goal), gloss, auto=True))}</p>" if goal else "")
             + (f'<p class="note">{links.show(st.inline(links.hide(note), gloss, auto=True))}</p>' if note else "") + "</div>")
-    body = head
-    if disc:
-        body += '<section class="discussion"><h2>Discussion</h2>' + "".join(
-            (f'<h3 class="section" id="{st.anchor(topic)}">{html.escape(topic)}</h3>' if topic else "") + "".join(st.render_discussion_item(it, gloss) for it in its)
-            for topic, its in disc) + "</section>"
+    body = head + discussion
     if changes:
         cards, last = [], None
         for c in changes:

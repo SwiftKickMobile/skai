@@ -82,5 +82,28 @@ class Render(unittest.TestCase):
         self.assertIn('<template id="tip-gap-base-d02"><div class="pop-src">../package/design-review.html</div>', page)
 
 
+    def test_base_shows_a_requests_pending_decision_and_its_promoted_requests_open_items(self):
+        request = self.copy / "package/change-requests/001/design-authoring.md"
+        request.write_text(request.read_text().replace("## Decision Log\n", "## Decision Log\n\n- [D02][base D02] decided — the group collapses.\n", 1)
+                           + "\n[base D02]: ../../design-authoring.md#d02\n")
+        promoted = self.copy / "package/promoted-change-requests/002"
+        promoted.mkdir(parents=True)
+        (promoted / "design-authoring.md").write_text(
+            "# Design — Pin Badge\n\n## Goal\n\nBadge pinned notes.\n\n## Discussion\n\n"
+            "- [ ] D05 [Question] Which badge color?\n  - **Gap** Gray stands in until the brand team picks one.\n\n"
+            "## Decision Log\n\n- D05 gap — gray stands in.\n")
+        artifact = self.copy / "package/design-authoring.md"
+        text = artifact.read_text().replace("**Gap:** D02. Placeholder: the empty group", "**Gap:** [D05][002 D05]. Placeholder: the empty group", 1)
+        artifact.write_text(text + "\n[002 D05]: promoted-change-requests/002/design-authoring.md#d05\n")
+        code, out = self.render(artifact)
+        self.assertEqual(code, 0, out)
+        self.assertIn("'gaps': 4", out, "the promoted request's open gap counts on the base")
+        page = (artifact.parent / "design-review.html").read_text()
+        d02 = re.search(r'<details[^>]* id="d02" open>.*?</details>', page, re.S).group(0)
+        self.assertIn('Decided in request <a href="change-requests/001/design-review.html">001</a>', d02, "the base item stays open and shows the request's pending decision")
+        self.assertIn('Open in promoted request <a href="promoted-change-requests/002/design-review.html">002</a>', page)
+        self.assertIn('id="r002-d05"', page)
+        self.assertRegex(page, r'<div class="gapbody"><a class="ref" href="promoted-change-requests/002/design-review\.html#d05" data-tip="tip-gap-linked-\d+-d05">D05</a> the empty group')
+
 if __name__ == "__main__":
     unittest.main()

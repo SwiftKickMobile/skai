@@ -43,7 +43,7 @@ resolved target identity. Entries omit spec text; the page shows each difference
 - **ID** `S01`, `S02`, …: package-local, never renumbered or reused; dev specs cite `UI-*`, never
   `S`. Order entries by root, glossary, folder, file and item; no checkbox.
 - **Operation** `add | modify | retire | move` × **object** `spec file | item | rule | index line |
-  glossary entry | known-difference note`. Only items move; a rule changing parent retires and is
+  glossary entry | known-difference note`. Only items and glossary entries move; a rule changing parent retires and is
   re-added; files never retire. [Modify vs. Retire](design-specs.md#modify-vs-retire) decides; a
   retired glossary entry or note disappears, only items and rules keep `(retired)`.
 - **Identity** file titles linked to drafts, item and rule IDs to the draft item heading, terms

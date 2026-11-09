@@ -235,7 +235,7 @@ Gaps are items or footnotes per design authoring. Once drawn, each gap gets one 
 across the package's drawings (its change page or request Section, whatever their screen Sections), on
 its placeholder node in the first frame drawing it in canvas order; move it when that changes. Three lines: `<owning item ID>: <the question>`, `Placeholder: <what is drawn>`,
 `Owner: <owning artifact path relative to skai/changes/>`. Use node `annotations`, keeping others, in the
-file's yellow `Gap` category (`figma.annotations`; create it if missing). Update on placeholder changes;
+file's yellow `Gap` category (`figma.annotations`; create it if missing). Update on placeholder or owner-path changes;
 remove when the owning item closes; never in `Production`.
 
 ## Working a backfill

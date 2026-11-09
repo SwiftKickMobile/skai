@@ -34,7 +34,9 @@ Usage:
         removed the glossary entry, a conflict the projection introduces that the package must
         settle (hold the file, or a change request). Gap footnotes: a "[^n]" marker in an item's
         text pairs with a "[^n]: **Gap:** <owning item>. Placeholder: <the provisional answer this place builds on>" definition
-        under that item (after its rules and tables, before known differences); a marker with no
+        under that item (after its rules and tables, before known differences); the owner is "D3",
+        or a link to another package's item, "[D27][001 D27]" or "[D27](path#d27)" (the older
+        scoped "base D3" still reads); a marker with no
         definition, a duplicate label in a file, a definition outside an item or off its shape is
         rejected; a definition with no marker is a marker-less note. Canon carries none: a
         footnote in a single root, or in the first root of a projection, is reported (a note
@@ -87,6 +89,9 @@ Usage:
         <base>/change-requests/<nnn>/ or <base>/promoted-change-requests/<nnn>/ layer on the base's
         drafts of the same name (and the base's own bases), read from the folder by render and
         check-changes; --base overrides. The page title chains the ids: "Change Package: offers | 001".
+        Open items and gaps stay where they were raised: a package's page lists the open items of
+        its promoted requests (and theirs) under its Discussion and counts them, and shows on an
+        open item the decision an open request logged on it.
 
     python3 spec-tool.py check-changes --catalog DIR --drafts DIR --authoring FILE
         The list-matches-diff check: every added, modified, retired or missing item, glossary
@@ -94,7 +99,9 @@ Usage:
         (an entry naming it, or naming it in Touches), a changed intro (an index file's reminder
         line too), section line or index line may instead ride in an entry's Touches naming its
         file, and no entry names something unchanged or
-        absent, including a rule (ID-NN, ID-NN-NN) the drafts do not define. The declared
+        absent, including a rule (ID-NN, ID-NN-NN) the drafts do not define. An entry's type must
+        be one its artifacts guide allows: a product change to a rule goes under "modify
+        requirement" on its parent, and a design file never retires. The declared
         operation must match the projection: add names something added, modify something
         modified, retire something retired, removed or missing (an item whose heading is gone,
         as a catalog rework absorbs it), move (design specs) an item missing from
@@ -102,19 +109,21 @@ Usage:
         added in another (keyed by term across files, so a relocation is one move, never a retire
         plus an add; a modify entry rides on it when the definition or Also called note changed on
         the way, compared with the catalog under any --base); a file-typed entry names the file itself (never its index
-        line), so "add file" on a file the catalog already has, or "modify file" on a new one,
-        fails; an entry about a rule ("sub-item" is accepted as the older
-        name) or a known-difference note names an item that shows as modified. A moved item may
+        line), so "add file" on a file the catalog already has, or "modify spec file" on a new one,
+        fails; an entry about a rule or a known-difference note names an item that shows as modified. A moved item may
         change on the way: then a modify entry rides on the move and both are accepted, and a
         move whose item changed without a modify entry fails, as does a modify entry on a moved
         item whose text is the same. The authoring artifact's "## Decision Log" is checked
         against its Discussion: the section exists once the Discussion has an item and is the
-        artifact's last; each line is "- <ID> decided|gap|reopened — <one line>"; an entry may
+        artifact's last; each line is "- <ID> decided|gap|reopened — <one line>", or "- [D12][label]
+        decided|reopened — …" for a change request deciding another package's item (the older
+        "base D12" still reads), whose last decided entry must name an item open there (an
+        archived request's are history), a base gap's footnotes drafted out; an entry may
         name an item since removed (the log outlives its items); an item's last entry agrees with
         it (checked ⇔ decided, a "**Gap**" sub-bullet ⇔ gap, otherwise reopened or none); an item
         carries at most one Decision line and is never both checked and a gap; every D# a change
         entry's justification cites is in the Discussion. Every gap footnote in the drafts names
-        an open gap item (unchecked, with a Gap line), and every open gap item is marked by at
+        an open gap item (unchecked, with a Gap line), a linked one an item its target holds, and every open gap item is marked by at
         least one footnote (a marker-less note counts). One line per failure as
         path:line: message; exit status 1 when there are any.
 
@@ -268,7 +277,7 @@ BARE_ADDRESS_RE = re.compile(r"://|\b(?:mailto|tel):|\bwww\.|\S@\S+\.\w", re.I) 
 ALSO_RE = re.compile(rf"^> \*\*Also called:\*\* (?P<text>(?:{ALSO_ALT}; )*{ALSO_ALT}\.)$")
 LINKDEF_RE = re.compile(r"^\[(?P<name>[^\]]+)\]:\s+(?P<target>\S.*)$")
 FOOT_DEF_RE = re.compile(r"^\[\^(?P<label>[A-Za-z0-9-]+)\]:\s*(?P<text>.*)$")
-GAP_NOTE_RE = re.compile(r"^\*\*Gap:\*\*\s*(?:(?P<scope>[a-z][a-z ]*?)\s+)?(?P<did>D\d+)\.(?:\s+Placeholder:\s*(?P<ph>.+?))?\s*$")
+GAP_NOTE_RE = re.compile(r"^\*\*Gap:\*\*\s*(?:(?:(?P<scope>[a-z][a-z ]*?)\s+)?(?P<did>D\d+)|\[(?P<ldid>D\d+)\](?:\((?P<url>[^)\s]+)\)|\[(?P<ref>[^\]]*)\]))\.(?:\s+Placeholder:\s*(?P<ph>.+?))?\s*$")
 FOOT_MARK_RE = re.compile(r"\[\^(?P<label>[A-Za-z0-9-]+)\](?!:)")
 TABLE_ROW_RE = re.compile(r"^( *)\|(.*)\|\s*$")
 TABLE_SEP_RE = re.compile(r"^ *\|(\s*:?-+:?\s*\|)+\s*$")
@@ -319,12 +328,20 @@ class Known:
 class Gap:
     """A gap footnote under an item: its label, the Discussion item that owns the question (and the
     scope naming that item's artifact when it is another one, "" for this one), the placeholder as
-    this item shows it (empty when there is nothing to proceed on) and its line."""
+    this item shows it (empty when there is nothing to proceed on) and its line. An owner named by
+    link (`[D27][001 D27]` or `[D27](path#d27)`) has its target in `link`, a definition's name or
+    the inline target, and `inline` set for the latter."""
     label: str
     did: str
     scope: str
     placeholder: str
     line: int
+    link: str = ""
+    inline: bool = False
+
+    def target(self, linkdefs):
+        """The link's target as written: the inline one, or the named definition's ("" when undefined)."""
+        return self.link if self.inline else linkdefs.get(self.link, "")
 
 
 @dataclass
@@ -523,7 +540,8 @@ def _parse_spec(spec, body, err):
                 else:
                     if item.knowns:
                         err(i, "gap footnote after a known-difference note; known differences come last in an item")
-                    item.gaps.append(Gap(mf.group("label"), mg.group("did"), (mg.group("scope") or "").strip(), (mg.group("ph") or "").strip(), i + 1))
+                    item.gaps.append(Gap(mf.group("label"), mg.group("did") or mg.group("ldid"), (mg.group("scope") or "").strip(), (mg.group("ph") or "").strip(), i + 1,
+                                         mg.group("url") or mg.group("ref") or (mg.group("ldid") or ""), bool(mg.group("url"))))
             k += 1
             continue
         if item is None:
@@ -746,8 +764,8 @@ def link_uses(text):
     names = []
     for m in LINK_USE_RE.finditer(text):
         label, ref = m.group(1), m.group(2)
-        if label.startswith("^") and ref is None:
-            continue  # a gap footnote marker
+        if label.startswith("^") and (ref is None or ref.startswith("^")):
+            continue  # a gap footnote marker, or two side by side
         if ref is not None:
             names.append(ref if ref else label)
         else:
@@ -825,7 +843,7 @@ def validate(roots):
     for s in specs:
         used, first_line = set(), {}
         for ln, l in enumerate(s.raw, 1):
-            if LINKDEF_RE.match(l):
+            if LINKDEF_RE.match(l) and not FOOT_DEF_RE.match(l):  # a gap footnote's owner may be a link
                 continue
             for name in link_uses(l):
                 used.add(name)
@@ -906,7 +924,8 @@ def resolve_link(spec, rel, path, frag, lookup):
             return None, f"points at {path}, which does not exist"
     else:
         found = spec
-    if frag and frag not in heading_anchors(found):
+    if frag and frag not in heading_anchors(found) and not (found.path.name.endswith("-authoring.md") and frag in {
+            it["id"].lower() for _, its in parse_discussion(found.path.read_text(encoding="utf-8")) for it in its}):  # a Discussion item's anchor
         return found, f"points at #{frag}, which is not in {found.path}"
     return found, None
 
@@ -1255,6 +1274,7 @@ def inline(s, gloss=None, auto=False):
         m3 = re.fullmatch(r"(?:(base product specs|base|product specs|specs)\s+)?(D\d+)", name, re.I) or re.fullmatch(r"D\d+", label)
         if m3:
             scope, did = (m3.group(1), m3.group(2)) if m3.re.groups == 2 else (None, m3.group(0))
+            scope = None if RESOLVER["linkdefs"].get(name) else scope  # a defined link names its item by its target; a scope word only for a bare name
             ref_chip = item_ref_chip(did, scope, RESOLVER["linkdefs"].get(name, "") or ("#" if not ref else ""), label)
             if ref_chip:
                 return ref_chip
@@ -1546,7 +1566,7 @@ def gap_owners(authoring, disc):
         return owners
     authoring = Path(authoring).resolve()
     folder = authoring.parent
-    base = folder.parent.parent / authoring.name if folder.parent.name in ("change-requests", "promoted-change-requests") else input_base(authoring, own_text)
+    base = base_authoring(authoring, own_text)
     if base and base.exists():
         base_text = base.read_text(encoding="utf-8")
         page = os.path.relpath(base.with_name(authoring.name.replace("-authoring.md", "-review.html")), folder).replace(os.sep, "/")
@@ -1571,6 +1591,42 @@ def gap_owners(authoring, disc):
         if found:
             owners["base product specs"] = found  # the specs the base builds on, when this package's own differ
     return owners
+
+
+def linked_owner(path):
+    """The gap-owner key of the authoring artifact at `path`, which a link reached: the key it is
+    already read under, or a new one once read, so its items get chips and tooltips like the
+    known owners'; None when `path` is not an authoring artifact on disk."""
+    owners = RESOLVER.setdefault("gap_owners", {})
+    path = Path(path).resolve()
+    key = next((k for k, info in owners.items() if k != "specs" and info[3] is not None and Path(info[3]).resolve() == path), None)
+    if key is None and path.name.endswith("-authoring.md") and path.is_file():
+        text = path.read_text(encoding="utf-8")
+        page = os.path.relpath(path.with_name(path.name.replace("-authoring.md", "-review.html")), RESOLVER.get("out_dir") or path.parent).replace(os.sep, "/")
+        key = f"linked {len(owners)}"
+        owners[key] = (page, {it["id"]: it for _, its in parse_discussion(text) for it in its},
+                       {m.group("name"): m.group("target") for m in map(LINKDEF_RE.match, text.splitlines()) if m}, path)
+    return key
+
+
+def link_owner_chip(did, target):
+    """The chip of an item named by a link `target` relative to the document being rendered: its
+    own artifact's for a bare fragment, else the linked artifact's; the ID alone when unreachable."""
+    path = target.split("#", 1)[0]
+    if not path:
+        return gap_owner_chip("", did, RESOLVER.get("gap_owners", {}))
+    key = linked_owner(RESOLVER["base"] / path) if RESOLVER.get("base") is not None else None
+    return gap_owner_chip(key, did, RESOLVER["gap_owners"]) if key is not None else html.escape(did)
+
+
+def base_authoring(authoring, text):
+    """A package's base authoring artifact: a change request's parent package (the folder above
+    `change-requests/` or `promoted-change-requests/`, same artifact name), else its `## Inputs`
+    base; None when it builds on production."""
+    authoring = Path(authoring).resolve()
+    if authoring.parent.parent.name in ("change-requests", "promoted-change-requests"):
+        return authoring.parent.parent.parent / authoring.name
+    return input_base(authoring, text)
 
 
 def input_base(authoring, text):
@@ -1613,10 +1669,12 @@ def item_ref_chip(did, scope=None, target=None, label=None):
     owners = RESOLVER.get("gap_owners", {})
     if not owners:
         return None
-    key = (scope or "").strip().lower()
+    key, found = (scope or "").strip().lower(), None
     if not key and target and not target.startswith("#") and RESOLVER.get("base") is not None:
         path = (RESOLVER["base"] / target.split("#", 1)[0]).resolve()
-        key = next((k for k, info in owners.items() if k and len(info) > 3 and info[3] is not None and Path(info[3]).resolve() == path), "")
+        found = next((k for k, info in owners.items() if k and len(info) > 3 and info[3] is not None and Path(info[3]).resolve() == path), None)
+        found = found if found is not None else linked_owner(path)
+    key = found if found is not None else RESOLVER.get("scope_map", {}).get(key, key)  # a scope word as the document being rendered means it
     info = owners.get(key)
     if info is None or did not in info[1]:
         return None
@@ -1640,7 +1698,8 @@ def gap_owner_chip(scope, did, owners):
 def render_gaps(it, aid, gloss):
     """An item's gap notes, each owner resolved through the artifacts the page knows."""
     owners = RESOLVER.get("gap_owners", {})
-    return gap_notes(((g.label, gap_owner_chip(g.scope, g.did, owners), g.placeholder) for g in it.gaps), aid, gloss)
+    return gap_notes(((g.label, link_owner_chip(g.did, g.target(RESOLVER["linkdefs"])) if g.link else gap_owner_chip(g.scope, g.did, owners), g.placeholder)
+                      for g in it.gaps), aid, gloss)
 
 
 def render_item(old: Item, new: Item, gloss, why):
@@ -1692,7 +1751,7 @@ def render_item(old: Item, new: Item, gloss, why):
                     changed = True
                     body = word_diff(a.text if a else "", b.text if b else "", gloss)
                     parts.append(f'<blockquote class="mod"><b>Known difference — {html.escape(app)}:</b> {body}</blockquote>')
-            changed = changed or {(g.scope, g.did, g.placeholder) for g in new.gaps} != {(g.scope, g.did, g.placeholder) for g in old.gaps}  # a footnote gained, lost or reworded is a change; one carried unchanged is not
+            changed = changed or {(g.scope, g.did, g.placeholder, g.link) for g in new.gaps} != {(g.scope, g.did, g.placeholder, g.link) for g in old.gaps}  # a footnote gained, lost or reworded is a change; one carried unchanged is not
             status = "modified" if changed else "unchanged"
     iid = new.id if new else old.id
     aid = anchor(iid) + ("-retired" if (new and new.retired) else "")
@@ -2014,7 +2073,8 @@ def parse_discussion(text):
     return topics
 
 
-LOG_ENTRY_RE = re.compile(r"^- (?P<id>[A-Z]+\d+) (?P<state>decided|gap|reopened) — (?P<text>.+?)\s*$")
+LOG_ENTRY_RE = re.compile(r"^- (?P<id>(?:base )?[A-Z]+\d+|\[D\d+\](?:\([^)\s]+\)|\[[^\]]*\])) (?P<state>decided|gap|reopened) — (?P<text>.+?)\s*$")  # `[D12][base D12]` (or the older `base D12`): another package's item
+LOG_LINK_RE = re.compile(r"^\[(?P<did>D\d+)\](?:\((?P<url>[^)\s]+)\)|\[(?P<ref>[^\]]*)\])$")
 
 
 def parse_decision_log(text):
@@ -2036,6 +2096,103 @@ def parse_decision_log(text):
     return (text[:m.end() + after.start()].count("\n") + 1 if after else 0), entries, bad
 
 
+def check_base_decisions(authoring, text, drafts=None, bases=()):
+    """A change request's decisions on another package's items (`[D12][base D12] decided`, or the
+    older `base D12`) each name an item open there, which the request's promotion checks off; an
+    archived request's are history, already applied. A decided base gap leaves no footnote marking
+    it: the request drafts every base file that does, without it."""
+    authoring = Path(authoring).resolve()
+    if authoring.parent.parent.name == "promoted-change-requests":
+        return []
+    linkdefs = {m.group("name"): m.group("target") for m in map(LINKDEF_RE.match, text.splitlines()) if m}
+    base = base_authoring(authoring, text)
+    issues, gaps = [], set()
+    for (path, did), (state, n, raw) in other_decisions(authoring, text, linkdefs).items():
+        if state != "decided":
+            continue
+        if path is None:
+            issues.append(Issue(authoring, n, f"{raw} is decided but names no package's authoring artifact"))
+            continue
+        items = {it["id"]: it for _, its in parse_discussion(path.read_text(encoding="utf-8")) for it in its}
+        if did not in items or items[did]["done"]:
+            issues.append(Issue(authoring, n, f"{raw} is decided but {os.path.relpath(path, authoring.parent)} has no open item {did}"))
+        elif items[did]["gap"] and base and path == base.resolve():
+            gaps.add(did)
+    if not gaps or drafts is None or not bases:
+        return issues
+    for f in sorted(Path(bases[-1]).rglob("*.md")):
+        mine = Path(drafts) / f.relative_to(bases[-1])
+        held = mine.exists()
+        sp = parse(mine if held else f)
+        for it in (sp.items if sp.kind == "spec" else []):
+            for g in it.gaps:
+                if g.did not in gaps:
+                    continue
+                owner = linked_items(sp.path, g.target(sp.linkdefs), authoring)[0] if g.link and linked_items(sp.path, g.target(sp.linkdefs), authoring) else None
+                if (owner == base.resolve()) if g.link else (g.scope == ("base" if held else "")):
+                    issues.append(Issue(sp.path, g.line, f"gap footnote [^{g.label}] still marks base {g.did}, which this request decides; draft the file without it"))
+    return issues
+
+
+def other_decisions(authoring, text, linkdefs):
+    """{(authoring path or None, D): (last state, line, as written)} for the Decision Log's entries
+    on another package's items: a link reaches its target; `base D12` the base."""
+    _, entries, _ = parse_decision_log(text)
+    out = {}
+    for raw, state, _, n in entries:
+        m = LOG_LINK_RE.match(raw)
+        if m:
+            found = linked_items(authoring, m.group("url") or linkdefs.get(m.group("ref") or m.group("did"), ""), authoring)
+            out[(found[0] if found else None, m.group("did"))] = (state, n, raw)
+        elif raw.startswith("base "):
+            base = base_authoring(authoring, text)
+            out[(base.resolve() if base and base.exists() else None, raw[5:])] = (state, n, raw)
+    return out
+
+
+def linked_items(doc, target, authoring):
+    """(path, {D: item}) of the authoring artifact a link `target` in `doc` reaches (a bare fragment
+    reaches `authoring`); None when the target is not an authoring artifact on disk."""
+    path = target.split("#", 1)[0]
+    path = Path(authoring).resolve() if not path else (Path(doc).parent / path).resolve()
+    if not path.name.endswith("-authoring.md") or not path.is_file():
+        return None
+    return path, {it["id"]: it for _, its in parse_discussion(path.read_text(encoding="utf-8")) for it in its}
+
+
+def pending_base_decisions(authoring):
+    """{D: [(request number, decision, request page href)]} for this package's items that an open
+    change request has decided: checked off here when that request promotes, open until then."""
+    authoring, out = Path(authoring).resolve(), {}
+    for request in sorted((authoring.parent / "change-requests").glob(f"*/{authoring.name}")):
+        text = request.read_text(encoding="utf-8")
+        _, entries, _ = parse_decision_log(text)
+        said = {raw: words for raw, _, words, _ in entries}
+        page = os.path.relpath(request.with_name(authoring.name.replace("-authoring.md", "-review.html")), RESOLVER.get("out_dir") or authoring.parent).replace(os.sep, "/")
+        linkdefs = {m.group("name"): m.group("target") for m in map(LINKDEF_RE.match, text.splitlines()) if m}
+        for (path, did), (state, _, raw) in other_decisions(request, text, linkdefs).items():
+            if state == "decided" and path == authoring:
+                out.setdefault(did, []).append((request.parent.name, said[raw], page, request))
+    return out
+
+
+def promoted_open(authoring):
+    """[(request path label, page href, [open item])] for this package's promoted change requests,
+    and theirs in turn, in filing order: open items and gaps stay where they were raised."""
+    authoring, out = Path(authoring).resolve(), []
+
+    def walk(folder, label):
+        for request in sorted((folder / "promoted-change-requests").glob(f"*/{authoring.name}")):
+            path = label + [request.parent.name]
+            items = [it for _, its in parse_discussion(request.read_text(encoding="utf-8")) for it in its if not it["done"]]
+            if items:
+                page = os.path.relpath(request.with_name(authoring.name.replace("-authoring.md", "-review.html")), RESOLVER.get("out_dir") or authoring.parent).replace(os.sep, "/")
+                out.append((" | ".join(path), page, items, request))
+            walk(request.parent, path)
+    walk(authoring.parent, [])
+    return out
+
+
 def check_decision_log(path, text):
     """The log and the items agree: every item's last entry matches its state (checked ⇔ decided,
     a Gap line ⇔ gap, otherwise none or reopened); an entry may name an item since removed (the
@@ -2050,6 +2207,7 @@ def check_decision_log(path, text):
         issues.append(Issue(path, present, "a section follows ## Decision Log, which must be the artifact's last"))
     issues += [Issue(path, n, f"not a Decision Log entry (`- <ID> decided|gap|reopened — <one line>`): {line.strip()}") for n, line in bad]
     last = {did: state for did, state, _, _ in entries}  # an entry may outlive its item: the log is the history
+    issues += [Issue(path, n, f"{did} is logged {state}; another package's item is decided or reopened") for did, state, _, n in entries if did.startswith(("base ", "[")) and state == "gap"]
     for did, it in items.items():
         if it["decisions"] > 1:
             issues.append(Issue(path, it["line"], f"{did} carries {it['decisions']} Decision lines; at most one"))
@@ -2354,12 +2512,12 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
         set_resolver(linkdefs, Path(authoring).resolve())
         WHY_RESOLVER.update({"linkdefs": RESOLVER["linkdefs"], "base": RESOLVER["base"], "doc": RESOLVER["doc"]})
         RESOLVER["anchors"] |= {anchor(topic) for topic, _ in disc if topic} | {it["id"].lower() for _, its in disc for it in its}  # the page's Discussion headings and cards
-    head, discussion = "", ""
+    head = ""
+    discussion, (p_open, p_gap) = render_discussion(disc, gloss, authoring) if authoring else ("", (0, 0))
     if title or goal:
         items = [it for _, its in disc for it in its]
-        n_gap = sum(1 for it in items if not it["done"] and it["gap"])
-        n_open = sum(1 for it in items if not it["done"]) - n_gap
-        n_done = len(items) - n_open - n_gap
+        n_gap = sum(1 for it in items if not it["done"] and it["gap"]) + p_gap
+        n_open = sum(1 for it in items if not it["done"] and not it["gap"]) + p_open
         gaps = f"{n_gap} gap{'s' if n_gap != 1 else ''}"
         state = ((f"discussion complete; {gaps} carried" if n_gap else "discussion complete") if items and not n_open
                  else (f"{n_open} open" + (f", {gaps}" if n_gap else "") if n_open else "no discussion items"))
@@ -2369,15 +2527,11 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
                  + (f'<p class="note">{inline(note, gloss, auto=True)}</p>' if note else "") + "</div>")
     if situations:
         head += f'<h2>Situations</h2><div class="item request">{render_markdown(situations, gloss)}</div>'
-    if disc:
-        discussion = '<section class="discussion"><h2>Discussion</h2>' + "".join(
-            (f'<h3 class="section" id="{anchor(topic)}">{html.escape(topic)}</h3>' if topic else "") + "".join(render_discussion_item(it, gloss) for it in items)
-            for topic, items in disc) + "</section>"
     sections, toc, totals, _ = render_tree([*reversed(bases), catalog], drafts, gloss, changes)
-    n_gaps = sum(1 for _, items in disc for it in items if it["gap"]) if disc else 0
+    n_gaps = (sum(1 for _, items in disc for it in items if it["gap"]) if disc else 0) + p_gap
     n_gaps += sum(1 for d in sorted(drafts.rglob("*.md")) for it in (lambda sp: sp.items if sp.kind == "spec" else [])(parse(d)) if it.gaps)  # footnoted requirements, once each
     totals["gaps"] = n_gaps
-    totals["open"] = sum(1 for _, items in disc for it in items if not it["done"] and not it["gap"]) if disc else 0
+    totals["open"] = (sum(1 for _, items in disc for it in items if not it["done"] and not it["gap"]) if disc else 0) + p_open
     totals["resolved"] = sum(1 for _, items in disc for it in items if it["done"]) if disc else 0
     head += toc_html(toc) + discussion
     page = page_shell(f"Change Package: {package_id(drafts)}", totals, head, sections, gloss, out)
@@ -2385,17 +2539,56 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
     print(f"wrote {out}: {totals}")
 
 
-def render_discussion_item(it, gloss):
+def render_discussion(disc, gloss, authoring):
+    """The Discussion section and the (open, gap) counts it adds beyond the package's own items: its
+    items, an open one an open change request decided noting that decision, then the open items
+    of its promoted change requests, which stay there, each request under its own heading."""
+    pending = pending_base_decisions(authoring)
+    promoted = promoted_open(authoring)
+    if not disc and not promoted:
+        return "", (0, 0)
+    body = "".join((f'<h3 class="section" id="{anchor(topic)}">{html.escape(topic)}</h3>' if topic else "")
+                   + "".join(render_discussion_item(it, gloss, pending.get(it["id"], ())) for it in items) for topic, items in disc)
+    for label, page, items, request in promoted:
+        body += (f'<h3 class="section">Open in promoted request <a href="{html.escape(page)}">{html.escape(label)}</a></h3>'
+                 + under_request(request, lambda: "".join(render_discussion_item(it, gloss, prefix=f"r{anchor(label)}-") for it in items)))
+    gaps = sum(1 for _, _, items, _ in promoted for it in items if it["gap"])
+    return f'<section class="discussion"><h2>Discussion</h2>{body}</section>', (sum(len(items) for _, _, items, _ in promoted) - gaps, gaps)
+
+
+def under_request(request, fn):
+    """`fn()` rendering text another package wrote (a change request's items or decisions) on this
+    page: its links resolve as that package defines them, and its scope words as it means them,
+    its own items being its own and `base` the package it was filed against."""
+    text = request.read_text(encoding="utf-8")
+    scope_map = {}
+    for key, info in gap_owners(request, parse_discussion(text)).items():
+        mapped = linked_owner(info[3]) if key != "specs" and info[3] is not None else None
+        if mapped is not None:
+            scope_map[key] = mapped
+    scope_map["specs"] = scope_map.get("product specs", "specs")
+    saved, RESOLVER["scope_map"] = RESOLVER.get("scope_map", {}), scope_map
+    try:
+        return rendered_under({m.group("name"): m.group("target") for m in map(LINKDEF_RE.match, text.splitlines()) if m}, request, fn)
+    finally:
+        RESOLVER["scope_map"] = saved
+
+
+def render_discussion_item(it, gloss, pending=(), prefix=""):
     """A discussion item as a collapsible card: the summary line carries the ID, kind, title and
     the state word (no square: squares mean change type, which an item has none of); resolved
-    items start collapsed, open ones expanded; the sub-bullets as written show on expand."""
+    items start collapsed, open ones expanded; the sub-bullets as written show on expand, then each
+    `pending` (request, decision, page) an open change request recorded. `prefix` keeps the card's
+    anchor apart from this package's items when it shows another package's."""
     done = it["done"]
     state, status = ("resolved", "added") if done else ("gap", "modified") if it["gap"] else ("open", "modified")
     head = (f'<summary><span class="id">{it["id"]}</span>'
             f'<span class="status">{html.escape(it["kind"])}</span><span class="title">{inline(it["title"], gloss, auto=True)}</span>'
             f'<span class="state">{state}</span></summary>')
     bullets = bullet_list(it["bullets"], gloss)
-    return f'<details class="item request discussion {state}" id="{it["id"].lower()}"{"" if done else " open"}>{head}{f"<ul>{bullets}</ul>" if bullets else ""}</details>'
+    bullets += "".join(f'<li><b>Decided in request <a href="{html.escape(page)}">{html.escape(nnn)}</a></b>, checked off when it promotes: '
+                       f'{under_request(request, lambda: inline(text, gloss, auto=True))}</li>' for nnn, text, page, request in pending if not done)
+    return f'<details class="item request discussion {state}" id="{prefix}{it["id"].lower()}"{"" if done else " open"}>{head}{f"<ul>{bullets}</ul>" if bullets else ""}</details>'
 
 
 def render_markdown(text, gloss):
@@ -2442,6 +2635,13 @@ def render_markdown(text, gloss):
 
 # ---------------------------------------------------------------- list-matches-diff
 
+PRODUCT_CHANGE_TYPES = ("add folder", "add file", "add requirement", "modify requirement", "retire requirement",
+                        "add glossary entry", "modify glossary entry", "retire glossary entry")
+DESIGN_CHANGE_TYPES = tuple(f"{op} {what}" for op in ("add", "modify", "retire")
+                            for what in ("spec file", "item", "rule", "index line", "glossary entry", "known-difference note")
+                            if (op, what) != ("retire", "spec file")) + ("move item", "move glossary entry")
+
+
 def kind_matches(change_type, what):
     """A change entry names only things of its own kind, so a glossary term, an item and an index
     line that share a name never collide: a glossary-typed entry names glossary entries, an
@@ -2453,7 +2653,7 @@ def kind_matches(change_type, what):
         return what == "index line"
     if re.search(r"file|folder", change_type):
         return what == "file"
-    if re.search(r"rule|sub-item", change_type):  # sub-item: older name for rule
+    if "rule" in change_type:
         return what == "rule"
     return what == "item"
 
@@ -2465,13 +2665,14 @@ def check_changes(catalog, drafts, authoring, bases=()):
     no entry names something unchanged or absent."""
     catalog, drafts, authoring, bases = Path(catalog), Path(drafts), Path(authoring), [Path(b) for b in bases] or infer_bases(drafts)
     LAYERS[:] = [p.resolve() for p in [catalog, *bases, drafts]]
-    _, _, _, changes, _, _ = parse_authoring(authoring, drafts)
+    _, _, _, changes, own_defs, _ = parse_authoring(authoring, drafts)
     text = authoring.read_text(encoding="utf-8")
-    log_issues = check_decision_log(authoring, text)
+    other = lambda m: (m.group(2) or own_defs.get(m.group(3) or m.group(1), "")).split("#", 1)[0]  # a linked citation's file: another package when not empty
+    log_issues = check_decision_log(authoring, text) + check_base_decisions(authoring, text, drafts, bases)
     disc_items = {it["id"]: it for _, its in parse_discussion(text) for it in its}
     known = set(disc_items)
     log_issues += [Issue(authoring, c.line, f"{c.cid} cites {did}, which is not in ## Discussion")
-                   for c in changes for did in sorted(set(re.findall(r"(?<!base )(?<!specs )\bD\d+\b", re.sub(r"Base decision: D\d+", "", c.why)))) if did not in known and "Change request:" not in c.why]  # a folded entry's citation stays the request's  # a scoped item (base D4, product specs D21) is another artifact's
+                   for c in changes for did in sorted(set(re.findall(r"(?<!base )(?<!specs )\bD\d+\b", re.sub(r"\[(D\d+)\](?:\(([^)\s]+)\)|\[([^\]]*)\])", lambda m: "" if other(m) else m.group(1), re.sub(r"Base decision: D\d+", "", c.why))))) if did not in known and "Change request:" not in c.why]  # a folded entry's citation stays the request's  # a scoped item (base D4, product specs D21) is another artifact's
     # every gap footnote in the drafts names an open gap item, and every open gap item is marked
     open_gaps = {d for d, it in disc_items.items() if it["gap"] and not it["done"]}
     marked = set()
@@ -2479,7 +2680,14 @@ def check_changes(catalog, drafts, authoring, bases=()):
         sp = parse(d)
         for it in (sp.items if sp.kind == "spec" else []):
             for g in it.gaps:
-                if g.scope:
+                if g.link:
+                    owner = linked_items(d, g.target(sp.linkdefs), authoring)
+                    if owner is None or g.did not in owner[1]:
+                        log_issues.append(Issue(d, g.line, f"gap footnote [^{g.label}] links {g.did}, which its target does not hold"))
+                        continue
+                    if owner[0] != authoring.resolve():
+                        continue  # another artifact's item owns it
+                elif g.scope:
                     continue  # another artifact's item owns it
                 marked.add(g.did)
                 if g.did not in open_gaps:
@@ -2488,11 +2696,15 @@ def check_changes(catalog, drafts, authoring, bases=()):
     gloss = prepare(catalog, bases, drafts, drafts.parent / "product-specs-review.html")
     _, _, _, entries = render_tree([*reversed(bases), catalog], drafts, gloss, changes)
     added_files = {e.name for e in entries if e.what == "file" and e.status == "added"}
-    rules = {rid for d in drafts.rglob("*.md") for rid in rule_ids(parse(d))}
-    bad_rules = [c for c in changes if c.rule and c.rule not in rules]
-    issues = [Issue(authoring, c.line, f"{c.cid} names rule {c.rule}, which is not in the drafts") for c in bad_rules]
-    changes = [c for c in changes if c not in bad_rules]
     design = drafts.name == "proposed-design-specs"  # design specs list every changed rule; product specs list requirements
+    allowed = DESIGN_CHANGE_TYPES if design else PRODUCT_CHANGE_TYPES
+    rule_note = "" if design else "; a change to a rule goes under modify requirement on its parent"
+    bad_types = [c for c in changes if c.type not in allowed]
+    issues = [Issue(authoring, c.line, f"{c.cid} has type \"{c.type}\", which is not allowed: use {', '.join(allowed)}{rule_note}") for c in bad_types]
+    rules = {rid for d in drafts.rglob("*.md") for rid in rule_ids(parse(d))}
+    bad_rules = [c for c in changes if c not in bad_types and c.rule and c.rule not in rules]
+    issues += [Issue(authoring, c.line, f"{c.cid} names rule {c.rule}, which is not in the drafts") for c in bad_rules]
+    changes = [c for c in changes if c not in bad_types and c not in bad_rules]
     missing_items = {e.name for e in entries if e.what == "item" and e.status in ("missing", "retired")}
     matched, covering, actual = set(), set(), {}  # actual: cid -> {(what, name, status)} it names
     for e in entries:

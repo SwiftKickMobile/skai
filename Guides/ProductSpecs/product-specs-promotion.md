@@ -128,7 +128,7 @@ First run `validate <catalog root> <drafts>`, `check-changes` and `render` for a
 then verify before writing `## Promotion Checks`:
 
 1. Into production: no open `- [ ]` item in `## Discussion`, gap
-   ([`known-gaps.md`](../Core/known-gaps.md)) or request under the package. Into a package, `C7` carries them.
+   ([`known-gaps.md`](../Core/known-gaps.md)) or request under the package or its promoted requests.
 2. `validate` reports no fault in a file the package holds and no conflict the projection
    introduces; a fault already in an untouched base file never blocks: start a package against the base.
 3. `check-changes` passes: every change has a `## Requirement Changes` entry or Touches line at the
@@ -167,9 +167,9 @@ Verify changed content at its projected base location; unchanged content never b
   destination links, no Discussion citations, checkboxes or `🟡`, and only retirement marks and
   known-difference notes beside contracts; read back and run `validate <catalog root>` (a fault
   readiness missed is `C7`'s, wherever reported). Keep the approved diff; do not render after
-  writing. Into a package: replace its drafts; append entries to its `## Requirement Changes`
-  with its next `R` numbers, each Justification ending `; Change request: <nnn> R<n>`; carry open work and
-  name the request in `## Assumptions and TODOs` as the shared guide says; validate and
+  writing. Into a package: replace its drafts; per the shared guide, append entries to its
+  `## Requirement Changes`, fold footnotes, base-item decisions and open requests, and name the
+  request in `## Assumptions and TODOs`; validate and
   render the base, whose author reconciles its list on reopen. Repair mechanically, never reword; record the write outcome,
   then confirmation/repair results, keeping failures. Check `C7` only on confirmed success, then archive.
 - `C8 Archive the package` — *Archive the package* below; promotion completes only after verified
@@ -209,7 +209,7 @@ Use `output` on success only if persisted. Silence never passes: unresolved path
 
 After verified `C7`, execute `C8`:
 
-1. Move the package intact (pages, `working-docs/`, `change-requests/`,
+1. Move the package intact (pages, `working-docs/`,
    `promoted-change-requests/`): `skai/changes/<change-id>/product-specs/` to
    `skai/promoted/<change-id>/product-specs/` in the catalog repository; a request to
    `<base>/promoted-change-requests/<nnn>/`. Leave siblings; remove only empty grouping directories.

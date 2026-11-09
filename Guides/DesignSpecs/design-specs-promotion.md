@@ -11,7 +11,7 @@ Print `📖 SKAI guide: design-specs-promotion` now, as a line of its own. Read 
 ## Purpose
 
 Fold the approved package into its **base** per [`change-requests.md`](../Core/change-requests.md), then archive. Only promotion writes canon except verified dev specs
-known-difference cleanup. Validate and prepare destination links; preserve prose, IDs, notes and drafts. Return package defects to authoring; a defect in the base starts a package against it ([`change-requests.md`](../Core/change-requests.md)).
+known-difference cleanup. Validate and prepare destination links; preserve prose, IDs, notes and drafts. Return package defects to authoring; a defect in the base starts a package against it.
 
 Use [rules/checks](design-specs.md), [formats](design-specs-artifacts.md) and
 [shape/tool](../Core/spec-file-shape.md).
@@ -107,8 +107,7 @@ confirmation/repair there (keep `C1`–`C2`, repair without rewording, verify, c
 checked `C3` resumes archival only. Changed drafts, intervening base edits or uncertain outcomes block;
 never assume unrecorded writes or reopen/promote archived packages.
 
-Before writing, require an absent promoted path (`skai/promoted/<change-id>/design-specs/`, or
-`<base>/promoted-change-requests/<nnn>/`); find live incoming references from specs/app repos,
+Before writing, require an absent promoted path (*Archive the Package*); find live incoming references from specs/app repos,
 related packages and dev specs. Collisions or inaccessible required references block; never
 overwrite or merge destinations.
 
@@ -118,7 +117,7 @@ First run `validate <specs root> <drafts>`, `check-changes` and `render` for a c
 then verify:
 
 1. Into production: no open Discussion item, gap ([`known-gaps.md`](../Core/known-gaps.md)) or
-   request under the package. Into a package, carry them per `C3`.
+   request under the package or its promoted requests.
 2. `validate` reports no fault in a held file and no conflict the projection introduces; a fault already in an untouched base file never blocks: start a package against the base.
 3. `check-changes` passes: every change has a `## Spec Changes` entry or Touches line at the artifact
    formats' granularity, with the right operation; no entry names an unchanged or absent target.
@@ -147,9 +146,9 @@ Use readiness output as evidence for tool-covered checks; inspect the rest.
   by read-back and `validate <specs root>` (a fault readiness did not note is `C3`'s, wherever
   reported): intended link targets; no Discussion citations, checkboxes or `🟡`; only retirement
   marks and labeled known differences beside contracts. Keep the approved diff; do not render
-  after writing. Into a package: replace its drafts; append entries to its `## Spec Changes`
-  with its next `S` numbers, each Justification ending `; Change request: <nnn> S<n>`; carry open work and
-  name the request in Assumptions and TODOs as the shared guide says; validate and render the
+  after writing. Into a package: replace its drafts; per the shared guide, append entries to its
+  `## Spec Changes`, fold footnotes, base-item decisions and open requests, and name the request in
+  Assumptions and TODOs; validate and render the
   base, whose author reconciles its list on reopen. Record the write outcome; repair mechanically, never reword; check `C3`
   only on confirmed success.
 - `C4 Archive the package` — *Archive the Package* below; promotion completes only after verified
@@ -178,7 +177,7 @@ Result first; inspections name repeatable inputs. Silence never passes: unresolv
 
 After verified `C3`, execute `C4`:
 
-1. Move the package intact (pages, `working-docs/`, `change-requests/`,
+1. Move the package intact (pages, `working-docs/`,
    `promoted-change-requests/`): `skai/changes/<change-id>/design-specs/` to
    `skai/promoted/<change-id>/design-specs/`; a request to `<base>/promoted-change-requests/<nnn>/`.
    Preserve siblings; remove only empty grouping directories.

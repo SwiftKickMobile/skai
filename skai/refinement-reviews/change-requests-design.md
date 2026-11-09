@@ -97,3 +97,7 @@ gates and invokes no skill.
 ## Size Budget — 2026-10-25
 
 Cap **2,950** holds (supervisor, 2026-10-25, series PL); the provenance tag on a folded entry now follows the entry's own reason and source.
+
+## Size Budget — 2026-11-07
+
+skai#118 (open items stay where raised; citations of other packages' items are links), after a compression round: caps **3,200** for `change-requests.md`, **15,550** for `product-specs-promotion.md` and **47,500** for the design specs set (supervisor, 2026-11-07). Sizes at commit: 3,164; 15,469; 47,459.

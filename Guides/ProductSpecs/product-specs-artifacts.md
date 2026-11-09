@@ -64,8 +64,8 @@ target identity. Entries omit spec text; the page shows each difference under it
 - **Source** `Design` | `Implementation` | `Supervisor input` | `Resolved decision` |
   `Agent inference` | `Change request` | `Catalog`. A Justification is a reason a reader follows
   without opening anything, then its source. `Design` names the screen or state by product
-  name, never a design-tool link; `Resolved decision: D#` cites a Discussion item, `Base decision: D#`
-  its base's; `Agent inference` draws first scrutiny; promotion ends a folded entry's Justification
+  name, never a design-tool link; `Resolved decision: D#` cites a Discussion item,
+  linked when another package's; `Agent inference` draws first scrutiny; promotion ends a folded entry's Justification
   with `; Change request: <nnn> R<n>`.
 
 `check-changes` confirms the list matches the projection: entries name every changed requirement

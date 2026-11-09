@@ -14,7 +14,7 @@ All artifacts: `[^n]`, numbered by first use and unique per file, ends a placeho
 
 `[^n]: **Gap:** <owning item>. Placeholder: <the provisional answer this place builds on>`
 
-Owner: open gap `D<n>` where the question was raised, not merely inherited (here or scoped: `base D04`, `product specs D21`). Questions stay only there. Marker-less definitions note the nearest requirement; no Placeholder: nothing to proceed on.
+Owner: open gap `D<n>` where raised, not inherited: here, or linked elsewhere (`[D27][001 D27]`). Questions stay only there. Marker-less definitions note the nearest requirement; no Placeholder: nothing to proceed on.
 
 ```markdown
 ### REMIND-01
