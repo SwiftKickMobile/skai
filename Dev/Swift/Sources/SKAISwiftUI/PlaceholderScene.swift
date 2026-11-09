@@ -40,6 +40,21 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
         self.hasEmbedded = true
     }
 
+    /// Scene with embedded content whose tabs are selected through the scene's
+    /// tab route enum: `selection` binds the view model's current tab route, and
+    /// each tab names its case with `PlaceholderTab(label:systemImage:route:)`.
+    public init<Selection: Hashable>(
+        title: String,
+        domainColor: Color = .accentColor,
+        routes: [PlaceholderRoute] = [],
+        tabs: [PlaceholderTab],
+        selection: Binding<Selection>,
+        @ViewBuilder embedded: () -> EmbeddedContent
+    ) {
+        self.init(title: title, domainColor: domainColor, routes: routes, tabs: tabs, embedded: embedded)
+        self.selection = Self.erased(selection, tabs: tabs)
+    }
+
     /// Leaf scene (no embedded content) or a tabs-only container.
     public init(
         title: String,
@@ -53,6 +68,20 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
         self.tabs = tabs
         self.embedded = EmptyView()
         self.hasEmbedded = false
+    }
+
+    /// Tabs-only container whose tabs are selected through the scene's tab route
+    /// enum: `selection` binds the view model's current tab route, and each tab
+    /// names its case with `PlaceholderTab(label:systemImage:route:)`.
+    public init<Selection: Hashable>(
+        title: String,
+        domainColor: Color = .accentColor,
+        routes: [PlaceholderRoute] = [],
+        tabs: [PlaceholderTab],
+        selection: Binding<Selection>
+    ) where EmbeddedContent == EmptyView {
+        self.init(title: title, domainColor: domainColor, routes: routes, tabs: tabs)
+        self.selection = Self.erased(selection, tabs: tabs)
     }
 
     // MARK: - Constants
@@ -69,6 +98,7 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     private let tabs: [PlaceholderTab]
     private let embedded: EmbeddedContent
     private let hasEmbedded: Bool
+    private var selection: Binding<AnyHashable>?
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.placeholderCrumbs) private var crumbs
@@ -110,9 +140,9 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     private var layout: some View {
         if !tabs.isEmpty {
             // Tabbed: a full-bleed TabView owns the screen edges (tab bar at the
-            // bottom). The breadcrumb is delegated to the tab content, which
-            // accumulates this scene into its crumbs and renders it under its
-            // own nav bar.
+            // bottom). The breadcrumb, and the dismiss ✕ when presented modally,
+            // are delegated to the tab content, which accumulates this scene into
+            // its crumbs and renders it under its own nav bar.
             tabView
         } else {
             VStack(alignment: .leading, spacing: 16) {
@@ -177,16 +207,39 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
         }
     }
 
+    @ViewBuilder
     private var tabView: some View {
-        TabView {
-            ForEach(tabs) { tab in
-                tab.content
-                    .environment(\.placeholderCrumbs, effectiveCrumbs)
-                    .environment(\.placeholderShowsDismiss, false)
-                    .tabItem { Label(tab.label, systemImage: resolvedSymbol(tab.systemImage)) }
-            }
+        if let selection {
+            TabView(selection: selection) { tabItems }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            TabView { tabItems }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var tabItems: some View {
+        ForEach(tabs) { tab in
+            tab.content
+                .environment(\.placeholderCrumbs, effectiveCrumbs)
+                .environment(\.placeholderShowsDismiss, showsDismiss)
+                .tabItem { Label(tab.label, systemImage: resolvedSymbol(tab.systemImage)) }
+                .tag(tab.route ?? AnyHashable(tab.id))
+        }
+    }
+
+    /// Erases a typed tab route binding so the scene can hold any route enum.
+    /// Debug builds stop when a tab has no route of that enum, since the bar would
+    /// silently stop tracking the view model.
+    private static func erased<Selection: Hashable>(_ binding: Binding<Selection>, tabs: [PlaceholderTab]) -> Binding<AnyHashable> {
+        assert(
+            tabs.allSatisfy { $0.route?.base is Selection },
+            "PlaceholderScene: with selection:, every PlaceholderTab needs route: set to a \(Selection.self) case."
+        )
+        return Binding(
+            get: { AnyHashable(binding.wrappedValue) },
+            set: { if let route = $0.base as? Selection { binding.wrappedValue = route } }
+        )
     }
 
     /// Returns `name` if it's a real SF Symbol, else the default — guards against

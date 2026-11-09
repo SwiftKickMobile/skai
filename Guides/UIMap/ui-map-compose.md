@@ -8,21 +8,21 @@ Managed-Updated-At: 2026-11-07
 
 Print `📖 SKAI guide: ui-map-compose` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
-Platform reference for implementing a UI Map in Jetpack Compose. Companion to [`ui-map-guide.md`](ui-map-guide.md), which defines the platform-agnostic YAML format.
+Platform reference for implementing a UI Map in Jetpack Compose; companion to [`ui-map-guide.md`](ui-map-guide.md), the platform-agnostic YAML format.
 
 Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
-Each scene's routing is implemented locally: the view model emits one-shot navigation effects, and the screen subscribes and dispatches each effect to a Compose Navigation `NavController` scoped to that scene. There is no central router.
+Routing is local, with no central router: the view model emits one-shot navigation effects and the screen dispatches them to a Compose Navigation `NavController` scoped to the scene. Deliberate overrides of any pattern here go in the project's `README.md` or an equivalent conventions doc; "README" here and in the placeholder guide means either.
 
 ## Scene file layout
 
-Map scene IDs are lower snake case. Remove the underscores from the map ID for the package name and convert each word to UpperCamelCase for code types: `trail_detail` becomes:
+Map scene IDs are lower snake case; the package name drops the underscores and each word becomes UpperCamelCase in code types: `trail_detail` becomes:
 
 ```
 traildetail/
   TrailDetailScreen.kt          // @Composable fun TrailDetailScreen(viewModel: TrailDetailViewModel = hiltViewModel())
   TrailDetailViewModel.kt       // @HiltViewModel class TrailDetailViewModel : ViewModel()
-  TrailDetailNavRoute.kt        // sealed class TrailDetailNavRoute — one file per nav, tab or child route
+  TrailDetailNavRoute.kt        // sealed class TrailDetailNavRoute — one file per nav, tab or child route kind
   TrailDetailModalRoute.kt      // sealed class TrailDetailModalRoute — all of the scene's modal destinations
   TrailDetailViewState.kt       // data class for observable scene state
   TrailDetailViewEvent.kt       // sealed interface — UI inputs to the view model
@@ -30,17 +30,17 @@ traildetail/
   views/                        // optional — TrailDetail's own subviews
 ```
 
-A scene's route enums live in files of their own beside its view model: one `<Scene><Kind>Route.kt` for each nav, tab or child route, and one `<Scene>ModalRoute.kt` for its modal destinations. A scene with no routes has no route files. This keeps the view model to state and logic, and keeps a navigation change out of its diff. A non-routing scene with no state to manage may omit the view model, view state, event, and effect files entirely — the composable stands alone.
+A non-routing, stateless scene may omit the view model, view state, event and effect files; the composable stands alone.
 
-A scene's package may contain a `views/` subpackage for the scene's own subviews — small composables split out to keep `<Scene>Screen.kt` uncluttered. `views/` holds subviews only: never a scene (every scene gets its own package), and never another scene's subviews.
+An optional `views/` subpackage holds the scene's own small composables, keeping `<Scene>Screen.kt` uncluttered — never a scene (each gets its own package) or another scene's subviews.
 
-Package nesting mirrors the map's canonical definition nesting inside `domains:` — not references, `primary_parent`, or other inbound routes. Each domain is a package directly under the scenes root, and a scene's package is placed where the map *defines* it (a collapsed domain at the domain package itself; an inline-defined scene inside its container's owning scene's package; a scene in a non-collapsed domain's `scenes:` list directly under the domain package). Every other appearance of a scene is a reference: the referencing scene calls the composable directly — a reference (cross-domain or `primary_parent`) never creates or moves a package.
+Package nesting mirrors where the map *defines* each scene inside `domains:`, never references, `primary_parent`, or other inbound routes. Each domain is a package directly under the top-level `scenes/` package; within it, a collapsed domain's root scene is the domain package itself, an inline-defined scene nests in its container's owning scene's package, and a scene listed in a non-collapsed domain's `scenes:` sits directly under the domain package. Every other appearance is a reference — the referencing scene calls the composable directly — and creates or moves nothing.
 
-Scenes in the YAML's top-level `common:` group are domain-agnostic. They live in the shared UI module under its own top-level `scenes/` package — one package per scene, following the same per-scene layout as any other scene.
+The YAML's top-level `common:` scenes are domain-agnostic and live in the shared UI module's own top-level `scenes/` package, one package per scene with the same layout.
 
 ## Route enums
 
-Sealed classes implementing a `Route` marker interface, with `@Serializable` cases for type-safe Compose Navigation. Cases carry whatever associated values the destination needs as `data class` fields.
+Sealed classes implementing a `Route` marker interface, with `@Serializable` cases for type-safe Compose Navigation that carry the values the destination needs as `data class` fields. One `<Scene><Kind>Route.kt` per kind sits beside the view model, not inside it, keeping it to state and logic and a navigation change out of its diff.
 
 ```kotlin
 sealed class DashboardNavRoute : Route {
@@ -51,11 +51,11 @@ sealed class DashboardNavRoute : Route {
 
 ## Scene state, events, and effects
 
-Every scene exposes three sealed types alongside its view model:
+Every scene with a view model exposes three sealed types beside it:
 
-- `FooViewState` — a `data class` of observable state; exposed as `StateFlow<FooViewState>`.
-- `FooViewEvent` — a `sealed interface` of UI inputs; the screen calls `viewModel.processEvent(event)`.
-- `FooViewEffect` — a `sealed interface` of one-shot outputs (navigation, toast, etc.); exposed as `Flow<FooViewEffect>` from a `Channel`.
+- `FooViewState` — a `data class` of observable state, exposed as `StateFlow<FooViewState>`.
+- `FooViewEvent` — a `sealed interface` of UI inputs the screen sends via `viewModel.processEvent(event)`.
+- `FooViewEffect` — a `sealed interface` of one-shot outputs (navigation, toast, etc.), exposed as `Flow<FooViewEffect>` from a `Channel`.
 
 ```kotlin
 @HiltViewModel
@@ -73,15 +73,18 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
 
 ## Nav routing
 
-The view model emits a `Navigate(route)` effect; the screen dispatches it to the local `NavController`.
+The view model emits a `Navigate(route)` effect; the screen hands it to the local `NavController`.
 
 ```kotlin
+// DashboardNavRoute.kt
 sealed class DashboardNavRoute : Route {
     @Serializable data object Detail : DashboardNavRoute()
 }
 
+// DashboardViewEffect.kt
 data class Navigate(val route: DashboardNavRoute) : DashboardViewEffect
 
+// DashboardScreen.kt
 @Composable
 fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
@@ -104,7 +107,7 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
 
 ## Modal routing
 
-One `ModalRoute` enum per scene. Every modal destination has a required `modal_style` in the map; that agreed value selects the builder at the `NavHost` declaration site, not in the route enum. Do not infer or substitute a style during implementation:
+One `ModalRoute` enum per scene; each destination's required map `modal_style` selects the builder at the `NavHost` declaration site, not the route enum — never infer or substitute one:
 
 | `modal_style` | Builder |
 |---|---|
@@ -112,15 +115,17 @@ One `ModalRoute` enum per scene. Every modal destination has a required `modal_s
 | `full_screen` | `bottomSheetFullScreen<Route>` |
 | `popover` | `dialog<Route>` |
 
-Projects document non-standard styles and deliberate overrides in their project-conventions document.
+Projects document non-standard styles in `README.md`, each with its builder and the `NavHost` it belongs in.
 
 ```kotlin
+// DashboardModalRoute.kt
 sealed class DashboardModalRoute : Route {
     @Serializable data object Profile : DashboardModalRoute()
     @Serializable data class MediaCapture(val id: String) : DashboardModalRoute()
     @Serializable data object RecordWarning : DashboardModalRoute()
 }
 
+// DashboardViewEffect.kt
 data class NavigateModal(val route: DashboardModalRoute) : DashboardViewEffect
 data object CloseModal : DashboardViewEffect
 ```
@@ -146,16 +151,19 @@ ModalBottomSheetNavHost(navController = modalNavController) {
 
 ## Child routing
 
-Child routes replace what the scene renders. The start destination lives on the view state; transitions use `navigateReplace` instead of `navigatePush`.
+Child routes replace what the scene renders: the view state holds the start destination; transitions use `navigateReplace`, not `navigatePush`.
 
 ```kotlin
+// AppChildRoute.kt
 sealed class AppChildRoute : Route {
     @Serializable data object Login : AppChildRoute()
     @Serializable data object Main : AppChildRoute()
 }
 
+// AppViewState.kt
 data class AppViewState(val startDestination: AppChildRoute = AppChildRoute.Login)
 
+// AppViewEffect.kt
 data class Navigate(val route: AppChildRoute) : AppViewEffect
 ```
 
@@ -176,21 +184,23 @@ NavHost(navController = navController, startDestination = viewState.startDestina
 
 ## Tab routing
 
-The view state carries `currentTabRoute`. The screen uses a pager and tab row, syncing the pager's position to the route via events.
+The view state carries `currentTabRoute`; the screen binds the tab container in use (`NavigationBar`, `TabRow` + pager, etc.) to it via events.
 
 ```kotlin
+// MainTabRoute.kt
 sealed class MainTabRoute : Route {
     @Serializable data object Home    : MainTabRoute()
     @Serializable data object Library : MainTabRoute()
     @Serializable data object Settings: MainTabRoute()
 }
 
+// MainViewState.kt
 data class MainViewState(val currentTabRoute: MainTabRoute = MainTabRoute.Home)
 ```
 
 ## Composite scenes
 
-A composite parent has no route enum for its composite children — they're called directly as composables in the parent's body.
+A composite parent has no route enum for its composite children; its body calls them directly.
 
 ```kotlin
 @Composable
@@ -202,15 +212,15 @@ fun DetailScreen(viewModel: DetailViewModel = hiltViewModel()) {
 }
 ```
 
-The composite wrapper in the diagram is a grouping; no Kotlin artifact corresponds to it.
+The diagram's composite wrapper is a grouping; no Kotlin artifact corresponds to it.
 
 ## Reused scenes
 
-A reused scene is a `@Composable` function called from multiple parents. It may itself be a full scene with its own routes — e.g. a `PlayerScreen` used as a composite child in several parents, with its own modal route to a fullscreen variant.
+A reused scene is a `@Composable` function called from several parents, possibly a full scene with its own routes — e.g. a `PlayerScreen` composite child of several parents with a modal route to a fullscreen variant.
 
 ## Implements
 
-An `Implements: A, B, C` annotation means a single composable renders multiple variants, parameterized at call site. The variant is typically carried as a field on the route case that targets it:
+An `Implements: A, B, C` annotation means one composable renders several variants, parameterized at call site; the variant typically rides as a field on the targeting route case:
 
 ```kotlin
 sealed class ProfileNavRoute : Route {
@@ -218,21 +228,21 @@ sealed class ProfileNavRoute : Route {
 }
 ```
 
-`WebScreen(resource = …)` renders the page for the given `Resource` (e.g. `PrivacyPolicy`, `TermsAndConditions`). One composable, one view model, multiple instances.
+`WebScreen(resource = …)` renders the page for its `Resource` (e.g. `PrivacyPolicy`, `TermsAndConditions`): one composable, one view model, many instances.
 
 ## Placeholder scenes
 
-Scaffolding placeholder scenes — the placeholder library API, the per-route-kind patterns, the each-scene-owns-its-navigation-hosts rule, and the dismiss/breadcrumb behavior — is covered in its own doc, read only when implementing: [`ui-map-compose-placeholders.md`](ui-map-compose-placeholders.md).
+Placeholder scaffolding (placeholder library API, per-route-kind patterns, the each-scene-owns-its-navigation-hosts rule, dismiss/breadcrumb behavior) has its own doc, read only when implementing: [`ui-map-compose-placeholders.md`](ui-map-compose-placeholders.md).
 
 ## State ownership
 
-Routes are owned by the local `NavController`, not the view model. The view model expresses *intent* to route via one-shot effects (`Navigate`, `NavigateModal`, `CloseModal`); the screen dispatches each effect to the appropriate `NavController`. The screen never reads the current route from the view model — Compose Navigation is the source of truth.
+Route state lives in the local `NavController`: Compose Navigation is the source of truth; the screen never reads the current route from the view model, which only signals *intent* via one-shot effects (`Navigate`, `NavigateModal`, `CloseModal`) the screen dispatches to the right `NavController`.
 
 Effects come from:
 
-- `processEvent` handlers called by the screen, e.g. a click handler that sends `Navigate(…)` to the effect channel.
-- External flows observed in the view model's `init`, e.g. an auth flow that sends `Navigate(AppChildRoute.Login)` when the user logs out.
-- Compose Navigation itself handles dismissal: system back press, drag-to-dismiss, and outside-tap pop the back stack automatically. The view model can pop programmatically via `CloseModal`.
+- `processEvent` handlers the screen calls, e.g. a click handler sending `Navigate(…)` to the effect channel.
+- External flows the view model's `init` observes, e.g. an auth flow sending `Navigate(AppChildRoute.Login)` on logout.
+- Compose Navigation handles dismissal itself: system back, drag-to-dismiss and outside-tap pop the back stack; the view model pops programmatically via `CloseModal`.
 
 ## Project Addendum
 

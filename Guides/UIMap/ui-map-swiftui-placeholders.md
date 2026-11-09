@@ -2,49 +2,49 @@ Managed-By: skai
 Managed-Id: guide.ui-map-swiftui-placeholders
 Managed-Source: Guides/UIMap/ui-map-swiftui-placeholders.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-07
 
 # UI Map — SwiftUI Placeholder Scenes
 
 Print `📖 SKAI guide: ui-map-swiftui-placeholders` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
-How the UI Map **implementation** skill scaffolds scenes in SwiftUI: skeleton + navigation, no feature content. Companion to [`ui-map-swiftui.md`](ui-map-swiftui.md) — read its **Scene file layout**, **Route enums**, and **Modal routing** sections first; this doc builds on them. Load this doc while auditing, planning, or building whenever placeholder work is in scope; omit it only when no placeholder work is in scope.
+How the UI Map **implementation** skill scaffolds SwiftUI scenes: skeleton + navigation, no feature content, building on [`ui-map-swiftui.md`](ui-map-swiftui.md) (read its **Scene file layout**, **Route enums** and **Modal routing** first). Load this guide while auditing, planning, or building whenever placeholder work is in scope, and only then. Placeholder route actions set view-model route properties directly, unlike production's *State ownership*.
 
-Placeholders are built from the `SKAISwiftUI` package. Inspect the app target first; when the local package product is absent, adding it from the skai submodule is mechanical scaffold setup owned by this skill in Build. If the package path is unavailable or project constraints prevent linking it, STOP at a blocked gate. **Requires iOS 18 / macOS 15** (uses `ScrollPosition`).
+Placeholders are built from the `SKAISwiftUI` package (**requires iOS 18 / macOS 15**; uses `ScrollPosition`). Inspect the app target first: a missing local package product is added from the skai submodule as mechanical scaffold setup this skill owns in Build; if its path is unavailable or project constraints prevent linking it, STOP at a blocked gate.
 
 Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 ## Build philosophy
 
-Follow this guide for the standard patterns; defer to the project `README.md` for overrides and for patterns not covered here (e.g. custom modal styles). With standard route kinds and modal styles, this guide alone suffices — no README required. If a scaffold needs a pattern neither the guide nor the README supplies, STOP at a blocked gate citing the missing piece — do not invent one.
+This guide covers the standard patterns — with standard route kinds and modal styles it alone suffices — and the project `README.md` covers overrides and patterns not here (e.g. custom modal styles); a pattern neither supplies means STOP at a blocked gate citing the missing piece, never inventing one.
 
 ## The one rule: NavigationStack lives at the presentation boundary
 
-A scene **never wraps itself** in a `NavigationStack`. Exactly one stack sits on any root-to-leaf path, supplied by whatever first presents a scene on that path.
+A scene **never wraps itself** in a `NavigationStack`: exactly one stack sits on any root-to-leaf path, supplied by whatever first presents a scene on it.
 
-**The decision you run:** before rendering any slot or destination, ask *is a `NavigationStack` already on this path?* — add one only if not. That question resolves every graph. The per-kind cases below are it worked out for a **single** kind; read them as derivations of this rule, not independent commands. For a composition the cases don't draw (e.g. a `child` coordinator reached by a `nav` push), apply the rule rather than pattern-matching a case: the push already put a stack on the path, so the child slot adds none.
+**The decision you run:** before rendering any slot or destination, ask *is a `NavigationStack` already on this path, or is what I'm presenting tabbed?* and add one only if neither; that resolves every graph. The per-kind cases below each derive it for a **single** kind — not independent commands — so for a composition they don't draw (e.g. a `child` coordinator reached by `nav` push), apply the rule, not a case: the push already put a stack on the path; the child slot adds none.
 
-- **modal** — `.sheet` / `.fullScreenCover` supplies the stack (popover does **not**).
-- **tab** — each `PlaceholderTab`'s content supplies its own stack.
-- **child** — the child slot supplies the stack for a **non-tab** child **only when none is already on the path**; a **tabbed** child (its body is a `TabView`) supplies its own per tab.
+- **modal** — `.sheet` / `.fullScreenCover` supply the stack (a tabbed destination excepted: see **tab**); `.popover` does **not**.
+- **tab** — a tabbed scene (its body is a `TabView`) takes no stack from its presenter; each tab's content supplies its own unless one is already on the path.
+- **child** — the child slot supplies the stack for a **non-tab** child **only when none is already on the path**; a **tabbed** child is never wrapped (see **tab**).
 - **nav push** — reuses the ambient stack; the destination adds none.
 
-This gives every scene a nav bar (for its title) without nested stacks, for any graph.
+This gives every scene's title a nav bar without nested stacks, for any graph; a tabbed scene's title rides in its tabs' breadcrumbs instead.
 
 ## API (`SKAISwiftUI`)
 
-- `PlaceholderScene(title:domainColor:routes:tabs:)` and `PlaceholderScene(title:domainColor:routes:tabs:) { embedded }` — the scene body.
-- `PlaceholderRoute(label:kind:isCurrent:) { action }` — one menu route. `kind` ∈ `.nav .sheet .fullScreen .popover .child`. `isCurrent: true` omits it from the menu (used for the **active child**).
-- `PlaceholderTab(label:) { content }` — one tab.
-- `PlaceholderChildHost(title:domainColor:routes:) { content }` — hosts a child-routed scene full-bleed and contributes the parent's breadcrumb to the selected child.
-- `.placeholderCrumb("Owner", color: ..., routes: ...)` — on a nav/modal destination, adds the presenting scene and its routes to the destination's breadcrumb.
-- `\.placeholderShowsDismiss` (environment `Bool`) — `true` on modal destinations (shows the ✕), `false` on nav destinations.
+- `PlaceholderScene(title:domainColor:routes:tabs:selection:)`, or with `{ embedded }` instead of tabs — the scene body; `title` is the scene name from its map ID.
+- `PlaceholderRoute(label:kind:isCurrent:) { action }` — one menu route; `kind` ∈ `.nav .sheet .fullScreen .popover .child`; `isCurrent: true` hides it (the **active child**).
+- `PlaceholderTab(label:systemImage:route:) { content }` — one tab; see *tab*.
+- `PlaceholderChildHost(title:domainColor:routes:) { content }` — hosts a child-routed scene full-bleed, passing the parent's breadcrumb to the selected child.
+- `.placeholderCrumb("Owner", color: ..., routes: ...)` — on a nav/modal destination, adds the presenting scene and its routes to its breadcrumb.
+- `\.placeholderShowsDismiss` (environment `Bool`) — `true` on modal destinations (shows the ✕), `false` on nav ones.
 
 ## Domain colors
 
-Scaffolded scenes are tinted to match the rendered map, so click-through reads against the diagram. The render colors each domain by its **declaration order** in the map; `Colors.domain(at:)` returns the tint for that index.
+Scaffolded scenes are tinted like the rendered map, so click-through reads against the diagram; domains are colored in map **declaration order**, and `Colors.domain(at:)` returns an index's tint.
 
-Generate one artifact, `DomainColors.swift`, mapping each domain to its slot in map declaration order:
+Generate one file, `DomainColors.swift`, with each domain's slot:
 
 ```swift
 // 🟡 UI Map scaffold <change-id>
@@ -58,38 +58,38 @@ enum DomainColors {
 }
 ```
 
-Each scene then sets `domainColor` to its domain's slot. A scene in a sub-domain uses its domain's color — `trail_detail` and `log_hike` live in `trails`, so both use `DomainColors.trails`:
+Each scene sets `domainColor` to its domain's slot, a sub-domain scene to its domain's color: `trail_detail` and `log_hike` live in `trails`, so both use `DomainColors.trails`:
 
 ```swift
 PlaceholderScene(title: "Trails", domainColor: DomainColors.trails, routes: [ /* ... */ ])
 ```
 
-`DomainColors` follows the renderer's domain order: every key in `domains`, in declaration order, followed by `common` when the map has a top-level `common:` group. Never track only the domains that currently have placeholders. It is shared placeholder infrastructure, like the `SKAISwiftUI` dependency itself: the production skill deletes it once no `UI Map scaffold` markers remain in the project.
+`DomainColors` lists every key in `domains`, in declaration order, then `common` when the map has a top-level `common:` group — never only the domains with placeholders so far. Like the `SKAISwiftUI` dependency, it is shared placeholder infrastructure the production skill deletes once no `UI Map scaffold` markers remain.
 
 ## What the package renders for you — don't hand-build these
 
-You declare only `title` / `domainColor` / `routes` / `tabs` / `embedded` and wire the destinations. `PlaceholderScene` handles:
+You declare only `title` / `domainColor` / `routes` / `tabs` / `selection` / `embedded` and wire the destinations; `PlaceholderScene` handles:
 
-- **Breadcrumb title bar** — ancestors + this scene; each segment is a menu of that scene's routes, grouped into title-case sections by kind (Nav / Sheet / Full Screen / Popover / Child). Routeless segments render in secondary color; the **active child** is omitted; the row scrolls horizontally and is pinned to the trailing (current) node.
-- **Dismiss ✕** — inline beside the breadcrumb, shown only when `placeholderShowsDismiss` (i.e. presented modally).
-- **Nav-bar title** — inline `navigationTitle`, on full-bleed scenes only (embedded content doesn't set one).
-- **Layout** — full-bleed (no border) for everything except **embedded composite content**, which gets a light-gray fill (no border).
-- **Tabs** — a real full-bleed `TabView`; the breadcrumb is delegated to (accumulated into) each tab. Each tab takes a `systemImage` (see tab section); the package falls back to a default if it doesn't resolve.
+- **Breadcrumb title bar** — ancestors + this scene; each segment is a menu of its scene's routes in title-case sections by kind (Nav / Sheet / Full Screen / Popover / Child). Routeless segments are secondary-colored, the **active child** omitted; the row scrolls horizontally, pinned to the trailing (current) node.
+- **Dismiss ✕** — inline beside the breadcrumb, only when `placeholderShowsDismiss` (i.e. modal).
+- **Nav-bar title** — inline `navigationTitle`, full-bleed scenes only (embedded content sets none).
+- **Layout** — full-bleed (no border) for all but **embedded composite content**, which gets a light-gray fill (no border).
+- **Tabs** — a real full-bleed `TabView` and nothing else: the breadcrumb, and the ✕ when presented modally, move into each tab. Each tab takes a `systemImage` (see *tab*), defaulted if it doesn't resolve.
 
 ## Destination markers (nav + modal only)
 
-Every destination a scene presents gets two annotations so the destination inherits the right breadcrumb + dismiss context:
+Every destination a scene presents gets two annotations for breadcrumb + dismiss context:
 
-- `.placeholderCrumb("<this scene's own title>", color: <this scene's domain color>, routes: <this scene's routes>)` — so the destination's breadcrumb includes this presenting scene and exposes the same route menu. Reuse the route list passed to the presenter's `PlaceholderScene`; do not reconstruct a partial list at each destination.
+- `.placeholderCrumb("<this scene's title>", color: <its domain color>, routes: <its routes>)` — puts this presenting scene and its route menu in the destination's breadcrumb; pass the presenter's `PlaceholderScene` route list, never a partial rebuild per destination.
 - `.environment(\.placeholderShowsDismiss, <true for modal, false for nav>)`.
 
-Child and tab content need **no** markers — `PlaceholderChildHost` and the tab wrapping carry the crumb automatically.
+Child and tab content need **no** markers — `PlaceholderChildHost` and the tab wrapping carry the crumb.
 
 ## Per route kind
 
 ### child
 
-`PlaceholderChildHost` + a `switch` over the child route. Each child route is `kind: .child` and marks `isCurrent` so the active one drops out of the menu. In the switch, apply the one rule: wrap a **non-tab** child in a `NavigationStack` **only if no stack is already on the path** — i.e. this coordinator is itself the presentation boundary (the root, or reached by a modal/tab). A coordinator reached by a **nav push** already sits in the presenter's stack, so its non-tab children reuse it (no wrap). A **tabbed** child is never wrapped.
+`PlaceholderChildHost` + a `switch` over the child route; each child route is `kind: .child` marking `isCurrent`. In the switch, apply the one rule: wrap a **non-tab** child in a `NavigationStack` **only if no stack is already on the path**, i.e. this coordinator is the presentation boundary (the root, or presented by a popover; a sheet, cover, tab or nav push already put one on the path). A **tabbed** child is never wrapped.
 
 ```swift
 struct AppView: View {
@@ -114,7 +114,7 @@ struct AppView: View {
 
 ### tab
 
-`tabs:` on `PlaceholderScene`; each tab's content is wrapped in a `NavigationStack`. Give each tab a fitting `systemImage` — a real SF Symbol, preferably a base name with a `.fill` variant so iOS solidifies it when selected (e.g. `note.text`, `folder`, `trash`). If the name doesn't resolve, the package falls back to a default, but pick a valid one. Modal routes (if any) ride alongside as `.sheet` / `.fullScreenCover` (see modal).
+`tabs:` on `PlaceholderScene`; each tab's content is wrapped in a `NavigationStack` unless one is already on the path (see the one rule). Tab labels and icons are final: use those the inputs give; otherwise a reasonable label, and for an icon not given or not an SF Symbol, a fitting `systemImage` — a valid name, not the package's fallback — ideally with a `.fill` variant so iOS fills it when selected (e.g. `text.document`, `folder`, `trash`). As in production the view model's `currentTabRoute` selects the tab: pass it as `selection:`, each tab's `<Scene>TabRoute` case as `route:`. The package's bar is the bar: styling or extending it, or custom bars, isn't scaffold work. A tab added to a real screen's bar is a real-screen route (see *Reaching a scene from a real screen*), not a `tabs:` entry. Modal routes ride alongside as `.sheet` / `.fullScreenCover` (see modal).
 
 ```swift
 PlaceholderScene(
@@ -124,11 +124,12 @@ PlaceholderScene(
         PlaceholderRoute(label: "Profile", kind: .sheet) { viewModel.sheetRoute = .profile },
         PlaceholderRoute(label: "Search", kind: .fullScreen) { viewModel.coverRoute = .search },
     ],
-    tabs: [
-        PlaceholderTab(label: "Notes", systemImage: "note.text") { NavigationStack { NotesView() } },
-        PlaceholderTab(label: "Folders", systemImage: "folder") { NavigationStack { FoldersView() } },
-        PlaceholderTab(label: "Trash", systemImage: "trash") { NavigationStack { TrashView() } },
-    ]
+    tabs: [ // from the inputs
+        PlaceholderTab(label: "All Notes", systemImage: "text.document", route: LibraryTabRoute.notes) { NavigationStack { NotesView() } },
+        PlaceholderTab(label: "Folders", systemImage: "folder", route: LibraryTabRoute.folders) { NavigationStack { FoldersView() } },
+        PlaceholderTab(label: "Trash", systemImage: "trash", route: LibraryTabRoute.trash) { NavigationStack { TrashView() } },
+    ],
+    selection: $viewModel.currentTabRoute
 )
 .sheet(...) { ... }            // see modal
 .fullScreenCover(...) { ... }
@@ -136,7 +137,7 @@ PlaceholderScene(
 
 ### nav
 
-The scene declares `.navigationDestination` on its `PlaceholderScene` and owns **no** `NavigationStack` (the presenter/tab/child supplies it). The destination gets `showsDismiss = false` and the presenter's crumb.
+The scene declares `.navigationDestination` on its `PlaceholderScene` and owns **no** `NavigationStack` (supplied by the presenter/tab/child).
 
 ```swift
 struct NotesView: View {
@@ -162,9 +163,9 @@ struct NotesView: View {
 
 ### modal
 
-`.sheet` / `.fullScreenCover` **wrap their content in a `NavigationStack`**; `.popover` does not (and adds `.presentationCompactAdaptation(.popover)`). Every modal destination gets `showsDismiss = true` and the presenter's crumb. Use the modal-style → modifier mapping in `ui-map-swiftui.md`.
+`.sheet` / `.fullScreenCover` **wrap their content in a `NavigationStack`** unless it is tabbed; `.popover` does not (and adds `.presentationCompactAdaptation(.popover)`). Use the modal-style → modifier mapping in `ui-map-swiftui.md`.
 
-In the modifier examples below, `routes` is the same array passed to the presenting `PlaceholderScene`.
+Below, `routes` is the presenting `PlaceholderScene`'s array.
 
 ```swift
 .sheet(item: $viewModel.sheetRoute) { route in
@@ -197,7 +198,7 @@ In the modifier examples below, `routes` is the same array passed to the present
 
 ### composite
 
-Composite children are instantiated directly in the `embedded` ViewBuilder (shown together, each as its own gray-filled `PlaceholderScene`).
+Composite children go directly in the `embedded` ViewBuilder (shown together, each a gray-filled `PlaceholderScene`). A scene with both tabs and composite children has no placeholder shape: STOP in Discussion under the implementation guide's *Finding disposition*.
 
 ```swift
 PlaceholderScene(
@@ -211,12 +212,16 @@ PlaceholderScene(
 
 ### leaf
 
-No routes, no embedded, no tabs — but still gets a view model, like every scene (empty until it needs state).
+No routes, embedded or tabs — but, like every scene, a view model (empty until it needs state).
 
 ```swift
+// ShareSheetViewModel.swift
+// 🟡 UI Map scaffold <change-id>
 @Observable
 class ShareSheetViewModel {}
 
+// ShareSheetView.swift
+// 🟡 UI Map scaffold <change-id>
 struct ShareSheetView: View {
     @State private var viewModel = ShareSheetViewModel()
 
@@ -226,22 +231,22 @@ struct ShareSheetView: View {
 
 ## New-scene inputs — none
 
-A newly scaffolded scene models no inputs: no variant enum for `implements`, no initializer parameters, and its incoming route case carries no associated value. For a new route to an existing destination, inspect and preserve that destination's initializer contract. When the codebase or project conventions already define the source of every required value, carry those values on the route enum and pass them through; otherwise STOP in Discussion under the implementation guide's missing-input rule. Do not invent fixture data, value sources, or feature behavior.
+A newly scaffolded scene models no inputs: no variant enum for `implements`, no initializer parameters, no associated value on its incoming route case. A new route to an existing destination inspects and preserves its initializer contract: when the codebase or project conventions already define every required value's source, carry them on the route enum and pass them through; otherwise STOP in Discussion. Never invent fixture data, value sources, or feature behavior.
 
 ## Reaching a scene from a real screen
 
-> **TODO (deferred).** The concrete entry-trigger API is not implemented yet (rebuild-plan D12). Until `SKAISwiftUI` or project conventions provide it, this route has no defined code mapping: STOP in Discussion before Code Changes under the implementation guide's missing-mapping rule. Do not hand-roll or omit the trigger.
+> **TODO (deferred).** No concrete entry-trigger API exists yet; until `SKAISwiftUI` or project conventions provide it, this whole route, a real screen's tab bar included, is deferred: STOP in Discussion before Code Changes under the implementation guide's *Finding disposition*. Never hand-roll or omit the trigger.
 
-Once that mapping exists, reaching a scaffolded scene from an existing **real** (non-placeholder) screen injects two pieces into that real file, each stamped with the change-id scaffold marker (`// 🟡 UI Map scaffold <change-id>`) so feature work can find and remove them:
+Once it exists, reaching a scaffolded scene from a **real** (non-placeholder) screen injects up to two pieces into that file, each stamped with the change-id scaffold marker (`// 🟡 UI Map scaffold <change-id>`) for feature work to find and remove:
 
-1. **Destination registration** — register the new scene on the real screen's navigation host using the standard route pattern (see *Route enums* in [`ui-map-swiftui.md`](ui-map-swiftui.md) and *Per route kind* above).
-2. **Entry trigger** — a temporary route-menu bar overlaid on the real screen via `safeAreaInset(edge: .top)`, so the new scene is reachable for click-through. Planned as a small `SKAISwiftUI` modifier reusing the placeholder breadcrumb menu; exact signature TBD in testing.
+1. **Destination registration** — the new scene on the real screen's navigation host or tab bar, in the standard route pattern (*Route enums* and *Tab routing* in [`ui-map-swiftui.md`](ui-map-swiftui.md); *Per route kind* above).
+2. **Entry trigger** — unless the host is its own entry (a tab bar), a temporary route-menu bar over the real screen via `safeAreaInset(edge: .top)` so the new scene is click-through reachable; planned as a small `SKAISwiftUI` modifier reusing the placeholder breadcrumb menu, exact signature TBD in testing.
 
 The trigger is throwaway — feature work replaces it with the real entry point and deletes the marked block.
 
 ## Boundary
 
-Placeholders are skeleton + navigation only. If a scaffold seems to require feature content (real UI, business logic, data), the scene is being over-built — stop. Feature work belongs to a separate dev spec.
+Placeholders are skeleton + navigation only: a scaffold that seems to require feature content (real UI, business logic, data) is over-built — stop; feature work belongs to a separate dev spec.
 
 ## Project Addendum
 

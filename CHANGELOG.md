@@ -9,6 +9,8 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **Placeholder tab bars use the scene's tab route.** The SwiftUI placeholder library can now bind a tab bar to the view model's tab route enum, as production code does.
+- **Scaffolded tab bars use the labels and icons you give them.** A tab bar a UI Map scaffold sets up stays in the app, so its labels and icons now come from the request, your instructions, the designs or the specs instead of scene names; placeholder screens still use scene names.
 - **Route enums get their own files.** The SwiftUI and Compose UI Map guides now put each route enum in a file beside the view model instead of inside it; projects that prefer the old layout can keep it with a README override.
 - **Work specs are now dev specs.** The two skills are `skai-dev-specs-authoring` and `skai-dev-specs-implementation`, matching product specs and design specs; the update carries over each project's skill choices, install history and addenda.
 - **Session working documents are gitignored again.** `skai/working-docs/` collects too much transient material to keep; a package's own `working-docs/` folder is still committed.

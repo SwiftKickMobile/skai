@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation
 Managed-Source: Guides/UIMap/ui-map-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-07
 
 # UI Map Implementation
 
@@ -19,13 +19,13 @@ Conform app code to approved UI Map architecture or record the work for a larger
 - **Official map** — the approved architecture authority; frozen while a proposed change is under review.
 - **Proposed map** — `skai/changes/<change-id>/ui-map/proposed-ui-map.yaml`, the architecture the change moves toward.
 
-Work against the proposed map when present, then **promote** it after Code Changes spec approval: copy proposed YAML to official YAML, then regenerate official HTML from it. Proposed HTML is only a preview, never a promotion source. In Build this follows a green conforming build. In Plan the approved map intentionally leads the unchecked implementation work recorded in the artifact. Promotion and archival are the final UI Map implementation step of every run that changes the map; a no-package conformance run works against and leaves the official map unchanged.
+Work against the proposed map when present, then **promote** it after Code Changes spec approval: copy proposed YAML to official YAML, then regenerate official HTML from it. Proposed HTML is only a preview, never a promotion source. In Build this follows a green conforming build. In Plan the approved map leads the unchecked implementation work recorded in the artifact. Promotion and archival are the final UI Map implementation step of every run that changes the map; a no-package conformance run works against and leaves the official map unchanged.
 
-**Invariant — the map leads, code follows.** The target map is the architecture authority. Implementation may scaffold, align, move, rename, hand off, block, or raise a **change request** back to architecture — but it never edits map content to justify code. When the map itself is wrong or infeasible, raise a change request; when the skill simply can't do a change mechanically, hand it off or stop at a blocked gate (see *Code Changes*).
+**Invariant — the map leads, code follows.** The target map is the architecture authority. Implementation may scaffold, align, move, rename, hand off, block, or raise a **change request** back to architecture — but it never edits map content to justify code. When the map itself is wrong or infeasible, raise a change request; when the skill can't do a change mechanically, hand it off or stop at a blocked gate (see *Code Changes*).
 
-**Invariant — structure, not features.** Implementation changes and creates *structure* — scaffolding new scenes, wiring routes, moving, renaming, aligning code to the platform conventions — but never *feature content*: no business logic, no real UI, no data beyond placeholder labels. A scene it scaffolds is a minimal placeholder that compiles, routes correctly, and is visibly identifiable in the running app.
+**Invariant — structure, not features.** Implementation changes and creates *structure* — scaffolding new scenes, wiring routes, moving, renaming, aligning code to the platform conventions — but never *feature content*: no business logic, no real UI, no data beyond placeholder labels (the scaffold writes a tab bar's labels and icons as production code, not placeholder labels: see the placeholder guide's *tab*). A scene it scaffolds is a minimal placeholder that compiles, routes correctly, and is visibly identifiable in the running app.
 
-This workflow is one part of a larger agent session, not the system of record for every task in that session. Keep unrelated feature, bug, and product work out of the UI Map implementation artifact, including disclaimers that label it excluded or outside scope; session orchestration or that work's own skill and artifacts own it. If such work appears alongside a UI Map request, complete the separable UI-map-owned work through `🏁` before session orchestration starts the unrelated work, even when both happen in the same overall agent turn. Record `handoff` only when external work directly affects UI Map conformance or reconciliation. Block only when the UI Map work itself cannot proceed without that work or an external decision.
+This workflow is one part of a larger agent session, not the record of every task in it. Keep unrelated feature, bug, and product work out of the UI Map implementation artifact, including disclaimers that label it excluded or outside scope; session orchestration or that work's own skill and artifacts own it. If such work arrives alongside a UI Map request, complete the separable UI-map-owned work through `🏁` before session orchestration starts the unrelated work, even within the same agent turn. Record `handoff` only when external work directly affects UI Map conformance or reconciliation. Block only when the UI Map work itself cannot proceed without that work or an external decision.
 
 Implementation runs in four stages:
 
@@ -58,9 +58,10 @@ the proposal itself.
 - The matching placeholder guide whenever placeholder work is in scope during Audit, Plan, or Build: [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md) or [`ui-map-compose-placeholders.md`](ui-map-compose-placeholders.md). Omit it only when no placeholder work is in scope.
 - The artifact-format references: [`ui-map-implementation-artifacts.md`](ui-map-implementation-artifacts.md) (code-change items + evidence this skill writes) and [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md) (map-change items it reads, change requests it raises).
 - `skai/integration.md` for build/test commands, render overrides, and evidence paths. Do not invent project-specific commands; for rendering, use the SKAI default from [`ui-map-guide.md`](ui-map-guide.md) when no override exists.
+
 Expected when available:
 
-- The project's `README.md` or equivalent project-conventions doc for overrides such as modal styles, route wrappers, folder layout, or view-model conventions. Standard guide-covered patterns do not require one.
+- The project's `README.md` or equivalent project-conventions doc for overrides such as modal styles or folder organization and file layout. Standard guide-covered patterns do not require one.
 - Scoped architecture/change collateral for the active story, and the active upstream requirement/story/bug scope.
 
 If no change package is present, conform code to the official map as the frozen source of truth (the map is unchanged); a missing architecture artifact is not a blocker when the map and codebase are present. If the map (proposed or official) is missing, invalid, or not identifiable, STOP with a blocked gate (see *Gates*). The target package is the one named or already in context; sibling types and promoted packages
@@ -74,15 +75,15 @@ promoted again. If the app codebase is not present, STOP with a blocked gate.
 
 For a new change-package run, create the implementation artifact parallel to the architecture
 artifact: `skai/changes/<change-id>/ui-map/ui-map-implementation.md`. Use the package's ID. The
-`ui-map/` folder owns this artifact, its requests and evidence; related product specs work is separate.
+`ui-map/` folder (the package's type folder) owns this artifact, its requests and evidence; related product specs work is separate.
 On resume reuse the existing artifact and its Mode, IDs, decisions, Evidence and valid completion states. After promotion the same artifact is at `skai/promoted/<change-id>/ui-map/ui-map-implementation.md`.
 Receiving workflows execute and check any pending Plan work there without reopening or re-promoting
 the map proposal. When this skill is invoked on an already-promoted Plan, retain the recorded Mode,
 items and evidence and hand off that plan at its archived path; do not create another package or
 terminal promote item. If resuming such work, verify current code against the current official map rather
-than assuming the archived preview remains current canon.
+than trusting the archived preview as current canon.
 
-Without a proposed map, create no change package. Put the conformance artifact in the map repository
+Without a proposed map, create no change package (the one exception: *Raising a change request*). Put the conformance artifact in the map repository
 at `skai/working-docs/<session-name>/ui-map-implementation.md`, using
 [`working-doc-conventions.md`](../Core/working-doc-conventions.md). Resolve a short session name from
 the request; if unclear, propose one and wait at a blocked gate before creating the artifact. Requests
@@ -116,7 +117,7 @@ The supervisor is the human or authorized agent outside this workflow that resol
 
 **Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
-**No fabricated gates.** `⏳ GATE:` lines only appear at gates this `## Gates` section defines or at a properly emitted blocked gate. Do not invent new gate categories or labels to describe discussion state, partial completion, or intermediate review. If a `⏳ GATE:` line is needed that this guide doesn't define, that's a signal the guide is missing a gate — file it as a process improvement.
+**No fabricated gates.** `⏳ GATE:` lines only appear at gates this `## Gates` section defines or at a properly emitted blocked gate. Do not invent new gate categories or labels to describe discussion state, partial completion, or intermediate review. If a `⏳ GATE:` line this guide doesn't define seems needed, the guide is missing a gate — file it as a process improvement.
 
 Use these standard gate lines:
 - Planned gate: `⏳ GATE: Next: <what happens after your response>. Say "next" or what to change.`
@@ -127,11 +128,11 @@ Planned gates are the expected review points of this workflow. At each planned g
 2. End with the planned gate line.
 3. STOP and wait for the supervisor.
 
-In the planned gate line, `<what happens after your response>` should describe what the agent will do after the supervisor gives advance intent. If the gate is non-standard, make it describe the exact supervisor response or handoff needed to resume the workflow.
+In the planned gate line, `<what happens after your response>` describes what the agent will do after the supervisor gives advance intent; for a non-standard gate, the exact supervisor response or handoff needed to resume the workflow.
 
 If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
-At a planned gate, first reread the implementation artifact and remove any reference to separate-session work from Goal, Audit, Discussion, Code Changes, Change Requests, and Evidence; those sections record only UI Map conformance. Then summarize what you did and what happens next, end with the gate line, STOP and wait.
+At a planned gate, before summarizing, reread the implementation artifact and remove any reference to separate-session work from Goal, Audit, Discussion, Code Changes, Change Requests, and Evidence; those sections record only UI Map conformance.
 
 **Planned gates** — `next` advances:
 
@@ -217,11 +218,13 @@ Compare code against the target map for:
 - Route kinds and presentation mechanics.
 - Modal styles and project-specific presentation overrides.
 - Scene/domain identity and code names: derive each in-scope scene's expected code identity from its map ID and the selected platform convention, then compare it to the actual code; labels or equivalent behavior do not substitute for the mapped identity.
-- Canonical folder organization and file layout: derive each scene's expected home from the map and the selected platform or project convention, then compare it to the actual files.
+- Canonical folder organization and file layout: derive each scene's expected home and file set from the map and the selected platform or project convention, then compare both to the actual files.
 - Placeholder-scene boundaries for newly scaffolded map scenes.
 - Platform patterns called out by the selected platform convention guide.
 
-Read a route's kind and modal style from the modifier or host it is actually bound to, not from an enum's name. For example, a route enum named `MessageRoute` is still modal if it is bound to `.sheet(item:)`.
+A project convention counts only when the project declares it (its README or conventions doc); a pattern the code follows without a declaration is a deviation.
+
+Read a route's kind and modal style from the modifier or host it is actually bound to, not from an enum's name. For example, an enum named `MessageRoute` is still modal if bound to `.sheet(item:)`.
 
 Findings are observed deviations only. Inspect the relevant code and project metadata; do not record a guide-required ingredient that is already present or enumerate conforming scenes. Keep each architecture source's stated operation separate from additional deviations observed at the same implementation site: an `M#` or `D#` covers only the operation it states, while any other deviation is an independent audit finding and cannot broaden or reclassify that source.
 
@@ -229,10 +232,10 @@ Findings are observed deviations only. Inspect the relevant code and project met
 
 Each finding gets one of three dispositions, in order — do it, else stop, and request a map change only as a last resort:
 
-Before assigning a disposition, confirm that the map plus the loaded platform and project guidance define a concrete, verifiable conforming outcome. If required guidance is missing or a map value has no defined code mapping, STOP in Discussion at a blocked gate before writing Code Changes; ask for the missing decision or mapping. Do not turn an unknown outcome into a `handoff`. If the problem is instead that the target map itself is wrong or infeasible, use **Request change** below.
+Before assigning a disposition, confirm that the map plus the loaded platform and project guidance define a concrete, verifiable conforming outcome. If required guidance is missing or a map value has no code mapping, STOP in Discussion at a blocked gate before writing Code Changes and ask for it; never turn an unknown outcome into a `handoff`. If instead the target map itself is wrong or infeasible, use **Request change** below.
 
-1. **Implement** — a mechanical fix or a placeholder scaffold the skill does itself; becomes a `T#` code-change item. Mechanical changes default here: placeholder scaffolds for new scenes in scope; file/folder moves that mirror the target map's domains; renames that align scene IDs and code names; route enum or route-host placement that follows the platform convention guide; missing imports or simple local compile fixes caused by these.
-2. **Hand off** — a concrete, verifiable non-mechanical change outside UI Map implementation ownership that directly affects conformance: the required outcome is already defined, but another workflow, skill, person, or PR must do the work → an unchecked `handoff` `T#`. In Build this stops the run at a blocked gate; in Plan it is part of the spec. Examples: rewriting existing runtime behavior, refactoring cross-cutting navigation infrastructure, or changing established project conventions to an already-defined pattern. A scene newly added by the active proposed map is UI-map-owned placeholder work in Build or `planned` work in Plan. A pre-existing official-map scene with no code in a shipped or brownfield app is a `handoff` unless the active request explicitly scopes it as new scaffold work. Unrelated feature work elsewhere in the session is not a finding and does not belong in this artifact.
+1. **Implement** — a mechanical fix or a placeholder scaffold the skill does itself; becomes a `T#` code-change item. Mechanical changes default here: placeholder scaffolds for new scenes in scope; file/folder moves that mirror the target map's domains; renames that align scene IDs and code names; route enum or route-host placement that follows the platform or declared project convention; missing imports or simple local compile fixes caused by these.
+2. **Hand off** — a concrete, verifiable non-mechanical change outside UI Map implementation ownership that directly affects conformance: the required outcome is already defined, but another workflow, skill, person, or PR must do the work → an unchecked `handoff` `T#`. In Build this stops the run at a blocked gate; in Plan it is part of the spec. Examples: rewriting existing runtime behavior, refactoring cross-cutting navigation infrastructure, or changing a declared project convention to an already-defined pattern. A scene newly added by the active proposed map is UI-map-owned placeholder work in Build or `planned` work in Plan. A pre-existing official-map scene with no code in a shipped or brownfield app is a `handoff` unless the active request explicitly scopes it as new scaffold work. Unrelated feature work elsewhere in the session is not a finding and does not belong in this artifact.
 3. **Request change** — only when the target **map itself** must change (a clear flaw, infeasible as specified, a poor decision worth revisiting). The skill never edits the map, so it proposes a change request in Discussion and, only after explicit approval, raises the request and blocks its own Code Changes until the map is updated — the heaviest stop, so prefer a blocked gate or handoff unless the map is genuinely at fault or the supervisor directs it.
 
 The implement/handoff line is the mechanical/non-mechanical line for work that affects UI Map conformance **after the conforming outcome is known**. A brownfield case may produce `handoff` items plus a mechanical slice, so a Build lands that thin slice and then blocks at completion on the unchecked handoff remainder. The audit's mix of dispositions does not reclassify the run: `Mode` remains the ownership scope inferred at initiation.
@@ -265,8 +268,8 @@ When the supervisor explicitly approves a Discussion decision to request a map c
 `D#` and append its Decision. In a no-package conformance run, resolve a new change ID using the
 architecture guide's rules and check its active/promoted UI Map paths. Seed that type folder and
 move the conformance artifact, requests and evidence into it, repairing links and preserving the
-review history; a collision blocks rather than overwrites. The run now awaits architecture's proposed
-map. Then immediately write one markdown file at `skai/changes/<change-id>/ui-map/change-requests/ui-map-<nnn>.md` and link it under the implementation artifact's `## Change Requests`. Use the format in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md): `Change Request Status: Proposed`, a `Reviewer Response`, and the concern and requested map change. Number from `ui-map-001.md`.
+review history; a collision blocks rather than overwrites.
+In either run, immediately write one markdown file at `skai/changes/<change-id>/ui-map/change-requests/ui-map-<nnn>.md` and link it under the implementation artifact's `## Change Requests`. Use the format in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md): `Change Request Status: Proposed`, a `Reviewer Response`, and the concern and requested map change. Number from `ui-map-001.md`.
 
 Do not create the request while its `D#` is unresolved, and do not enter or populate `## Code Changes` after creating it. Emit the change-request blocked gate immediately; the run resumes and re-audits only after architecture updates the map and no change request remains open.
 
@@ -295,7 +298,7 @@ After separating the sources, assign each item's Disposition independently from 
 | Change kind | What it covers | Build disposition | Plan disposition |
 |---|---|---|---|
 | `folder-org` | folders mirror the map's domains | `implement`, or `handoff` if non-mechanical | `planned`, or `handoff` if non-mechanical |
-| `file-layout` | a scene's files sit at its canonical home | `implement`, or `handoff` if non-mechanical | `planned`, or `handoff` if non-mechanical |
+| `file-layout` | a scene's files sit at its canonical home and match its file set | `implement`, or `handoff` if non-mechanical | `planned`, or `handoff` if non-mechanical |
 | `naming` | code names match the map's scene ids / types | `implement`, or `handoff` if non-mechanical | `planned`, or `handoff` if non-mechanical |
 | `route-kind` | an existing route's presentation matches the map | `implement`, or `handoff` if non-mechanical | `planned`, or `handoff` if non-mechanical |
 | `platform-pattern` | code follows the platform reference's conventions | `implement`, or `handoff` if non-mechanical | `planned`, or `handoff` if non-mechanical |
@@ -306,7 +309,7 @@ After separating the sources, assign each item's Disposition independently from 
 
 A change not in the table still gets its disposition from the same principle — apply the `implement` / `placeholder` / `planned` / `handoff` definitions in [`ui-map-implementation-artifacts.md`](ui-map-implementation-artifacts.md) to the change at hand.
 
-**Routes aren't special.** The skill wires route *structure*, not new feature data. In Build, a **new route** is `placeholder`: a new destination receives no feature inputs, while an existing destination keeps its inspectable input contract when the project already defines the required value sources; if a required source is undefined, stop in Discussion under the platform placeholder guide's missing-input rule. A **mechanical kind change** on an already-wired route (e.g. nav → modal) is `implement`. In Plan, the same UI-map-owned route work is `planned`. A **real route refactor** is `handoff`.
+**Routes aren't special.** The skill wires route *structure*, not new feature data. In Build, a **new route** is `placeholder`: a new destination receives no feature inputs, while an existing destination keeps its inspectable input contract when the project already defines the required value sources; if a required source is undefined, stop in Discussion under *Finding disposition*. A **mechanical kind change** on an already-wired route (e.g. nav → modal) is `implement`. In Plan, the same UI-map-owned route work is `planned`. A **real route refactor** is `handoff`.
 
 **The terminal promote item.** The last `T#` owns official promotion and archival. Its Disposition
 is `implement`, Realizes names the approved change as a whole, and Touches includes official
@@ -350,7 +353,7 @@ When Code Changes is ready, say first what the items change in the app (the scre
 - Build: `⏳ GATE: Next: Code Changes ready: <N> items to build. Review them, then say "next" to build them. Or say what to change.`
 - Plan: `⏳ GATE: Next: Code Changes ready as the plan. Say "next" to make the proposed map official (or finish, when there is none); building is left to a later run. Or say what to change.`
 
-On advance intent, proceed to *Implement*. In **Plan** mode the only executable item, when a proposed map exists, is the terminal promote; perform and check it, then complete. Without a proposed map, complete with the official map unchanged. In **Build** mode, execute unchecked `implement` / `placeholder` items and block if any `handoff` item remains unchecked.
+On advance intent, proceed to *Implement*.
 
 ## Implement
 
@@ -370,9 +373,9 @@ On resume, re-audit every unchecked `handoff` item. If external work has made th
 
 **Moving files.** When an item relocates tracked files, use `git mv` to preserve history. Use plain `mv` only for untracked files.
 
-**Scaffold markers.** Every scaffold site carries a greppable in-code marker — a `🟡` comment stamped with the change-id (e.g. `// 🟡 UI Map scaffold <change-id>`): one file-level marker on a new placeholder file, one marker per injected block in an existing real file (a real-screen entry trigger, route registration in a real nav host). The `🟡` visually flags placeholder code; the change-id lets a later productionization pass grep all of one change's scaffold sites. This skill does **not** remove these at its own completion — they are the handoff for productionizing the placeholders (invariant: no markers left for a change-id = fully productionized). Exact marker syntax lives in the placeholder reference.
+**Scaffold markers.** Every scaffold site carries a greppable in-code marker — a `🟡` comment stamped with the change-id (e.g. `// 🟡 UI Map scaffold <change-id>`): one file-level marker on a new placeholder file, one marker per injected block in an existing real file (a real-screen entry trigger, route registration in a real nav host or tab bar). The `🟡` visually flags placeholder code; the change-id lets a later productionization pass grep all of one change's scaffold sites. This skill does **not** remove these at its own completion — they are the handoff for productionizing the placeholders (invariant: no markers left for a change-id = fully productionized). Exact marker syntax lives in the placeholder reference.
 
-**Reaching a new scene from an existing real screen.** When the selected placeholder guide or project conventions define this mapping, a `wire-route` item registers the destination on the real nav host and adds the defined temporary entry trigger so the skeleton is click-through-able; both injected blocks carry the change-id scaffold marker. If no trigger mapping is available, STOP in Discussion before writing Code Changes under *Finding disposition*; do not hand-roll or omit it.
+**Reaching a new scene from an existing real screen.** When the selected placeholder guide or project conventions define this mapping, a `wire-route` item registers the destination on the real nav host or tab bar and adds the entry trigger that mapping defines for that host so the skeleton is click-through-able; each injected block carries the change-id scaffold marker. If no trigger mapping is available, STOP in Discussion before writing Code Changes under *Finding disposition*; do not hand-roll or omit it.
 
 **Chunk boundaries.** At the end of each domain or natural chunk for large change sets, run the project's build command from `skai/integration.md`. Record the result inline in `## Evidence`, a sentence saying what the build established, then the bracket:
 
@@ -396,7 +399,7 @@ STOP at a blocked gate for:
 - Removing, weakening, or reordering `T#` items beyond what Code Changes permits.
 - Choosing a different route kind, modal style, or scene identity than the target map specifies.
 - Adding feature content to a UI-map-owned structural item. Keep separable feature work out of this artifact; block only when the structural work cannot proceed without it.
-- Changing project conventions.
+- Changing a declared project convention.
 - Substituting an undocumented workaround to force a green build.
 
 ## Verification

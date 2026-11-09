@@ -8,42 +8,42 @@ Managed-Updated-At: 2026-11-07
 
 Print `📖 SKAI guide: ui-map-swiftui` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
-Platform reference for implementing a UI Map in SwiftUI. Companion to [`ui-map-guide.md`](ui-map-guide.md), which defines the platform-agnostic YAML format.
+Platform reference for implementing a UI Map in SwiftUI; companion to [`ui-map-guide.md`](ui-map-guide.md), the platform-agnostic YAML format.
 
 Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
-Each scene's routing is implemented locally: the view model owns the outgoing route state as `@Published` properties, and the view applies SwiftUI modifiers driven by those properties. There is no central router.
+Routing is local, with no central router: the view model owns the outgoing route state as properties and the view applies SwiftUI modifiers driven by them. Deliberate overrides of any pattern here go in the project's `README.md` or an equivalent conventions doc — what README means here and in the placeholder guide.
 
 ## Scene file layout
 
-Map scene IDs are lower snake case. Convert each word to UpperCamelCase for scene folders and code types: `trail_detail` becomes `TrailDetail`, so its standard layout is:
+Map scene IDs are lower snake case; each word becomes UpperCamelCase for scene folders and code types: `trail_detail` becomes `TrailDetail`, so its standard layout is:
 
 ```
 TrailDetail/
   TrailDetailView.swift          // struct TrailDetailView: View
   TrailDetailViewModel.swift     // @Observable class TrailDetailViewModel
-  TrailDetailNavRoute.swift      // enum TrailDetailNavRoute — one file per nav, tab or child route
+  TrailDetailNavRoute.swift      // enum TrailDetailNavRoute — one file per nav, tab or child route kind
   TrailDetailModalRoute.swift    // the scene's modal route enums, together
   Views/                         // optional — TrailDetail's own subviews
 ```
 
-A scene's route enums live in files of their own beside its view model: one `<Scene><Kind>Route.swift` for each nav, tab or child route, and one `<Scene>ModalRoute.swift` holding all of its modal route enums (`<Scene>SheetRoute`, `<Scene>CoverRoute`, `<Scene>PopoverRoute`). A scene with no routes has no route files. This keeps the view model to state and logic, and keeps a navigation change out of its diff. Every scene gets a `<Scene>ViewModel` — even a leaf with no routes or state — so each scene's file layout is identical and there is always a consistent home for state the moment any is needed.
+Every scene, even a leaf with no routes or state, gets a `<Scene>ViewModel`, so layouts are identical and state has a home the moment any is needed.
 
-A scene's folder may contain a `Views/` subfolder for the scene's own subviews — small presentational views split out to keep `<Scene>View.swift` uncluttered. `Views/` holds subviews only: never a scene (every scene gets its own folder), and never another scene's subviews.
+An optional `Views/` subfolder holds the scene's own small presentational subviews, split out to keep `<Scene>View.swift` uncluttered — never a scene (every scene gets its own folder) or another scene's subviews.
 
-Scenes live under a top-level `Scenes/` folder (a project may override the root in its `README.md`), organized to mirror the map's canonical definition nesting inside `domains:` — not references, `primary_parent`, or other inbound routes. Each domain is a folder directly under `Scenes/`, and a scene's folder is placed where the map *defines* it:
+Scenes live under a top-level `Scenes/` folder (root overridable in `README.md`); each domain is a folder directly under it, and a scene's folder sits where the map *defines* it inside `domains:` — never where a reference, `primary_parent`, or other inbound route names it:
 
-- a collapsed domain (domain id == its root scene) → the domain folder is that root scene's folder (e.g. `Library/LibraryView.swift`);
-- a scene defined inline under a route container → nests inside that container's owning scene's folder (e.g. `App/Login/Welcome/`);
+- a collapsed domain (domain id == its root scene) → the domain folder is the root scene's folder (e.g. `Library/LibraryView.swift`);
+- a scene defined inline under a route container → nests inside the container's owning scene's folder (e.g. `App/Login/Welcome/`);
 - a scene defined in a non-collapsed domain's `scenes:` list → sits directly under the domain folder.
 
-Every other appearance of a scene is a reference: the referencing scene imports and instantiates it, and a reference **never** creates or moves a folder. This includes a cross-domain reference (it does not pull the scene into the referrer's domain) and `primary_parent` (a render-only hint, never a folder move). Do not place scenes flat — the folder tree must mirror the map's domain structure.
+Every other appearance is a reference — the referencing scene imports and instantiates it — and **never** creates or moves a folder: a cross-domain reference does not pull the scene into the referrer's domain, and `primary_parent` is a render-only hint. Never place scenes flat.
 
-Scenes in the YAML's top-level `common:` group are domain-agnostic. They live in the shared UI module under its own top-level `Scenes/` folder — one folder per scene, following the same per-scene layout as any other scene. When scaffolding them, apply the `SKAISwiftUI` package-linkage rule in [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md) to the shared module. If the project has no SwiftUI-capable shared module, STOP at a blocked gate; do not relocate the scene into another target to make it build.
+The YAML's top-level `common:` scenes are domain-agnostic and live in the shared UI module under its own top-level `Scenes/` folder, one folder per scene with the same layout. Scaffolding them applies the `SKAISwiftUI` package-linkage rule in [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md) to the shared module; with no SwiftUI-capable shared module, STOP at a blocked gate rather than relocating the scene into another target to make it build.
 
 ## Route enums
 
-One enum per route kind. The enum is named `<Scene><Kind>Route` and each case maps to a destination scene by name. Cases carry whatever associated values the destination needs at construction. Modal-style enums are `Identifiable, Hashable` with a stable string `id`:
+One enum per route kind, or per modal style, named `<Scene><Kind>Route`; each case maps to a destination scene by name and carries the associated values the destination needs at construction. It lives in a file of that name beside the view model, not inside it (modal enums share `<Scene>ModalRoute.swift`), keeping the view model to state and logic and a navigation change out of its diff. Enums bound with `item:` (nav and modal) are `Identifiable, Hashable` with a stable string `id`; a tab enum is `Hashable`:
 
 ```swift
 enum DashboardNavRoute: Identifiable, Hashable {
@@ -60,16 +60,19 @@ enum DashboardNavRoute: Identifiable, Hashable {
 ## Nav routing
 
 ```swift
+// DashboardNavRoute.swift
 enum DashboardNavRoute: Identifiable, Hashable {
     case detail
     var id: String { "detail" }
 }
 
+// DashboardViewModel.swift
 @Observable
 class DashboardViewModel {
     var navRoute: DashboardNavRoute?
 }
 
+// DashboardView.swift
 struct DashboardView: View {
     @State private var viewModel = DashboardViewModel()
 
@@ -91,17 +94,23 @@ The view model sets `navRoute` to navigate; SwiftUI clears it when the user pops
 
 ## Modal routing
 
-Every modal destination has a required `modal_style` in the map; that agreed value selects the native modifier. Do not infer or substitute a style during implementation:
+The map's required `modal_style` on every modal destination selects the native modifier; never infer or substitute a style:
 
 | `modal_style` | Enum suffix | Property | Modifier |
 |---|---|---|---|
 | `sheet` | `SheetRoute` | `sheetRoute` | `.sheet(item:)` |
 | `full_screen` | `CoverRoute` | `coverRoute` | `.fullScreenCover(item:)` |
-| `popover` | `PopoverRoute` | `popoverRoute` | `.popover(item:)` — also apply `.presentationCompactAdaptation(.popover)` to the content, or it falls back to a sheet on iPhone (compact width) |
+| `popover` | `PopoverRoute` | `popoverRoute` | `.popover(item:)` — also apply `.presentationCompactAdaptation(.popover)` to the content, or iPhone (compact width) shows a sheet instead |
 
-A single scene can expose several at once - one enum and one route property per presentation style:
+A scene can expose several at once - one enum and one route property per style:
 
 ```swift
+// DashboardModalRoute.swift
+enum DashboardSheetRoute: Identifiable, Hashable { /* ... */ }
+enum DashboardCoverRoute: Identifiable, Hashable { /* ... */ }
+enum DashboardPopoverRoute: Identifiable, Hashable { /* ... */ }
+
+// DashboardViewModel.swift
 @Observable
 class DashboardViewModel {
     var navRoute: DashboardNavRoute?
@@ -110,6 +119,7 @@ class DashboardViewModel {
     var popoverRoute: DashboardPopoverRoute?
 }
 
+// DashboardView.swift
 struct DashboardView: View {
     @State private var viewModel = DashboardViewModel()
 
@@ -124,23 +134,26 @@ struct DashboardView: View {
 }
 ```
 
-For modal styles beyond the standard set above (third-party libraries, project-specific overlay patterns), the project declares them in its `modal_styles` YAML vocabulary and documents the implementations in `README.md` under a **Modal Styles** section — each non-standard style paired with its modifier signature and enum-suffix convention. The project's `README.md` is also where projects declare deliberate overrides of other patterns in this guide.
+Non-standard modal styles (third-party libraries, project-specific overlays) the project declares in its `modal_styles` YAML vocabulary and documents, each with its modifier signature and enum-suffix convention, under a **Modal Styles** section of `README.md`.
 
 ## Child routing
 
-Child routes are mutually-exclusive root views. The enum is non-optional and has a default case.
+Child routes are mutually-exclusive root views; the enum is non-optional with a default case.
 
 ```swift
+// AppChildRoute.swift
 enum AppChildRoute {
     case login
     case main
 }
 
+// AppViewModel.swift
 @Observable
 class AppViewModel {
     var childRoute: AppChildRoute = .login
 }
 
+// AppView.swift
 struct AppView: View {
     @State private var viewModel = AppViewModel()
 
@@ -156,23 +169,25 @@ struct AppView: View {
 ## Tab routing
 
 ```swift
+// MainTabRoute.swift
 enum MainTabRoute: Hashable {
     case home
     case library
     case settings
 }
 
+// MainViewModel.swift
 @Observable
 class MainViewModel {
     var currentTabRoute: MainTabRoute = .home
 }
 ```
 
-The view binds `currentTabRoute` to whatever tab container is in use (`TabView`, a custom material tab bar, etc.).
+The view binds `currentTabRoute` to the tab container in use (`TabView`, a custom material tab bar, etc.).
 
 ## Composite scenes
 
-A composite parent has no route enum for its composite children — they're embedded directly in the parent's body.
+A composite parent has no route enum for its composite children — its body embeds them directly.
 
 ```swift
 struct DetailView: View {
@@ -188,15 +203,15 @@ struct DetailView: View {
 }
 ```
 
-The composite wrapper in the diagram is a grouping; no Swift artifact corresponds to it.
+The diagram's composite wrapper is a grouping; no Swift artifact corresponds to it.
 
 ## Reused scenes
 
-A reused scene is a `View` struct instantiated from multiple parents. It may itself be a full scene with its own routes — e.g. a `PlayerView` used as a composite child in several parents, with its own modal route to a fullscreen presentation.
+A reused scene is a `View` struct instantiated from several parents, possibly a full scene with its own routes — e.g. a `PlayerView` composite child of several parents with its own modal route to a fullscreen presentation.
 
 ## Implements
 
-An `Implements: A, B, C` annotation means a single Swift type renders multiple variants, parameterized at construction. The variant is typically carried as an associated value on the route case that targets it:
+An `Implements: A, B, C` annotation means one Swift type renders several variants, parameterized at construction; the variant typically rides as an associated value on the route case that targets it:
 
 ```swift
 enum ProfileNavRoute: Identifiable, Hashable {
@@ -210,21 +225,21 @@ enum ProfileNavRoute: Identifiable, Hashable {
 }
 ```
 
-`WebView(resource:)` renders the page for the given `Resource` (e.g. `.privacyPolicy`, `.termsAndConditions`). One view, one view model, multiple instances.
+`WebView(resource:)` renders the page for its `Resource` (e.g. `.privacyPolicy`, `.termsAndConditions`). One view, one view model, multiple instances.
 
 ## State ownership
 
-Routes live on the view model. The view never owns or mutates route state. Mutations come from:
+Route state lives on the view model; the view never owns or mutates it. Mutations come from:
 
-- View-model methods called by the view, e.g. `viewModel.detailTapped()` sets `navRoute = .detail`.
+- View-model methods the view calls, e.g. `viewModel.detailTapped()` sets `navRoute = .detail`.
 - External publishers observed in the view model's `init`, e.g. an auth service publisher flipping `childRoute` between `.login` and `.main`.
-- SwiftUI itself: any modifier bound with `item:` (Nav, Sheet, Cover, Modal, Message, Popover) clears the route back to `nil` when the user dismisses the destination (back button, swipe-back, sheet drag-down, etc.).
+- SwiftUI itself: any `item:`-bound modifier (nav, sheet, cover, popover) clears the route to `nil` on user dismissal (back button, swipe-back, sheet drag-down, etc.).
 
-The view model can also set or clear any route programmatically at any time — assign `nil` to dismiss, or assign a new value to transition to a different destination.
+The view model can also set or clear any route programmatically at any time: `nil` dismisses, a new value moves to a different destination.
 
 ## Placeholder scenes
 
-Scaffolding placeholder scenes — the `SKAISwiftUI` package, the per-route-kind patterns, the NavigationStack-at-the-presentation-boundary rule, and the dismiss/breadcrumb/nav-title behavior — is covered in its own doc, read only when implementing: [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md).
+Placeholder scaffolding (the `SKAISwiftUI` package, per-route-kind patterns, the NavigationStack-at-the-presentation-boundary rule, dismiss/breadcrumb/nav-title behavior) has its own doc, read only when implementing: [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md).
 
 ## Project Addendum
 

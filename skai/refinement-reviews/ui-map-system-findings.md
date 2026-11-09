@@ -168,3 +168,184 @@ Restored from `refinement-reviews/ui-map-compose-findings.md` at skai commit `c6
 ## Change-request triage — 2026-10-19
 
 The pass that aligned `ui-map-architecture.md` and `ui-map-architecture-artifacts.md` with the shared triage decision (the supervisor rules on a change request; the agent applies) is logged with the other spec types in [`change-request-triage-findings.md`](change-request-triage-findings.md): see r1 F3 (the "on its own" qualifier in § Initiation) and r5 F1 (the proposed map is seeded only when none exists).
+
+## Route files and tab bars — 2026-11-07 (skai#81, skai#57)
+
+Draft-then-cap per skai#90: inventory and caps in the design spec's § Decisions — 2026-11-07; compression review on the additions; then cold review with the compressed edits and the caps.
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-11-07 r1 | F1 Nav routing examples declared the route enum beside the view model | closed | Enum declarations removed from both guides' Nav routing examples; *Route enums* keeps the definition |
+| 2026-11-07 r1 | F2 "The tab bar is production code" misread against the package rendering the bar | closed | Tab sections say tab titles and icons are final, and that the package's bar is the bar |
+| 2026-11-07 r1 | F3 The spec's "records nothing about them" was dropped | closed | Restored in both tab sections |
+| 2026-11-07 r1 | F4 SwiftUI API list omitted the tab icon parameter | closed | `PlaceholderTab(label:systemImage:)` |
+| 2026-11-07 r1 | F5 SwiftUI library doc comment calls a tab's label the child scene's name | logged | Outside the guides; routed to the placeholder library in `Dev/Swift/` |
+| 2026-11-07 r1 | F6 Nothing lists tab titles, icons and sources for review | rejected | Supervisor ruling: the result is checked in the running app, so change entries don't list them |
+| 2026-11-07 r1 | F7 Tab sections didn't point to the designs input | closed | "(an implementation input)" in both tab sections |
+| 2026-11-07 r1 | A1 Stale `@Published` | closed | Removed; doubles as a cap trim |
+| 2026-11-07 r1 | A2 Client app names in the Compose placeholder guide | closed | Removed; doubles as a cap trim |
+| 2026-11-07 r1 | A3 "Modal-style enums" illustrated with a nav enum | logged | Cosmetic, single observation |
+| 2026-11-07 r1 | Trim of the implementation guide's custom-marker-lifecycle lines | rejected | Shared progress-tracking template text, also in the architecture guide; the Gates **Completion** paragraph became a pointer instead |
+
+Sizes after round 1 repairs, against caps: swiftui 9,990 / 10,050; compose 10,792 / 10,850; swiftui-placeholders 14,965 / 15,050; compose-placeholders 15,949 / 16,000; implementation 51,351 / 51,500.
+| 2026-11-07 r2 | F1 Child, tab and Compose modal examples still declared their route enums beside the view model (round 1's F1 fix was partial) | closed | Enum declarations removed from every route-kind example in both platform guides; *Route enums* is their one home |
+| 2026-11-07 r2 | F2 SwiftUI *Route enums* gave modal enums the conformances a nav enum shows (re-raises r1 A3) | closed | Conformance sentence now covers enums bound with `item:` and tab enums |
+| 2026-11-07 r2 | F3 Tab fallback reachable without looking for designs | closed | Fallback applies to tabs the designs don't show or when none were supplied; Inputs say what the designs feed; the artifact's Inputs record the designs used or that none were supplied (supervisor) |
+| 2026-11-07 r2 | F4 Spec and guides differed on an app's existing tab bar | closed | Supervisor: the existing bar is used. Guides add that a tab added to the app's own bar uses it as set up, through *Reaching a scene from a real screen*; the spec is unchanged |
+| 2026-11-07 r2 | F5 Tab examples used labels equal to scene names | closed | One tab per example shows a label from the designs |
+| 2026-11-07 r2 | F6 Placeholder titles' source unstated | closed | `title` is the scene's name from its map ID, at each API list |
+| 2026-11-07 r2 | F7 "Expected when available" joined the previous bullet | closed | Blank line |
+| 2026-11-07 r2 | F8 Gates quotes one fixed completion line | logged | Shared template text; routed to the template's owner |
+| 2026-11-07 r2 | F9 Compose placeholder route pointer named the whole file layout | closed | "route file layout" |
+| 2026-11-07 r2 | Trim of the implementation guide's planned-gate steps | rejected | Shared template text |
+
+Round 2 repairs leave `ui-map-swiftui-placeholders.md` 9 bytes and `ui-map-compose-placeholders.md` 80 bytes over their caps, after the reviewer's two recommended trims; round 3 is asked for the rest.
+| 2026-11-07 r3 | F1 "final" asked to go back to "production code" | rejected | r1 F2 closed "production code" as an undefined label that misled; "final" states what it means |
+| 2026-11-07 r3 | F2 Compose tab section said "package" | closed | "library" |
+| 2026-11-07 r3 | F3 Both placeholder guides cited an unreachable "rebuild-plan D12" | closed | Removed; the work is skai#127 |
+| 2026-11-07 r3 | F4 Designs input buried in a hard-to-parse bullet | closed | Its own bullet in Inputs |
+| 2026-11-07 r3 | F5 Placeholder tab bars had no way to use the tab route enum | closed | Supervisor: match production. The SwiftUI placeholder library takes `selection:` and `route:`; the guide binds `currentTabRoute` |
+| 2026-11-07 r3 | F6 API lists gave no pointer to the tab rules | closed | Each `PlaceholderTab` entry points to *tab* |
+| 2026-11-07 r3 | F7 Modal examples' `routes` no longer explained beside them | logged | The rule stays at *Destination markers*; the nav example shows it |
+| 2026-11-07 r3 | Appendix: stale `item:` kind list; child enum conformances; Compose companion pointer omits *Modal routing* | logged | Cosmetic, outside the charter |
+| 2026-11-07 r4 | F1 SwiftUI tab example's `route: .notes` didn't type-check against the generic initializer | closed | Cases written as `LibraryTabRoute.notes` |
+| 2026-11-07 r4 | F2 API list omitted `selection:` | closed | `PlaceholderScene(title:domainColor:routes:tabs:selection:)` |
+| 2026-11-07 r4 | F3 SwiftUI placeholder guide over cap | closed | Trims: the one-rule worked example (stated again in *child*), the speculative modifier sentence (skai#127 holds it), the "throwaway" sentence |
+| 2026-11-07 r4 | F4 Initiation loaded only required inputs, so designs were never gathered | closed | Initiation loads the expected inputs that are available; the Gates "Code Changes ready" bullet now points to *Code Changes gate* (it restated it) |
+| 2026-11-07 r4 | F5 Code Changes gate summary didn't say whether designs were used for a tab bar | rejected | Supervisor: gates announce no other inputs; the artifact's Inputs records them |
+| 2026-11-07 r4 | Q1 `selection:` with tabs lacking `route:` silently desyncs the bar | closed | Supervisor: library debug assertion in `PlaceholderScene` |
+| 2026-11-07 r4 | F6 Stale `item:` modifier list | closed | (nav, sheet, cover, popover) |
+| 2026-11-07 r4 | F7 Compose layout comment read as one file per route | closed | "route kind" |
+| 2026-11-07 r5 | F1 Implementation Inputs gave no way to tell whether designs were available | closed | Designs are available wherever the request, the architecture artifact's `## Inputs` or the scope collateral names them |
+| 2026-11-07 r5 | F2 Real-screen block didn't say it covers a tab added to the app's own bar | closed | Supervisor ruling (existing bar via the real-screen route, skai#127): both placeholder guides' block names that case |
+| 2026-11-07 r5 | F3 Implementation guide restated the tab-title rule without its fallback | closed | Reduced to a pointer to the placeholder guides |
+| 2026-11-07 r5 | F4 SwiftUI API list offered `selection:` only without embedded content | closed | Listed as one form, optionally with `{ embedded }` |
+| 2026-11-07 r5 | F5 Real-screen STOP sits under Implement, not Audit | logged | Placeholder guides carry the STOP at the point of use |
+| 2026-11-07 r5 | F6 Four hand-kept lists of what the placeholder guides cover | logged | None stale; shorten when next edited |
+| 2026-11-07 r6 | F1 Tab sections read as permission to add a tab to the app's own bar | closed | Tab sections now say it is a real-screen route, not a `tabs:` entry |
+| 2026-11-07 r6 | F2 Real-screen wiring assumed a trigger overlay even for a tab bar | closed | SwiftUI block: registration on the nav host or tab bar, trigger unless the host is its own entry; implementation § Implement matches |
+| 2026-11-07 r6 | F3 "Final" is shorthand for production code | logged | Action is carried by the rest of the sentence |
+| 2026-11-07 r6 | F4 API list shows only the `selection:` form | logged | Rule and example pair `tabs:` with `selection:` |
+| 2026-11-07 r7 | F1 "Adding to it" read as adding tabs | closed | Both tab sections: "adding components or customizations to it", the spec's wording |
+| 2026-11-07 r7 | F2 Real-screen registration on a tab bar pointed back to the tab section | closed | Piece 1 also cites *Tab routing* in the platform guide |
+| 2026-11-07 r7 | F3 Implementation said the placeholder guide defines the trigger; Compose defines none | closed | "the entry trigger that mapping defines" |
+| 2026-11-07 r7 | F4 Audit file-layout check compared only the scene's folder | closed | Audit and the `file-layout` row compare the scene's file set too |
+| 2026-11-07 r7 | F5 Code blocks show several files together | logged | Route enums sections state the file; codify on recurrence |
+| 2026-11-07 r7 | A1 Compose `isCurrent` expressions differ without comment | logged | Outside charter |
+| 2026-11-07 r7 | Q SwiftUI real-screen TODO said "no defined mapping" then defined one | closed | TODO says the whole route is deferred, the own-bar tab included |
+| 2026-11-07 r8 | F1 Structure-not-features invariant read against design-sourced tab titles | closed | Invariant names the tab-bar carve-out and points to the placeholder guide's *tab* |
+| 2026-11-07 r8 | F2 "Styling it" drops the spec's "bars the app hasn't styled" | logged | Matches the spec for the only bar a scaffold sets up today |
+| 2026-11-07 r8 | F3 "You declare only …" list omitted `selection` | closed | Added |
+| 2026-11-07 r8 | F4 Deferred real-screen section carried a buildable trigger recipe | closed | `safeAreaInset` detail removed; skai#127 holds the design |
+| 2026-11-07 r8 | A1 Circular "missing-input rule" pointers | closed | Placeholder guides just STOP; implementation cites *Finding disposition* |
+| 2026-11-07 r8 | Q Compose placeholder tab route file with no selection binding | logged | Compose library work, skai#128 |
+| 2026-11-07 r9 | F1 "Routes live on the view model" read as file placement | closed | "Route state lives on the view model"; both *Route enums* say "not inside it" |
+| 2026-11-07 r9 | F2 Placeholder guides stop in two idioms (blocked gate vs Discussion) | logged | Pre-existing text outside this change |
+| 2026-11-07 r9 | F3 Override location stated under *Modal routing* only | closed | Moved to each platform guide's intro, covering every pattern |
+| 2026-11-07 r9 | F4 Design icons that aren't SF Symbols have no instruction | closed | Supervisor: falls back to a fitting icon, as for an unshown tab |
+| 2026-11-07 r9 | F5 *Routes aren't special* restates table rows | logged | Pre-existing; agrees with the table |
+| 2026-11-07 r9 | F6 "are production" shorthand | closed | "production code, not placeholder labels" |
+| 2026-11-07 r9 | A1–A3 Section order, pre-read list, override-document naming | logged | Outside charter |
+| 2026-11-07 r10 | F1 "Established project conventions" let undeclared code habits outrank the guide | closed | Handoff example and never-auto-fix name a declared convention; an undeclared pattern is a deviation |
+| 2026-11-07 r10 | F2 Override list didn't name file layout | closed | "folder organization and file layout"; "route wrappers" dropped |
+| 2026-11-07 r10 | F3 Icon fallback replaced the designs' title too | closed | Title and icon fall back independently |
+| 2026-11-07 r10 | F4 SwiftUI placeholders set route state from the view without saying it's placeholder-only | closed | Intro states it, as the Compose guide does |
+| 2026-11-07 r10 | F5 Unresolved symbol builds as a square | logged | Supervisor checks icons in the running app |
+| 2026-11-07 r11 | F1 Handoff example read a declared convention as handoff work | closed | Moved to the Audit file-layout bullet: a convention counts only when declared |
+| 2026-11-07 r11 | F2 "view-model conventions" is a coined label | closed | Dropped |
+| 2026-11-07 r11 | F3 SwiftUI tab example doesn't show the fallback branch | logged | Prose is unambiguous |
+| 2026-11-07 r11 | F4 "One enum per route kind" reads wrong for modals until the next sentence | logged | Recovered two sentences later |
+| 2026-11-07 r11 | A1 Compose stateless leaf vs every scene exposes three sealed types | logged | Older text |
+| 2026-11-07 81-r1 | F1 Compose guide named the override location with an undefined label | closed | Both platform guides say `README.md` |
+| 2026-11-07 81-r1 | F2 Compose "Routes are owned by … not the view model" | closed | "Route state is owned by" |
+| 2026-11-07 81-r1 | Appendix: modal sentence order, Inputs record of a checked README, T# granularity, spec P9 wording | logged | Outside scope |
+| 2026-11-07 81-r2 | F1 Platform guides said README only; implementation also accepts a conventions doc | closed | Each platform intro defines the override document once; README below means either |
+| 2026-11-07 81-r2 | F2 SwiftUI file rule stated before its modal exception | closed | Exception moved into the rule's sentence |
+| 2026-11-07 81-r2 | F3 *Finding disposition* placement named only the platform convention | closed | "platform or declared project convention" |
+| 2026-11-07 81-r3 | F1 "README below means either" didn't reach the placeholder guides | closed | "README here and in the placeholder guide means either" |
+| 2026-11-07 81-r3 | F2 "One enum per route kind" vs per-style modal enums | closed | "or per modal style" |
+| 2026-11-07 81-r3 | F3 "route-host placement" defaults to Implement | logged | Predates this change (f8ec8a5) |
+| 2026-11-07 81-r3 | F4 Undeclared-pattern clause unqualified | logged | Preceding sentence and Inputs resolve it |
+| 2026-11-07 81-r3 | F5 "Route-type contract" label in Compose placeholder pointer | logged | Cosmetic |
+| 2026-11-07 81-r3 | F6 Override definition sits in the routing intro | logged | No proportionate fix under caps |
+| 2026-11-07 81-r4 | F1 SwiftUI *Route enums* opening takes three corrections to reach the modal file name | logged | Readable; no misroute |
+| 2026-11-07 81-r4 | F2 Intro forward-references the placeholder guide | logged | Reached by reading the guide fully |
+| 2026-11-07 81-r4 | F3 "lives" used for enum file and route state | logged | "not inside it" governs |
+| 2026-11-07 81-r4 | F4 Nothing says how to establish that no declaration exists | logged | Gate and Inputs record make it auditable; record "none found" if it recurs |
+| 2026-11-07 81-r4 | F5 Override-document rule restated in five places | logged | Owner: platform intro (definition), implementation (audit consequence); placeholder guides point |
+| 2026-11-07 81-r4 | Series 81 (route files) converged: a round with no live findings | closed | — |
+| 2026-11-07 57-r1 | F1 Designs lookup was a location, not a step; "none supplied" recordable without looking | closed | Inputs say to check the three places; the record says that check found none |
+| 2026-11-07 57-r1 | F2 Tab titles could also come from requirement/story sources | closed | Rejected at first on a misread ruling; supervisor later widened sources to any input |
+| 2026-11-07 57-r1 | F3 "missing-mapping rule" label has no owner heading | closed | Cites *Finding disposition* |
+| 2026-11-07 57-r1 | A1–A4 Selection-less library inits, Tab routing pre-read, *Boundary* carve-out, example annotations | logged | Outside scope or cosmetic |
+| 2026-11-07 57-r2 | F1 Inputs record's "that check" had no anchor | closed | Names the designs check in the guide's *Inputs* |
+| 2026-11-07 57-r2 | F2 Designs found but unreadable could read as "don't show" | logged | Standing ambiguity stop covers it; fix at the Inputs bullet if it occurs |
+| 2026-11-07 57-r2 | A1–A5 Debug stop unmentioned, marker examples, ImageVector shorthand, duplicated Inputs clause, CLI symbol oddity | logged | Cosmetic |
+| 2026-11-07 57-r3 | F1 Inputs record said "designs used" (nothing uses them in Plan) and coined "designs check" | closed | "the designs found in the places *Inputs* lists, or that none were found there" |
+| 2026-11-07 57-r3 | F2 Invariant classified tab titles instead of saying the scaffold writes them | closed | "the scaffold writes a tab bar's titles and icons as production code" |
+| 2026-11-07 57-r3 | F3 "The app's own bar" didn't exclude an earlier scaffold's placeholder bar | closed | "a real screen's bar" in both guides |
+| 2026-11-07 57-r3 | F4 README bar convention vs "the package's bar is the bar" | logged | Not yet seen; ❌/✅ example if it occurs |
+| 2026-11-07 57-r4 | F1 "Tab titles" collides with the scene `title:` | closed | "Tab labels", matching `label:` |
+| 2026-11-07 57-r4 | F2 Inputs record says designs "found", spec says "used" | rejected | Reverses 57-r3 F1: a Plan run uses no designs; the *tab* rule makes the scaffold follow them |
+| 2026-11-07 57-r5 | F1 *tab* pointed to "an implementation input", not the record | closed | "the designs the artifact's Inputs record" |
+| 2026-11-07 57-r5 | F2 Designs lookup used "scope collateral" and never said what designs are | closed | "(the design file or drawings)"; "the story's linked documents" |
+| 2026-11-07 57-r5 | F3 Spec says tab "title", guides say "label" | closed | Spec aligned to "label" |
+| 2026-11-07 57-r5 | F4 No pairing rule when designs' tabs and map tabs disagree | logged | Standing ambiguity stop |
+| 2026-11-07 57-r6 | F1 "the artifact's Inputs" could mean the architecture or implementation artifact | closed | "the implementation artifact's `## Inputs`" |
+| 2026-11-07 57-r6 | F2 Project-convention path to a real tab bar never meets the label rule | logged | Future text behind the deferred route; lands with skai#127 |
+| 2026-11-07 57-r6 | F3 Resume doesn't say to refresh the designs record | logged | Standing ambiguity stop; record shows what was searched |
+| 2026-11-07 57-r7 | F1 A missing or stale designs record reads like "none found" at *tab* | closed | Moot: supervisor widened label sources to any input; *tab* no longer reads a designs record |
+| 2026-11-07 57-r7 | A1, A2 Inputs bullet phrasing; dense relative clause in *tab* | logged | Cosmetic |
+| 2026-11-07 57b-r1 | F1/F2 Product specs named as a label source but not loaded or recorded | closed | Inputs bullet and record name designs and product specs; spec matches |
+| 2026-11-07 57b-r1 | F3 Examples marked only one tab as from the inputs | closed | Comment on the tab list |
+| 2026-11-07 57b-r1 | F4 *Tab routing* not in the SwiftUI read-first list | logged | Platform guide is read in full |
+| 2026-11-07 57b-r2 | F1 "Available" undefined when loading expected inputs | closed | Initiation loads "the expected ones found where *Inputs* says to look"; the bullet says where |
+| 2026-11-07 57b-r2 | F2 Where-to-look list omitted the change package | closed | Named |
+| 2026-11-07 57b-r2 | F3 Route-menu label source unstated | logged | Examples consistent; no recurrence |
+| 2026-11-07 57b-r2 | F4 Compose icon-fallback clause hard to parse | closed | "or that has no `ImageVector`" |
+| 2026-11-07 57b-r2 | A1 `PlaceholderTab.label` doc comment said designs only | closed | Doc comment updated |
+| 2026-11-07 57b-r3 | F1 Expected inputs could go unloaded | rejected | Supervisor: low-risk like any coding slip; lookup and record wording removed instead |
+| 2026-11-07 57b-r3 | F2 Compose "has no `ImageVector`" names a type, not a test | closed | "that no existing `ImageVector` provides" |
+| 2026-11-09 57b | Series 57 (tab bars) converged by supervisor ruling | closed | — |
+| 2026-11-09 | Cap trims deleted worked examples and explanations instead of tightening wording | closed | Supervisor ruling: all cap trims restored, examples labeled with their files; caps met by a compression review's rewording (102 changes, verified); its proposal to delete the Compose type bullets was rejected. Template wording that invited it drafted as a skai ticket |
+| 2026-11-09 caps-r1 | F1 SwiftUI placeholder child section told a child coordinator under a sheet, cover or tab to add a second stack | closed | Parenthetical names the root or a popover as the boundary; sheet, cover, tab and nav push already supply one |
+| 2026-11-09 caps-r1 | F2/F3 Multi-file code blocks without file labels (SwiftUI Modal routing; both leaf examples) | closed | Each file labeled; Modal routing shows the shared `DashboardModalRoute.swift` |
+| 2026-11-09 caps-r1 | F4 Compose "screen never reads the current route" vs. tab route in view state | logged | Tab routing governs at its point of use |
+| 2026-11-09 caps-r1 | F5 Change-request step said the run awaits the map before the request file is written | closed | Wait sentence removed; "In either run, immediately write…" |
+| 2026-11-09 caps-r1 | F6 `DomainColors` has no stated home for `common:` scenes in a shared module | logged | Standing escalation catches it; one clause in *Domain colors* if it recurs |
+| 2026-11-09 caps-r1 | A1–A11 Duplicate `DashboardNavRoute` cases, "three sealed types", routeless crumb color, `SlideNavHost` call shapes, unlabeled single-file fragments, marker syntax pointer, real-screen STOP restated under *Implement*, third completion copy, invariant pointer | logged | Cosmetic |
+| 2026-11-09 caps-r2 | F1/F2 SwiftUI library's tabbed branch draws only the tabs: tabs plus composite drops the composite, a tabbed modal had no ✕, and a sheet wrapped tabbed content in a second stack | closed | Guides carry the spec's tabs-plus-composite STOP; library passes the ✕ to tabs; a tabbed destination's tabs own their stacks |
+| 2026-11-09 caps-r2 | F3 Compose "every scene exposes three sealed types" vs. the stateless-scene exemption | closed | "Every scene with a view model" |
+| 2026-11-09 caps-r2 | F4 No-package rule lacked its change-request exception | closed | Pointer to *Raising a change request* |
+| 2026-11-09 caps-r2 | F5 "Type folder" undefined | closed | Defined at the `ui-map/` folder |
+| 2026-11-09 caps-r2 | F6 Compose modal API names differ from the spec | logged | Reconcile when the Compose library lands |
+| 2026-11-09 caps-r2 | A1–A6 Assert unmentioned, nav-bar overclaim for popovers, "sub-domain", gate-line location rule, archive shorthand, palette wrap | logged | Cosmetic |
+| 2026-11-09 caps-r3 | F1 Tab stacks stated unconditionally; a pushed tabbed scene got two answers | closed | **Tab** bullet owns the tabbed-scene boundary; modal and child point to it |
+| 2026-11-09 caps-r3 | F2/F3 Compose guide lost the `scenes/` root and the README bar for non-standard modal styles | closed | Both restated in Compose, parallel to SwiftUI |
+| 2026-11-09 caps-r3 | F4 SwiftUI nav example's scene wrapped itself in a `NavigationStack` | closed | Wrapper removed; matches the modal example |
+| 2026-11-09 caps-r3 | A1–A5 Library accepts tabs plus embedded; resume "records" Mode; `Route`/`NavStart` not in the library list; unnamed linkage rule; Compose modal crumb reset | logged | Cosmetic |
+| 2026-11-09 caps-r4 | F1 Decision question and modal bullet told a sheet to wrap a tabbed destination | closed | The decision question asks whether the presented scene is tabbed; modal bullet points to **tab**; nav-bar sentence covers tabbed scenes |
+| 2026-11-09 caps-r4 | F2 Leaf examples lacked the scaffold marker | closed | Marker line on each file |
+| 2026-11-09 caps-r4 | F3 Compose tab section named one widget | closed | "the tab container in use" |
+| 2026-11-09 caps-r4 | A1 `note.text` example has no `.fill` variant | closed | `text.document` |
+| 2026-11-09 caps-r4 | A3–A6 Library-link stop phrasing differs, Compose icon clause, `DomainColors` location, mixed-destination modal example | logged | Cosmetic |
+| 2026-11-09 caps-r5 | F1 Declared-convention rule sat inside one audit bullet | closed | Moved below the *What to compare* list |
+| 2026-11-09 caps-r5 | F2 Compose tabbed placeholder's tab route file | rejected | Deferred to the Compose library; missing from the prompt's settled list |
+| 2026-11-09 caps-r5 | F3 Library doc comment said tabs never show the ✕ | closed | Tab content inherits the scene's value |
+| 2026-11-09 caps-r5 | F4 Compressed phrases lost their noun: "route" (layout), "final" (tab), Compose icon clause | closed | "route kind"; Compose icon clause reworded; "final" left as logged earlier |
+| 2026-11-09 caps-r5 | F5 "One nav bar per tab" overgeneralized | closed | "a tabbed scene at a boundary" |
+| 2026-11-09 caps-r5 | F6 New-scene-inputs STOP without a section pointer; appendix (tab fragment's `@Bindable`, Compose README-only modal styles) | logged | Cosmetic or out of scope |
+| 2026-11-09 caps-r6 | F1 "Boundary" used in two senses in the one rule | closed | Conditions carry the meaning; "boundary" dropped from the tab and child bullets |
+| 2026-11-09 caps-r6 | F2 Library default list said tabs have nothing to dismiss | closed | "tabs of a non-modal scene" |
+| 2026-11-09 caps-r6 | F3 Scaffold-marker examples named only a nav host | closed | "or tab bar" |
+| 2026-11-09 caps-r6 | F4/F5 Read-first list omits *Tab routing*; declared-convention sentence literally over-broad | logged | Cosmetic |
+| 2026-11-09 caps-r7 | F1 Given non-symbol icon replaced by a fitting one | rejected | Supervisor ruling, missing from the prompt's settled list |
+| 2026-11-09 caps-r7 | F2 "Load it only when…" pointed at the wrong guide | closed | "Load this guide" |
+| 2026-11-09 caps-r7 | F3 Nav-bar parenthetical overclaimed | closed | Baseline sentence restored |
+| 2026-11-09 caps-r7 | F4 Library comment used process wording | closed | Library's own terms |
+| 2026-11-09 caps-r8 | F1 Nav-bar sentence untrue for tabbed scenes | closed | Tabbed scene's title rides in its tabs' breadcrumbs |
+| 2026-11-09 caps-r8 | F2 SwiftUI intro load rule lost its mandate half | closed | Matches the Compose intro |
+| 2026-11-09 caps-r8 | F3/F4 Deferral reason vs. tab bars; library label comment's input list | logged | Cosmetic |
+| 2026-11-09 caps-r9 | F1 One rule's closing sentence put its guarantee after the tabbed exception | closed | Guarantee first, exception last |
+| 2026-11-09 caps-r9 | F2 Tab examples' `// from the inputs` comments | logged | Cosmetic |
+| 2026-11-09 caps | Series caps (size pass) converged by supervisor ruling | closed | — |
