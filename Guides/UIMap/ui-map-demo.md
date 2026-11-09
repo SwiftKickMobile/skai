@@ -2,11 +2,17 @@ Managed-By: skai
 Managed-Id: guide.ui-map-demo
 Managed-Source: Guides/UIMap/ui-map-demo.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-05-24
+Managed-Updated-At: 2026-10-25
 
 # UI Map Demo
 
+Print `📖 SKAI guide: ui-map-demo` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+
 A complete UI Map shown in both representations: YAML source (the source of truth) and the Mermaid render derived from it. For feedback on the format and the render.
+
+The standard render is the interactive HTML page (`--html`, see [`ui-map-guide.md`](ui-map-guide.md)), which a Markdown document cannot embed; this demo shows the Mermaid render instead. To view the demo as the HTML page, save the YAML below to a file and render it with `--html`.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 Examples use **LumenNotes**, skai's shared fictional theme. The schema and conventions are project-agnostic.
 
@@ -40,7 +46,7 @@ domains:
       - search                            # cross-domain ref (reused)
     notes:
       - at: modal
-        text: "Both surfaced from the library toolbar"
+        text: "Profile and Search open from the Library toolbar"
 
   note:                                   # collapsed
     composite:
@@ -79,6 +85,9 @@ todos:
 ```mermaid
 ---
 config:
+  layout: elk
+  elk:
+    nodePlacementStrategy: SIMPLE
   flowchart:
     diagramPadding: 20
     padding: 12
@@ -89,10 +98,10 @@ config:
     nodeSpacing: 30
     rankSpacing: 40
 ---
-flowchart TD
+flowchart LR
     %% Domains
     subgraph domain_legend[" "]
-        direction LR
+        direction TB
         leg_app(["App"])
         leg_library(["Library"])
         leg_note(["Note"])
@@ -158,7 +167,7 @@ flowchart TD
         tag_picker
         attachment_viewer
         share_sheet
-        search_at_note(["Search"])
+        search_at_note_modal(["Search"])
     end
 
     note -->|"<span style='background:white;border:1px solid black;padding:4px 8px'>Composite</span>"| note_composite
@@ -176,7 +185,7 @@ flowchart TD
 
     note_welcome@{ shape: tag-rect, label: "Onboarding flow not yet built" }
     note_welcome -.- welcome
-    note_library@{ shape: tag-rect, label: "Both surfaced from the library toolbar" }
+    note_library@{ shape: tag-rect, label: "Profile and Search open from the Library toolbar" }
     note_library -.- library_modal
 
     mstyle_library[/"<div style='text-align:left'>Profile <b>sheet</b>, Search <b>full_screen</b></div>"/]
@@ -197,7 +206,7 @@ flowchart TD
     classDef app_todo fill:#8AD1FA4C,stroke:#8AD1FA,stroke-width:2px,color:#231f20,filter:none
     class welcome app_todo
     classDef pointer fill:#bdbdbd,stroke:#bdbdbd,color:#231f20,filter:none
-    class search_at_note pointer
+    class search_at_note_modal pointer
     classDef mutex fill:#ffffff,stroke:#999,stroke-dasharray:10 5,filter:none
     class app_child,login_nav,library_modal,library_tab,notes_nav,note_modal,profile_nav mutex
     classDef composite fill:#f0f0f0,stroke:#f0f0f0,stroke-width:0px,filter:none
@@ -216,14 +225,21 @@ flowchart TD
 ## Notes on what's where
 
 - **Wrappers per route.** Every route container in the YAML (`nav:`, `modal:`, `composite:`, `tab:`, `child:`) becomes a wrapper subgraph in the render. Even single-target routes get a wrapper. The route-kind label sits on the incoming arrow.
-- **Canonical placement via `primary_parent`.** `Search` is YAML-organized under `other:` but its `primary_parent: library` puts the canonical instance in the `library_modal` wrapper. The reference from `note.modal` renders as a gray pointer (`Search_at_note`).
+- **Canonical placement via `primary_parent`.** `Search` is YAML-organized under `other:` but its `primary_parent: library` puts the canonical instance in the `library_modal` wrapper. The reference from `note.modal` renders as a gray pointer (`search_at_note_modal`).
 - **Gray fill marks non-canonical references.** Pointer nodes use the same shape as canonical scenes, distinguished by fill color only.
 - **Root scenes are not wrapped.** `App` is the root: no incoming route, no enclosing wrapper. Matches the FigJam convention.
 - **`common:` scenes render at their consumer, colored as the `Common` domain.** `Web` is YAML-organized under `common:` (domain-agnostic): the render places its canonical instance inside its only consumer's Nav wrapper (`profile_nav`), since it has a single inbound route. Its fill is the dedicated **Common** color with its own legend entry (appended last) — common scenes no longer borrow a real domain's color. If Web were referenced from multiple consumers, a `primary_parent` would pick the visual home.
-- **Scene fill encodes domain.** Each domain maps to a palette color (in YAML declaration order); `common:` is appended last as the **Common** pseudo-domain with the next palette slot. The Domain Legend block at the top maps domain to color.
+- **Scene fill encodes domain.** Each domain maps to a palette color (in YAML declaration order); `common:` is appended last as the **Common** pseudo-domain with the next palette slot. The Domain Legend block, a single column at the start of the diagram, maps domain to color.
 - **Mutex vs. composite wrappers are visually distinct.** Mutex wrappers use a dashed border with white fill; composite wrappers use light-gray fill with no border.
 - **`Implements:` callouts.** Right-leaning parallelograms attached to the abstract scene via a dashed connector, with single-line comma-separated implementations. Fill matches the attached scene's domain color.
 - **Modal-style callouts.** The project declares a `modal_styles` vocabulary; each scene reached by a modal route tags itself with a `modal_style`. For every modal wrapper, the render emits a callout — a parallelogram styled like the mutex wrapper (white fill, dashed gray border) — listing each destination and its bolded style on a single comma-separated line. The callout annotates the wrapper, not any one scene.
 - **TODO scenes and notes.** `Welcome` is flagged `todo: true` in YAML. A TODO scene keeps its domain identity but signals the unimplemented state: full-opacity domain color as a 2px stroke, with the domain color at 0.3 alpha as the fill. `Welcome` also has a `note:` rendering as a pale-yellow sticky-note callout (a `tag-rect` shape). The two are independent — a scene can have either, both, or neither.
 - **Container-attached notes.** A `notes:` entry on a scene can use `at: <route-kind>` to attach to a route container (wrapper) rather than the scene itself.
-- **Auto-layout caveat.** Mermaid lays out the graph automatically; positions won't match the FigJam exactly. Topology, grouping, and edge labels match; relative positions within a domain are the renderer's choice.
+- **Left-to-right layout.** The render is `flowchart LR`, laid out by Mermaid's ELK engine with simple node placement: depth runs left to right and siblings stack top to bottom, so a deep map stays compact rather than very wide.
+- **Auto-layout caveat.** Mermaid lays out the graph automatically; positions won't match the FigJam exactly. Topology, grouping, and edge labels match; relative positions within a domain are the renderer's choice. In particular, the order of screens within a group follows the layout's effort to minimise crossing lines, not the order written in the YAML.
+
+## Project Addendum
+
+If `<active-project-root>/skai/addenda/ui-map-demo-addendum.md` exists, read it and immediately print
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
+guide and win any conflict.

@@ -7,20 +7,27 @@
 # ]
 # ///
 """
-ui-map-render.py — render a UI Map YAML document as a Mermaid flowchart.
+ui-map-render.py — render a UI Map YAML document as an interactive HTML page
+or a Mermaid flowchart.
 
 The input is a UI Map YAML document conforming to ui-map.schema.json.
-The output is a Mermaid `flowchart TD` block (bare, no ``` fences).
+The primary output is a static HTML page (`--html`) that loads the viewer
+beside this script (ui-map-viewer.v1.js, ui-map-viewer.v1.css; the version bumps only when a
+change would break pages already rendered); no server is needed.
+The Mermaid `flowchart LR` text (bare, no ``` fences) remains available for
+documents that embed a diagram, and `--svg` still renders it through the
+Mermaid CLI.
 
 Usage:
+    uv run ui-map-render.py <input.yaml> --html <output.html>    # the interactive map
+    uv run ui-map-render.py <input.yaml> --html <o.html> --open  # render, then open it
     uv run ui-map-render.py <input.yaml>                     # write Mermaid to stdout
     uv run ui-map-render.py <input.yaml> -o <output.mmd>     # write Mermaid to a file
     uv run ui-map-render.py <input.yaml> --markdown          # wrap in ```mermaid fences
     uv run ui-map-render.py <input.yaml> --svg <output.svg>  # also render an SVG
-    uv run ui-map-render.py <input.yaml> --svg <o.svg> --open   # render SVG, then open it
     uv run ui-map-render.py <input.yaml> --no-validate       # skip JSON Schema validation
 
-The Mermaid-text outputs (-o / --markdown / stdout) and the --svg output are
+The HTML, Mermaid-text (-o / --markdown / stdout) and --svg outputs are
 independent and may be combined in a single invocation.
 
 SVG rendering shells out to the Mermaid CLI (`mmdc`) — an optional external
@@ -44,11 +51,17 @@ These rules are what the script applies. They are the canonical render spec;
 the demo doc and the guide describe the same conventions in prose.
 
 1. OVERALL STRUCTURE
-   - A `---`-delimited front matter sets Mermaid config: padding 12,
-     nodeSpacing 30, rankSpacing 40, subGraphTitleMargin top/bottom 0.
-   - The diagram is `flowchart TD`.
+   - A `---`-delimited front matter sets Mermaid config: the ELK layout
+     engine with SIMPLE node placement (more compact than Mermaid's default
+     layout for deep maps), padding 12, nodeSpacing 30, rankSpacing 40,
+     subGraphTitleMargin top/bottom 0. ELK ships inside Mermaid; no extra
+     install is needed beyond the Mermaid CLI.
+   - The diagram is `flowchart LR`: depth runs left to right and siblings
+     stack top to bottom, which keeps deep maps far less wide than a
+     top-down layout.
    - The first block is a Domain Legend subgraph (one labeled node per
-     domain, colored to match the scenes in that domain).
+     domain, colored to match the scenes in that domain), laid out as a
+     single column so it does not stretch the diagram's width.
    - All canonical scenes are declared next at top level (stadium shape).
    - Outgoing routes are emitted per source scene, in YAML declaration order.
    - Callouts (implements, notes) are emitted after routes.
@@ -75,7 +88,7 @@ the demo doc and the guide describe the same conventions in prose.
      the next palette slot after the real domains. Common scenes still render
      at their canonical position (their consumer's wrapper) — only the fill
      color and the legend entry mark them as common.
-   - The Domain Legend subgraph at the top of the diagram contains one node
+   - The Domain Legend subgraph at the start of the diagram contains one node
      per domain, named `leg_<domain_id>`, classed with that domain's color.
 
 4. CANONICAL POSITION (which wrapper holds the rounded-rect instance)
@@ -83,11 +96,14 @@ the demo doc and the guide describe the same conventions in prose.
      a. `primary_parent: X` set → canonical instance renders inside X's wrapper
         that routes to this scene. The route kind is the unique kind connecting
         X to this scene; if X routes to this scene via multiple kinds, the
-        first declared kind wins.
+        kind whose container defines the scene wins, falling back to the first
+        declared kind when the scene is defined elsewhere.
      b. Exactly one inbound reference → that single parent's wrapper.
      c. Zero inbound references → root scene: declared at top level, no
         enclosing wrapper.
      d. Multiple inbound references with no `primary_parent` → semantic error.
+     e. Every scene must be reachable from a root through its visual homes; a
+        loop of visual homes → semantic error listing the scenes it strands.
 
 5. WRAPPERS (one per route container)
    - Each route kind on a scene becomes a `subgraph <sid>_<kind>[" "]` (empty
@@ -102,8 +118,10 @@ the demo doc and the guide describe the same conventions in prose.
 6. POINTERS (non-canonical references)
    - When a scene `T` appears in a route container whose source `S` is NOT T's
      visual parent, the script renders a separate pointer node inside S's
-     wrapper: `<T>_at_<S>` with the same label as the canonical `T`, classed
-     `pointer` (gray fill — overrides T's domain color).
+     wrapper: `<T>_at_<S>_<kind>` with the same label as the canonical `T`,
+     classed `pointer` (gray fill — overrides T's domain color). The route
+     kind is part of the id so that S referencing T under two route kinds
+     (e.g. `nav` and `modal`) renders a pointer in each wrapper.
    - The canonical `T` is unaffected; it renders inside its visual parent's
      wrapper with its domain fill.
 
@@ -150,12 +168,77 @@ the demo doc and the guide describe the same conventions in prose.
       report mode (TODO: not yet implemented in this script).
     - Cross-platform `platform:` field: not rendered; informational only.
 
-12. ERRORS
+12. HTML OUTPUT (--html)
+    - A static page: the map model inline as `window.UI_MAP` JSON, plus a
+      stylesheet link and script tag for ui-map-viewer.v1.css / ui-map-viewer.v1.js
+      beside this script, referenced by a path relative to the output file.
+      The page works from file:// and from any static server; it needs the
+      SKAI checkout at that relative location and nothing else. `--open`
+      opens it.
+    - The model carries, per scene: id, humanized label, domain, canonical
+      home (visual parent and route kind, rule 4), route containers in YAML
+      order with their destinations, `implements`, `modal_style`, notes
+      (with `at:` when attached to a route container, rule 9), `todo`, and
+      every inbound route. Plus the domain list in palette order (rule 3),
+      the modal-style vocabulary, scene order, and the root scenes.
+    - Layout: levels as rows — depth in the canonical-home tree — at a fixed
+      cell width that never shrinks, the page growing vertically. Each scene's
+      route containers sit in the row below it as dashed boxes (composite:
+      filled, no border) holding the destination cells, with the route kind as
+      a label on the connector. A box is never shared between scenes, so every
+      connector runs one row down. A row too wide for the window wraps
+      between route containers, never inside one, so a scene's containers may
+      land on different lines. Each visual line is centred horizontally in the
+      window; a line too wide to fit stays flush left.
+    - Cells: neutral boxes with the title centred (two lines, then clipped), a
+      domain colour swatch top-left and icons top-right marking only the
+      existence of callouts — notes, implements, modal style — whose content the
+      side panel shows. A pointer (rule 6) is a lighter cell with a reuse
+      arrow; clicking it selects the canonical scene.
+    - Selection: clicking a scene filters the page to its connected
+      neighbourhood (1 hop by default; 2 hops or All from the control in the
+      top bar), removes everything else and collapses empty rows. The
+      selected cell, its route boxes, every box holding it, and their
+      connectors and labels are highlighted; All shows the whole map and dims
+      the unconnected parts instead. Clicking the selected cell again,
+      clicking empty canvas, Escape, or Clear restores the full map; closing
+      the side panel instead leaves the scene selected and the view filtered,
+      uncovering the part of the map it hid without moving anything (see
+      Placement). The domain legend filters the same way (multi-select). A
+      search box highlights matches; Enter selects the first.
+    - Placement after a selection, in priority order: the selected cell is
+      fully visible and clear of the side panel; as much cell area as possible
+      is visible, counted continuously so that closing a gap always beats
+      leaving one beside a clipped cell; of what does not fit, as little as
+      possible falls off the left edge, so overflow sits under the side panel
+      instead; the selected cell is as close as possible to its home, its
+      place in the full map. A cell already at home does not move. Dismissing
+      the side panel re-places nothing: the graph keeps the place it has and
+      the overflow the panel covered is simply revealed. Placement is a graph
+      offset plus a scroll position, kept on the 4px layout grid so 1px
+      borders stay crisp at fractional device pixel ratios.
+    - Animation: on every state change, cells, route boxes and labels present
+      before and after slide (and boxes resize) to their new place, departing
+      elements fade out, arriving ones fade in. The side panel slides in when
+      it opens and changes content in place while open. A window resize
+      reflows without animating. Off under prefers-reduced-motion.
+    - Side panel for the selected scene: its domain, Reached from (every
+      inbound route with its kind, tagged home/reused when the scene appears
+      more than once), Opens (per route kind, with route notes inline),
+      Notes, Implements, Modal style (each headed by the cell's icon; ids
+      shown humanized), and a Specs section reserved for a future sidecar.
+      The panel's footprint is a safe area: the layout width does not change
+      when it opens, and the canvas scrolls under it.
+    - Theme: follows the system, with a Theme toggle. The "?" button opens a
+      legend: the cell and box vocabulary, the route kinds, and the controls.
+
+13. ERRORS
     - Schema validation runs first (unless --no-validate); failures abort.
     - Semantic validation runs next; failures abort with a specific message.
       Categories: duplicate canonical home, undefined scene reference,
       ambiguous visual home (multiple inbound, no primary_parent),
       `primary_parent` that doesn't actually route to the scene,
+      visual homes that form a loop,
       too many domains for the palette, missing modal_style or vocabulary,
       modal_style outside the vocabulary.
 """
@@ -164,7 +247,10 @@ from __future__ import annotations
 
 import argparse
 import json
+from html import escape as html_escape
+import html
 import os
+from urllib.parse import quote
 import shutil
 import subprocess
 import sys
@@ -281,6 +367,7 @@ def _walk_item(
     scenes: dict[str, dict[str, Any]],
     edges: list[tuple[str, str, str]],
     scene_domain: dict[str, str | None],
+    definition_site: dict[str, tuple[str | None, str | None]],
 ) -> None:
     scene_id, body = _scene_id_and_body(item)
     if parent_id is not None and route_kind is not None:
@@ -291,30 +378,45 @@ def _walk_item(
         raise SemanticError(f"Duplicate canonical home for scene '{scene_id}'")
     scenes[scene_id] = body
     scene_domain[scene_id] = domain_id
+    definition_site[scene_id] = (parent_id, route_kind)
     for kind in ROUTE_KINDS:
         for sub_item in body.get(kind, []) or []:
-            _walk_item(sub_item, scene_id, kind, domain_id, scenes, edges, scene_domain)
+            _walk_item(
+                sub_item, scene_id, kind, domain_id, scenes, edges, scene_domain, definition_site
+            )
 
 
 def build_model(data: dict[str, Any]) -> Model:
     scenes: dict[str, dict[str, Any]] = {}
     edges: list[tuple[str, str, str]] = []
     scene_domain: dict[str, str | None] = {}
+    definition_site: dict[str, tuple[str | None, str | None]] = {}
     domain_order: list[str] = []
 
     for domain_id, domain_data in data["domains"].items():
         domain_order.append(domain_id)
         if "scenes" in domain_data:
             for item in domain_data["scenes"]:
-                _walk_item(item, None, None, domain_id, scenes, edges, scene_domain)
+                _walk_item(
+                    item, None, None, domain_id, scenes, edges, scene_domain, definition_site
+                )
         else:
             _walk_item(
-                {domain_id: domain_data}, None, None, domain_id, scenes, edges, scene_domain
+                {domain_id: domain_data},
+                None,
+                None,
+                domain_id,
+                scenes,
+                edges,
+                scene_domain,
+                definition_site,
             )
 
     common_items = data.get("common", []) or []
     for item in common_items:
-        _walk_item(item, None, None, COMMON_DOMAIN_ID, scenes, edges, scene_domain)
+        _walk_item(
+            item, None, None, COMMON_DOMAIN_ID, scenes, edges, scene_domain, definition_site
+        )
     if common_items:
         domain_order.append(COMMON_DOMAIN_ID)
 
@@ -335,7 +437,14 @@ def build_model(data: dict[str, Any]) -> Model:
             kinds = [k for (p, k) in inbound[sid] if p == pp]
             if not kinds:
                 raise SemanticError(f"primary_parent '{pp}' does not route to '{sid}'")
-            visual_parent[sid] = (pp, kinds[0])
+            # When the primary parent reaches this scene by more than one route
+            # kind, render the canonical instance in the container the map
+            # actually defines it under; otherwise fall back to route order.
+            def_parent, def_kind = definition_site.get(sid, (None, None))
+            if def_parent == pp and def_kind in kinds:
+                visual_parent[sid] = (pp, def_kind)
+            else:
+                visual_parent[sid] = (pp, kinds[0])
         elif len(inbound[sid]) == 1:
             visual_parent[sid] = inbound[sid][0]
         elif len(inbound[sid]) == 0:
@@ -346,6 +455,17 @@ def build_model(data: dict[str, Any]) -> Model:
                 f"Scene '{sid}' has {len(inbound[sid])} inbound refs ({listing}) "
                 f"but no primary_parent"
             )
+
+    # Every scene must hang from a root. A loop of visual homes (e.g. a
+    # primary_parent the scene itself routes to) would silently drop its scenes.
+    placed = {sid for sid, (p, _) in visual_parent.items() if p is None}
+    while grown := {sid for sid, (p, _) in visual_parent.items() if p in placed} - placed:
+        placed |= grown
+    if unplaced := [sid for sid in scenes if sid not in placed]:
+        raise SemanticError(
+            f"Visual homes form a loop, so these scenes can't be placed: {', '.join(unplaced)}. "
+            "Give one of them a primary_parent outside the loop"
+        )
 
     if len(domain_order) > len(DOMAIN_PALETTE):
         raise SemanticError(
@@ -424,6 +544,9 @@ def render(model: Model) -> str:
     out.extend([
         "---",
         "config:",
+        "  layout: elk",
+        "  elk:",
+        "    nodePlacementStrategy: SIMPLE",
         "  flowchart:",
         "    diagramPadding: 20",
         "    padding: 12",
@@ -434,18 +557,18 @@ def render(model: Model) -> str:
         "    nodeSpacing: 30",
         "    rankSpacing: 40",
         "---",
-        "flowchart TD",
+        "flowchart LR",
     ])
 
     # Domain legend (one node per domain, colored to match its scenes)
     if model.domain_order:
         out.append("    %% Domains")
         out.append('    subgraph domain_legend[" "]')
-        out.append("        direction LR")
+        out.append("        direction TB")
         for domain_id in model.domain_order:
             out.append(f'        leg_{domain_id}(["{humanize(domain_id)}"])')
-        # The legend nodes have no edges, so `direction LR` has nothing to flow.
-        # Chain them with invisible edges to force a horizontal row.
+        # The legend nodes have no edges, so `direction TB` has nothing to flow.
+        # Chain them with invisible edges to force a single column.
         if len(model.domain_order) > 1:
             chain = " ~~~ ".join(f"leg_{d}" for d in model.domain_order)
             out.append(f"        {chain}")
@@ -461,7 +584,7 @@ def render(model: Model) -> str:
     # Anchor the legend to a root scene with an invisible edge. Without this,
     # the legend subgraph is unconnected and Mermaid's layout drops it in an
     # arbitrary spot, where it can overlap real edges and route labels. The
-    # invisible edge forces it onto the top rank, above the root scene.
+    # invisible edge forces it onto the first rank, beside the root scene.
     if model.domain_order:
         roots = [sid for sid, vp in model.visual_parent.items() if vp == (None, None)]
         if roots:
@@ -494,7 +617,7 @@ def render(model: Model) -> str:
                 if model.visual_parent[target_id] == (sid, kind):
                     out.append(f"        {target_id}")
                 else:
-                    pid = f"{target_id}_at_{sid}"
+                    pid = f"{target_id}_at_{sid}_{kind}"
                     out.append(f'        {pid}(["{humanize(target_id)}"])')
                     pointer_ids.append(pid)
             out.append("    end")
@@ -725,8 +848,9 @@ def render_svg(mermaid: str, svg_path: Path) -> None:
 def open_in_browser(path: Path) -> None:
     """Open a file in a browser.
 
-    macOS forces a browser explicitly: Preview cannot display SVG, and Launch
-    Services may map .svg to a non-browser app. Defaults to Safari; override
+    macOS forces a browser explicitly: Preview cannot display SVG, Launch
+    Services may map .svg to a non-browser app, and .html may be mapped to an
+    editor. Defaults to Safari; override
     with the UI_MAP_BROWSER env var. Other platforms use the OS default opener.
     """
     if sys.platform == "darwin":
@@ -741,13 +865,90 @@ def open_in_browser(path: Path) -> None:
 
 
 # ---------------------------------------------------------------------------
+# HTML output — the interactive viewer (docstring rule 12)
+# ---------------------------------------------------------------------------
+
+VIEWER_ASSETS: tuple[str, ...] = ("ui-map-viewer.v1.css", "ui-map-viewer.v1.js")  # the version bumps only when a change would break pages already rendered; old versions stay beside this script
+
+
+def build_viewer_model(model: Model) -> dict[str, Any]:
+    """The JSON model the viewer renders, derived from the resolved Model."""
+    domains = [
+        {"id": d, "label": humanize(d), "color": DOMAIN_PALETTE[i]}
+        for i, d in enumerate(model.domain_order)
+    ]
+    scenes: dict[str, dict[str, Any]] = {}
+    for sid, body in model.scenes.items():
+        parent, kind = model.visual_parent[sid]
+        routes = [
+            {"kind": k, "targets": [_scene_id_and_body(item)[0] for item in body[k]]}
+            for k in body
+            if k in ROUTE_KINDS and body[k]
+        ]
+        notes: list[dict[str, Any]] = []
+        if body.get("note"):
+            notes.append({"at": None, "text": body["note"]})
+        for n in body.get("notes", []) or []:
+            if isinstance(n, str):
+                notes.append({"at": None, "text": n})
+            else:
+                notes.append({"at": n.get("at"), "text": n.get("text", "")})
+        scenes[sid] = {
+            "id": sid,
+            "label": humanize(sid),
+            "domain": model.scene_domain[sid],
+            "parent": parent,
+            "parentKind": kind,
+            "routes": routes,
+            "implements": body.get("implements", []) or [],
+            "modalStyle": body.get("modal_style"),
+            "notes": notes,
+            "todo": bool(body.get("todo")),
+            "reachedFrom": [{"source": p, "kind": k} for p, k in model.inbound[sid]],
+        }
+    return {
+        "app": model.app,
+        "version": model.version,
+        "modalStyles": model.modal_styles,
+        "domains": domains,
+        "scenes": scenes,
+        "order": list(model.scenes.keys()),
+        "roots": [sid for sid, (p, _) in model.visual_parent.items() if p is None],
+    }
+
+
+def render_html(model: Model, html_path: Path) -> str:
+    """The viewer page: model inline, viewer assets linked relative to html_path."""
+    asset_dir = Path(__file__).resolve().parent
+    rel = os.path.relpath(os.path.abspath(asset_dir), os.path.abspath(html_path.parent)).replace(os.sep, "/")
+    css, js = (html.escape(quote(f"{rel}/{name}", safe="/")) for name in VIEWER_ASSETS)
+    payload = json.dumps(build_viewer_model(model)).replace("</", "<\\/")
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{html_escape(model.app)} UI Map</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="{css}">
+</head>
+<body>
+<div id="app"></div>
+<script>window.UI_MAP = {payload};</script>
+<script src="{js}"></script>
+</body>
+</html>
+"""
+
+
+# ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Render a UI Map YAML document as a Mermaid flowchart."
+        description="Render a UI Map YAML document as an interactive HTML page or a Mermaid flowchart."
     )
     parser.add_argument("input", type=Path, help="Path to a UI Map YAML file.")
     parser.add_argument(
@@ -762,6 +963,11 @@ def main(argv: list[str] | None = None) -> int:
         help="Wrap the Mermaid text in ```mermaid fences.",
     )
     parser.add_argument(
+        "--html",
+        type=Path,
+        help="Render the interactive HTML page to this path (loads the viewer beside this script).",
+    )
+    parser.add_argument(
         "--svg",
         type=Path,
         help="Also render an SVG to this path (requires the mmdc CLI).",
@@ -769,7 +975,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--open",
         action="store_true",
-        help="Open the rendered SVG in a browser (requires --svg).",
+        help="Open the rendered page in a browser (requires --html or --svg; HTML wins).",
     )
     parser.add_argument(
         "--schema",
@@ -784,8 +990,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    if args.open and not args.svg:
-        parser.error("--open requires --svg")
+    if args.open and not (args.html or args.svg):
+        parser.error("--open requires --html or --svg")
 
     data = load_yaml(args.input)
 
@@ -807,6 +1013,10 @@ def main(argv: list[str] | None = None) -> int:
     text_output = f"```mermaid\n{mermaid}\n```\n" if args.markdown else mermaid
 
     generated: list[Path] = []
+    if args.html:
+        args.html.write_text(render_html(model, args.html), encoding="utf-8")
+        generated.append(args.html)
+
     if args.output:
         args.output.write_text(text_output + "\n")
         generated.append(args.output)
@@ -819,14 +1029,14 @@ def main(argv: list[str] | None = None) -> int:
             return 4
         generated.append(args.svg)
 
-    if not args.output and not args.svg:
+    if not args.output and not args.svg and not args.html:
         print(text_output)
 
     if generated:
         print(f"Generated: {', '.join(p.name for p in generated)}", file=sys.stderr)
 
     if args.open:
-        open_in_browser(args.svg)
+        open_in_browser(args.html or args.svg)
 
     return 0
 

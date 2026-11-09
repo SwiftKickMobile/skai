@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.unit-test-infrastructure
 Managed-Source: Guides/Test/unit-test-infrastructure-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-06
+Managed-Updated-At: 2026-10-31
 
 # Unit Test Infrastructure Guide
+
+Print `📖 SKAI guide: unit-test-infrastructure-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 ## Purpose
 
@@ -18,7 +20,9 @@ Defines the process for identifying, implementing, and compiling test infrastruc
 
 ## Gates
 
-Core rule: every time the agent is waiting on the operator, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+Core rule: every time the agent is waiting on the supervisor, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+
+The supervisor is the human or authorized agent outside this workflow that resolves its discussion items and reviews its gates; the executing agent does not resolve or approve its own.
 
 **Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
@@ -31,11 +35,11 @@ Use these standard gate lines:
 Planned gates are the expected review points of this workflow. At each planned gate:
 1. Summarize what was completed and what should happen next.
 2. End with the planned gate line.
-3. STOP and wait for the operator.
+3. STOP and wait for the supervisor.
 
-In the planned gate line, `<what happens after your response>` should describe what the agent will do after the operator gives advance intent.
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the supervisor gives advance intent.
 
-If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the operator resolves it.
+If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
 When the workflow finishes, return control to the parent testing workflow.
 
@@ -56,7 +60,7 @@ Rules:
 
 Progress tracking:
 - Default marker convention: `- [ ]` / `- [x]` in the infrastructure work document (process artifact). See `Guides/Core/process-flow.md`, "Progress markers".
-- Default rule: a `- [ ]` phase item means TODO or pending approval. Do not check the box without operator approval.
+- Default rule: a `- [ ]` phase item means TODO or pending approval. Do not check the box without supervisor approval.
 - This workflow has a conditional marker model:
   - If Phase 1 concludes no infrastructure changes are required, do not create an infrastructure work document and do not invent phase items.
   - If Phase 1 concludes infrastructure changes are required, the infrastructure work document owns the phase items:
@@ -141,7 +145,7 @@ Progress tracking:
 
 **Always propose HOW to test, never whether to test.**
 
-**During this phase, never skip a test because it requires a production code change.** If testing a component requires a protocol wrapper, dependency injection, or other production code abstraction, propose the minimal change as infrastructure and ask the operator for approval.
+**During this phase, never skip a test because it requires a production code change.** If testing a component requires a protocol wrapper, dependency injection, or other production code abstraction, propose the minimal change as infrastructure and ask the supervisor for approval.
 
 ---
 
@@ -266,7 +270,7 @@ See `skai/integration.md` for the project's test utility locations and available
 - Enables consistent testing approach
 - Solves a common testing problem
 
-**Always propose to the operator before implementing.**
+**Always propose to supervisor before implementing.**
 
 ---
 
@@ -395,8 +399,8 @@ read_file path/to/Mocks/MockService.swift
    - **Session name**: `<session-name>` (the parent unit-testing workflow's session name)
    - **Subpath**: `testing`
    - **File name**: `infrastructure.md`
-   - **Full path**: `skai/working-docs/<branch-path>/<session-name>/testing/infrastructure.md`
-   - **Example**: `skai/working-docs/work/feature-branch/login-tests/testing/infrastructure.md`
+   - **Full path**: `skai/working-docs/<session-name>/testing/infrastructure.md`
+   - **Example**: `skai/working-docs/login-tests/testing/infrastructure.md`
    - **Structure**:
      ```markdown
      # Unit Testing - Infrastructure
@@ -421,17 +425,17 @@ read_file path/to/Mocks/MockService.swift
      [Implementation details will go here]
      ```
 
-**1. Create infrastructure work spec** (if complex, otherwise implement directly):
-   - **Full path**: `skai/working-docs/<branch-path>/<session-name>/testing/infrastructure-spec.md`
-   - **Example**: `skai/working-docs/work/feature-branch/login-tests/testing/infrastructure-spec.md`
+**1. Create infrastructure dev spec** (if complex, otherwise implement directly):
+   - **Full path**: `skai/working-docs/<session-name>/testing/infrastructure-spec.md`
+   - **Example**: `skai/working-docs/login-tests/testing/infrastructure-spec.md`
    - **Structure**: Motivation, Functional Requirements, Relevant Files, Task List
    - **Content**: Describe all stubs, mocks, fixtures, and production code changes needed
    - **No code**: Describe what to implement, not how
 
 2. **Document in work document** what infrastructure was created
 
-3. **Work through the spec with the operator:**
-   - The operator will say "Start task N" or "Proceed to next task"
+3. **Work through the spec with supervisor:**
+   - Supervisor will say "Start task N" or "Proceed to next task"
    - Implement each task following the project's code organization policy (stack-specific)
    - Continue until all infrastructure tasks are complete
 
@@ -620,7 +624,7 @@ let result3 = try await sut.performOperation(params: params3)  // Gets third res
 
 **Work Document Structure** (created in Phase 2 only if infrastructure needed):
 
-Full path: `skai/working-docs/<branch-path>/<session-name>/testing/infrastructure.md` (per `Guides/Core/working-doc-conventions.md`)
+Full path: `skai/working-docs/<session-name>/testing/infrastructure.md` (per `Guides/Core/working-doc-conventions.md`)
 
 ```markdown
 # Unit Testing - Infrastructure
@@ -659,7 +663,7 @@ This document tracks the infrastructure work for implementing unit tests for [se
 
 **Phase 2: Implement** (only if infrastructure needed)
 - Create work document (only now, not in Phase 1)
-- Create infrastructure work spec (if complex)
+- Create infrastructure dev spec (if complex)
 - Implement all tasks
 - Mark tasks complete
 
@@ -686,3 +690,8 @@ See `skai/integration.md` for all infrastructure locations and naming convention
 
 **Content sections:** Prefer "Already exists" vs "NEW" (avoid ✅/❌ completion markers)
 
+## Project Addendum
+
+If `<active-project-root>/skai/addenda/unit-test-infrastructure-guide-addendum.md` exists, read it and immediately print
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
+guide and win any conflict.

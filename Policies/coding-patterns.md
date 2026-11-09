@@ -1,9 +1,3 @@
-Managed-By: skai
-Managed-Id: policy.coding-patterns
-Managed-Source: Policies/coding-patterns.md
-Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-06
-
 # Coding Patterns (Core)
 
 This is a language-agnostic set of coding patterns intended to keep APIs simple, code readable, and changes easy to review.
@@ -31,3 +25,4 @@ Prefer:
 
 Avoid:
 - Requiring callers to check internal state before invoking an API unless there's a strong reason
+

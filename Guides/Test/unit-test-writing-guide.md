@@ -2,9 +2,11 @@ Managed-By: skai
 Managed-Id: guide.unit-test-writing
 Managed-Source: Guides/Test/unit-test-writing-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-06
+Managed-Updated-At: 2026-10-21
 
 # Unit Test Writing & Execution Guide
+
+Print `📖 SKAI guide: unit-test-writing-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 ## Purpose
 
@@ -16,7 +18,9 @@ Defines the process for writing and executing test logic.
 
 ## Gates
 
-Core rule: every time the agent is waiting on the operator, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+Core rule: every time the agent is waiting on the supervisor, the message must end with a `⏳ GATE:` line. The only normal exception is full workflow completion, which uses `🏁 Complete. Let me know if anything needs adjustment.`
+
+The supervisor is the human or authorized agent outside this workflow that resolves its discussion items and reviews its gates; the executing agent does not resolve or approve its own.
 
 **Gate persistence.** Once a `⏳ GATE:` line is emitted, every subsequent response — including discussion, clarifications, and refinements — must end with the *same* gate line, verbatim, until the gate actually moves. The gate stays "on" between turns; re-emitting it is mandatory, not optional. Update the line only when the gate's content actually changes (e.g., a blocker emerges, or `Next` has to be revised); when updating, emit the new line in full at the end of that response. Do not paraphrase, shorten, or silently mutate the line across turns.
 
@@ -29,11 +33,11 @@ Use these standard gate lines:
 Planned gates are the expected review points of this workflow. At each planned gate:
 1. Summarize what was completed and what should happen next.
 2. End with the planned gate line.
-3. STOP and wait for the operator.
+3. STOP and wait for the supervisor.
 
-In the planned gate line, `<what happens after your response>` should describe what the agent will do after the operator gives advance intent.
+In the planned gate line, `<what happens after your response>` should describe what the agent will do after the supervisor gives advance intent.
 
-If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the operator resolves it.
+If an unexpected blocker prevents continued work, use the blocked gate line and STOP until the supervisor resolves it.
 
 When the workflow finishes, return control to the parent testing workflow.
 
@@ -67,7 +71,7 @@ This workflow uses both progress-marker conventions because it produces both kin
 - `- [ ]` / `- [x]` in the **work document** (process artifact, markdown).
 - `🟡` in the **test files** (in-code, where completion is removal of the marker as tests are written and pass).
 
-Default rule: a progress marker (either `- [ ]` or `🟡`) means TODO or pending approval. Do not clear it without operator approval.
+Default rule: a progress marker (either `- [ ]` or `🟡`) means TODO or pending approval. Do not clear it without supervisor approval.
 
 Work document:
 - The work document's checklist has two `- [ ]` phase items: `- [ ] Phase 1: Write Tests` and `- [ ] Phase 2: Execute & Fix`.
@@ -80,7 +84,7 @@ Work document:
 
 Test files (in code):
 - Test-function and section `🟡` markers in the test file are local work markers for the tests in scope.
-- Once a test passes and the operator gives advance intent, remove `🟡` from that test function. If all tests in a section pass, also remove `🟡` from the section MARK comment.
+- Once a test passes and the supervisor gives advance intent, remove `🟡` from that test function. If all tests in a section pass, also remove `🟡` from the section MARK comment.
 
 If work stops due to ambiguity, missing evidence, test-execution failure, or a proposed production-code fix, do not change any markers — neither check the box on the phase item nor remove `🟡` from test functions.
 
@@ -113,7 +117,7 @@ If work stops due to ambiguity, missing evidence, test-execution failure, or a p
 6. Tests skipped due to missing infrastructure → planned gate
 7. Advance intent → return control to the parent workflow with the skipped tests' `🟡` markers still present and `Phase 2: Execute & Fix` still unchecked.
 
-**Missing infrastructure during writing:** If you discover a test requires infrastructure that was not provided during the infrastructure phase, do not create the infrastructure inline. Skip the test (mark it as blocked on infrastructure), document what is missing, and continue with the rest of the section. Once the runnable tests in the section have been handled, STOP at the skipped-tests planned gate and return control to the parent workflow so the operator can decide whether to re-enter the infrastructure phase before more writing continues.
+**Missing infrastructure during writing:** If you discover a test requires infrastructure that was not provided during the infrastructure phase, do not create the infrastructure inline. Skip the test (mark it as blocked on infrastructure), document what is missing, and continue with the rest of the section. Once the runnable tests in the section have been handled, STOP at the skipped-tests planned gate and return control to the parent workflow so the supervisor can decide whether to re-enter the infrastructure phase before more writing continues.
 
 **Two scenarios:**
 - **Writing new tests**: Start at Phase 1
@@ -154,10 +158,10 @@ If work stops due to ambiguity, missing evidence, test-execution failure, or a p
    - **Session name**: `<session-name>` (the parent unit-testing workflow's session name)
    - **Subpath**: `testing/<suite-name>`
    - **File name**: `<section-name>-writing.md`
-   - **Full path**: `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-writing.md`
+   - **Full path**: `skai/working-docs/<session-name>/testing/<suite-name>/<section-name>-writing.md`
    - `<suite-name>` = test file name without "Tests.swift" (e.g., `TemplateRenderer` from `TemplateRendererTests.swift`)
    - `<section-name>` = section name in kebab-case (e.g., `success-tests`, `error-handling`)
-   - **Example**: `skai/working-docs/work/feature-branch/login-tests/testing/TemplateRenderer/success-tests-writing.md`
+   - **Example**: `skai/working-docs/login-tests/testing/TemplateRenderer/success-tests-writing.md`
    - **Structure**:
      ```markdown
      # [Suite Name] - [Section Name] Tests - Writing & Execution
@@ -217,7 +221,7 @@ If work stops due to ambiguity, missing evidence, test-execution failure, or a p
 
 **Important:** Do NOT run tests yet. Wait for advance intent.
 
-**Note:** `🟡` remains on test functions during Phase 1. `- [ ] Phase 1: Write Tests` in the work document also remains unchecked until the operator gives advance intent at the Phase 1 gate.
+**Note:** `🟡` remains on test functions during Phase 1. `- [ ] Phase 1: Write Tests` in the work document also remains unchecked until the supervisor gives advance intent at the Phase 1 gate.
 
 ---
 
@@ -452,14 +456,14 @@ struct MyComponentTests {
 
 1. **Run the tests** using standard process (see "Running Tests" section below)
    - Use the project's test command from `skai/integration.md`
-   - Save full output to `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
+   - Save full output to `/tmp/skai/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
 
 **CRITICAL VALIDATION - DO NOT SKIP:**
 
 2. **Verify the test actually ran** - IMMEDIATELY after running the command:
-   - **Check output file size**: `ls -lh skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
+   - **Check output file size**: `ls -lh /tmp/skai/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
      - If file is 0 bytes or very small (< 1KB): **TESTS DID NOT RUN**
-   - **Read the output file**: `cat skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
+   - **Read the output file**: `cat /tmp/skai/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`
      - Look for test execution indicators (✔, ✘, Test Suite, etc.)
      - If you see no test execution output: **TESTS DID NOT RUN**
    - Confirm any additional expected artifacts described in `skai/integration.md` were produced.
@@ -476,7 +480,7 @@ struct MyComponentTests {
    - Fix the error
    - Re-run the test command
    - Repeat validation until test actually runs
-   - **If you cannot determine why tests didn't run**: Document what you tried and consult the operator
+   - **If you cannot determine why tests didn't run**: Document what you tried and consult with supervisor
    - End with the blocked gate line.
 
    **Only proceed to step 3 when you can confirm:**
@@ -518,20 +522,20 @@ See `skai/integration.md` for project-specific test execution commands.
 
 1. **Create output directory** (per `Guides/Core/working-doc-conventions.md`):
 ```bash
-   mkdir -p skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>
+   mkdir -p /tmp/skai/<session-name>/testing/<suite-name>
    ```
 
 2. **Run tests with full output logging**:
    - **CRITICAL: Run ONLY the tests in the current section** - Do NOT run the entire test file (noise from unimplemented tests).
    - Use the project's test command from `skai/integration.md` and follow its recommended way to scope to specific tests.
-   - Persist full output to `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`.
+   - Persist full output to `/tmp/skai/<session-name>/testing/<suite-name>/<section-name>-test-output.txt`.
    - Persist any additional artifacts described in `skai/integration.md`.
 
 3. **Analyze failures**:
    - **Primary**: Extract structured assertion failure details using the process in `skai/integration.md`
    - **Secondary**: Search output file for additional context:
 ```bash
-     grep -A 10 "failed\|error" skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt
+     grep -A 10 "failed\|error" /tmp/skai/<session-name>/testing/<suite-name>/<section-name>-test-output.txt
 ```
 
 4. **Next test run** overwrites the same files (keep paths stable per section)
@@ -552,7 +556,7 @@ When resolving test failures, follow the project's Debugging / Problem-Resolutio
 - See `Guides/Core/debugging-guide.md` for the evidence-first loop and approval gates.
 - Select a debugging tactic (e.g., partitioning, minimal working implementation, bisect) and state *why* it's the best next step.
 - Prefer experiments that produce discriminating evidence over "guessing fixes."
-- Use explicit stop conditions: if you need runtime output you can't access, pause and ask the operator to run tests and provide the output/logs.
+- Use explicit stop conditions: if you need runtime output you can't access, pause and ask the supervisor to run tests and provide the output/logs.
 
 **Process:**
 1. **Extract structured assertion failure details** - This is CRITICAL for understanding what failed
@@ -573,7 +577,7 @@ When resolving test failures, follow the project's Debugging / Problem-Resolutio
    
 3. **Search test output file** for additional context:
    ```bash
-   grep -A 10 "failed\|error" skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-test-output.txt
+   grep -A 10 "failed\|error" /tmp/skai/<session-name>/testing/<suite-name>/<section-name>-test-output.txt
    ```
    
 4. **Document the failure** in work document:
@@ -588,7 +592,7 @@ When resolving test failures, follow the project's Debugging / Problem-Resolutio
    - Compare expected vs actual values from assertion failure
    - Check for common patterns below
 6. **Propose fix** - Document the proposed solution in work document and STOP with the blocked gate line
-7. **Wait for approval / advance intent** - The operator reviews and approves before you apply the fix
+7. **Wait for approval / advance intent** - Supervisor reviews and approves before you apply the fix
 8. **Apply fix** - Make the approved changes
 9. **Re-run test** - Verify it passes
 10. **Repeat if needed** - If still failing, return to step 1 (extract assertion details)
@@ -597,14 +601,14 @@ When resolving test failures, follow the project's Debugging / Problem-Resolutio
 - **Production code first** - Check the code under test before assuming test infrastructure is broken
 - **Trust isolation results** - If a test fails in complete isolation with consistent values, the bug is in production code
 - **Simple explanations first** - Logic bugs are more likely than framework issues
-- **Listen to evidence** - When the operator provides contradictory evidence, stop and reconsider your hypothesis
+- **Listen to evidence** - When user provides contradictory evidence, stop and reconsider your hypothesis
 - **Facts vs guesses** - Never state assumptions as facts. Clearly label: Facts (what logs/code show), Hypothesis (what you think), Unknown (what needs verification)
 
-**When to ask for operator determination:**
-- **Business rules/domain questions**: Ask the operator about product behavior, UX decisions, timing rules, notification preferences
+**When to ask for supervisor determination:**
+- **Business rules/domain questions**: Ask supervisor about product behavior, UX decisions, timing rules, notification preferences
 - **Obvious bugs**: Fix without asking - logic errors, wrong variables, crashes, off-by-one errors
 
-**How to report issues requiring operator determination:**
+**How to report issues requiring supervisor determination:**
 
 Document in work document with:
 1. Brief context (what scenario you're testing)
@@ -632,7 +636,7 @@ with `option: .includeMetadata` (line 194), but the tests expect `.excludeMetada
 **Update test vs production code:**
 - Update production code if test reveals a real bug or recent changes broke functionality
 - Update test if assumptions are wrong, behavior intentionally changed, or test is too brittle
-- Always discuss with the operator before deciding which to change
+- Always discuss with supervisor before deciding which to change
 
 ---
 
@@ -800,7 +804,7 @@ See `skai/integration.md` for:
 
 **Work Document Structure:**
 
-Full path: `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/<section-name>-writing.md` (per `Guides/Core/working-doc-conventions.md`)
+Full path: `skai/working-docs/<session-name>/testing/<suite-name>/<section-name>-writing.md` (per `Guides/Core/working-doc-conventions.md`)
 
 ```markdown
 # [Suite Name] - [Section Name] Tests - Writing & Execution
@@ -868,7 +872,7 @@ This document tracks the writing and execution work for implementing unit tests.
 See `skai/integration.md` for project-specific test execution commands.
 
 **Standard process:**
-- Create suite output directory: `skai/working-docs/<branch-path>/<session-name>/testing/<suite-name>/` (per `Guides/Core/working-doc-conventions.md`, e.g., `skai/working-docs/work/step-refactor/login-tests/testing/TemplateRenderer/`)
+- Create suite output directory: `/tmp/skai/<session-name>/testing/<suite-name>/` (per `Guides/Core/working-doc-conventions.md`, e.g., `/tmp/skai/login-tests/testing/TemplateRenderer/`)
 - Run tests scoped to ONLY the current section's tests (per `skai/integration.md`)
 - Persist artifacts/logs as described in `skai/integration.md`
 - **Extract structured assertion failures** - CRITICAL first step (see `skai/integration.md`)
@@ -893,3 +897,9 @@ See `skai/integration.md` for project-specific test execution commands.
 2. Document expected vs actual values
 3. Investigation → Fix → Verify (repeat until passing)
 - See "When Tests Fail" section above for complete process
+
+## Project Addendum
+
+If `<active-project-root>/skai/addenda/unit-test-writing-guide-addendum.md` exists, read it and immediately print
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
+guide and win any conflict.

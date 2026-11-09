@@ -2,11 +2,15 @@ Managed-By: skai
 Managed-Id: guide.ui-map-swiftui
 Managed-Source: Guides/UIMap/ui-map-swiftui.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-11
+Managed-Updated-At: 2026-10-25
 
 # UI Map — SwiftUI Reference
 
+Print `📖 SKAI guide: ui-map-swiftui` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+
 Platform reference for implementing a UI Map in SwiftUI. Companion to [`ui-map-guide.md`](ui-map-guide.md), which defines the platform-agnostic YAML format.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 Each scene's routing is implemented locally: the view model owns the outgoing route state as `@Published` properties, and the view applies SwiftUI modifiers driven by those properties. There is no central router.
 
@@ -219,3 +223,9 @@ The view model can also set or clear any route programmatically at any time — 
 ## Placeholder scenes
 
 Scaffolding placeholder scenes — the `SKAISwiftUI` package, the per-route-kind patterns, the NavigationStack-at-the-presentation-boundary rule, and the dismiss/breadcrumb/nav-title behavior — is covered in its own doc, read only when implementing: [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md).
+
+## Project Addendum
+
+If `<active-project-root>/skai/addenda/ui-map-swiftui-addendum.md` exists, read it and immediately print
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
+guide and win any conflict.

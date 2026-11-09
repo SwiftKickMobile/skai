@@ -2,29 +2,34 @@ Managed-By: skai
 Managed-Id: guide.ui-map-guide
 Managed-Source: Guides/UIMap/ui-map-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-06
+Managed-Updated-At: 2026-10-25
 
 # UI Map Guide
 
-A UI Map is a YAML document that defines every scene in an app and the routing relationships between them. The map is the single source of truth for the app's UI architecture; implementation should mirror it directly. A render script produces a visual diagram from the YAML for operator review.
+Print `📖 SKAI guide: ui-map-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
+
+A UI Map is a YAML document that defines every scene in an app and the routing relationships between them. The map is the single source of truth for the app's UI architecture; implementation should mirror it directly. A render script produces a visual diagram from the YAML for review.
+
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
 This guide defines the platform-agnostic YAML format. Platform implementation patterns live in companion references:
 
 - [`ui-map-swiftui.md`](ui-map-swiftui.md) — implementing a UI Map in SwiftUI
-- [`ui-map-compose.md`](ui-map-compose.md) — implementing a UI Map in Compose Multiplatform or Android-only Jetpack Compose
-- [`ui-map-figjam.md`](ui-map-figjam.md) — the deprecated FigJam diagram format, for migrating existing projects
+- [`ui-map-compose.md`](ui-map-compose.md) — implementing a UI Map in Jetpack Compose
 
 ## Rendering and validation
 
 SKAI owns the default UI Map renderer. Use `Bin/ui-map-render.py` from the current SKAI checkout unless the project provides an explicit override.
 
-For an installed project, look first for the SKAI checkout at `Submodules/skai`. If SKAI is installed elsewhere, use that root instead. The renderer takes the map to render and the SVG to write; for the official map:
+For an installed project, look first for the SKAI checkout at `Submodules/skai`. If SKAI is installed elsewhere, use that root instead. The renderer takes the map to render and the HTML page to write — map and page paths resolved against the repo that holds the map, which may be separate from the app and SKAI repos. For the official map:
 
 ```
-uv run <skai-root>/Bin/ui-map-render.py skai/ui-map/ui-map.yaml --svg skai/ui-map/ui-map.svg
+uv run <skai-root>/Bin/ui-map-render.py <map-repo-root>/skai/ui-map/ui-map.yaml --html <map-repo-root>/skai/ui-map/ui-map.html
 ```
 
-`skai/integration.md` may override this command or add project-specific evidence-capture requirements. It does not need to repeat the SKAI default. If no override exists, use the default renderer and block only when the SKAI root, renderer, runtime dependency, SVG dependency, or validation result prevents a valid render.
+The page is static: it holds the map model and loads the viewer (`Bin/ui-map-viewer.v1.js`, `Bin/ui-map-viewer.v1.css`) from the SKAI checkout by a relative path, so it opens from the file system or any static server with no build step. It lays the map out in levels at a fixed width, and selecting a scene filters the page to that scene's connections; the renderer's docstring ("RENDER CONVENTIONS", rule 12) is the authoritative description. The renderer also still emits Mermaid text (`-o`, `--markdown`) for documents that embed a diagram, and an SVG (`--svg`, needs the Mermaid CLI).
+
+`skai/integration.md` may override this command or add project-specific evidence-capture requirements. It does not need to repeat the SKAI default. If no override exists, use the default renderer and block only when the SKAI root, renderer, runtime dependency, or validation result prevents a valid render.
 
 ## YAML format
 
@@ -194,6 +199,20 @@ thumbnail_slider:
 
 With a single inbound reference, `primary_parent` is unnecessary — the only parent is implicitly primary.
 
+Every scene must reach a root through its visual homes. A `primary_parent` that the scene itself leads to forms a loop, and the renderer rejects it.
+
+When the primary parent reaches the scene by more than one route kind and defines it in one of those containers, the canonical instance renders in that container; the other kinds get pointers. If the scene is defined elsewhere, the renderer falls back to the first matching kind in its fixed order (`nav`, `modal`, `composite`, `tab`, `child`). Define the scene under the route you want it drawn in:
+
+```yaml
+app:                       # reaches login by both child and modal
+  child:
+    - login:               # defined here, so the canonical instance renders here
+        primary_parent: app
+        modal_style: sheet # declared in the map's modal_styles vocabulary
+  modal:
+    - login                # pointer
+```
+
 ### Annotations
 
 Four annotation types, all optional and independent:
@@ -223,7 +242,7 @@ library:
   notes:
     - "Subfolder support planned for v2"
     - at: modal
-      text: "Both surfaced from the library toolbar"
+      text: "Profile and Search open from the Library toolbar"
 ```
 
 A note item can be:
@@ -273,7 +292,7 @@ The formal contract is in [`ui-map.schema.json`](../../Bin/ui-map.schema.json) (
 pipx run check-jsonschema --schemafile ui-map.schema.json <your-map>.yaml
 ```
 
-The schema catches structural errors (missing required fields, invalid route kinds, malformed notes, etc.). Semantic errors (dangling cross-references, duplicate canonical homes) are validated by the render script.
+The schema catches structural errors (missing required fields, invalid route kinds, malformed notes, etc.). Semantic errors (dangling cross-references, duplicate canonical homes, visual-home loops) are validated by the render script.
 
 ## Authoring a UI Map
 
@@ -312,3 +331,9 @@ The sections above define the format; these are the conventions that make a map 
 - **Display and data states are notes, not structure.** Empty, populated, loading, and error are states of one scene — not separate scenes, routes, or `implements` variants. Capture them with `note`/`notes` (or a map TODO); reserve `implements` for genuinely distinct variants of an abstract scene.
 - **Route kind reflects the actual presentation.** Read `nav`/`modal`/`composite`/`tab`/`child` from how a destination is really presented — not from vague wording ("appears", "available from", "can access") and not from an enum's name. Use `modal` when the source says modal/sheet/dialog/popover/full-screen; use `nav` when it says pushed/opens detail/drills in/links to. When the basis is genuinely ambiguous, treat it as a decision to raise, not a guess to bury.
 - **Every modal destination has a `modal_style`, on the scene.** A scene presented modally carries one required `modal_style` at its canonical home — it describes the destination, not the route — and implementation must use it.
+
+## Project Addendum
+
+If `<active-project-root>/skai/addenda/ui-map-guide-addendum.md` exists, read it and immediately print
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
+guide and win any conflict.

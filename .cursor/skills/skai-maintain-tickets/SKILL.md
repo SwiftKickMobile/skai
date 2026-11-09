@@ -7,6 +7,6 @@ description: Work through process improvement tickets filed against the skai rep
 
 ## Instructions
 
-- Read `maintain-tickets.md` and follow it as the source of truth.
-- Read `maintain-skai.md` for repo conventions and safety defaults before making changes.
-- After implementing tickets, run the checklist in `maintain-retro.md` and report only misses/follow-ups.
+- Read `internal/maintain-tickets.md` and follow it as the source of truth.
+- Read `internal/maintain-skai.md` for repo conventions and safety defaults before making changes.
+- After implementing tickets, run the checklist in `internal/maintain-retro.md` and report only misses/follow-ups.

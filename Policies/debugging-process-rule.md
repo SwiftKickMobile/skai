@@ -1,9 +1,3 @@
-Managed-By: skai
-Managed-Id: policy.debugging-process
-Managed-Source: Policies/debugging-process-rule.md
-Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-06
-
 # Debugging Process Rule (Agent Policy)
 
 Goal: prevent "guessing fixes" loops by enforcing the **Debugging / Problem-Resolution Guide**.
@@ -25,14 +19,14 @@ For each iteration:
 3. **Pick a tactic** from the guide and justify why it's the best next step.
 4. **Design the smallest discriminating experiment** (what it will prove/disprove).
 5. **Stop conditions**:
-   - If you need output you cannot access, STOP and ask the operator to provide it or escalate.
-   - If multiple plausible behaviors depend on product intent, STOP and ask the operator which is correct or to escalate.
+   - If you need output you cannot access, STOP and ask the supervisor to run the command and paste results.
+   - If multiple plausible behaviors depend on product intent, STOP and ask the supervisor which is correct.
 6. Apply **one** change, re-run the smallest verification, and update the possibility space.
 
 ## Root cause and fix gates (hard)
 
 - Do not declare a root cause without discriminating evidence that rules out plausible alternatives.
-- Before applying a fix, present the root cause and proposed fix and get explicit operator approval.
+- Before applying a fix, present the root cause and proposed fix and get explicit supervisor approval.
 
 ## Evidence requirements
 
@@ -49,3 +43,4 @@ For each iteration:
 - "It's probably X" fixes without evidence.
 - Changing multiple files/areas at once "just in case".
 - Rewriting architecture or refactoring broadly as a debugging tactic unless explicitly approved.
+

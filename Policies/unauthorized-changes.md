@@ -2,11 +2,11 @@ Managed-By: skai
 Managed-Id: policy.unauthorized-changes
 Managed-Source: Policies/unauthorized-changes.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-09-06
+Managed-Updated-At: 2026-09-30
 
 # Do NOT Make Unauthorized Changes
 
-Do not make code changes during discussion or troubleshooting unless explicitly authorized by the operator. This rule applies especially when:
+Do not make code changes during discussion or troubleshooting unless explicitly authorized by the user. This rule applies especially when:
 
 - Diagnosing issues or problems
 - Responding to questions
@@ -15,15 +15,13 @@ Do not make code changes during discussion or troubleshooting unless explicitly 
 
 When identifying a solution, explain it and wait for authorization before implementing.
 
-Exception: when the operator explicitly requests the change (e.g., "make this change", "fix this", "implement X").
+Exception: when the user explicitly requests the change (e.g., "make this change", "fix this", "implement X").
 
 ## Explicit authorization (bright line)
 
-"Explicit authorization" means the operator clearly instructs the agent to make code changes now
-(an imperative request to implement/modify), not merely to analyze, explain, or suggest. A standing
-authorization in an approved workflow or runbook also counts within its stated scope.
+"Explicit authorization" means the supervisor clearly instructs the agent to make code changes now (an imperative request to implement/modify), not merely to analyze, explain, or suggest.
 
-If the operator's intent could plausibly be interpreted as discussion/troubleshooting, treat it as NOT authorized and STOP to ask: "Do you want me to implement this change?"
+If the user intent could plausibly be interpreted as discussion/troubleshooting, treat it as NOT authorized and STOP to ask: "Do you want me to implement this change?"
 
 If operating inside an `skai` workflow with checkpoints: treat authorization to proceed as valid only at a checkpoint, with the standard `⏳ GATE:` line (see `Guides/Core/process-flow.md`). Do not infer execution approval from collaborative phrasing outside a gate.
 
@@ -60,6 +58,7 @@ Adding/removing debug logs, changing test assertions, and "quick refactors" are 
 
 ## Literal instruction compliance (execution-level invariant)
 
-If the operator gives an explicit instruction about how to perform a change, follow it literally.
+If the supervisor gives an explicit instruction about how to perform a change, follow it literally.
 
 If you believe the instruction is suboptimal, STOP and ask before acting -- do not substitute your preferred approach.
+

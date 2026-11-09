@@ -2,13 +2,20 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation-artifacts
 Managed-Source: Guides/UIMap/ui-map-implementation-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-08-06
+Managed-Updated-At: 2026-10-25
 
 # UI Map Implementation Artifact Formats
 
-The typed formats the implementation skill produces. Read an artifact with [`ui-map-implementation.md`](ui-map-implementation.md) for Mode and control flow, the platform guide named in its `## Inputs`, and [`ui-map-guide.md`](ui-map-guide.md) for the YAML map. The architecture-side formats the implementation skill *consumes* (map change items) and *raises* (change requests) live in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md).
+Print `📖 SKAI guide: ui-map-implementation-artifacts` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
-The implementation artifact (`ui-map-implementation.md`) sits in the change package at `skai/changes/<change-id>/`, parallel to the architecture artifact. Its `## Code Changes` section lists **code change items**; its `## Evidence` section holds **verification evidence**.
+Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
+
+The typed formats the implementation skill produces. Read an artifact with [`ui-map-implementation.md`](ui-map-implementation.md) for Mode and control flow, the platform guide named in its `## Inputs`, and [`ui-map-guide.md`](ui-map-guide.md) for the YAML map. The architecture-side formats it *consumes* (map change items) and *raises* (change requests) live in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md).
+
+The implementation artifact (`ui-map-implementation.md`) sits in the change package at `skai/changes/<change-id>/ui-map/` in the official map's repo, beside the architecture artifact. After promotion it lives at `skai/promoted/<change-id>/ui-map/`, pending Plan work and `working-docs/` included.
+A conformance run without a proposal instead uses
+`skai/working-docs/<session-name>/ui-map-implementation.md` in the map repository,
+with its requests beside it. `## Code Changes` lists **code change items**; `## Evidence` holds **verification evidence**; `## Decision Log` ends it (`- <ID> decided|gap|reopened — <one line>`, append-only).
 
 ## Code change items
 
@@ -22,24 +29,45 @@ The implementation artifact (`ui-map-implementation.md`) sits in the change pack
   - **Touches** files / folders / types affected
 ```
 
-- **ID** — `T1`, `T2`, ... assigned in document order, never renumbered or reused, so the production skill can cite an item by a stable handle.
-- **Checkbox** — actual completion state. Write every item unchecked (`- [ ]`) at the Code Changes-ready gate. Check it (`- [x]`) only when the code or artifact state described by the item is true. A later workflow may check a `planned` or `handoff` item after completing or verifying it; it preserves the item's ID and Disposition.
+- **ID** — `T01`, `T02`, ... assigned in document order, never renumbered or reused, so the production skill can cite an item by a stable handle.
+- **Checkbox** — actual completion state. Write new items unchecked (`- [ ]`) at the Code Changes-ready gate. Re-auditing existing work
+  preserves IDs, Dispositions, Evidence and still-valid verified checks; it does not reset all items.
+  Recheck changed work against the updated target before retaining completion. Check it (`- [x]`) only when the code or artifact state described by the item is true. A later workflow may check a `planned` or `handoff` item after completing or verifying it; it preserves the item's ID and Disposition.
 - **Disposition** — who owns the item and how it is treated; it does not change when the checkbox changes:
   - `implement` — UI Map implementation owns the item: either a mechanical, non-placeholder code change executed in Build, or the terminal promotion executed when a proposed map exists.
   - `placeholder` — UI Map implementation owns placeholder or navigation scaffolding and executes it in Build. Check the item when the scaffold is complete; later productionization is separate work.
   - `planned` — UI-map-owned work intentionally not executed because the run is Plan; the receiving workflow should implement and check it using the UI Map and platform guides.
   - `handoff` — concrete, verifiable work outside UI Map implementation ownership that directly affects UI Map conformance; the required outcome is already defined, and another workflow, skill, person, or PR owns and checks it. Missing guidance or an unmapped value is not a handoff; it blocks before Code Changes.
 - **Description for `planned` / `handoff`** — include what remains, why this run is not doing it, and the relevant UI Map/platform guidance or constraints the receiving workflow must preserve. A `handoff` Description must define enough of the expected outcome to decide when its checkbox is true.
-- **Realizes** — what this item carries out, so each code change traces back to the map: an `M#` from the architecture change list, a `D#` discussion decision, a short description of the audit finding when it has no ID, or — for the terminal promote item — the approved change as a whole rather than a single `M#`.
+- **Realizes** — what this item carries out, so each code change traces back to the map; it traces, it does not explain, the Description says why: an `M#` from the architecture change list, a `D#` discussion decision, a short description of the audit finding when it has no ID, or — for the terminal promote item — the approved change as a whole rather than a single `M#`.
 
-There is no `Type` field: the identity and Description convey the kind at a glance (e.g. `T3 move pantry/ → inventory/`, `T5 scaffold edit_item`). Items are written top-down in structural order: any shared, cross-scene item (e.g. a generated `DomainColors`) **first**, then per domain → scene → route, mirroring the map.
+There is no `Type` field: the identity and Description convey the kind at a glance (e.g. `T03 move pantry/ → inventory/`, `T05 scaffold edit_item`). Items are written top-down in structural order: any shared, cross-scene item (e.g. a generated `DomainColors`) **first**, then per domain → scene → route, mirroring the map.
+
+## Promotion state
+
+The terminal promote `T#` covers official YAML write, official render, then archival/link repair and
+promoted-preview regeneration. It is checked only after all succeed. Existing Evidence records the
+actual write outcome with package source/official destination before the render, whose command/result
+is recorded separately. A recorded write with incomplete render resumes rendering only if current
+official YAML still matches that source; intervening changes block reconciliation rather than being
+overwritten. Verified write/render with an unchecked terminal item resumes archival only.
+
+A checked terminal item closes the proposal; pending `planned`/`handoff` work remains in the promoted
+artifact. Older checked items retain their meaning; migration fabricates no new execution evidence.
 
 ## Verification evidence
 
-`## Evidence` records the verification trail: build checks at chunk boundaries and completion, plus the official render performed by a terminal promote item. One bracket per check:
+`## Evidence` records the verification trail: build checks at chunk boundaries and completion, plus the official render performed by a terminal promote item. One line per check, a sentence saying what it established, then the bracket:
 
 ```
-[evidence: <command>; exit <code>; output: <path when persisted>]
+The Tickets domain builds after the move. [evidence: <command>; exit <code>; output: <scratch path, if captured>]
+The official map renders with the three new scenes. [evidence: <render command>; exit 0]
 ```
 
-On failure, persist and link the full output, so `output` is required. On success, `output` is optional when no output was persisted. The evidence brackets are the durable record that conformance and promotion were verified, not asserted.
+Captured output stays in the scratch root ([`working-doc-conventions.md`](../Core/working-doc-conventions.md)), never the repository. Say only what that run established: a passing compile is not a tested click-through.
+
+## Project Addendum
+
+If `<active-project-root>/skai/addenda/ui-map-implementation-artifacts-addendum.md` exists, read it and immediately print
+`  - 📎 Addendum loaded` as a line of its own, indented under this guide's line; its rules are part of this
+guide and win any conflict.

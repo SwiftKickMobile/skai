@@ -2,45 +2,120 @@
   "manifestVersion": 1,
   "repo": "skai",
   "theme": "LumenNotes",
+  "retiredComponents": ["skill.skai-ui-map-planning", "skill.skai-requirements-authoring", "skill.skai-requirements-promotion", "skill.skai-work-spec-creation", "skill.skai-work-spec-implementation"],
+  "componentCategories": [
+    {"name": "Setup", "description": "Configure SKAI and keep the project installation up to date."},
+    {"name": "Product specs", "description": "Define, review and maintain the project’s product specs: its behavioral requirements."},
+    {"name": "Design", "description": "Author design changes in the project’s design file and promote them to production."},
+    {"name": "Design specs", "description": "Specify how each screen presents the requirements in its design, and promote the specs."},
+    {"name": "UI Map", "description": "Describe screens and routes, then implement the approved map."},
+    {"name": "Dev specs", "description": "Design changes and plan their implementation."},
+    {"name": "Testing", "description": "Plan coverage, prepare test infrastructure and write unit tests."},
+    {"name": "Debugging", "description": "Find the cause of defects and verify repairs."},
+    {"name": "Process", "description": "Review development work and improve guides and practices."},
+    {"name": "Policies", "description": "Set shared rules for code, debugging and safe project changes."}
+  ],
   "assets": [
     {
+      "id": "install-policy.component-history",
+      "type": "install-policy",
+      "sourcePath": "Install/component-history.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "application.skai-configure",
+      "type": "application",
+      "sourcePath": "Bin/SKAIConfigure.app",
+      "installRole": "required",
+      "tags": ["core", "platform:macos", "arch:arm64"]
+    },
+    {
+      "id": "tool.component-selection",
+      "type": "tool",
+      "sourcePath": "Bin/skai-configuration.py",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.configure-skai",
+      "type": "guide",
+      "sourcePath": "Guides/Core/configure-skai.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "skill.skai-configure",
+      "label": "Configure SKAI",
+      "category": "Setup",
+      "description": "Choose which SKAI skills and policies are installed in this project.",
+      "installRole": "required",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-configure/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "install-policy.component-selection",
+      "type": "install-policy",
+      "sourcePath": "Install/component-selection.md",
+      "tags": ["core"]
+    },
+    {
       "id": "policy.coding-patterns",
+      "label": "Coding patterns",
+      "category": "Policies",
+      "description": "Keep implementation patterns consistent and explain non-obvious choices.",
       "type": "policy",
       "sourcePath": "Policies/coding-patterns.md",
       "tags": ["core"]
     },
     {
       "id": "policy.error-handling",
+      "label": "Error handling",
+      "category": "Policies",
+      "description": "Handle failures explicitly and keep errors useful to callers.",
       "type": "policy",
       "sourcePath": "Policies/error-handling.md",
       "tags": ["core"]
     },
     {
       "id": "policy.unauthorized-changes",
+      "label": "Task scope",
+      "category": "Policies",
+      "description": "Keep edits within the requested task and respect explicit instructions.",
       "type": "policy",
       "sourcePath": "Policies/unauthorized-changes.md",
       "tags": ["core"]
     },
     {
       "id": "policy.debugging-process",
+      "label": "Debugging rules",
+      "category": "Policies",
+      "description": "Investigate with evidence before choosing or applying a fix.",
       "type": "policy",
       "sourcePath": "Policies/debugging-process-rule.md",
       "tags": ["core"]
     },
     {
       "id": "policy.safe-operations",
+      "label": "Safe operations",
+      "category": "Policies",
+      "description": "Protect project work during Git, file and other sensitive operations.",
       "type": "policy",
       "sourcePath": "Policies/safe-operations.md",
       "tags": ["core"]
     },
     {
       "id": "policy.universal-stop-conditions",
+      "label": "Stop conditions",
+      "category": "Policies",
+      "description": "Pause when required inputs, authority or a safe next step are missing.",
       "type": "policy",
       "sourcePath": "Policies/universal-stop-conditions.md",
       "tags": ["core"]
     },
     {
       "id": "policy.swift-code-organization",
+      "label": "Swift code organization",
+      "category": "Policies",
+      "description": "Organize Swift files and protocol conformances consistently. Applies to Swift projects.",
       "type": "policy",
       "sourcePath": "Policies/swift-code-organization.md",
       "tags": ["swift", "adapter:xcode"]
@@ -61,6 +136,60 @@
       "id": "guide.working-doc-conventions",
       "type": "guide",
       "sourcePath": "Guides/Core/working-doc-conventions.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.spec-file-shape",
+      "type": "guide",
+      "sourcePath": "Guides/Core/spec-file-shape.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "tool.spec-tool",
+      "type": "tool",
+      "sourcePath": "Bin/spec-tool.py",
+      "tags": ["core"]
+    },
+    {
+      "id": "tool.design-tool",
+      "type": "tool",
+      "sourcePath": "Bin/design-tool.py",
+      "tags": ["core"]
+    },
+    {
+      "id": "tool.figma-page-check",
+      "type": "tool",
+      "sourcePath": "Bin/figma-page-check.js",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.spec-file-gaps",
+      "type": "guide",
+      "sourcePath": "Guides/Core/spec-file-gaps.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.writing-style",
+      "type": "guide",
+      "sourcePath": "Guides/Core/writing-style.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.change-requests",
+      "type": "guide",
+      "sourcePath": "Guides/Core/change-requests.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.artifact-hosting",
+      "type": "guide",
+      "sourcePath": "Guides/Core/artifact-hosting.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.known-gaps",
+      "type": "guide",
+      "sourcePath": "Guides/Core/known-gaps.md",
       "tags": ["core"]
     },
     {
@@ -94,33 +223,39 @@
       "tags": ["core"]
     },
     {
-      "id": "template.integration-section-requirements",
-      "type": "template",
-      "sourcePath": "Templates/docs/skai/integration-sections/requirements.md",
-      "tags": ["core"]
-    },
-    {
       "id": "template.codex-agents",
       "type": "template",
       "sourcePath": "Templates/agents/codex/AGENTS.md",
       "tags": ["adapter:codex"]
     },
     {
-      "id": "template.claude-code-instructions",
+      "id": "template.claude-instructions",
       "type": "template",
-      "sourcePath": "Templates/agents/claude-code/CLAUDE.md",
+      "sourcePath": "Templates/agents/claudecode/CLAUDE.md",
       "tags": ["adapter:claude-code"]
     },
     {
-      "id": "guide.work-spec-creation",
-      "type": "guide",
-      "sourcePath": "Guides/Spec/work-spec-creation.md",
+      "id": "template.agent-instructions-block",
+      "type": "template",
+      "sourcePath": "Templates/agents/instructions-block.md",
+      "tags": ["adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "install-policy.agent-instructions-install-update",
+      "type": "install-policy",
+      "sourcePath": "Install/agent-instructions-install-update.md",
       "tags": ["core"]
     },
     {
-      "id": "guide.work-spec-implementation",
+      "id": "guide.dev-specs-authoring",
       "type": "guide",
-      "sourcePath": "Guides/Spec/work-spec-implementation.md",
+      "sourcePath": "Guides/DevSpecs/dev-specs-authoring.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.dev-specs-implementation",
+      "type": "guide",
+      "sourcePath": "Guides/DevSpecs/dev-specs-implementation.md",
       "tags": ["core"]
     },
     {
@@ -155,6 +290,9 @@
     },
     {
       "id": "skill.skai-process-refinement",
+      "label": "Process refinement",
+      "category": "Process",
+      "description": "Refine a guide through independent review and focused repairs.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-process-refinement/SKILL.md",
       "tags": [
@@ -165,6 +303,9 @@
     },
     {
       "id": "skill.skai-suggestion",
+      "label": "Suggestion and ticket filing",
+      "category": "Process",
+      "description": "Turn a process improvement suggestion into a reviewed ticket.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-suggestion/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
@@ -172,7 +313,7 @@
     {
       "id": "guide.ticket-implementation",
       "type": "guide",
-      "sourcePath": "maintain-tickets.md",
+      "sourcePath": "internal/maintain-tickets.md",
       "tags": ["core"]
     },
     {
@@ -198,6 +339,12 @@
       "type": "guide",
       "sourcePath": "Guides/Test/unit-test-writing-guide.md",
       "tags": ["adapter:xcode", "swift"]
+    },
+    {
+      "id": "runbook.install-update",
+      "type": "runbook",
+      "sourcePath": "Install/install-update.md",
+      "tags": ["core"]
     },
     {
       "id": "runbook.cursor-install-update",
@@ -261,54 +408,81 @@
     },
     {
       "id": "skill.skai-debugging",
+      "label": "Debugging",
+      "category": "Debugging",
+      "description": "Investigate a defect, narrow its cause and verify the chosen repair.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-debugging/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
-      "id": "skill.skai-work-spec-creation",
+      "id": "skill.skai-dev-specs-authoring",
+      "label": "Dev specs authoring",
+      "category": "Dev specs",
+      "description": "Turn a feature request into a reviewed technical design.",
       "type": "skill",
-      "sourcePath": "Templates/skills/skai-work-spec-creation/SKILL.md",
+      "sourcePath": "Templates/skills/skai-dev-specs-authoring/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
-      "id": "skill.skai-work-spec-implementation",
+      "id": "skill.skai-dev-specs-implementation",
+      "label": "Dev specs implementation",
+      "category": "Dev specs",
+      "description": "Plan and carry out the work needed by an approved design.",
       "type": "skill",
-      "sourcePath": "Templates/skills/skai-work-spec-implementation/SKILL.md",
+      "sourcePath": "Templates/skills/skai-dev-specs-implementation/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-unit-testing",
+      "label": "Unit testing",
+      "category": "Testing",
+      "description": "Coordinate test planning, infrastructure and implementation.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-unit-testing/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-unit-test-planning",
+      "label": "Test planning",
+      "category": "Testing",
+      "description": "Design test coverage and test cases before implementing them.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-unit-test-planning/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-unit-test-infrastructure",
+      "label": "Test infrastructure",
+      "category": "Testing",
+      "description": "Prepare the shared setup, helpers and seams needed by tests.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-unit-test-infrastructure/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-unit-test-writing",
+      "label": "Test writing",
+      "category": "Testing",
+      "description": "Implement planned tests and record verification results.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-unit-test-writing/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-dev-retro",
+      "label": "Development retro",
+      "category": "Process",
+      "description": "Review session work, documentation gaps and follow-up needs.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-dev-retro/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
       "id": "skill.skai-update-installation",
+      "label": "Update installation",
+      "category": "Setup",
+      "description": "Update the SKAI checkout and reconcile installed components.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-update-installation/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
@@ -316,7 +490,7 @@
     {
       "id": "guide.maintain-retro",
       "type": "guide",
-      "sourcePath": "maintain-retro.md",
+      "sourcePath": "internal/maintain-retro.md",
       "tags": ["core"]
     },
     {
@@ -368,12 +542,6 @@
       "tags": ["core"]
     },
     {
-      "id": "guide.ui-map-planning",
-      "type": "guide",
-      "sourcePath": "Guides/UIMap/ui-map-planning.md",
-      "tags": ["core"]
-    },
-    {
       "id": "guide.ui-map-implementation",
       "type": "guide",
       "sourcePath": "Guides/UIMap/ui-map-implementation.md",
@@ -386,63 +554,153 @@
       "tags": ["core"]
     },
     {
-      "id": "guide.ui-map-figjam",
+      "id": "guide.designer-guide",
       "type": "guide",
-      "sourcePath": "Guides/UIMap/ui-map-figjam.md",
+      "sourcePath": "Guides/Design/figma-designer-guide.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.figma-designer-guide-multiple-sizes",
+      "type": "guide",
+      "sourcePath": "Guides/Design/figma-designer-guide-multiple-sizes.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.design-authoring",
+      "type": "guide",
+      "sourcePath": "Guides/Design/design-authoring.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.design-promotion",
+      "type": "guide",
+      "sourcePath": "Guides/Design/design-promotion.md",
       "tags": ["core"]
     },
     {
       "id": "skill.skai-ui-map-architecture",
+      "label": "UI Map architecture",
+      "category": "UI Map",
+      "description": "Create or change the map of screens and routes.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-ui-map-architecture/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
-      "id": "skill.skai-ui-map-planning",
-      "type": "skill",
-      "sourcePath": "Templates/skills/skai-ui-map-planning/SKILL.md",
-      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
-    },
-    {
       "id": "skill.skai-ui-map-implementation",
+      "label": "UI Map implementation",
+      "category": "UI Map",
+      "description": "Plan or build code conformance to an approved UI Map.",
       "type": "skill",
       "sourcePath": "Templates/skills/skai-ui-map-implementation/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
-      "id": "guide.requirements-catalog",
+      "id": "guide.product-specs-catalog",
       "type": "guide",
-      "sourcePath": "Guides/Requirements/requirements-catalog.md",
+      "sourcePath": "Guides/ProductSpecs/product-specs-catalog.md",
       "tags": ["core"]
     },
     {
-      "id": "guide.requirements-authoring",
+      "id": "guide.product-specs-authoring",
       "type": "guide",
-      "sourcePath": "Guides/Requirements/requirements-authoring.md",
+      "sourcePath": "Guides/ProductSpecs/product-specs-authoring.md",
       "tags": ["core"]
     },
     {
-      "id": "guide.requirements-promotion",
+      "id": "guide.product-specs-baseline",
       "type": "guide",
-      "sourcePath": "Guides/Requirements/requirements-promotion.md",
+      "sourcePath": "Guides/ProductSpecs/product-specs-baseline.md",
       "tags": ["core"]
     },
     {
-      "id": "guide.requirements-artifacts",
+      "id": "guide.product-specs-promotion",
       "type": "guide",
-      "sourcePath": "Guides/Requirements/requirements-artifacts.md",
+      "sourcePath": "Guides/ProductSpecs/product-specs-promotion.md",
       "tags": ["core"]
     },
     {
-      "id": "skill.skai-requirements-authoring",
+      "id": "guide.product-specs-artifacts",
+      "type": "guide",
+      "sourcePath": "Guides/ProductSpecs/product-specs-artifacts.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.design-specs",
+      "type": "guide",
+      "sourcePath": "Guides/DesignSpecs/design-specs.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.design-specs-authoring",
+      "type": "guide",
+      "sourcePath": "Guides/DesignSpecs/design-specs-authoring.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.design-specs-promotion",
+      "type": "guide",
+      "sourcePath": "Guides/DesignSpecs/design-specs-promotion.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.design-specs-artifacts",
+      "type": "guide",
+      "sourcePath": "Guides/DesignSpecs/design-specs-artifacts.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "skill.skai-product-specs-authoring",
+      "label": "Product specs authoring",
+      "category": "Product specs",
+      "description": "Draft and discuss product specs without changing the canonical catalog.",
       "type": "skill",
-      "sourcePath": "Templates/skills/skai-requirements-authoring/SKILL.md",
+      "sourcePath": "Templates/skills/skai-product-specs-authoring/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     },
     {
-      "id": "skill.skai-requirements-promotion",
+      "id": "skill.skai-product-specs-promotion",
+      "label": "Product specs promotion",
+      "category": "Product specs",
+      "description": "Verify an approved package, write the catalog and archive the package.",
       "type": "skill",
-      "sourcePath": "Templates/skills/skai-requirements-promotion/SKILL.md",
+      "sourcePath": "Templates/skills/skai-product-specs-promotion/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "skill.skai-design-authoring",
+      "label": "Design authoring",
+      "category": "Design",
+      "description": "Take a design change from idea to approved mockups on a change page, without touching production designs.",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-design-authoring/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "skill.skai-design-promotion",
+      "label": "Design promotion",
+      "category": "Design",
+      "description": "Move an approved design package into the production designs after supervisor review.",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-design-promotion/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "skill.skai-design-specs-authoring",
+      "label": "Design specs authoring",
+      "category": "Design specs",
+      "description": "Draft and discuss design specs without changing the canonical specs.",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-design-specs-authoring/SKILL.md",
+      "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
+    },
+    {
+      "id": "skill.skai-design-specs-promotion",
+      "label": "Design specs promotion",
+      "category": "Design specs",
+      "description": "Verify an approved package, write the specs and archive the package.",
+      "type": "skill",
+      "sourcePath": "Templates/skills/skai-design-specs-promotion/SKILL.md",
       "tags": ["adapter:cursor", "adapter:claude-code", "adapter:codex"]
     }
   ]

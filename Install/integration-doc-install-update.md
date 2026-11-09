@@ -7,6 +7,7 @@ This is a shared guide for installers that create/update the host project's Inte
 - The Integration doc is **project-owned operational glue**.
 - It must be **agent-usable** and **deterministic** (prefer CLI commands; avoid GUI instructions).
 - It must be safe to update on existing repos (don't delete/overwrite project-owned content).
+- It supplies project-wide operational settings. Guide-specific additions/overrides belong in project-owned `skai/addenda/` files; the base guide loads Integration when needed, without requiring addendum authors to repeat that dependency.
 - It records project-specific overrides and evidence conventions; canonical SKAI-native defaults stay in SKAI guides and do not need to be copied here just to make them discoverable.
 
 ## Rules
@@ -19,18 +20,19 @@ This is a shared guide for installers that create/update the host project's Inte
 ## Managed blocks
 
 The Integration doc contains:
-- a human-owned "Special instructions / overrides" section (must be read and obeyed first)
+- a project-owned "Special instructions / overrides" section (must be read and obeyed first)
 - LLM-managed blocks delimited by:
   - `<!-- BEGIN Managed-By: skai | Section: ... -->`
   - `<!-- END Managed-By: skai | Section: ... -->`
 
 Installers may only create/update/remove content inside managed blocks.
 
-### `required-values` block (operator-filled form)
+### `required-values` block (project-owned form)
 
-The `required-values` block is a managed "form" that operators fill in:
-- Operators should remove 🟡 markers and delete any `INSTRUCTION:` lines once they fill a value.
+The `required-values` block is a managed "form" the project owner fills in:
+- The project owner replaces each `{supervisor response}` placeholder with the value, and should remove 🟡 markers and delete any `INSTRUCTION:` lines once they fill a value.
 - Installers must preserve filled values and must only restore 🟡 + instruction lines when required information is missing.
+- A field the template has and the host's form lacks is added in the template's position with the template's text; a field with a default value (such as the scratch root) is added with that default.
 
 Standard instruction format:
 - `INSTRUCTION: <what is needed>`
@@ -46,24 +48,16 @@ When creating/updating the Integration doc:
      - `Templates/docs/skai/integration-sections/xcode.md`
      - `Templates/docs/skai/integration-sections/swift-package.md`
      - `Templates/docs/skai/integration-sections/android-gradle.md`
-   - remove irrelevant managed blocks if the stack is not present (or the operator says omit).
+   - remove irrelevant managed blocks if the stack is not present (or the supervisor says omit).
    - Note: a project may use both `xcode` and `swift-package` sections (e.g., app targets built via Xcode and library submodules built as Swift packages).
-4. Insert/update the `requirements` managed block from
-   `Templates/docs/skai/integration-sections/requirements.md`. Unlike the stack sections above this
-   one is **not stack-dependent** — every project gets it, because every workflow that reads or
-   writes requirements needs to know the repository shape and where the catalog lives. A project
-   that keeps no requirements records shape `none`; that is what tells those workflows to skip.
-   - Infer where you can: an existing `skai/requirements/` directory means shape `local` with that
-     root. A root-level `requirements/` directory is a legacy local-catalog candidate: propose moving
-     it to `skai/requirements/`, preserve its contents, and wait for explicit approval; if both paths
-     exist, stop on the collision rather than merging or choosing one. Absence of either does not mean
-     `none` — a greenfield project intending to keep requirements here is `local` with the default
-     `skai/requirements/` root, and `none` is a deliberate opt-out. Do not guess `shared` — whether
-     another repo holds the catalog is the operator's call.
-   - See `Guides/Requirements/requirements-catalog.md` for what each shape and scope means.
+4. Where the project's canonical artifacts live is **not** recorded here: the project README links
+   them, and the agent instruction block tells every session to read it first. If an existing
+   Integration doc still carries a `requirements` or `design-specs` managed block from an earlier
+   skai, propose removing it (see *Legacy cleanup*); before removal, confirm the README links the
+   artifact the block named, or propose adding the link — a project-owned edit with its own approval.
 5. If required project-specific constants/mappings cannot be inferred:
    - restore/leave 🟡 markers + instruction lines in the `required-values` block
-   - STOP and ask the operator the minimum questions needed
+   - STOP and ask the supervisor the minimum questions needed
 
 Discovery guidance (avoid brittle filename checklists):
 - When migrating "legacy integration glue" into the Integration doc, **search broadly** (README, `docs/`, CI config/scripts, prior agent/rule docs) for build/test commands, destinations, and artifact path conventions.

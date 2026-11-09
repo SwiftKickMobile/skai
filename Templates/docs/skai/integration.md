@@ -4,11 +4,11 @@ This document is the project-owned source of truth for operational details requi
 
 Do not store secrets here.
 
-<!-- Human-owned: edit freely. -->
+<!-- Project-owned: edit freely. -->
 ## Special instructions / overrides
 
 - 🟡 **Project-specific override rules**
-  {human response}
+  {supervisor response}
   - INSTRUCTION: Add any project-specific override rules here that should influence how the installer manages the blocks below. Examples: preferred default destinations/devices; scheme/test-plan mapping rules; required flags (extra `xcodebuild` options, Gradle flags); evidence-capture expectations/limitations.
   - INSTRUCTION: If you have no overrides, delete the 🟡 marker and delete these instruction lines.
 
@@ -19,15 +19,15 @@ Do not store secrets here.
 
 ### Repositories and tooling
 
-- **Primary IDE(s)**: {operator response}
-- **Languages/frameworks**: {operator response}
-- 🟡 **CI**: {operator response}
+- **Primary IDE(s)**: {supervisor response}
+- **Languages/frameworks**: {supervisor response}
+- 🟡 **CI**: {supervisor response}
   - INSTRUCTION: Name the CI system if you have one (GitHub Actions, Buildkite, etc.), or write "none".
 
 ### Destinations (multi-platform supported)
 
 - 🟡 **Default destinations** (project-wide constants; used by Xcode command templates)
-  {operator response}
+  {supervisor response}
   - INSTRUCTION: List one destination per platform you support (iOS / macOS / visionOS / etc.). The agent selects `<DefaultDestination>` based on task context.
   - Format: copy/pasteable `xcodebuild -destination` string.
   - Example:
@@ -38,17 +38,17 @@ Do not store secrets here.
 ### Xcode container + scheme/test-plan conventions (if applicable)
 
 - 🟡 **Xcode container**
-  {operator response}
+  {supervisor response}
   - INSTRUCTION: Specify the canonical build container as either a project or workspace path (choose one):
     - project: `<ProjectDir>/<Project>.xcodeproj`
     - workspace: `<Workspace>.xcworkspace`
 
 - 🟡 **Scheme selection rule**
-  {operator response}
+  {supervisor response}
   - INSTRUCTION: Describe how to pick the scheme for "the module under work". If it's "scheme == module name", say so.
 
 - 🟡 **Test plan rule** (if applicable)
-  {operator response}
+  {supervisor response}
   - INSTRUCTION: If you use test plans, state the rule (often "test plan name == scheme name"). Otherwise write "not used".
 
 - **Mapping table** (optional; include only if rules aren't enough)
@@ -57,48 +57,47 @@ Do not store secrets here.
 ### UI / instrumentation tests (if applicable)
 
 - 🟡 **How to run UI/instrumentation tests**
-  {operator response}
+  {supervisor response}
   - INSTRUCTION: Provide the canonical command(s) or write "not used".
 
 - 🟡 **Device/simulator requirements**
-  {operator response}
+  {supervisor response}
   - INSTRUCTION: State required devices/OS versions or special setup, or write "none".
 
-### Output and evidence collection (operator-in-the-loop)
+### Output and evidence collection (supervisor-in-the-loop)
 
 Purpose: define the project-specific "evidence contract" so agents can debug deterministically when they cannot directly observe runtime behavior.
 
+- **Scratch root** (output captured to verify a build or test: command captures, result bundles, extracted results, screenshots; outside the repository, never in a working document; a build's deliverable is not captured output): `/tmp/skai/<session-name>/`
+
 - 🟡 **Where command output is captured**
-  {operator response}
-  - INSTRUCTION: Provide the canonical paths/naming (and whether the operator should paste full content vs paste the path to the captured file).
+  {supervisor response}
+  - INSTRUCTION: Provide the file naming under the scratch root (and whether the supervisor should paste full content vs paste the path to the captured file).
 
 - 🟡 **Test artifacts** (if applicable)
-  {operator response}
-  - INSTRUCTION: Provide artifact path conventions for structured test results (stack-specific). Examples: Xcode `.xcresult` + extracted JSON; Android JUnit XML under `**/build/test-results/**` and HTML reports under `**/build/reports/tests/**`.
+  {supervisor response}
+  - INSTRUCTION: Provide artifact path conventions for structured test results (stack-specific). Examples: Xcode `.xcresult` + extracted JSON; Android JUnit XML and HTML reports. Every one is written under the scratch root (point the build's output options there), never under the repository's `build/`.
 
 - 🟡 **Runtime/UI evidence**
-  {operator response}
+  {supervisor response}
   - INSTRUCTION: Where logs are found and what artifacts to provide (screenshots, recordings, crash reports).
 
 - 🟡 **Known limitations**
-  {operator response}
+  {supervisor response}
   - INSTRUCTION: List any tooling limitations that affect evidence collection (e.g., missing test log visibility) and the workaround.
 
 ### Project structure notes
 
 - Main targets/modules:
-  {operator response}
+  {supervisor response}
 - 🟡 Test targets/modules:
-  {operator response}
+  {supervisor response}
   - INSTRUCTION: List test targets/modules so the agent can choose the right test runner commands. For Xcode projects, this also supports forming `-only-testing:` selectors and choosing schemes correctly.
 - 🟡 Any special conventions needed for imports, fixtures, or test discovery:
-  {operator response}
+  {supervisor response}
   - INSTRUCTION: Document any repo-specific conventions that affect tests.
 
 <!-- END Managed-By: skai | Section: required-values -->
-
-<!-- BEGIN Managed-By: skai | Section: requirements -->
-<!-- END Managed-By: skai | Section: requirements -->
 
 <!-- BEGIN Managed-By: skai | Section: xcode -->
 <!-- END Managed-By: skai | Section: xcode -->
@@ -108,3 +107,4 @@ Purpose: define the project-specific "evidence contract" so agents can debug det
 
 <!-- BEGIN Managed-By: skai | Section: android-gradle -->
 <!-- END Managed-By: skai | Section: android-gradle -->
+

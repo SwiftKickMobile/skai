@@ -7,5 +7,4 @@ description: Updates the skai submodule and re-runs installed adapter runbooks. 
 
 ## Instructions
 
-- Read `Submodules/skai/Guides/Core/update-installation-guide.md` and follow its procedure.
-- If the install state file is missing, STOP and tell the operator to run the initial install first.
+- Read `Submodules/skai/Guides/Core/update-installation-guide.md` in full, including its Project Addendum instructions, and follow it.
