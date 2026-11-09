@@ -27,7 +27,6 @@ This folder is a self-contained Gradle build with its own wrapper:
 ./gradlew :skai-compose-kmp:assemble             # KMP module (all targets)
 ./gradlew :skai-compose-kmp:compileKotlinIosArm64
 ./gradlew :skai-compose-kmp:jvmTest
-./verify-guide-api.sh                             # guide/source API drift
 ```
 
 ## Consuming from a host project (composite build)
