@@ -33,10 +33,11 @@ kotlin {
             kotlin.srcDir("../skai-compose-android/src/main/java")
             dependencies {
                 implementation(libs.compose.material)
+                implementation(libs.compose.material.icons.core)
                 implementation(libs.compose.material3)
-                implementation(libs.jetbrains.material.icons.extended)
                 implementation(libs.jetbrains.material.navigation)
                 implementation(libs.jetbrains.navigation.compose)
+                implementation(libs.kotlinx.serialization.core)
             }
         }
         commonTest.dependencies {

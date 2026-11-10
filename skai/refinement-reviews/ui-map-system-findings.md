@@ -349,3 +349,62 @@ Round 2 repairs leave `ui-map-swiftui-placeholders.md` 9 bytes and `ui-map-compo
 | 2026-11-09 caps-r9 | F1 One rule's closing sentence put its guarantee after the tabbed exception | closed | Guarantee first, exception last |
 | 2026-11-09 caps-r9 | F2 Tab examples' `// from the inputs` comments | logged | Cosmetic |
 | 2026-11-09 caps | Series caps (size pass) converged by supervisor ruling | closed | — |
+| 2026-11-09 compose-r1 | F1 Library declares Navigation Compose and Material as `implementation`; guide's setup list reads as complete | closed | Supervisor chose the library fix: both builds expose their public-signature dependencies as `api`; a consumer declaring only the SKAI artifact compiles, and fails with 28 unresolved references under the old `implementation` scope |
+| 2026-11-09 compose-r1 | F2 Production *Modal routing* didn't place `ModalNavHost`; only the placeholder guide said `Box` | closed | *Modal routing* owns the `Box` placement; placeholder bullets point to it |
+| 2026-11-09 compose-r1 | F3 View-model provider rule and STOP in both guides | closed | Owned by *Scene state, events, and effects*, now in the placeholder read-first list |
+| 2026-11-09 compose-r1 | F4 Production tab host kind unstated | closed | "plain tab `NavHost` (tabs swap in place, not `SlideNavHost`)" |
+| 2026-11-09 compose-r1 | F5 Spec's September table names `bottomSheet` for `sheet` | closed | Spec 2026-11-09 records `bottomSheetModal`; guide unchanged |
+| 2026-11-09 compose-r1 | F6 Breadcrumb "opens on the current segment" | closed | "pinned to the current (trailing) segment", per `PlaceholderScene.kt` scroll |
+| 2026-11-09 compose-r1 | F7 SwiftUI aside in the Layout bullet; siblings in older text | closed / logged | Layout aside deleted; older siblings outside the change |
+| 2026-11-09 compose-r1 | F8 Tab example shows no `Box`/`ModalNavHost` | logged | The *tab* prose says modals ride in the same `Box`; a copy fails to compile, not silently |
+| 2026-11-09 compose-r1 | F9 `ModalStyles` "property name, keeping its exact map ID" | logged | Example shows camelCase name with exact `id` |
+| 2026-11-09 compose-r1 | F10 Hilt API list | closed | Parenthetical deleted |
+| 2026-11-09 compose-r1 | F11 Library pointer twice in the placeholder intro | closed | Folded into the read-first list |
+| 2026-11-09 compose-r1 | Q Production tab taps through the view model; no pop effect for pushed routes; "Android-only scenes" wording; `common:` STOP parity; literal include path | logged | Open questions, no defect shown |
+| 2026-11-09 compose-r2 | F1 Modal `Box` placement undefined for a scene that also pushes; production example drew no `Box` | closed | *Modal routing*: over the `SlideNavHost` when the scene pushes; example draws the `Box` |
+| 2026-11-09 compose-r2 | F2 "the same `Box`" in *tab* has no referent | closed | "the scene's modal `Box`" |
+| 2026-11-09 compose-r2 | F3 Tabbed-only "no host" while the library hosts a tab `NavHost` | logged | The operator writes no host; supervisor asked for less library internals |
+| 2026-11-09 compose-r2 | F4 Placeholder-only view model with no SwiftUI counterpart | logged | Older text, outside the change; touches the logged production-leaf item |
+| 2026-11-09 compose-r2 | F5 "plain `NavHost` swaps in place" (default fades) | closed | Claim removed: "plain tab `NavHost` (not `SlideNavHost`)" |
+| 2026-11-09 compose-r2 | F6 `common:` scenes lack SwiftUI's no-shared-module STOP | logged | Stranded; the blocked-gate route catches it |
+| 2026-11-09 compose-r2 | F7 Read-first entry for *Scene state, events, and effects* | closed | Removed; the point-of-use pointer stays |
+| 2026-11-09 compose-r2 | Q `viewModel()` not supplied by the library | logged | Verified by consumer build: `ViewModel` and `collectAsStateWithLifecycle` resolve, `viewModel()` doesn't; the guide leaves the provider to the project with a STOP |
+| 2026-11-09 compose-r2 | Q Child start destination in view state; `rememberBottomSheetNavigator` name collision; tab order source | logged | No defect shown |
+| 2026-11-09 compose-r3 | F1 Placeholder "never add Hilt wiring" contradicts production Hilt-by-convention | closed | Clause deleted; production *Scene state, events, and effects* owns DI |
+| 2026-11-09 compose-r3 | F2 Nav + modal scene can paste two `viewEffects` collectors; a `receiveAsFlow` channel splits between them | closed | `FooViewEffect` bullet: collected by a single `LaunchedEffect` that handles every effect |
+| 2026-11-09 compose-r3 | F3 Placeholder nav example passes `navController` positionally into `modifier` | closed | Named argument, per `SlideNavHost.kt` signature |
+| 2026-11-09 compose-r3 | F4 `ModalStyles` removal rule restated with a different "what stays" list | closed | "Like `DomainColors`, `ModalStyles` is temporary." |
+| 2026-11-09 compose-r3 | F5 Compose doesn't name the README's Modal Styles section | logged | Older text, off-normal |
+| 2026-11-09 compose-r3 | F6 Dismissal bullet under "Effects come from" | logged | Older text, cosmetic |
+| 2026-11-09 compose-r3 | F7 Setup STOP doesn't name the SDK floor | logged | Closed setup list and the convention-change rule already stop it |
+| 2026-11-09 compose-r3 | F8 "the scene's modal `Box`" coined label | closed | "the `Box` with the scene's `ModalNavHost`" |
+| 2026-11-09 compose-r3 | Q `ModalNavHost(isComposite)` undocumented; `CloseModal` on an idle host; no debug route check in the Compose library | logged | Library-level, no guide defect shown |
+| 2026-11-09 compose-r4 | F1 One-collector rule not visible at the routing examples (r3 F2 reproduced at the copy point) | closed | Comment on the *Modal routing* example's `LaunchedEffect`; the `FooViewEffect` bullet stays the owner |
+| 2026-11-09 compose-r4 | F2 Missing-modal-style STOP restated in *Modal routing* | closed | Clause deleted; *Build philosophy* and *Finding disposition* own it |
+| 2026-11-09 compose-r4 | F3 Library behavior restated: modal Behavior column; Layout bullet's equal share; crumb-less root | closed / logged | Behavior column cut; equal share is older text; crumb-less root is the 2026-09-02 full-bleed decision |
+| 2026-11-09 compose-r4 | F4 Route-files and marker sentences under *View models and DI* | logged | Older text |
+| 2026-11-09 compose-r4 | F5 No rule for shared vs Android-only scene placement | logged | Stranded; project convention and *Finding disposition* cover it |
+| 2026-11-09 compose-r4 | F6 `ModalStyles` "readable title" has no source | logged | The example shows Title Case of the ID |
+| 2026-11-09 compose-r4 | Q Child start destination in view state; `DomainColors`/`ModalStyles` package unstated on both platforms; setup STOP routed via *Finding disposition* | logged | No defect shown |
+| 2026-11-09 compose-r5 | F1 Audit status of existing M2 `bottomSheet` destinations undecided | closed | Follows the spec's "`bottomSheet` stays for legacy code": "existing `bottomSheet` destinations stay" |
+| 2026-11-09 compose-r5 | F2 "recorded in Plan and done in Build" reads two ways | closed | SwiftUI shape: "mechanical setup this skill owns in Build" |
+| 2026-11-09 compose-r5 | F3 `PlaceholderColors.domain(index)` stated twice | logged | Older text |
+| 2026-11-09 compose-r5 | F4 Tab icon clause doesn't reject the library's default star | logged | Older #57 text; the clause already requires a fitting icon |
+| 2026-11-09 compose-r5 | F5 "at the `NavHost` declaration site" names no host | logged | Older text; the example and table place every standard builder in `ModalNavHost` |
+| 2026-11-09 compose-r5 | Q Placeholder view model × DI STOP on a greenfield shared module; `navigatePush` same-class no-op | logged | Settled / library behavior |
+| 2026-11-09 compose-r6 | F1 Setup STOP routed through *Finding disposition* instead of a blocked gate | closed | "STOP at a blocked gate", as on SwiftUI |
+| 2026-11-09 compose-r6 | F2 "this skill … in Build" without an antecedent | closed | "the implementation skill owns in Build" |
+| 2026-11-09 compose-r6 | F3 Placeholder *Route enums* section restates the route-file rule | logged | Older text |
+| 2026-11-09 compose-r6 | F4 *tab* restates "in its own file" and `@Serializable` | closed | "(one case per tab)" |
+| 2026-11-09 compose-r6 | F5 *Child routing* start destination in view state vs *State ownership* | logged | Older text outside the change; raised as an open question in r1, r2, r4 |
+| 2026-11-09 compose-r6 | F6 Tab example uses `Icons.Default.Menu` for Folders | logged | Older #57 example |
+| 2026-11-09 compose-r6 | F7 Three names for one library | logged | Resolved by the intro's parenthesis |
+| 2026-11-09 compose-r6 | Q Android-only module in a KMP project with both artifacts on one classpath; `collectAsStateWithLifecycle` vs project convention; `Sample.kt` builds a style inline | logged | No occurrence; settled; non-normative |
+| 2026-11-09 compose-r7 | F1 Setup "inspect the consuming module" misses the settings include | closed | "Inspect the Gradle settings and the consuming module first" |
+| 2026-11-09 compose-r7 | F2 Builder-source rule stated three times in the placeholder guide | closed | *Modal style descriptors* sentence deleted; the API bullet and *modal* keep it |
+| 2026-11-09 compose-r7 | F3 "Never copy the library sources or hand-roll substitutes" has no SwiftUI counterpart | logged | Guards the vendoring failure mode; one sentence |
+| 2026-11-09 compose-r7 | F4 *Placeholder scenes* pointer before *State ownership* | logged | Older text, reading order only |
+| 2026-11-09 compose-r7 | F5 `DomainColors`/`ModalStyles` package unstated | logged | Same on SwiftUI; a wrong source set fails the build |
+| 2026-11-09 compose-r7 | Q KMP project with an Android-only scene module gets both artifacts (duplicate classes); README omits the Kotlin Gradle plugin floor | logged | Raised r6 and r7; no occurrence; library/README scope |
+| 2026-11-10 compose-r1 | F1 reopened by supervisor ruling (skai#133): the app owns its dependencies | closed | `api` reverted to `implementation` at the oldest versions the sources build with (each floor fails one release lower); unused AppCompat, Core KTX, Material Components, extended icons and BOM dropped; core icons and kotlinx-serialization-core, which the sources import, declared; guide's "exactly one artifact" and serialization-plugin sentences cut |
+| 2026-11-10 compose series | Stopped by supervisor ruling after r7 | closed | r7's two cosmetic findings fixed; F3–F5 and the both-artifacts question stay logged |

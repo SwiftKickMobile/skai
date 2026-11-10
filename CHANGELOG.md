@@ -9,6 +9,7 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **The Compose UI Map guides use SKAI's Compose library.** Compose routing and placeholders now come from a shared library in the SKAI submodule, for Compose Multiplatform and Android-only apps, and the guides match the SwiftUI ones. The library asks for old minimum versions of its dependencies, so adding it doesn't upgrade an app's own libraries.
 - **Placeholder tab bars use the scene's tab route.** The SwiftUI placeholder library can now bind a tab bar to the view model's tab route enum, as production code does.
 - **Scaffolded tab bars use the labels and icons you give them.** A tab bar a UI Map scaffold sets up stays in the app, so its labels and icons now come from the request, your instructions, the designs or the specs instead of scene names; placeholder screens still use scene names.
 - **Route enums get their own files.** The SwiftUI and Compose UI Map guides now put each route enum in a file beside the view model instead of inside it; projects that prefer the old layout can keep it with a README override.

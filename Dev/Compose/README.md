@@ -52,19 +52,26 @@ Use exactly one artifact in a consuming module. The KMP artifact supports Androi
 JVM, `iosArm64`, and `iosSimulatorArm64`; use the Android artifact only when the
 consuming code is Android-only.
 
+The library declares its dependencies (Navigation Compose, Material, Material 3, Material
+Navigation, the core Material icons and kotlinx-serialization-core) as `implementation`,
+at the oldest versions its sources build with (`gradle/libs.versions.toml`). Gradle
+resolves each to the highest version requested, so a host's newer versions win and
+linking the library upgrades nothing; a host older than a floor is raised to it. The host
+declares the dependencies its own code uses, at its own versions.
+
 ## Kotlin Multiplatform
 
 `:skai-compose-kmp` is the primary module: its `commonMain` points at the Android
 module's sources (the multiplatform artifacts keep the `androidx.*` package names, so
 the exact same files compile on both) and it builds for `androidTarget` plus the iOS
 targets. `:skai-compose-android` is the plain-Android backup, compiled against the androidx
-Compose BOM. Pick one — they ship the same classes.
+Compose artifacts. Pick one — they ship the same classes.
 
 The catalog's KMP equivalents (marked as such in `libs.versions.toml`):
 
 - Plugins: `kotlin-multiplatform`, `compose-multiplatform`, `android-kotlin-multiplatform-library`
 - Libraries: the `org.jetbrains.*` multiplatform ports of material, material3,
-  navigation-compose, material-navigation, and material-icons-extended
+  navigation-compose, material-navigation, and material-icons-core
 
 Toolchain notes: AGP 9+ has built-in Kotlin, so the Android module applies no
 `kotlin-android` plugin, and the KMP module uses `com.android.kotlin.multiplatform.library`

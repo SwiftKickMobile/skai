@@ -248,9 +248,6 @@ no-package run seeds the package before filing. Its repairs (r1 F3, r5 F1) are i
 ## Open
 
 - **No size budget.** To be set by the supervisor, as for the spec guides.
-- **The Compose library is unmerged.** `Dev/Compose` and the September guide revisions exist only
-  on `work/uimap-cmp` and `work/skai-v6-uimap-integration`; `main`'s Compose placeholder guide
-  still says the libraries are project-vendored. Merge or retire is a supervisor decision.
 - **The real-screen entry trigger** is deferred on both platforms ("rebuild-plan D12"); that plan
   is in neither repository. Until it lands, reaching a scaffold from a real screen blocks.
 - Top-level `todos:` are not rendered.
@@ -283,3 +280,11 @@ Working documents serving a package live in its `working-docs/` folder and archi
 **Tab bars (skai#57).** A tab bar a placeholder scaffold sets up is production code: each tab's label and icon are the ones the inputs give, otherwise a reasonable label and a fitting icon. The scaffold uses the app's bars as already set up; styling bars the app hasn't styled, building non-standard bars, and adding components or customizations to standard bars are not its job. Placeholder screens keep taking their titles, route menus and breadcrumbs from scene IDs. A tab added to the app's own tab bar uses that bar, through the placeholder guides' real-screen route (skai#127). As in production, a scaffolded tab bar is selected through the view model's tab route enum: the SwiftUI placeholder library's `PlaceholderScene` takes a `selection:` binding and each `PlaceholderTab` its `route:` case, and debug builds stop when a tab given `selection:` has no route of that enum (supervisor, 2026-11-07; label sources widened from designs only the same day; lookup and record wording dropped 2026-11-09 as over-engineering a low-risk rule).
 
 Caps (supervisor, 2026-11-07), whole-file bytes by `wc -c`, binding every repair per the refinement guide's size-budget rule: `ui-map-swiftui.md` 10,050; `ui-map-compose.md` 10,850; `ui-map-swiftui-placeholders.md` 15,100 (raised from 15,050 for the tab selection binding); `ui-map-compose-placeholders.md` 16,000; `ui-map-implementation.md` 51,500, replacing its 50,900 cap of 2026-10-20, which the guide already exceeded.
+
+## Decisions — 2026-11-09 (Compose library merged; skai#128)
+
+`Dev/Compose` is merged (supervisor), so the 2026-09-02 decisions hold and both Compose guides point to SKAI's library instead of project-vendored ones. The September guide text is redone against the current guides: route files (skai#81), tab labels and icons from the inputs (skai#57), and the 2026-10-18 package naming win over it. The library's M3 `bottomSheetModal` replaces the September table's `bottomSheet` for `sheet`; `bottomSheet` stays for legacy code. Tabs are routes in a tab `NavHost`, switched with `navigateToTab`: the placeholder library's `PlaceholderTab` takes its `<Scene>TabRoute` case, and production tab routing does the same, reading the current tab from the `NavController` with no current-tab field in the view state (*State ownership*: Compose Navigation is the source of truth). A tabbed placeholder presented modally keeps its ✕ in each tab, as on SwiftUI.
+
+**SwiftUI is the standard for the Compose guides** (supervisor, 2026-11-09). Each Compose guide matches its SwiftUI counterpart in content and depth; Compose text with no SwiftUI counterpart is there only for a need Compose has and SwiftUI doesn't, and says it as briefly. This replaces the 2026-11-07 Compose caps for this pass; new caps follow the series.
+
+**The app owns its dependencies** (supervisor, 2026-11-10; skai#133). The Compose library declares its dependencies as `implementation` at the oldest versions its sources build with, so Gradle keeps a host's newer versions and linking the library upgrades nothing. The guide names the include and the two artifacts and gives no other project setup. This reverses the `api` repair of compose-r1 F1.

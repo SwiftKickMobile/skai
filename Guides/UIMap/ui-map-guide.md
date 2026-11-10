@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-guide
 Managed-Source: Guides/UIMap/ui-map-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-11-09
 
 # UI Map Guide
 
@@ -15,7 +15,7 @@ Everything you write for a person follows [`writing-style.md`](../Core/writing-s
 This guide defines the platform-agnostic YAML format. Platform implementation patterns live in companion references:
 
 - [`ui-map-swiftui.md`](ui-map-swiftui.md) — implementing a UI Map in SwiftUI
-- [`ui-map-compose.md`](ui-map-compose.md) — implementing a UI Map in Jetpack Compose
+- [`ui-map-compose.md`](ui-map-compose.md) — implementing a UI Map in Compose Multiplatform or Android-only Jetpack Compose
 
 ## Rendering and validation
 
