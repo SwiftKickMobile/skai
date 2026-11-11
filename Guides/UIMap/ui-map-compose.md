@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-compose
 Managed-Source: Guides/UIMap/ui-map-compose.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-09
+Managed-Updated-At: 2026-11-11
 
 # UI Map — Compose Multiplatform Reference
 
@@ -48,7 +48,7 @@ The YAML's top-level `common:` scenes are domain-agnostic and live in the shared
 
 ## Route enums
 
-Sealed classes implementing a `Route` marker interface, with `@Serializable` cases for type-safe Compose Navigation (see the serialization plugin in **SKAI Compose library**) that carry the values the destination needs as `data class` fields. One `<Scene><Kind>Route.kt` per kind sits beside the view model, not inside it, keeping it to state and logic and a navigation change out of its diff.
+Sealed classes implementing a `Route` marker interface, with `@Serializable` cases for type-safe Compose Navigation that carry the values the destination needs as `data class` fields. One `<Scene><Kind>Route.kt` per kind sits beside the view model, not inside it, keeping it to state and logic and a navigation change out of its diff.
 
 ```kotlin
 sealed class DashboardNavRoute : Route {
@@ -118,11 +118,11 @@ fun DashboardScreen(viewModel: DashboardViewModel) {
 
 One `ModalRoute` enum per scene; each destination's required map `modal_style` selects the builder at the `NavHost` declaration site, not the route enum — never infer or substitute one. A scene that presents modals owns a `modalNavController` from `rememberNavController(rememberBottomSheetNavigator())` and places one `ModalNavHost` over its body in a `Box` (over its `SlideNavHost` when it also pushes):
 
-| `modal_style` | Builder | Behavior |
-|---|---|---|
-| `sheet` | `bottomSheetModal<Route>(navHostController = modalNavController) { … }` | Material 3 modal bottom sheet |
-| `full_screen` | `bottomSheetFullScreenModal<Route>(navHostController = modalNavController) { … }` | full-height Material 3 sheet |
-| `popover` | `dialog<Route> { … }` | Navigation Compose dialog destination |
+| `modal_style` | Builder |
+|---|---|
+| `sheet` | `bottomSheetModal<Route>(navHostController = modalNavController) { … }` |
+| `full_screen` | `bottomSheetFullScreenModal<Route>(navHostController = modalNavController) { … }` |
+| `popover` | `dialog<Route> { … }` |
 
 Projects document non-standard styles in `README.md`, each with its builder and the `NavHost` it belongs in. `ModalNavHost` also hosts the M2 `bottomSheet` builder: existing `bottomSheet` destinations stay; new `sheet` destinations use `bottomSheetModal`.
 

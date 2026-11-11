@@ -18,31 +18,29 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
 
     // MARK: - API
 
-    /// Scene with embedded composite/child content — optionally also tabbed.
+    /// Scene with embedded composite/child content.
     /// - Parameters:
     ///   - title: The scene's name (the visible identifier).
     ///   - routes: Outgoing nav/modal routes for the "Routes" menu; empty hides the menu.
-    ///   - tabs: Tab children rendered as a real `TabView`; empty for a non-tabbed scene.
     ///   - embedded: Composite/child scene placeholders, instantiated directly; each is
     ///     itself a `PlaceholderScene` and carries its own border.
     public init(
         title: String,
         domainColor: Color = .accentColor,
         routes: [PlaceholderRoute] = [],
-        tabs: [PlaceholderTab] = [],
         @ViewBuilder embedded: () -> EmbeddedContent
     ) {
         self.title = title
         self.domainColor = domainColor
         self.routes = routes
-        self.tabs = tabs
+        self.tabs = []
         self.embedded = embedded()
         self.hasEmbedded = true
     }
 
-    /// Scene with embedded content whose tabs are selected through the scene's
-    /// tab route enum: `selection` binds the view model's current tab route, and
-    /// each tab names its case with `PlaceholderTab(label:systemImage:route:)`.
+    /// Tabbed scene with embedded content. `tabs` render as a real `TabView`,
+    /// selected through the scene's tab route enum: `selection` binds the view
+    /// model's current tab route, and each tab names its case with `route:`.
     public init<Selection: Hashable>(
         title: String,
         domainColor: Color = .accentColor,
@@ -51,28 +49,28 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
         selection: Binding<Selection>,
         @ViewBuilder embedded: () -> EmbeddedContent
     ) {
-        self.init(title: title, domainColor: domainColor, routes: routes, tabs: tabs, embedded: embedded)
+        self.init(title: title, domainColor: domainColor, routes: routes, embedded: embedded)
+        self.tabs = tabs
         self.selection = Self.erased(selection, tabs: tabs)
     }
 
-    /// Leaf scene (no embedded content) or a tabs-only container.
+    /// Leaf scene (no embedded content).
     public init(
         title: String,
         domainColor: Color = .accentColor,
-        routes: [PlaceholderRoute] = [],
-        tabs: [PlaceholderTab] = []
+        routes: [PlaceholderRoute] = []
     ) where EmbeddedContent == EmptyView {
         self.title = title
         self.domainColor = domainColor
         self.routes = routes
-        self.tabs = tabs
+        self.tabs = []
         self.embedded = EmptyView()
         self.hasEmbedded = false
     }
 
-    /// Tabs-only container whose tabs are selected through the scene's tab route
-    /// enum: `selection` binds the view model's current tab route, and each tab
-    /// names its case with `PlaceholderTab(label:systemImage:route:)`.
+    /// Tabs-only container. `tabs` render as a real `TabView`, selected through
+    /// the scene's tab route enum: `selection` binds the view model's current tab
+    /// route, and each tab names its case with `route:`.
     public init<Selection: Hashable>(
         title: String,
         domainColor: Color = .accentColor,
@@ -80,7 +78,8 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
         tabs: [PlaceholderTab],
         selection: Binding<Selection>
     ) where EmbeddedContent == EmptyView {
-        self.init(title: title, domainColor: domainColor, routes: routes, tabs: tabs)
+        self.init(title: title, domainColor: domainColor, routes: routes)
+        self.tabs = tabs
         self.selection = Self.erased(selection, tabs: tabs)
     }
 
@@ -95,7 +94,7 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
     private let title: String
     private let domainColor: Color
     private let routes: [PlaceholderRoute]
-    private let tabs: [PlaceholderTab]
+    private var tabs: [PlaceholderTab]
     private let embedded: EmbeddedContent
     private let hasEmbedded: Bool
     private var selection: Binding<AnyHashable>?
@@ -212,9 +211,6 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
         if let selection {
             TabView(selection: selection) { tabItems }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else {
-            TabView { tabItems }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 
@@ -224,21 +220,25 @@ public struct PlaceholderScene<EmbeddedContent: View>: View {
                 .environment(\.placeholderCrumbs, effectiveCrumbs)
                 .environment(\.placeholderShowsDismiss, showsDismiss)
                 .tabItem { Label(tab.label, systemImage: resolvedSymbol(tab.systemImage)) }
-                .tag(tab.route ?? AnyHashable(tab.id))
+                .tag(tab.id)
         }
     }
 
-    /// Erases a typed tab route binding so the scene can hold any route enum.
-    /// Debug builds stop when a tab has no route of that enum, since the bar would
+    /// Erases a typed tab route binding so the scene can hold any route enum. The
+    /// `TabView` selects by the whole route value, as each tab's `id` is its route.
+    /// Debug builds stop when a tab's route is of another enum, since the bar would
     /// silently stop tracking the view model.
     private static func erased<Selection: Hashable>(_ binding: Binding<Selection>, tabs: [PlaceholderTab]) -> Binding<AnyHashable> {
         assert(
-            tabs.allSatisfy { $0.route?.base is Selection },
-            "PlaceholderScene: with selection:, every PlaceholderTab needs route: set to a \(Selection.self) case."
+            tabs.allSatisfy { $0.id.base is Selection },
+            "PlaceholderScene: every PlaceholderTab route must be a \(Selection.self) case."
         )
         return Binding(
             get: { AnyHashable(binding.wrappedValue) },
-            set: { if let route = $0.base as? Selection { binding.wrappedValue = route } }
+            set: { id in
+                guard let route = id.base as? Selection, route != binding.wrappedValue else { return }
+                binding.wrappedValue = route
+            }
         )
     }
 
@@ -331,24 +331,35 @@ private struct InlineNavTitle: ViewModifier {
     }
 }
 
+private enum PreviewTabRoute: Identifiable, Hashable {
+    case home
+    case library
+
+    var id: Self { self }
+}
+
 #Preview("Tabbed") {
+    @Previewable @State var tab = PreviewTabRoute.home
     PlaceholderScene(
         title: "Main",
         tabs: [
-            PlaceholderTab(label: "Home") { PlaceholderScene(title: "Home") },
-            PlaceholderTab(label: "Library") { PlaceholderScene(title: "Library") },
-        ]
+            PlaceholderTab(label: "Home", route: PreviewTabRoute.home) { PlaceholderScene(title: "Home") },
+            PlaceholderTab(label: "Library", route: PreviewTabRoute.library) { PlaceholderScene(title: "Library") },
+        ],
+        selection: $tab
     )
 }
 
 #Preview("Tabbed + embedded") {
+    @Previewable @State var tab = PreviewTabRoute.home
     PlaceholderScene(
         title: "Pipeline",
         routes: [PlaceholderRoute(label: "Menu", kind: .nav) {}],
         tabs: [
-            PlaceholderTab(label: "Appointments") { PlaceholderScene(title: "Appointments Stage") },
-            PlaceholderTab(label: "Closed") { PlaceholderScene(title: "Closed Pipeline Stage") },
-        ]
+            PlaceholderTab(label: "Appointments", route: PreviewTabRoute.home) { PlaceholderScene(title: "Appointments Stage") },
+            PlaceholderTab(label: "Closed", route: PreviewTabRoute.library) { PlaceholderScene(title: "Closed Pipeline Stage") },
+        ],
+        selection: $tab
     ) {
         PlaceholderScene(title: "Header Banner")
     }

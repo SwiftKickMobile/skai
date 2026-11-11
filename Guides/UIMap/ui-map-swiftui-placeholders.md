@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-swiftui-placeholders
 Managed-Source: Guides/UIMap/ui-map-swiftui-placeholders.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-07
+Managed-Updated-At: 2026-11-11
 
 # UI Map — SwiftUI Placeholder Scenes
 
@@ -104,8 +104,8 @@ struct AppView: View {
             ]
         ) {
             switch viewModel.childRoute {
-            case .library: LibraryView()                  // tabbed child → not wrapped
-            case .login: NavigationStack { LoginView() }  // non-tab child, App is root (no ambient stack) → wrap
+            case .library: LibraryView().id(viewModel.childRoute)                // tabbed child → not wrapped
+            case .login: NavigationStack { LoginView() }.id(viewModel.childRoute) // non-tab child, App is root (no stack) → wrap; `.id` on the stack
             }
         }
     }
@@ -152,7 +152,7 @@ struct NotesView: View {
         )
         .navigationDestination(item: $viewModel.navRoute) { route in
             switch route {
-            case .note: NoteView()
+            case .note: NoteView().id(route)
                 .environment(\.placeholderShowsDismiss, false)
                 .placeholderCrumb("Notes", color: DomainColors.library, routes: routes)
             }

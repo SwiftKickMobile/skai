@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-swiftui
 Managed-Source: Guides/UIMap/ui-map-swiftui.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-07
+Managed-Updated-At: 2026-11-10
 
 # UI Map — SwiftUI Reference
 
@@ -43,19 +43,16 @@ The YAML's top-level `common:` scenes are domain-agnostic and live in the shared
 
 ## Route enums
 
-One enum per route kind, or per modal style, named `<Scene><Kind>Route`; each case maps to a destination scene by name and carries the associated values the destination needs at construction. It lives in a file of that name beside the view model, not inside it (modal enums share `<Scene>ModalRoute.swift`), keeping the view model to state and logic and a navigation change out of its diff. Enums bound with `item:` (nav and modal) are `Identifiable, Hashable` with a stable string `id`; a tab enum is `Hashable`:
+One enum per route kind, or per modal style, named `<Scene><Kind>Route`; each case maps to a destination scene by name and carries the associated values the destination needs at construction. It lives in a file of that name beside the view model, not inside it (modal enums share `<Scene>ModalRoute.swift`), keeping the view model to state and logic and a navigation change out of its diff. Every route enum is `Identifiable, Hashable` with `var id: Self { self }`: a route's identity is its whole value, so a new associated value is a new screen:
 
 ```swift
 enum DashboardNavRoute: Identifiable, Hashable {
     case detail(itemID: String)
-
-    var id: String {
-        switch self {
-        case .detail: "detail"
-        }
-    }
+    var id: Self { self }
 }
 ```
+
+Nav and child destinations take `.id(route)`, or SwiftUI keeps the old screen.
 
 ## Nav routing
 
@@ -63,7 +60,7 @@ enum DashboardNavRoute: Identifiable, Hashable {
 // DashboardNavRoute.swift
 enum DashboardNavRoute: Identifiable, Hashable {
     case detail
-    var id: String { "detail" }
+    var id: Self { self }
 }
 
 // DashboardViewModel.swift
@@ -82,7 +79,7 @@ struct DashboardView: View {
             content
                 .navigationDestination(item: $viewModel.navRoute) { route in
                     switch route {
-                    case .detail: DetailView()
+                    case .detail: DetailView().id(route)
                     }
                 }
         }
@@ -142,9 +139,10 @@ Child routes are mutually-exclusive root views; the enum is non-optional with a 
 
 ```swift
 // AppChildRoute.swift
-enum AppChildRoute {
+enum AppChildRoute: Identifiable, Hashable {
     case login
     case main
+    var id: Self { self }
 }
 
 // AppViewModel.swift
@@ -159,8 +157,8 @@ struct AppView: View {
 
     var body: some View {
         switch viewModel.childRoute {
-        case .login: LoginView()
-        case .main: MainView()
+        case .login: LoginView().id(viewModel.childRoute)
+        case .main: MainView().id(viewModel.childRoute)
         }
     }
 }
@@ -170,10 +168,11 @@ struct AppView: View {
 
 ```swift
 // MainTabRoute.swift
-enum MainTabRoute: Hashable {
+enum MainTabRoute: Identifiable, Hashable {
     case home
     case library
     case settings
+    var id: Self { self }
 }
 
 // MainViewModel.swift
@@ -183,7 +182,7 @@ class MainViewModel {
 }
 ```
 
-The view binds `currentTabRoute` to the tab container in use (`TabView`, a custom material tab bar, etc.).
+The view binds `currentTabRoute` to its tab container (`TabView` or a custom bar), tagging each tab with its route case.
 
 ## Composite scenes
 
@@ -216,12 +215,7 @@ An `Implements: A, B, C` annotation means one Swift type renders several variant
 ```swift
 enum ProfileNavRoute: Identifiable, Hashable {
     case web(Resource)
-
-    var id: String {
-        switch self {
-        case .web: "web"
-        }
-    }
+    var id: Self { self }
 }
 ```
 
@@ -235,7 +229,7 @@ Route state lives on the view model; the view never owns or mutates it. Mutation
 - External publishers observed in the view model's `init`, e.g. an auth service publisher flipping `childRoute` between `.login` and `.main`.
 - SwiftUI itself: any `item:`-bound modifier (nav, sheet, cover, popover) clears the route to `nil` on user dismissal (back button, swipe-back, sheet drag-down, etc.).
 
-The view model can also set or clear any route programmatically at any time: `nil` dismisses, a new value moves to a different destination.
+The view model can also set or clear any route programmatically at any time: `nil` dismisses, a new value presents a new screen.
 
 ## Placeholder scenes
 

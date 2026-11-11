@@ -2,13 +2,13 @@ Managed-By: skai
 Managed-Id: guide.ui-map-compose-placeholders
 Managed-Source: Guides/UIMap/ui-map-compose-placeholders.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-09
+Managed-Updated-At: 2026-11-11
 
 # UI Map — Compose Multiplatform Placeholder Scenes
 
 Print `📖 SKAI guide: ui-map-compose-placeholders` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
-How the UI Map **implementation** skill scaffolds scenes in Compose Multiplatform or Android-only Jetpack Compose: skeleton + navigation, no feature content. It builds on [`ui-map-compose.md`](ui-map-compose.md) — read its **SKAI Compose library** (which also supplies the placeholder APIs below), **Scene file layout**, **Route enums** and **Modal routing** first. Load this guide while auditing, planning, or building whenever placeholder work is in scope, and only then.
+How the UI Map **implementation** skill scaffolds scenes in Compose Multiplatform or Android-only Jetpack Compose: skeleton + navigation, no feature content. It builds on [`ui-map-compose.md`](ui-map-compose.md) — read its **SKAI Compose library** (which also supplies the placeholder APIs below), **Scene file layout**, **Route enums**, **Scene state, events, and effects** and **Modal routing** first. Load this guide while auditing, planning, or building whenever placeholder work is in scope, and only then.
 
 Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
@@ -18,7 +18,7 @@ Follow this guide for the standard patterns — with standard route kinds and mo
 
 ## The one rule: each scene owns its navigation hosts
 
-Unlike SwiftUI, which keeps **one** `NavigationStack` at the presentation boundary and lets scenes declare destinations into that ambient stack, Compose has no ambient stack — **each scene that navigates owns its host(s)**:
+Compose has no ambient stack: **each scene that navigates owns its host(s)**:
 
 - **nav push** — the scene wraps itself in a `SlideNavHost` whose start destination (`NavStart`) is the scene's own body, with the pushed scenes as sibling destinations.
 - **modal** — the scene overlays a `ModalNavHost` (its own `modalNavController`), placed as in *Modal routing*.
@@ -34,7 +34,6 @@ A scene that both pushes and presents modals owns both hosts; a pushed or modall
 - `PlaceholderModalStyle(id, title, index)` — one entry of the map's top-level `modal_styles`; it only labels and orders the breadcrumb section, never presents the modal (see *Modal style descriptors*).
 - `PlaceholderTab(label, route, icon) { content }` — one tab; `route` is its `<Scene>TabRoute` case; `icon` is an `ImageVector`; see *tab*.
 - `PlaceholderChildHost(title, domainColor, routes) { content }` — hosts a child-routed scene full-bleed, passing the parent's breadcrumb to the selected child.
-- `PlaceholderColors.domain(index)` — the domain palette by index, matched to the rendered map (mirrors `Bin/ui-map-render.py`).
 
 Two presentation helpers wire the breadcrumb + dismiss/back context on destinations:
 
@@ -80,7 +79,7 @@ Every modal `PlaceholderRoute` uses `PlaceholderRouteKind.Modal` with the shared
 
 You declare only `title` / `domainColor` / `routes` / `tabs` / `embedded` and wire the destinations. `PlaceholderScene` handles:
 
-- **Top app bar** — on full-bleed scenes (never embedded composite boxes), a centered title (the scene name) plus a back arrow on pushed scenes (wired via `PlaceholderPushedScene`'s `onBack`); it also insets content below the status bar — the Compose stand-in for SwiftUI's `NavigationStack` nav bar.
+- **Top app bar** — on full-bleed scenes (never embedded composite boxes), a centered title (the scene name) plus a back arrow on pushed scenes (wired via `PlaceholderPushedScene`'s `onBack`); it also insets content below the status bar.
 - **Breadcrumb** — below the app bar: ancestors + this scene; each segment is a menu of that scene's routes in sections: Nav, the modal styles in map declaration order, then Child. Routeless segments render dimmed; the **active child** is omitted; the row scrolls horizontally, pinned to the current (trailing) segment.
 - **Dismiss control** — the ✕, beside the breadcrumb, shown only when presented modally (via `PlaceholderModalScene`).
 - **Layout** — full-bleed (no border) for everything except **embedded composite content**, which gets a light-gray fill and is greedy: each embedded child takes an equal share of the available height. A crumb-less root or `NavStart` scene is still full-bleed.
@@ -102,7 +101,7 @@ sealed class NoteModalRoute : Route {
 
 Every new placeholder file, `<Scene>Screen.kt` and `<Scene>ViewModel.kt` included, starts with exactly one file-level `// 🟡 UI Map scaffold <change-id>` marker, as the implementation guide requires; the examples keep it even where imports are omitted.
 
-As a placeholder-only convention, every scaffolded scene gets a **minimal** view model (`class FooViewModel : ViewModel()`), empty until it needs state; the canonical guide still lets production stateless leaves omit one. The file holds nothing else; route declarations stay in their own files. Obtain it per *Scene state, events, and effects* (the examples use plain `viewModel()`). Production scenes follow `ui-map-compose.md`; placeholders skip the state/event/effect triad and call `navigatePush` directly from the route action.
+Placeholder-only: every scaffolded scene gets a **minimal** view model (`class FooViewModel : ViewModel()`), empty until it needs state. Obtain it per *Scene state, events, and effects* (examples use plain `viewModel()`). Placeholders skip the state/event/effect triad and call `navigatePush` directly from the route action.
 
 ## Per route kind
 
