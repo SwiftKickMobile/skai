@@ -137,7 +137,7 @@ fun AppScreen(viewModel: AppViewModel = viewModel()) {
 
 ### tab
 
-Declare a `<Scene>TabRoute` (one case per tab) and pass `tabs` to `PlaceholderScene`, each with its route. Each tab's content is the child scene's composable called directly (it owns its own hosts if it navigates — no wrapping at the tab). Tab labels and icons are final: use the ones the inputs give; otherwise pick a reasonable label, and for an icon not given or without an `ImageVector`, a fitting `ImageVector`. The library's bar is the bar: styling it, adding to it, or custom bars aren't scaffold work. A tab added to a real screen's bar is a real-screen route (see *Reaching a scene from a real screen*), not a `tabs` entry. Modal routes ride alongside in the `Box` with the scene's `ModalNavHost` (see modal).
+Declare a `<Scene>TabRoute` (one case per tab) and pass `tabs` to `PlaceholderScene`, each with its route. Each tab's content is the child scene's composable called directly (it owns its own hosts if it navigates — no wrapping at the tab). Label each tab with its scene's name, as `title` is, and give it a fitting `ImageVector`. The library's bar is the bar: styling it, adding to it, or custom bars aren't scaffold work. A tab added to a real screen's bar is a real-screen route (see *Reaching a scene from a real screen*), not a `tabs` entry. Modal routes ride alongside in the `Box` with the scene's `ModalNavHost` (see modal).
 
 ```kotlin
 // LibraryTabRoute.kt
@@ -157,8 +157,8 @@ PlaceholderScene(
         PlaceholderRoute("Profile", PlaceholderRouteKind.Modal(ModalStyles.sheet)) { modalNavController.navigatePush(LibraryModalRoute.Profile) },
         PlaceholderRoute("Search", PlaceholderRouteKind.Modal(ModalStyles.fullScreen)) { modalNavController.navigatePush(LibraryModalRoute.Search) },
     ),
-    tabs = listOf( // labels and icons from the inputs
-        PlaceholderTab("All Notes", LibraryTabRoute.Notes, Icons.Default.Edit) { NotesScreen() },
+    tabs = listOf(
+        PlaceholderTab("Notes", LibraryTabRoute.Notes, Icons.Default.Edit) { NotesScreen() },
         PlaceholderTab("Folders", LibraryTabRoute.Folders, Icons.Default.Menu) { FoldersScreen() },
         PlaceholderTab("Trash", LibraryTabRoute.Trash, Icons.Default.Delete) { TrashScreen() },
     ),

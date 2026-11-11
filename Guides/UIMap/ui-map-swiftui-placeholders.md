@@ -114,7 +114,7 @@ struct AppView: View {
 
 ### tab
 
-`tabs:` on `PlaceholderScene`; each tab's content is wrapped in a `NavigationStack` unless one is already on the path (see the one rule). Tab labels and icons are final: use those the inputs give; otherwise a reasonable label, and for an icon not given or not an SF Symbol, a fitting `systemImage` — a valid name, not the package's fallback — ideally with a `.fill` variant so iOS fills it when selected (e.g. `text.document`, `folder`, `trash`). As in production the view model's `currentTabRoute` selects the tab: pass it as `selection:`, each tab's `<Scene>TabRoute` case as `route:`. The package's bar is the bar: styling or extending it, or custom bars, isn't scaffold work. A tab added to a real screen's bar is a real-screen route (see *Reaching a scene from a real screen*), not a `tabs:` entry. Modal routes ride alongside as `.sheet` / `.fullScreenCover` (see modal).
+`tabs:` on `PlaceholderScene`; each tab's content is wrapped in a `NavigationStack` unless one is already on the path (see the one rule). Label each tab with its scene's name, as `title` is, and give it a fitting `systemImage` — a valid SF Symbol name, not the package's fallback — ideally with a `.fill` variant so iOS fills it when selected (e.g. `text.document`, `folder`, `trash`). As in production the view model's `currentTabRoute` selects the tab: pass it as `selection:`, each tab's `<Scene>TabRoute` case as `route:`. The package's bar is the bar: styling or extending it, or custom bars, isn't scaffold work. A tab added to a real screen's bar is a real-screen route (see *Reaching a scene from a real screen*), not a `tabs:` entry. Modal routes ride alongside as `.sheet` / `.fullScreenCover` (see modal).
 
 ```swift
 PlaceholderScene(
@@ -124,8 +124,8 @@ PlaceholderScene(
         PlaceholderRoute(label: "Profile", kind: .sheet) { viewModel.sheetRoute = .profile },
         PlaceholderRoute(label: "Search", kind: .fullScreen) { viewModel.coverRoute = .search },
     ],
-    tabs: [ // from the inputs
-        PlaceholderTab(label: "All Notes", systemImage: "text.document", route: LibraryTabRoute.notes) { NavigationStack { NotesView() } },
+    tabs: [
+        PlaceholderTab(label: "Notes", systemImage: "text.document", route: LibraryTabRoute.notes) { NavigationStack { NotesView() } },
         PlaceholderTab(label: "Folders", systemImage: "folder", route: LibraryTabRoute.folders) { NavigationStack { FoldersView() } },
         PlaceholderTab(label: "Trash", systemImage: "trash", route: LibraryTabRoute.trash) { NavigationStack { TrashView() } },
     ],

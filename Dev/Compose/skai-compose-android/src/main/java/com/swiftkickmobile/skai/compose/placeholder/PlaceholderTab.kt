@@ -14,7 +14,7 @@ import com.swiftkickmobile.skai.compose.navigation.Route
  * state saved and restored, back from any tab root returning to the primary
  * tab) rather than a faked stack.
  *
- * @param label Tab label — the one the app's design or requirements give, else a sensible label.
+ * @param label Tab label — the child scene's name.
  * @param route The tab's typed route case. The first tab's route is the primary
  *   tab and the tab host's start destination.
  * @param icon Icon for the tab item; defaults to a generic placeholder glyph.

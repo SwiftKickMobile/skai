@@ -433,3 +433,12 @@ Round 2 repairs leave `ui-map-swiftui-placeholders.md` 9 bytes and `ui-map-compo
 | 2026-11-11 compose-trim | F2 *View models and DI* points at *Scene state, events, and effects* without naming its file; read-first list omitted it, so the DI rule and STOP never reach the placeholder operator | closed | Section added to the read-first list; reviewer tightenings "Placeholder-only:" lead and "(examples use plain `viewModel()`)"; 16,499 |
 | 2026-11-11 compose trim | Stopped by supervisor ruling after r1 | closed | F2 fixed; F1 logged |
 | 2026-11-11 131 series | Stopped by supervisor ruling after r5 | closed | r5 F1 fixed; logged items stay logged |
+| 2026-11-11 57-backout-r1 | F1 neither placeholder guide says a tab's label is its scene's name after the #57 rule's removal | closed | *tab* sentence in both guides: "Label each tab with its scene's name, as `title` is" |
+| 2026-11-11 57-backout-r1 | F2 implementation invariant lacks P6's designs-and-specs sentence | logged | Lines 28 and 238 already keep feature work out of `handoff`; restating would duplicate them |
+| 2026-11-11 57-backout-r1 | F3 SwiftUI "Tabbed + embedded" preview labels differ from their scene titles | logged | Previews aren't operator inputs; library file outside the change |
+| 2026-11-11 57-backout-r1 | F4 Compose tab icon source (icon sets the app links) unstated | logged | One unobserved case; a red build stops at the standing blocked gate |
+| 2026-11-11 57-backout-r2 | F1 "its scene's name, as `title` is" could be read as the tabbed scene's own title | logged | Cosmetic; example and library comment resolve it |
+| 2026-11-11 57-backout-r2 | F2 SwiftUI real-screen deferral names a missing trigger API, which a tab bar doesn't need | logged | Default path stops in Discussion as intended; Compose and implementation guides say "mapping" |
+| 2026-11-11 57-backout-r2 | F3 scene-name label rule doesn't reach a tab on a real bar | logged | Behind the real-screen deferral; sharpen when the mapping lands |
+| 2026-11-11 57-backout-r2 | F4 SwiftUI library previews omit `systemImage` | logged | Library previews, not operator inputs; guide rule is clear |
+| 2026-11-11 57-backout | Series stop | closed | r2 scored 0 over the current text |

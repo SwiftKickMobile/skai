@@ -11,7 +11,7 @@ public struct PlaceholderTab: Identifiable {
     /// `selection` binding to it.
     public let id: AnyHashable
 
-    /// Tab label — the one the app's design or requirements give, else a sensible label.
+    /// Tab label — the child scene's name.
     public let label: String
 
     /// SF Symbol name for the tab item. Use a base name with a `.fill` variant
