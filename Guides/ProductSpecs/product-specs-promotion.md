@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-promotion
 Managed-Source: Guides/ProductSpecs/product-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-10
 
 # Product Specs Promotion
 
@@ -127,8 +127,8 @@ overwrite or merge destinations.
 First run `validate <catalog root> <drafts>`, `check-changes` and `render` for a current review page;
 then verify before writing `## Promotion Checks`:
 
-1. Into production: no open `- [ ]` item in `## Discussion`, gap
-   ([`known-gaps.md`](../Core/known-gaps.md)) or request under the package or its promoted requests.
+1. Into production: the package and every promoted request under it, at any depth, hold no open `- [ ]` item in `## Discussion`,
+   gap ([`known-gaps.md`](../Core/known-gaps.md)) or request.
 2. `validate` reports no fault in a file the package holds and no conflict the projection
    introduces; a fault already in an untouched base file never blocks: start a package against the base.
 3. `check-changes` passes: every change has a `## Requirement Changes` entry or Touches line at the
@@ -167,10 +167,9 @@ Verify changed content at its projected base location; unchanged content never b
   destination links, no Discussion citations, checkboxes or `🟡`, and only retirement marks and
   known-difference notes beside contracts; read back and run `validate <catalog root>` (a fault
   readiness missed is `C7`'s, wherever reported). Keep the approved diff; do not render after
-  writing. Into a package: replace its drafts; per the shared guide, append entries to its
+  writing. Into a package, per `change-requests.md`: append entries to its
   `## Requirement Changes`, fold footnotes, base-item decisions and open requests, and name the
-  request in `## Assumptions and TODOs`; validate and
-  render the base, whose author reconciles its list on reopen. Repair mechanically, never reword; record the write outcome,
+  request in `## Assumptions and TODOs`; validate the base, whose author reconciles its list on reopen. Repair mechanically, never reword; record the write outcome,
   then confirmation/repair results, keeping failures. Check `C7` only on confirmed success, then archive.
 - `C8 Archive the package` — *Archive the package* below; promotion completes only after verified
   write and archival.
@@ -218,7 +217,7 @@ After verified `C7`, execute `C8`:
    recorded results; annotate historical paths with current locations. Inaccessible or unrepaired
    required links block.
 3. Verify archived files/links, absence of the active type path and preserved siblings; record move
-   and link evidence, then check `C8` in the archived `product-specs-promotion.md`.
+   and link evidence, re-render a request's base, then check `C8` in the archived `product-specs-promotion.md`.
 
 On failure, report the specs written but package not yet archived at the standard blocked gate;
 resume archival only at either package path, never overwriting a destination or repeating `C7`.

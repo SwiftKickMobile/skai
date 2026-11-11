@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.change-requests
 Managed-Source: Guides/Core/change-requests.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-11-10
 
 # Change Requests
 
@@ -10,17 +10,23 @@ Print `📖 SKAI guide: change-requests` now, as a line of its own. Read this gu
 
 Read for any base or request.
 
-1. **Packages author against a base.** Default: production; a request differs only in its base: another open package of its type, including a request.
-2. **Requests have their base's contents and list it as first input.** Production: `skai/changes/<change-id>/<type>/`; requests: `<base>/change-requests/<nnn>/`, in filing order. Any package may hold open `change-requests/` and archived `promoted-change-requests/`.
-3. **Name the base: "request a change to <package>".** Reopen a named or contextual request for the same work; otherwise use the next free number. A base defect with no open package starts one against that base.
-4. **Whoever runs a package's workflow authors it under the same rules and may edit anything.** To accept part, trim or edit, then promote the rest. Discussion and Decision Log record what stayed, changed or was dropped and why; the originator reads them.
-5. **Promotion folds into the base.** The type's promotion guide folds drafts or frames. Into a package, drafts become the base's; append change items with its next IDs, each keeping its own reason and source and ending `; Change request: <nnn> <id>`; a cited decision stays the request's. Name the request in the base's Assumptions, re-render its page and archive at `<base>/promoted-change-requests/<nnn>/`.
-6. **Open items and gaps stay where raised, keeping their IDs.** Cite another package's item, the base's too, by link everywhere: `[D27][001 D27]` defined `<path>#d27`. Moving a package updates links; folding links the request's own items. A request deciding a base item (drafting out its markers) logs `- [D12][base D12] decided — <decision>`; folding checks D12 off with that decision and logs it, each ending `(<nnn>)`. Its open requests move to the base's `change-requests/` as `<nnn>-<their nnn>`.
-7. **Requests inherit the base's open gaps like any input's.** Promotion into production allows no open Discussion item, gap or request, promoted requests' included; resolve those in place.
-8. **Use the same renderer and checks.** Layer request pages on base drafts; top bar: `<title>: <change-id> | <nnn> | …`.
-9. **File a package against each input your decisions change, except your base.** Use its process, or tell the supervisor if none, by your review gate's advance. Before promotion, apply every outcome; an invalidating outcome returns the package to authoring, a missing outcome blocks.
+1. **Packages author against a base.** Default production; a request differs only by base: an open package or request of its type.
+2. **Requests have the base's layout, only files they change, the base as first input.** Against production: `skai/changes/<change-id>/<type>/`; requests: `<base>/change-requests/<nnn>/`, numbered in filing order across open and promoted. Any package may hold open `change-requests/` and archived `promoted-change-requests/`.
+3. **Name the base: "request a change to <package>".** Reopen an open request for the same work, named or in context; else the next free number. A base defect goes to an open package for it or starts one against the base.
+4. **Promotion folds into the base.** Type guides fold drafts or frames. Into a package:
+   1. The request's drafts overwrite the base's, file by file; append the request's change items at the base's next IDs, reason and source kept, ending `; Change request: <nnn> <id>`; link the request's bare `D<n>` in its drafts and appended items to the request (`[D5][001 D5]`, per 5.1).
+   2. Check off items the request decided (5.3) where they live: Decision `<decision> (<nnn>)`, no Gap line or marker; log there `- D12 decided — <decision> (<nnn>)`.
+   3. Move the request's open requests to `<base>/change-requests/<nnn>-<their nnn>/`, first input repointed to the base.
+   4. Name the request in the base's Assumptions; archive it at `<base>/promoted-change-requests/<nnn>/`, then re-render the base.
+5. **Open items and gaps stay where raised, keeping their IDs, even when cited or decided elsewhere.**
+   1. Cite other packages' items, the base's too, by link; when copying a base file, link its bare `D<n>` (the base's). Define labels once per file: `[D27][reminder-expiry D27]`, `[reminder-expiry D27]: <cited authoring artifact>#d27`.
+   2. Copies, moves and folds keep links, repairing paths.
+   3. A request deciding its base's item logs `- [D12][reminder-expiry D12] decided — <decision>` and holds each base file marking it, drafted to the decision, minus the marker.
+6. **Requests inherit the base's open gaps like any input's.** Promotion into production allows no open Discussion item, gap or request, even in a promoted request, where the base's author resolves any as that request's own.
+7. **Use the same renderer and checks.** Request pages layer on base drafts; top bar: `<title>: <change-id> | <nnn> | …`.
+8. **For each input your decisions change, except your base, the supervisor picks: edit it in its workflow or file a request against it.** Ask before your review gate advances. Before promotion apply every outcome; invalidating ones reopen authoring, pending ones block.
 
-LumenNotes: `skai/changes/reminder-expiry/product-specs/change-requests/001/` holds `product-specs-authoring.md` and `proposed-product-specs/**`.
+LumenNotes: `skai/changes/reminder-expiry/product-specs/change-requests/001/` holds `product-specs-authoring.md` and `proposed-product-specs/features/reminders.md`, the one draft it changes.
 
 ## Project Addendum
 

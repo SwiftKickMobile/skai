@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-artifacts
 Managed-Source: Guides/DesignSpecs/design-specs-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-10
 
 # Design Spec Artifact Formats
 
@@ -17,7 +17,7 @@ The package mirrors the product spec package
 
 ## The Package
 
-`skai/changes/<change-id>/design-specs/`; after promotion, `skai/promoted/<change-id>/design-specs/`.
+`skai/changes/<change-id>/design-specs/`; after promotion into production, `skai/promoted/<change-id>/design-specs/`.
 For the **base** and requests, read [`change-requests.md`](../Core/change-requests.md).
 Packages depend only on their base and cited draft requirements in active product spec packages
 until promotion repoints them. Input citations, such as requests in other packages, are not dependencies.
@@ -25,9 +25,8 @@ until promotion repoints them. Input citations, such as requests in other packag
 The layout is the product spec package's, with `design-specs-authoring.md` (`## Spec Changes`),
 `proposed-design-specs/**` (touched files only, each whole),
 `design-specs-review.html`, `change-requests/<nnn>/` and `promoted-change-requests/<nnn>/` holding
-requests of this layout, `design-specs-promotion.md`, and `working-docs/`. The page follows the
+requests of this layout, `design-specs-promotion.md`, `evidence/` and `working-docs/`. The page follows the
 product spec guide's render/link rules. Checked `C3` means the base is written; `C4`, archived.
-Promotion's own failed check is not a request: it blocks and returns the package to authoring.
 
 ## Spec Change Items
 
@@ -37,27 +36,27 @@ resolved target identity. Entries omit spec text; the page shows each difference
 ```
 - S<n> <operation> <object>: <identity>
   - **Justification** <why the change is needed>; <Source>: <reference>
-  - **Touches** draft-file links; an intro may ride here, an index line only with the new file it describes
+  - **Touches** draft-file links; an intro or section orientation line rides here, or with no other entry for its file takes `modify spec file`; an index line only with the new file it describes
 ```
 
 - **ID** `S01`, `S02`, …: package-local, never renumbered or reused; dev specs cite `UI-*`, never
   `S`. Order entries by root, glossary, folder, file and item; no checkbox.
 - **Operation** `add | modify | retire | move` × **object** `spec file | item | rule | index line |
-  glossary entry | known-difference note`. Only items and glossary entries move; a rule changing parent retires and is
+  glossary entry | known-difference note`. Only items and glossary entries take `move`, and only to another file (a section change within a file is no entry); a rule changing parent retires and is
   re-added; files never retire. [Modify vs. Retire](design-specs.md#modify-vs-retire) decides; a
   retired glossary entry or note disappears, only items and rules keep `(retired)`.
-- **Identity** file titles linked to drafts, item and rule IDs to the draft item heading, terms
-  to the draft glossary, index lines by the file described. A `move` puts `from → to` in Touches;
-  promotion verifies identical prose and resolved targets and repoints incoming links; move plus
-  modify keeps one contract, the move verified first. Draft every design-spec file whose links a move or
-  retirement changes, in Touches after it.
+- **Identity** file titles linked to drafts, item and rule IDs, and a note's item ID, to the draft item heading, terms
+  to the draft glossary, index lines by the file described. A `move` puts `from → to` in Touches; a
+  moved item or entry whose text changes also takes entries for what changed; otherwise promotion verifies
+  identical prose and resolved targets; it repoints incoming links. Draft every file whose links a move
+  changes, in Touches after the `from → to`.
 - **Source** as the product spec guide, after the reason; `Catalog` is existing specs or requirements.
 
 `check-changes` confirms the list matches the projection.
 
 **Granularity follows the file.** A new spec file gets one entry, its index line in `Touches`;
-list incoming moves separately. Root creation gets one entry (root index, glossary, three folder
-indexes). In existing files, each changed item, rule, glossary entry, index line or known-difference
+list incoming moves separately. Root creation gets one `add spec file` entry, the root index, with the glossary and three
+folder indexes in `Touches`. In existing files, each changed item, rule, glossary entry, index line or known-difference
 note gets an entry.
 
 ```markdown

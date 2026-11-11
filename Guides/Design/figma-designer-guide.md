@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.designer-guide
 Managed-Source: Guides/Design/figma-designer-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-28
+Managed-Updated-At: 2026-11-11
 
 # Figma Designer Guide
 
@@ -25,8 +25,8 @@ domains or scenes.
 
    A change page, named for its change package, holds its drafts until they reach `Production`:
    one concept per page, its letter in the page name. A request uses one `CR-<nnn> — <name>`
-   Section on the base's page, the same per-screen Sections inside holding only added or changed
-   frames, a changed screen as a copy. Promotion folds them into the page's Sections and deletes
+   Section, `<nnn>` its number path (`001-002`: 002 against 001), never inside another Section, on the page holding its base, the same per-screen Sections inside holding only added or changed
+   frames, a changed screen as a copy. Promotion folds them into the base's Sections and deletes
    the request Section.
 
 2. **Production is canonical.** `Production` holds the approved design of every screen (plus a page
@@ -151,7 +151,7 @@ designer makes them; the guide does not.
 
 5. **Unique names.** Screen frames are named `screen — state` in lowercase with a spaced em dash:
    `notes — empty`, `note editor — date picker`. No suffix means the default state. No two frames
-   on a page share a name; a copied frame is renamed before anything else.
+   on a page share a name, a request's copies aside; any other copy is renamed.
 
 6. **Frames are never rotated.** A landscape design is a landscape target size, not a rotated frame.
 
@@ -231,9 +231,9 @@ designer makes them; the guide does not.
 
 ## Gaps
 
-Gaps are items or footnotes per design authoring. Once drawn, each gap gets one Dev Mode annotation
-across the package's drawings (its change page or request Section, whatever their screen Sections), on
-its placeholder node in the first frame drawing it in canvas order; move it when that changes. Three lines: `<owning item ID>: <the question>`, `Placeholder: <what is drawn>`,
+Gaps are items or footnotes per design authoring. Each gap's mirror is one Dev Mode annotation per change page and
+per request Section drawing it (a page's request Sections aside), on the placeholder node of the first frame
+there drawing it, in canvas order; move it when another frame becomes first. Three lines: `<owning item ID>: <the question>`, `Placeholder: <what is drawn>`,
 `Owner: <owning artifact path relative to skai/changes/>`. Use node `annotations`, keeping others, in the
 file's yellow `Gap` category (`figma.annotations`; create it if missing). Update on placeholder or owner-path changes;
 remove when the owning item closes; never in `Production`.

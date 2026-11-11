@@ -209,6 +209,121 @@ class Writers(unittest.TestCase):
         self.assertIn("declares move but", text)
         self.assertIn("S4 declares modify but file", text)
 
+    def design_check(self):
+        return run("check-changes", "--catalog", "design-catalog", "--drafts", "design-package/proposed-design-specs",
+                   "--authoring", "design-package/design-specs-authoring.md", fixtures=self.copy)
+
+    def test_design_change_list_takes_a_rule_change_riding_a_move(self):
+        catalog = self.copy / "design-catalog/screens/notes.md"
+        catalog.write_text(catalog.read_text().replace("with a prompt to write one.\n", "with a prompt to write one.\n\n- **01** The prompt opens a new note.\n", 1))
+        draft = self.copy / "design-package/proposed-design-specs/screens/list-screen.md"
+        draft.write_text(draft.read_text().replace(
+            "A list's empty state reads `No notes yet` or `Trash is empty` with a prompt to write a note.\n",
+            "The empty state reads `No notes yet` with a prompt to write one.\n\n- **01** The prompt opens a new note in the current list.\n", 1))
+        authoring = self.copy / "design-package/design-specs-authoring.md"
+        text = authoring.read_text().replace("- S8 modify item: [UI-NOTES-04]", "- S8 modify rule: [UI-NOTES-04-01]", 1)
+        authoring.write_text(text.replace("[s-notes]: ", "[UI-NOTES-04-01]: proposed-design-specs/screens/list-screen.md#ui-notes-04\n[s-notes]: ", 1))
+        code, lines = self.design_check()
+        self.assertEqual(issues(lines), [], "a changed rule of a moved item takes its own modify rule entry, as Granularity says")
+        self.assertEqual(code, 0, lines)
+
+    def moved_item_with_parts(self, draft_body, entries):
+        catalog = self.copy / "design-catalog/screens/notes.md"
+        catalog.write_text(catalog.read_text().replace("with a prompt to write one.\n", "with a prompt to write one.\n\n- **01** The prompt opens a new note.\n\n> **Known difference — LumenNotes iOS:** the prompt is missing.\n", 1))
+        draft = self.copy / "design-package/proposed-design-specs/screens/list-screen.md"
+        draft.write_text(draft.read_text().replace(
+            "A list's empty state reads `No notes yet` or `Trash is empty` with a prompt to write a note.\n",
+            "The empty state reads `No notes yet` with a prompt to write one.\n\n" + draft_body, 1))
+        authoring = self.copy / "design-package/design-specs-authoring.md"
+        lines_ = "".join(f"- {cid} {kind}: [{ident}]\n  - **Justification** The empty state changed on the way; Design: the empty list\n  - **Touches** [list-screen][s-list]\n\n" for cid, kind, ident in entries)
+        text = re.sub(r"- S8 modify item: \[UI-NOTES-04\]\n(  - .*\n)*\n?", lines_, authoring.read_text(), count=1)
+        authoring.write_text(text.replace("[s-notes]: ", "[UI-NOTES-04-01]: proposed-design-specs/screens/list-screen.md#ui-notes-04\n[s-notes]: ", 1))
+        return self.design_check()
+
+    def test_design_change_list_takes_a_note_change_riding_a_move(self):
+        code, lines = self.moved_item_with_parts(
+            "- **01** The prompt opens a new note.\n\n> **Known difference — LumenNotes iOS:** the prompt shows only after a sync.\n",
+            [("S8", "modify known-difference note", "UI-NOTES-04")])
+        self.assertEqual(issues(lines), [], "a moved item's changed note takes its own entry, as Granularity says")
+
+    def test_design_change_list_takes_a_rule_retirement_riding_a_move(self):
+        code, lines = self.moved_item_with_parts(
+            "- **01** (retired) Every list now opens its own composer.\n\n> **Known difference — LumenNotes iOS:** the prompt is missing.\n",
+            [("S8", "retire rule", "UI-NOTES-04-01")])
+        self.assertEqual(issues(lines), [], "a moved item's retired rule takes its own entry, as Granularity says")
+
+    def test_design_change_list_still_needs_an_entry_for_a_moved_item_that_changed(self):
+        code, lines = self.moved_item_with_parts(
+            "- **01** The prompt opens a new note in the current list.\n\n> **Known difference — LumenNotes iOS:** the prompt is missing.\n", [])
+        self.assertIn("rule UI-NOTES-04-01 of the moved item is modified and no change-list entry names it", "\n".join(issues(lines)))
+
+    def test_design_change_list_needs_an_entry_per_changed_part_of_a_moved_item(self):
+        body = "- **01** The prompt opens a new note in the current list.\n\n> **Known difference — LumenNotes iOS:** the prompt is missing.\n"
+        code, lines = self.moved_item_with_parts(body.replace("new note", "new note", 1), [("S8", "modify item", "UI-NOTES-04")])
+        self.assertIn("rule UI-NOTES-04-01 of the moved item is modified", "\n".join(issues(lines)), "modify item does not cover a changed rule")
+        self.setUp()
+        draft_body = "- **01** The prompt opens a new note.\n\n> **Known difference — LumenNotes iOS:** the prompt shows only after a sync.\n"
+        code, lines = self.moved_item_with_parts(draft_body, [("S8", "modify rule", "UI-NOTES-04-01")])
+        self.assertIn("also changed; a modify entry is needed", "\n".join(issues(lines)), "a rule entry does not cover the item's own change")
+
+    def test_footnote_labels_renumbering_is_not_a_change(self):
+        spec = importlib.util.spec_from_file_location("st", TOOL); st = importlib.util.module_from_spec(spec); spec.loader.exec_module(st)
+        self.assertTrue(st.same("Reminders expire after 30 days.[^2]", "Reminders expire after 30 days.[^1]"), "a renumbered marker is the same text")
+        self.assertFalse(st.same("Reminders expire after 30 days.", "Reminders expire after 30 days.[^1]"), "a new marker is a change")
+
+    def test_design_modify_spec_file_covers_its_own_intro_by_identity(self):
+        draft = self.copy / "design-package/proposed-design-specs/screens/notes.md"
+        draft.write_text(draft.read_text().replace("How a row reads.", "How a row reads, top to bottom.", 1))
+        authoring = self.copy / "design-package/design-specs-authoring.md"
+        entry = "- S13 modify spec file: [Notes Screen][s-notes]\n  - **Justification** The rows section now says its reading order; Catalog: the notes screen\n  - **Touches** [list-screen][s-list]\n\n"
+        authoring.write_text(authoring.read_text().replace("## Decision Log\n", entry + "## Decision Log\n", 1))
+        code, lines = self.design_check()
+        self.assertEqual(issues(lines), [], "the entry names the file, so it covers that file's orientation line wherever its Touches point")
+
+    def test_design_change_list_takes_a_note_on_a_new_item(self):
+        draft = self.copy / "design-package/proposed-design-specs/screens/notes.md"
+        item = ("### UI-NOTES-05\nThe list shows a sync badge while a sync runs.\n\n- **01** The badge clears when the sync ends.\n\n"
+                "> **Known difference — LumenNotes iOS:** the badge never shows.\n\n")
+        draft.write_text(draft.read_text().replace("[REMIND-04]: ", item + "[REMIND-04]: ", 1))
+        authoring = self.copy / "design-package/design-specs-authoring.md"
+        entries = "".join(f"- {cid} {kind}: [{ident}]\n  - **Justification** The list now shows sync progress; Design: the syncing list\n  - **Touches** [notes][s-notes]\n\n"
+                          for cid, kind, ident in (("S10", "add item", "UI-NOTES-05"), ("S11", "add rule", "UI-NOTES-05-01"),
+                                                   ("S12", "add known-difference note", "UI-NOTES-05")))
+        text = authoring.read_text().replace("## Decision Log\n", entries + "## Decision Log\n", 1)
+        defs = "[UI-NOTES-05]: proposed-design-specs/screens/notes.md#ui-notes-05\n[UI-NOTES-05-01]: proposed-design-specs/screens/notes.md#ui-notes-05\n"
+        authoring.write_text(text.replace("[s-notes]: ", defs + "[s-notes]: ", 1))
+        code, lines = self.design_check()
+        self.assertEqual(issues(lines), [], "a new item's known-difference note takes an add entry, as Granularity says")
+        self.assertEqual(code, 0, lines)
+
+    def test_design_change_list_rejects_a_footnote_whose_linked_owner_closed(self):
+        upstream = self.copy / "upstream/product-specs-authoring.md"
+        upstream.parent.mkdir()
+        upstream.write_text("# Upstream\n\n## Discussion\n\n### Expiry\n\n"
+                            "- [x] D7 [Tradeoff] How long a reminder lasts\n  - **Decision** 30 days.\n\n"
+                            "- [ ] D8 [Tradeoff] Whether badges count muted notes\n  - **Gap** Counted until support confirms.\n\n"
+                            "## Decision Log\n\n- D7 decided — 30 days.\n- D8 gap — Counted until support confirms.\n")
+        draft = self.copy / "design-package/proposed-design-specs/screens/notes.md"
+        text = draft.read_text().replace("for those days, the weekday name within the last week, and `{Mon D}` otherwise.\n",
+                                         "for those days, the weekday name within the last week, and `{Mon D}` otherwise.[^1]\n\n"
+                                         "[^1]: **Gap:** [D7][up D7]. Placeholder: 30 days.\n", 1)
+        text = text.replace("| 1 to 9 | The count |\n", "| 1 to 9 | The count[^1] |\n\n[^1]: **Gap:** [D8][up D8]. Placeholder: muted notes count.\n", 1)
+        text += "[up D7]: ../../../upstream/product-specs-authoring.md#d7\n[up D8]: ../../../upstream/product-specs-authoring.md#d8\n"
+        draft.write_text(text)
+        code, lines = self.design_check()
+        found = "\n".join(issues(lines))
+        self.assertIn("gap footnote [^1] links D7, which is not an open gap there", found, "a marker outlives its owner's closing")
+        self.assertNotIn("links D8", found, "a marker whose linked owner is still an open gap passes")
+
+    def test_design_change_list_takes_an_intro_change_alone_under_modify_spec_file(self):
+        draft = self.copy / "design-package/proposed-design-specs/screens/notes.md"
+        draft.write_text(draft.read_text().replace("How a row reads.", "How a row reads, top to bottom.", 1))
+        authoring = self.copy / "design-package/design-specs-authoring.md"
+        entry = "- S13 modify spec file: [Notes Screen][s-notes]\n  - **Justification** The rows section now says its reading order; Catalog: the notes screen\n  - **Touches** [notes][s-notes]\n\n"
+        authoring.write_text(authoring.read_text().replace("## Decision Log\n", entry + "## Decision Log\n", 1))
+        code, lines = self.design_check()
+        self.assertEqual(issues(lines), [], "a section orientation line rides on modify spec file, as the artifacts guide says")
+
     def test_render_product_package_page(self):
         page = self.copy / "package/product-specs-review.html"
         page.unlink()

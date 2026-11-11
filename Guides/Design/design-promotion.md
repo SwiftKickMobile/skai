@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-promotion
 Managed-Source: Guides/Design/design-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-11-11
 
 # Design Promotion
 
@@ -115,8 +115,8 @@ readiness screen is for a new run.
 
 Render the page, then verify before writing the checks:
 
-1. Into production: no open `- [ ]` item, gap, footnote ([`known-gaps.md`](../Core/known-gaps.md))
-   or request under the package or its promoted requests.
+1. Into production: no footnote or open `- [ ]` item, request or gap ([`known-gaps.md`](../Core/known-gaps.md)) in the
+   package, nor in its promoted requests at any depth, where a closed gap's footnote is history.
 2. `## Design Changes` is current, Review advanced and inputs reconciled (authoring's *Completion*).
 3. `add` and `modify` entries link drafts on the change page or request section, unless the
    no-mockups ruling under `## Assumptions and TODOs` leaves them unlinked; unlinked entries never
@@ -128,7 +128,7 @@ A failure is a blocked gate, recorded in `## Evidence` instead of a checks secti
 
 ## Promotion Checks
 
-Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution order.
+Write one `- [ ] C<n> <identity>` item per check, in execution order.
 
 - `C1 Drafts meet the conventions` — with drawings, run and pass the tool guide's structure
   check; drafts follow the guide and, into production, mirror no gap. A script covers what it tests; inspect the rest.
@@ -139,24 +139,24 @@ Write one `- [ ] C<n> <identity>` item per check, all unchecked, in execution or
   states and integrate needed components per the tool guide; delete removed designs. Into
   production, the per-screen sections do not survive: every column is regrouped into
   `Production`'s feature areas.
-  Designs outside the inventory change only by the placement and relocation the tool guide's
-  rules need to absorb them. Into a package, fold screen sections into same-named base sections
+  Designs outside the inventory change only by the placement and relocation the tool guide
+  needs to absorb them. Into a package, fold screen sections into same-named base sections
   (create missing ones), and:
-  - Append entries to its `## Design Changes`: next `V`
-    numbers, Descriptions kept, each Justification ending `; Change request: <nnn> V<n>`. Undrawn entries stay unlinked
+  - Append entries to the base's `## Design Changes`, each under its screen: next `V`
+    numbers, or sub-IDs under a frame the base lists, Descriptions kept, bare `D<n>` linked to the request, each Justification or sub-change ending `; Change request: <nnn> V<n>`. Undrawn entries stay unlinked
     and return the base to Mockups to draw them.
-  - Fold footnotes and mirrors, decisions on base items (each still open) and open
-    requests per the shared guide; name the request in its `## Assumptions and TODOs`.
-- `C4 Links point at the base` — repoint `add` and `modify` links, including appended entries,
+  - Fold footnotes (drop any whose gap the base owns or already footnotes), decisions on base items (each still open) and open requests per
+    `change-requests.md`, mirrors per the tool guide; name the request in the base's `## Assumptions and TODOs`.
+- `C4 Links point at the base` — repoint `add` and `modify` links, appended entries' too,
   to the base's drawings; a `remove` entry keeps its name; re-render every page whose
-  artifact changed, the promoting package's included.
+  artifact changed, this package's too.
 - `C5 Delete the drafts` — after Base review advances, delete the change page or request section,
-  where one exists.
+  if any.
 - `C6 Archive the package` — move the folder intact with `working-docs/`
   and `promoted-change-requests/` if present: to `skai/promoted/<change-id>/design/` for production,
   leaving siblings and removing an empty `<change-id>` folder; to
   `<base>/promoted-change-requests/<nnn>/` for a package. Repair links into and inside the moved
-  files, keeping targets; re-render the moved page, verify the move and check
+  files and mirrors' owner paths, keeping targets; re-render moved pages and a request's base, verify the move and check
   `C6` in the archived artifact.
 
 **Excerpt** (at the Base review gate: `C1`–`C4` checked, `C5`–`C6` unchecked):
@@ -180,11 +180,11 @@ it; silence is not a pass: name what was compared and found.
 
 ## Completion
 
-With `C6` checked, the base holds the changes, drafts are gone and the package is archived.
-Link its artifact, name what the base owes and gaps left open, and end with
+With `C6` checked, link the archived artifact, name what the base owes and each gap open in or under the
+package and where it was raised; end with
 `🏁 Complete. Let me know if anything needs adjustment.`
-If archival fails after `C5`, report the base promoted but archival incomplete, use the standard
-blocked gate and later resume only the archival.
+If archival fails after `C5`, report the base promoted, archival incomplete, use the standard
+blocked gate and resume only archival.
 
 ## Project Addendum
 

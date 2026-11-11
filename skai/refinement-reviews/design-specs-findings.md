@@ -69,3 +69,40 @@ Pass 1 re-converged by a clean round: round 18 (series B) after the post-backfil
 | 2026-10-15 backfill b1–b3 | Authors' self-checks passed while a cold reviewer found 10–13 defects per bucket; proposed a required delegated cold check before the Discussion gate | rejected (supervisor) | Review mechanics are not baked into the guide; whether and when to run a cold check is a supervisory decision per package. Do not re-raise |
 | 2026-10-26 RG r1 | the item definition's exclusion of "what is not shown" rejected legitimate prohibitions; V9 tested form only | closed | Items: show, do or withhold; a sentence binding nothing is not one; V9 tests Items |
 | 2026-10-26 RG r3 | design-specs.md assigned requirements "screen-independent promises" while the catalog keeps navigation guarantees | closed | product guarantees and thresholds, navigation included; the authoring trigger follows |
+| 2026-11-10 #118 r1 | F1 "glossary entries move" read as re-sectioning within one glossary; the tool sees no change there | closed | "move, and only to another file" |
+| 2026-11-10 #118 r1 | F2 root creation's one entry had no type the tool accepts | closed | "one `add spec file` entry, the root index, with the glossary and three folder indexes in `Touches`" |
+| 2026-11-10 #118 r1 | F3 Operation's "decides" has no object; rule-parent clause restates `design-specs.md` | rejected | The link's title (Modify vs. Retire) is what decides; the clause is older settled text |
+| 2026-11-10 #118 r1 | F4 Initiation "never overwrite or merge destinations" lost its antecedent | closed | "merge into a promoted path" |
+| 2026-11-10 #118 r1 | F5 readiness 1 "under it" may read as one level | closed | ", at any depth" here and in `product-specs-promotion.md` |
+| 2026-11-10 #118 r1 | F6 layout list omits `evidence/` | closed | Added |
+| 2026-11-10 #118 r1 | Initiation forbade touching archived packages while `change-requests.md` rule 6 resolves a promoted request's item there | closed | "reopen or re-promote archived drafts" |
+| 2026-11-10 #118 r1 | Readiness-failure gate line says "I am reopening the package" when the open item is in a promoted request | logged | The base's author reopens the base and resolves it there; same wording as the product guide |
+| 2026-11-10 #118 r1 | Gate summary omits base items checked off and requests moved by a fold | logged | Adding them is process weight (supervisor call); the page shows both after the base re-render |
+| 2026-11-10 #118 r1 | Anchor forms `#d27` vs `#missed-reminders` for a cited item | logged | Routed to `change-requests.md` / `product-specs-artifacts.md` |
+| 2026-11-10 #118 r2 | F1 r1's "only to another file" read as a ban on re-sectioning an entry in one glossary | closed | "take `move`, and only to another file (a glossary section change is no entry)" |
+| 2026-11-10 #118 r2 | F2 a known-difference note entry had no stated identity | closed | "and a note's item ID" in Identity |
+| 2026-11-10 #118 r2 | F3 "never overwrite or merge into a promoted path" vs resuming a partial archive | logged | Recovery's explicit "resume archival only at either path" governs; a blocking reading ends at the designed blocked gate |
+| 2026-11-10 #118 r2 | Open: moved open requests keep pages rendered at the old depth; sibling requests on one base file; unparsed entry lines draw no type message | logged | Routed to `change-requests.md`, authoring and the tool respectively; outside the binding surface |
+| 2026-11-10 #118 r3 | F1 a retirement's citing files were told to ride in Touches; the tool requires entries for them | closed | "a move changes, in Touches after the `from → to`"; retirement citers fall under Granularity |
+| 2026-11-10 #118 r3 | F2 an item added to an existing file needs an entry per rule; a new file's items do not | rejected | Granularity states it and the tool enforces it; the asymmetry is logged as a tool design question |
+| 2026-11-10 #118 r4 | F1+F2 `check-changes` rejects a `modify rule` riding a moved item and an `add known-difference note` on a new item, both entries Granularity asks for | logged | Tool is the wrong side; routed to `Bin/spec-tool.py` as a follow-up (code change, supervisor's go) |
+| 2026-11-10 #118 r4 | F3 an index-line identity linked to a file the package does not hold fails; only the index-draft link passes | logged | Single observation; the tool error and "linked to drafts" lead to the index draft |
+| 2026-11-10 #118 r4 | F4 "resume archival only at either path" lost its referent | closed | "resume archival only, wherever the package now sits" (cap raised to 47,700) |
+| 2026-11-10 #118 r4 | F5 move rules spread over three bullets; Identity reads without its verb | logged | Cosmetic; all within 20 lines and the tool enforces the outcome |
+| 2026-11-10 #118 r4 | F6 "after promotion" unqualified where a request archives under its base | closed | "after promotion into production", as the product guide |
+| 2026-11-10 #118 r5 | F1 "Draft every spec file" read as excluding the glossary and indexes; claimed promotion's repointing is a no-op | closed (part) / rejected (part) | "Draft every file"; `C2` maps draft targets to base destinations, so promotion's repointing stands |
+| 2026-11-10 #118 r5 | F2 "Promotion's own failed check … returns the package to authoring" overstated the failure routes | closed | Deleted; promotion's § Gates owns every route |
+| 2026-11-10 #118 r5 | F3 a footnote linked to another artifact's closed item passes readiness and surfaces only at `C3`'s post-write `validate` | logged | Tool follow-up: production readiness should fail any footnote in the drafts |
+| 2026-11-10 #118 r5 | F4 move example shows no citing file after `from → to` | logged | One example, cosmetic; ~70 bytes |
+| 2026-11-10 #118 r5 | F5 Archive step 1 omits `evidence/` | rejected | "Move the package intact" covers it |
+| 2026-11-10 #118 r6 | F1 "move plus modify keeps one contract, the move verified first" names no action | closed | "a moved item or entry whose text changes also takes a `modify` entry" |
+| 2026-11-10 #118 r6 | F2 "Input citations … are not dependencies" reads against readiness 5 | logged | Condition 5 states the block where it applies; a fix would restate `change-requests.md` rule 8 |
+| 2026-11-10 #118 r6 | Open: link definitions of appended entries on a fold; entry order after a fold | logged | Routed to `change-requests.md` 4.1; the base's `check-changes` catches a missing definition |
+| 2026-11-10 #118 r7 | F1 an intro- or orientation-line-only change had no stated entry | closed | Touches template: "alone under `modify spec file`"; tested |
+| 2026-11-10 #118 r7 | F2 "promotion verifies identical prose" read as absolute before the modify exception | closed | Exception first, "otherwise promotion verifies…" |
+| 2026-11-10 #118 r4–r5 tool | `check-changes` rejected `modify rule` on a moved item and `add known-difference note` on a new item; a linked footnote whose owner closed passed | closed | Fixed in `check_changes`, each with a reproducing test (supervisor's go) |
+| 2026-11-10 #118 r8 | Tool: a note or retired-rule entry on a moved item still rejected after the r7 patch | closed | `check_changes` judges any part entry riding a move against the item's change; tests added |
+| 2026-11-10 #118 r8 | F2 "alone under `modify spec file`" had two readings | closed | "or with no other entry for its file takes `modify spec file`" |
+| 2026-11-10 #118 r8 | F3 an item changing section within its file had no stated answer | closed | "(a section change within a file is no entry)" |
+| 2026-11-10 #118 r9 | Tool: a moved item's changed parts were not each required; a renumbered gap footnote read as a modified item; `modify spec file` covered its intro only through its own Touches | closed | Fixed in `check_changes` and `diff_key`, each with a test |
+| 2026-11-10 | Pass closed | closed | Clean round r9 (stop rule a): no live finding in the binding target. Rounds r1–r9: 13 · 8.125 · 5 · 6.5 · 5.375 · 2.75 · 4.75 · 2.5 · 0. The set 47,459 → 47,694 / 47,700 |

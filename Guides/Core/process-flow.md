@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.process-flow
 Managed-Source: Guides/Core/process-flow.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-10
 
 # Process flow (house style reference)
 
@@ -247,7 +247,7 @@ Sub-bullet labels are **bold** with no separator after the label. Standard label
 - **Options** (for `[Tradeoff]`) — the considered alternatives.
 - **Detail** (when needed) — elaboration on the concern.
 - **Why** — the reason, then its source.
-- **Gap** — for an item awaiting knowledge from outside this work; keep it unchecked, with `- **Gap** <the placeholder alone, or "no placeholder">` last; what is unknown goes in Concern. Gaps block promotion.
+- **Gap** — only once the supervisor rules the item awaits knowledge from outside this work; keep it unchecked, with `- **Gap** <the placeholder alone, or "no placeholder">` last; what is unknown goes in Concern. Gaps block promotion into production.
 - **Decision** (added on resolution) — see below.
 
 Inlined verbatim beside each Discussion-phase guide's Discussion rules; the sanity scan checks it:
@@ -264,7 +264,7 @@ The original question/proposal/tradeoff stays visible. The why-this-was-discusse
 
 ### Decision Log
 
-Each Discussion-based artifact has one append-only `## Decision Log`, the last `##` section before trailing link definitions, empty until a state change. Append `- <ID> <state> — <one line>` per change: `decided`, `gap`, or `reopened`, a linked `[<ID>][…]` (`decided` or `reopened`) for another package's item; order is history, no dates. The item shows only its current state. Tools check each item's last entry: checked ⇔ `decided`; **Gap** line ⇔ `gap`; otherwise no entry or `reopened`.
+Each Discussion-based artifact has one append-only `## Decision Log`, the last `##` section before trailing link definitions, empty until a state change. Append `- <ID> <state> — <one line>` per change: `decided`, `gap`, or `reopened`; another package's item ruled here is logged by its link, `[<ID>][…]`, `decided` or `reopened` only; order is history, no dates. The item shows only its current state. Tools check each own item's last entry: checked ⇔ `decided`; **Gap** line ⇔ `gap`; otherwise no entry or `reopened`.
 
 ### Discussion-phase gate behavior
 

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-authoring
 Managed-Source: Guides/Design/design-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-28
+Managed-Updated-At: 2026-11-11
 
 # Design Authoring
 
@@ -29,8 +29,8 @@ Against production: `skai/changes/<change-id>/design/`. Contents:
 | `evidence/` | promotion's check output; may be absent |
 | `working-docs/` | working documents |
 
-Draw against production on the **change page** the tool guide names; requests use a **request section**
-`CR-<nnn> — <name>` on the base's page for additions and changes only. Change screens on copies of
+Draw against production on the **change page** the tool guide names; requests use the **request section**
+it names, for additions and changes only. Change screens on copies of
 base frames, never in place. Other types for the same change share its `<change-id>` and
 update freely; promotion archives each type independently.
 
@@ -52,16 +52,13 @@ Use the input's change ID; otherwise propose a short kebab-case default and bloc
 
 ## Phases
 
-Authoring alternates between two phases, never both at once:
+Authoring alternates between two phases, never both at once, until Review advances:
 
 1. **Discussion.** Items are raised and resolved. Nothing is drawn.
 2. **Mockups.** The agent draws or adjusts in the design file; the supervisor reviews the designs.
    If the supervisor, asked at the tool-access blocked gate, rules no mockups can be drawn,
    record it under `## Assumptions and TODOs`; nothing is drawn, and the Design Changes list
    stands in for the drawings below.
-
-The phases alternate until the supervisor advances the
-Review gate.
 
 ## Gates
 
@@ -94,7 +91,7 @@ Workflow-specific gate notes:
   - Blocked: `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to Mockups.`
   - Planned: `⏳ GATE: Next: Discussion complete<; N open gaps carried>. Say "next" to draw the mockups on <page or section> (with no mockups: to write Design Changes).`
 - After the trace pass, Review covers drawings and rendered Design Changes (list alone with no
-  mockups). Feedback follows *Mockups*; the supervisor's `next` approves and runs *Completion*.
+  mockups); there, ask each changed input's route. Feedback follows *Mockups*; the supervisor's `next` approves and runs *Completion*.
   - `⏳ GATE: Next: Reconcile the inputs and complete <package>. Say "next" or what to change.`
 
 Planned gates for this workflow:
@@ -146,7 +143,7 @@ On the signal:
 1. Read the tool guide.
 2. Reopen a named or contextual package for this work if it has no `design-promotion.md` or was
    returned to authoring; promotion holds its packages, closed ones need new packages.
-   A request signal follows the shared guide: reopen or create `<base>/change-requests/<nnn>/`.
+   A request signal follows `change-requests.md`: reopen or create `<base>/change-requests/<nnn>/`.
 3. Otherwise resolve the path, create the artifact, and record `## Goal` and `## Inputs`.
 4. Open the first Discussion phase.
 
@@ -231,7 +228,7 @@ the frame name linked to its draft (`[name](<link>)`), or the intended name unli
 - **Description** the screen, state or component change in product words, never a visual diff or sample data; about a sentence with mockups; without them, enough to design from.
 - **Justification** a reason sentence, then an input citation, `Resolved decision: D<n>` (another package's linked), or `Supervisor input`.
 
-Inherited gaps get one footnote each, not items, on the first entry or sub-change whose change rests on its placeholder, never on what a frame merely keeps from the base; Placeholder is the provisional answer, not the frame ([`spec-file-gaps.md`](../Core/spec-file-gaps.md)).
+Only inherited gaps get footnotes, one each, not items, on the first entry or sub-change whose change rests on its placeholder, never on what a frame merely keeps from the base; Placeholder is the provisional answer, not the frame ([`spec-file-gaps.md`](../Core/spec-file-gaps.md)).
 
 Several changes: sub-IDs:
 
@@ -245,8 +242,8 @@ Several changes: sub-IDs:
 
 ## Completion
 
-On Review's `next`, reconcile drawings against every input but the base; file against each the
-decisions changed, with drafts, per the shared guide. Update
+On Review's `next`, reconcile drawings against every input but the base; route each input the
+decisions changed as the supervisor picked, with drafts, per `change-requests.md`. Update
 `## Assumptions and TODOs` and `## Out of scope`; name requests or needs, outcomes and downstream
 work owed (design specs, say). End with
 `🏁 Complete. Let me know if anything needs adjustment.` Invoke promotion separately.

@@ -73,6 +73,14 @@ class Render(unittest.TestCase):
         self.assertIn('<a class="ref" href="../../design-review.html#d02" data-tip="tip-gap-base-d02">D02</a>', page, "a base item shows its ID alone, links to the base's page and carries its tooltip")
         self.assertIn('<template id="tip-gap-base-d02"><div class="pop-src">../../design-review.html</div>', page, "the tooltip of another document's item starts with that document's review page path")
 
+    def test_archived_request_page_keeps_its_path_in_the_title(self):
+        moved = self.copy / "package/promoted-change-requests/001"
+        moved.parent.mkdir()
+        shutil.move(str(self.copy / "package/change-requests/001"), str(moved))
+        code, out = self.render(moved / "design-authoring.md")
+        self.assertEqual(code, 0, out)
+        self.assertIn("<title>Design Change: Package | 001</title>", (moved / "design-review.html").read_text(), "a promoted request keeps its change id and number")
+
     def test_package_built_on_a_sibling_package_links_its_base(self):
         artifact = self.copy / "followup/design-authoring.md"
         code, out = self.render(artifact)

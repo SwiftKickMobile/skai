@@ -367,7 +367,7 @@ Take a design change from an idea to a completed change package, authored agains
 
 ### Design promotion (skill `skai-design-promotion`)
 
-Fold a completed package into its base: into production (drafts moved from the change page, package archived to `skai/promoted/<change-id>/design/`) or into the parent package for a change request (frames moved from the request section into the base's drawings, the request's entries appended to the base's Design Changes, its open gaps carried into the base's Discussion, package archived to `<base>/promoted-change-requests/<nnn>/`). The supervisor confirms the base before the drafts are deleted. Promotion refactors the base to absorb the drafts; a draft that needs changing returns the package to authoring. Implementing designs in code is out of scope.
+Fold a completed package into its base: into production (drafts moved from the change page, package archived to `skai/promoted/<change-id>/design/`) or into the parent package for a change request (frames moved from the request section into the base's drawings, the request's entries appended to the base's Design Changes, its open items and gaps staying in the archived request, package archived to `<base>/promoted-change-requests/<nnn>/`). The supervisor confirms the base before the drafts are deleted. Promotion refactors the base to absorb the drafts; a draft that needs changing returns the package to authoring. Implementing designs in code is out of scope.
 
 - Guide [`Guides/Design/design-promotion.md`](Guides/Design/design-promotion.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written

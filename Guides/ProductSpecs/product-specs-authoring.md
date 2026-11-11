@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-authoring
 Managed-Source: Guides/ProductSpecs/product-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-10
 
 # Product Specs Authoring
 
@@ -154,7 +154,7 @@ Start on an explicit signal: "write", "backfill", "update the requirements for X
 1. When the catalog does not exist yet, follow [`artifact-hosting.md`](../Core/artifact-hosting.md)
    to settle where it lives and link it from the README.
 2. Read [`product-specs-catalog.md`](product-specs-catalog.md) and the existing catalog.
-3. For a request, reopen or create `<base>/change-requests/<nnn>/` per the shared guide; otherwise
+3. For a request, reopen or create `<base>/change-requests/<nnn>/` per `change-requests.md`; otherwise
    reopen unpromoted work named or in context, including another workflow's seed (*Reopening*).
 4. For other new packages, resolve the change ID and check its paths; create the artifact with
    `## Goal` and `## Inputs`.

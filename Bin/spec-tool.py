@@ -98,7 +98,7 @@ Usage:
         entry or index line in the projection has a change-list entry, every added file has one
         (an entry naming it, or naming it in Touches), a changed intro (an index file's reminder
         line too), section line or index line may instead ride in an entry's Touches naming its
-        file, and no entry names something unchanged or
+        file (in design specs a spec-file entry also covers its own file's intro and section lines), and no entry names something unchanged or
         absent, including a rule (ID-NN, ID-NN-NN) the drafts do not define. An entry's type must
         be one its artifacts guide allows: a product change to a rule goes under "modify
         requirement" on its parent, and a design file never retires. The declared
@@ -110,10 +110,13 @@ Usage:
         plus an add; a modify entry rides on it when the definition or Also called note changed on
         the way, compared with the catalog under any --base); a file-typed entry names the file itself (never its index
         line), so "add file" on a file the catalog already has, or "modify spec file" on a new one,
-        fails; an entry about a rule or a known-difference note names an item that shows as modified. A moved item may
-        change on the way: then a modify entry rides on the move and both are accepted, and a
-        move whose item changed without a modify entry fails, as does a modify entry on a moved
-        item whose text is the same. The authoring artifact's "## Decision Log" is checked
+        fails; an entry about a rule or a known-difference note names an item that shows as modified (an add
+        note entry may also name an item added here). A moved item may
+        change on the way: then, as for an item in place, its own change (statement, tables, notes, gaps) takes an item- or
+        note-typed entry and each changed rule a rule entry (rules and notes show as added in the new
+        file); all ride on the move; a move missing one fails, as does such an entry on a moved item
+        whose text is the same. A gap footnote marker's label is never compared, so renumbering by
+        first use is no change. The authoring artifact's "## Decision Log" is checked
         against its Discussion: the section exists once the Discussion has an item and is the
         artifact's last; each line is "- <ID> decided|gap|reopened — <one line>", or "- [D12][label]
         decided|reopened — …" for a change request deciding another package's item (the older
@@ -123,7 +126,7 @@ Usage:
         it (checked ⇔ decided, a "**Gap**" sub-bullet ⇔ gap, otherwise reopened or none); an item
         carries at most one Decision line and is never both checked and a gap; every D# a change
         entry's justification cites is in the Discussion. Every gap footnote in the drafts names
-        an open gap item (unchecked, with a Gap line), a linked one an item its target holds, and every open gap item is marked by at
+        an open gap item (unchecked, with a Gap line), a linked one an item its target holds that is still an open gap there, and every open gap item is marked by at
         least one footnote (a marker-less note counts). One line per failure as
         path:line: message; exit status 1 when there are any.
 
@@ -1381,7 +1384,8 @@ def target_identity(target):
 
 def diff_key(text, side):
     """Text as compared: a glossary link is its bare term; a citation is its label plus the
-    identity of its target in that side's link definitions."""
+    identity of its target in that side's link definitions; a gap footnote marker, its place only."""
+    text = FOOT_MARK_RE.sub("[^]", text)  # a footnote's label renumbers by first use; its owner and placeholder are compared apart
     def sub(m):
         label, ref = m.group(1), m.group(2)
         name = ref if ref else label
@@ -2686,6 +2690,9 @@ def check_changes(catalog, drafts, authoring, bases=()):
                         log_issues.append(Issue(d, g.line, f"gap footnote [^{g.label}] links {g.did}, which its target does not hold"))
                         continue
                     if owner[0] != authoring.resolve():
+                        it = owner[1][g.did]
+                        if it["done"] or not it["gap"]:  # the marker outlived its owner's closing
+                            log_issues.append(Issue(d, g.line, f"gap footnote [^{g.label}] links {g.did}, which is not an open gap there"))
                         continue  # another artifact's item owns it
                 elif g.scope:
                     continue  # another artifact's item owns it
@@ -2730,6 +2737,8 @@ def check_changes(catalog, drafts, authoring, bases=()):
                 any(c.keys & r.keys and kind_matches(c.type, "rule") for c in changes) for r in entries if r.what == "rule" and r.status != "unchanged" and rule_parent(r.name) == e.name):
             continue  # only its rules changed, and each has its own entry
         riders = [c for c in changes if c.touched & {e.file, Path(e.file).name}] if e.what in ("file", "intro", "section line", "index line") else []
+        if e.what in ("intro", "section line") and design:
+            riders += [c for c in changes if re.search(r"file", c.type) and c.keys & {e.file}]  # a spec file entry covers its own file's orientation prose
         if e.what == "index line" and design:
             riders = [c for c in riders if re.search(r"file|folder", c.type) and c.keys & e.keys & added_files]  # design specs: an index line rides only with the new file it describes
         covering |= {c.cid for c in riders}
@@ -2739,15 +2748,19 @@ def check_changes(catalog, drafts, authoring, bases=()):
     issues += [Issue(authoring, c.line, f"{c.cid} names {c.name}, which is not in the drafts") for c in changes
                if c.cid not in matched and not (c.cid in covering and re.search(r"file|folder", c.type))]
     # the declared operation must match what the projection shows; a moved item is missing from
-    # one file and added in another, and a modify entry may ride on the move when its text changed
+    # one file and added in another; entries on the item or its parts may ride on the move when its text changed
     moves = [c for c in changes if c.type.split()[0] == "move"]
+    part = lambda c: c.type.split()[0] in ("add", "modify", "retire") and re.search(r"rule|known-difference", c.type)
+    riding = lambda c, m: c.keys & m.keys and (c.type.split()[0] == "modify" or part(c))  # an entry on a moved item or one of its parts
     for c in changes:
         if c.cid not in actual:
             continue
         op = c.type.split()[0]
         found = {s for _, _, s in actual[c.cid]}
-        if "known-difference" in c.type:
-            ok = found <= {"modified"}  # a note inside an existing item shows as that item modified
+        if part(c) and any(c.keys & m.keys for m in moves):
+            ok = "added" in found and found <= {"added", "missing", "removed"}  # a moved item's parts show as added in its new file; the move check below judges the change
+        elif "known-difference" in c.type:
+            ok = found <= ({"modified", "added"} if op == "add" else {"modified"})  # a note shows as its item modified, or added with a new item
         elif op == "move" or (op == "modify" and any(c.keys & m.keys for m in moves)):
             ok = found in ({"added", "missing"}, {"added", "removed"})  # an item leaves a file; a glossary entry leaves a glossary file
         else:
@@ -2759,12 +2772,19 @@ def check_changes(catalog, drafts, authoring, bases=()):
         if {s for _, _, s in actual.get(m.cid, ())} not in ({"added", "missing"}, {"added", "removed"}):
             continue  # not a move; reported above
         for what, name in {(w, n) for w, n, _ in actual[m.cid] if w in ("item", "glossary entry")}:
-            modifies = [c for c in changes if c.type.split()[0] == "modify" and c.keys & m.keys]
+            modifies = [c for c in changes if riding(c, m)]
             status = (moved_item_status if what == "item" else moved_entry_status)(name, [*reversed(bases), catalog], drafts)
-            if status == "modified" and not modifies:
+            if status == "modified" and what == "item":  # like an item in place: its own change and each changed rule take entries
+                own, changed_rules = moved_item_parts(name, [*reversed(bases), catalog], drafts)
+                if own and not any("rule" not in c.type for c in modifies):
+                    issues.append(Issue(authoring, m.line, f"{m.cid} declares move but item {name} also changed; a modify entry is needed"))
+                for rid, how in changed_rules:
+                    if not any("rule" in c.type and c.rule == rid for c in modifies):
+                        issues.append(Issue(authoring, m.line, f"{m.cid} declares move but rule {rid} of the moved item is {how} and no change-list entry names it"))
+            elif status == "modified" and not modifies:
                 issues.append(Issue(authoring, m.line, f"{m.cid} declares move but {what} {name} also changed; a modify entry is needed"))
             for c in modifies if status == "unchanged" else []:
-                issues.append(Issue(authoring, c.line, f"{c.cid} declares modify but moved {what} {name} is unchanged"))
+                issues.append(Issue(authoring, c.line, f"{c.cid} declares {c.type.split()[0]} but moved {what} {name} is unchanged"))
     return issues + log_issues
 
 
@@ -2815,6 +2835,24 @@ def moved_item_status(iid, baseline, drafts):
         return "unchanged"
     LINKS["old"], LINKS["new"] = rebased_linkdefs(os_, oroot), rebased_linkdefs(ns, nroot)  # the two files sit in different folders
     return render_item(old, new, {}, "")[0]
+
+
+def moved_item_parts(iid, baseline, drafts):
+    """(own changed, [(rule ID, status)]) for a moved item, read as moved_item_status reads it: whether
+    its statement, tables, notes, gaps or retirement changed, and each rule that did."""
+    def find(root):
+        for p in sorted(Path(root).rglob("*.md")):
+            s = parse(p)
+            for it in (s.items if s.kind == "spec" else []):
+                if it.id == iid:
+                    return it, s, root
+        return None, None, None
+    old, os_, oroot = next(((it, sp, r) for root in baseline for it, sp, r in [find(root)] if it), (None, None, None))
+    new, ns, nroot = find(drafts)
+    if not old or not new:
+        return False, []
+    LINKS["old"], LINKS["new"] = rebased_linkdefs(os_, oroot), rebased_linkdefs(ns, nroot)
+    return item_own_changed(old, new), [(e.name, e.status) for e in rule_entries(old.rules, new.rules, iid) if e.status != "unchanged"]
 
 
 def rebased_linkdefs(spec, root):

@@ -395,3 +395,15 @@ change list follows (`figma-designer-guide-design.md` § Amendment — 2026-10-2
 2026-10-24 footnote rule (on a change that rests on the placeholder, never on what a frame merely
 keeps; the Placeholder clause is the provisional answer) stands.
 Cap: `design-authoring.md` **16,000** holds (compressed 15,992; supervisor, 2026-10-28).
+
+## Amendment — 2026-11-11: Items Stay Where Raised (skai#118)
+
+The design guides adopt [`product-specs-system-design.md`](product-specs-system-design.md) § Amendment — 2026-11-10 with `V` for `R` and `C3`–`C6` for `C7`/`C8`; the shared rules are `change-requests.md`'s ([`change-requests-design.md`](change-requests-design.md)). Recorded during the refinement pass for that change.
+
+1. **Change item source** (`design-authoring.md` § Design Changes): `Resolved decision: D<n>` cites a Discussion item, another package's by link; `Base decision: D<n>` is retired.
+2. **Readiness into production** (`design-promotion.md` condition 1): no open item, request, gap or footnote in the package, nor in its promoted requests at any depth, where a footnote whose gap closed is history (corrected after cold round 5: the exemption covers archived requests only, so a stale footnote in the live package still blocks).
+3. **Folding into a package** (`C3`): the type guide folds screen sections and appends change entries, each under its screen, a change to a frame the base already lists as the next sub-ID under the base's entry (authoring's one entry per frame; supersedes § Amendment — 2026-10-23's "the base's next `V` numbers" for that case; Offers design CR-001 folded this way); a footnote whose gap the base owns, or one the base already carries for the same gap, is dropped (only inherited gaps are footnoted, one each); footnotes, base-item decisions and open requests fold per `change-requests.md`, named by file; mirrors follow the tool guide's Gaps rules (move with their frames, update on owner-path changes, removed when the owning item closes) (corrected after cold round 1: `change-requests.md` has no mirror rule).
+4. **Archive** (`C6`): the package moves with `working-docs/` and `promoted-change-requests/`; open requests never reach archive. After the move, the moved page and a request's base are re-rendered, so the base's page shows the request's items where they now live.
+5. **Completion** names the gaps left open, where they were raised.
+
+Caps: `design-authoring.md` 16,000 holds (15,953 before this pass); `design-promotion.md` **12,100** (was 12,000; 11,878 before this pass; supervisor, 2026-11-11, after cold round 5, so the fold rulings are written out rather than compressed). Compression round skipped: each change replaces a clause in place.

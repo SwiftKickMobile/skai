@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-artifacts
 Managed-Source: Guides/ProductSpecs/product-specs-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-11-10
 
 # Product Specs Artifact Formats
 
@@ -16,8 +16,8 @@ Typed formats for product spec workflows. Content rules:
 
 ## The Package
 
-In the catalog's repository, `skai/changes/<change-id>/product-specs/`; after promotion,
-`skai/promoted/<change-id>/product-specs/`. Promoted packages are closed; new work needs a new ID/type pair. Sibling packages of other types
+In the catalog's repository, `skai/changes/<change-id>/product-specs/`; after promotion into production,
+`skai/promoted/<change-id>/product-specs/`, closed; new work needs a new change ID. Sibling packages of other types
 are independent. For the **base** and requests, read
 [`change-requests.md`](../Core/change-requests.md). Supervisor input during authoring is a decision, never a request.
 
@@ -65,7 +65,7 @@ target identity. Entries omit spec text; the page shows each difference under it
   `Agent inference` | `Change request` | `Catalog`. A Justification is a reason a reader follows
   without opening anything, then its source. `Design` names the screen or state by product
   name, never a design-tool link; `Resolved decision: D#` cites a Discussion item,
-  linked when another package's; `Agent inference` draws first scrutiny; promotion ends a folded entry's Justification
+  another package's by `change-requests.md`'s link; `Agent inference` draws first scrutiny; promotion ends a folded entry's Justification
   with `; Change request: <nnn> R<n>`.
 
 `check-changes` confirms the list matches the projection: entries name every changed requirement

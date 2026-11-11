@@ -178,3 +178,16 @@ Compression (Astra, 2026-10-28): the pair 18,037 bytes; cap **18,000 bytes**, se
 2026-10-28, replacing the 17,850 above; the installed text trimmed to fit.
 Ruling (supervisor, 2026-10-28, series GA round 2's logged finding): canvas order runs down a
 column, then across columns; stated once in the Canvas layout ordering rule, which § Gaps relies on.
+
+## Amendment — 2026-11-11: Owner Paths, Request Sections, Mirrors (skai#118)
+
+Recorded during the refinement pass for skai#118 (`design-process-design.md` § Amendment — 2026-11-11).
+
+1. **Owner-path updates** (§ Gaps): a gap annotation's `Owner:` line is updated when the owning artifact's path changes, as when promotion archives a request whose gap stays open where it was raised.
+2. **Mirror** (§ Gaps): the gap annotation is the design file's mirror of a gap, the word the design process guides use for it.
+3. **Request Sections** (§ Pages): a request's Section is named `CR-<nnn> — <name>`, `<nnn>` its number path from the package: `001-002` for request 002 against request 001, the same name a fold gives it when it re-files the request as `001-002`, so no rename and no two Sections share a name (corrected after cold round 1); promotion folds a request's frames into its base's Sections (a package's, or its base request's); a request against a request gets its own Section on the page holding its base's drafts, never inside its base's Section, so deleting that Section at promotion leaves the open request's drafts.
+
+4. **One mirror per change page and per request Section** (§ Gaps; supersedes § Amendment — 2026-10-28 item 3's "once in the package's section"): each change page and each request Section that draws a gap carries one mirror, on the first frame in canvas order drawing it; a page's count excludes its request Sections, so a request that copies a frame carrying a base gap mirrors it in its own Section. First-frame placement and "a later frame carries none" stand (recorded after cold round 4).
+5. **Frame names** (§ Frames rule 5): frame names are unique per page, with one exception: a request's copy of a base frame keeps the base frame's name, which the process guides use to match a change to its frame; any other copy is renamed (recorded after cold round 4).
+
+Cap (supervisor, 2026-11-11): the pair **18,100 bytes** (was 18,000; 17,997 before this pass). Compression round skipped: clause additions in place.

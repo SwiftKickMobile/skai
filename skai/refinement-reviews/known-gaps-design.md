@@ -55,7 +55,7 @@ Written 2026-10-20 from the known-gaps planning (SwiftKickMobile/skai#82).
    consumer compares its recorded version marker, reads what changed, and applies it under the
    normal Discussion bar). The guide states only what is gap-specific: an upstream gap answered
    differently from its placeholder is a change that may undercut an approved decision; an upstream
-   gap adopted as written changes nothing downstream.
+   gap adopted as written changes nothing downstream. An upstream omission is an answer differing from the placeholder (2026-11-07, cold round 4 F1).
 7. **Representation by artifact kind, pointed, not defined.** One short list: a Discussion item
    carries the **Gap** line (all artifact kinds); a spec file marks the placeholder with the
    footnote form the spec-file shape defines; a UI Map proposal and a Figma change page mirror
@@ -130,3 +130,34 @@ Size: draft 3,399, compressed by Astra to 3,296 (the opening's definition merged
 ## Amendment — 2026-10-26 (the Gap line is the placeholder only)
 
 Supervisor, 2026-10-26, from the Offers packages' content audit: once the no-placeholder form named what is awaited, Gap lines grew who is to answer, names, dates and narrative, and Decision lines followed; the artifacts are workflow-agnostic and skai knows only the supervisor. Two changes. Rule 8 drops "the question may name what the answer awaits": nothing in an item records who is to answer; the Concern states what is not yet known (requirement 8 reworded). The Gap line's no-placeholder form, owned by process-flow (`product-specs-system-design.md` § Decisions — 2026-10-20, item 1, amended the same day), becomes "no placeholder", in the maintainer reference and every inlined copy alike. Deletions only: known-gaps 3,211 bytes (cap 3,290 held); no compression round. Cold series GL.
+
+## Amendment — 2026-11-07: Open Gaps Stay Where Raised (skai#118)
+
+Supersedes the 2026-10-23 amendment "promotion into a package carries gaps" (supervisor, 2026-11-07; rulings in the #118 planning document). [`change-requests.md`](change-requests-design.md) owns the request model; this guide points at it and states only what is gap-specific. The guide must say:
+
+1. **Gaps stay where raised.** Promotion, into production or into another package, never moves or renumbers a gap item or its marks.
+2. **Production counts promoted requests.** Promotion into production needs zero open gap items and marks in the package and in every request promoted into it, at any depth.
+3. **Where a promoted request's gap is resolved.** A gap left open in a promoted request is resolved there by the base's author, one of rule 4's three ways; the guide points at `change-requests.md` for who and where, and does not restate it.
+4. **Promotion never resolves a gap.** When a request decided a base item, folding it checks that item off: the fold records a ruling the supervisor made in the request; it is not promotion resolving a gap. The guide's rule 6 must not read as contradicting `change-requests.md` rule 5.
+
+Cap after this amendment: **3,350** (supervisor, 2026-11-07; before 3,281, drafted 3,358, too small an addition for a compression round).
+
+Correction (2026-11-07, cold round 1 F4): requirement 6 and Boundaries name a general input catch-up rule that no guide contains; rule 7 points at the workflow's own Discussion rules instead (round 2 F1: most workflows have no input-change rules), triggered when an upstream gap closes; adopted as written, only the marker clears.
+
+## Amendment — 2026-11-07: The Supervisor Declares Gaps
+
+Supersedes the 2026-10-26 amendment's reading that the author applies rule 1's test and marks an item a gap (supervisor, 2026-11-07, from round 2 F4): the agent raises questions as Discussion items; when the supervisor lacks the authority to answer one, the supervisor says it is a gap and supplies its placeholder, or none. The agent never marks an item a gap or supplies a placeholder on its own; the no-placeholder case is the Gap line's "no placeholder" form and rule 5 (supervisor, 2026-11-09, round 7 F3). Rule 2 says the placeholder is the supervisor's to supply. The guide must say, at rule 1's definition, in place of the supervisor-can-make-now clause: a decision outside your authority is a Discussion item, and only the supervisor rules it a gap. The definition and the ❌/✅ example stay as what the supervisor rules. Owned with process-flow's **Gap** label (`product-specs-system-design.md` § Amendment — 2026-11-07). Pre-existing since 2026-10-20 (skai#82) and 2026-10-26; fixed in the #118 redo pass on the supervisor's instruction.
+
+Size: 3,347 before, 3,350 after; a replacement, not an addition; cap 3,350 holds.
+
+## Amendment — 2026-11-09: A Bare Upstream Gap Is Omitted or Waited On
+
+Supersedes requirement 5's "Only a bare upstream gap forces a Discussion item: request a placeholder upstream (a change request), leave the dependent part out, or wait; the agent recommends and the supervisor rules" (supervisor, 2026-11-09, during cold round 8). An upstream gap with no placeholder is intentional; downstream never questions it or pushes for a placeholder. The agent judges whether the missing part blocks progress: if not, it omits the dependent part (Out of scope); if so, it waits at a blocked gate. No route requests a placeholder upstream. Size: rule 5 shorter; cap 3,350 holds.
+
+Same day (supervisor, 2026-11-09): rule 2 states requirement 2's "a gap with no placeholder gives nothing to proceed on" for the package's own gaps: with none, the dependent part stays out of the drafts (cold round 4 F5, logged then).
+
+Same day, cold round 9: requirement 3 gains the exception: a bare upstream gap whose absence blocks progress waits at a blocked gate, so rule 3's lead says "except as rule 5 says". The dependent part omitted for a bare upstream gap is unmarked: a marker would block promotion into production, which the omission exists to avoid; the Out of scope record keeps it visible (follows from the supervisor's ruling above).
+
+## Amendment — 2026-11-09: No Out of Scope Record for a Bare Upstream Gap
+
+Supersedes "(Out of scope)" in the bare-upstream amendment above and "the Out of scope record keeps it visible" in its round-9 note (supervisor, 2026-11-09, after the pass closed). With no placeholder the upstream rule does not exist, so downstream has nothing to call out; if the upstream gap is later answered, that reaches downstream as an ordinary change (rule 7). The own-gap "Omitted" closure keeps its Out of scope record: there it records the supervisor's decision. Size: rule 5 shorter.

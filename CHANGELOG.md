@@ -9,6 +9,8 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **Change requests against change requests work end to end in design.** A nested request's Figma Section is named by its number path (`CR-001-002`), keeps that name when a fold re-files it, and passes the structure check; a fold puts a request's change to a known frame under the base's entry.
+- **`check-changes` stops rejecting two valid design entries.** Changed rules and notes on a moved item, and a known-difference note on a new item, can now be listed the way the guide says; a gap footnote whose owner in another package has closed is now reported before promotion, not after.
 - **Open items stay where they were raised.** Promoting a change request no longer moves or renumbers its open Discussion items and gaps. Items in other packages, the base's included, are cited by link, so moving a package only updates links; the base's page lists open items left in its promoted requests.
 - **`check-changes` catches change types the guides don't allow.** An entry like `retire rule` in a product change list used to pass promotion's readiness check; now it's reported, with the allowed types.
 - **Work specs are now dev specs.** The two skills are `skai-dev-specs-authoring` and `skai-dev-specs-implementation`, matching product specs and design specs; the update carries over each project's skill choices, install history and addenda.

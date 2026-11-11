@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-authoring
 Managed-Source: Guides/DesignSpecs/design-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-10
 
 # Design Specs Authoring
 
@@ -139,7 +139,7 @@ conversation is context.
 1. For first specs, follow [artifact hosting](../Core/artifact-hosting.md) and add the README link.
 2. Read [content rules](design-specs.md), existing specs, affected requirements and the design tool
    guide ([Figma](../Design/figma-designer-guide.md)).
-3. For a request, reopen or create `<base>/change-requests/<nnn>/` per the shared guide; otherwise
+3. For a request, reopen or create `<base>/change-requests/<nnn>/` per `change-requests.md`; otherwise
    reopen named or contextual unpromoted work, or resolve the ID and check its paths for a new
    package. Create the artifact with Goal/Inputs.
 4. Infer mode; read *Working a Baseline* before code.

@@ -231,3 +231,47 @@ round. Size 11,264 → 11,812 bytes against the 12,000 cap.
 | 2026-10-28 GA r3 | F1 the Design Changes list rule ("columns left to right, frames top to bottom") could order a spilled screen's frames against canvas order | closed | the rule says canvas order (down a column, then across), one entry per frame |
 | 2026-10-28 GA r4 | F1 the Discussion gate's "N open gaps carried" is ambiguous before the first drawing | logged | no occurrence; blocked gate covers it; settle the count's meaning before sharpening the gate wording |
 | 2026-10-28 GA r5 | F1 with no mockups, entries resting on one placeholder have no canvas order, so the footnote's entry is undefined | logged | no occurrence; blocked gate covers it |
+| 2026-11-11 #118 r1 | F1 Completion filed requests itself against rule 8 | closed | "route each the decisions changed as the supervisor picks" |
+| 2026-11-11 #118 r1 | F2 `C3` sent mirrors to `change-requests.md` | closed | "mirrors per the tool guide"; spec item 3 corrected |
+| 2026-11-11 #118 r1 | F3 readiness 1 "footnote" would block on archived history | closed | "open gap's footnote"; spec item 2 |
+| 2026-11-11 #118 r1 | F4 two "its" in `C3` | closed | "the base's" |
+| 2026-11-11 #118 r1 | F5 appended entries not placed under their screen | closed | "each under its screen" |
+| 2026-11-11 #118 r1 | F6 Completion lost "where raised" | closed | "each open gap, where raised" |
+| 2026-11-11 #118 r1 | F7 own gaps footnoted in design change lists per `known-gaps.md` rule 3, against the design spec | closed | "Only inherited gaps get footnotes"; `known-gaps.md` "inherited only in design change lists" |
+| 2026-11-11 #118 r1 | F8 a request deciding a base item: no design translation of "holds each base file marking it" | logged | The decision implies redrawing; mirrors follow the tool guide |
+| 2026-11-11 #118 r1 | F9 "(each still open)" reads as verify or skip | logged | Standing blocked gate catches a stop; sharpen on recurrence |
+| 2026-11-11 #118 r1 | F10 archived request page title dropped the change id | closed | `design-tool.py` `short_title`; test added |
+| 2026-11-11 #118 r1 | F11 Base review rejection has no undo for `C3`'s artifact writes | logged | Predates the change; no occurrence |
+| 2026-11-11 #118 r2 | F1 `C3` dropped `change-requests.md`'s link step for the request's bare `D<n>` | closed | "Link bare `D<n>` to the request" |
+| 2026-11-11 #118 r2 | F2 `C6` moved an owner's path without updating gap mirrors | closed | "and mirror owner paths" |
+| 2026-11-11 #118 r2 | F3 Completion's "each open gap" unscoped; "its artifact" unclear | closed | "link the archived artifact … each gap the package leaves open, where raised" |
+| 2026-11-11 #118 r2 | F4 nothing asked the supervisor's route before Completion needed it | closed | Review gate note "there, ask each changed input's route"; Completion "as the supervisor picked" |
+| 2026-11-11 #118 r2 | F5 footnotes after a fold: a base-owned gap's footnote lands in the base; two footnotes for one shared upstream gap | logged | Needs a spec ruling on what "fold footnotes" does for design; standing blocked gate |
+| 2026-11-11 #118 r2 | F6 a re-filed open request keeps its old section name | logged | Section naming is `figma-designer-guide.md`'s; pass 7 |
+| 2026-11-11 #118 r2 | F7 `C6` re-rendered only the moved page | closed | "re-render moved pages" |
+| 2026-11-11 #118 r2 | F8 Initiation step 3's "Otherwise" reads as excluding a new request | logged | Cosmetic; the operator still creates the artifact |
+| 2026-11-11 #118 r3 | F1 `C3` "Link bare `D<n>` to the request" had no scope; could retarget the base's own citations | closed | Moved into the append bullet: "bare `D<n>` linked to the request" |
+| 2026-11-11 #118 r3 | F2 `C6` "mirror owner paths" parsed as a verb | closed | "mirrors' owner paths" |
+| 2026-11-11 #118 r3 | F3 Completion ", where raised," read as a condition | closed | "and where it was raised" |
+| 2026-11-11 #118 r3 | F4 readiness 1 list attached "request" to the gap | closed | "item, request, gap or open gap's footnote" |
+| 2026-11-11 #118 r3 | F5 `C6` does not re-render pages it repaired but did not move | logged | Self-heals on next render; widening would drop the base's unconditional re-render |
+| 2026-11-11 #118 r3 | F6 Completion has no path when Review advanced without a route | logged | Standard blocked gate covers it |
+| 2026-11-11 #118 r4 | F1 `C3`'s provenance suffix had no target on entries with sub-changes | closed | "each Justification or sub-change ending …" |
+| 2026-11-11 #118 r4 | F2 Completion's "gap the package leaves open" unscoped | closed | "each gap open in or under the package" |
+| 2026-11-11 #118 r4 | F3 a still-open request written before 2026-11-07 folds scope-word citations that change meaning in the base | logged | Convert by hand once; no guide branch for legacy |
+| 2026-11-11 #118 r4 | F4 `C6` "keeping targets" reads against "Repair links" | logged | Cosmetic; no bytes |
+| 2026-11-11 #118 r4 | F5 readiness 1 "open `- [ ]` item" not scoped to Discussion | logged | Cosmetic; off-normal |
+| 2026-11-11 #118 r5 | F1 a request's change to a frame the base lists appended as a second `V` against one entry per frame | closed | Sub-IDs under the base's entry; spec item 3 supersedes 2026-10-23's "next `V`" for that case (supervisor's cap; Offers CR-001 precedent) |
+| 2026-11-11 #118 r5 | F2 r1's "open gap's footnote" let a stale footnote in the live package pass | closed | Any footnote in the package blocks; a closed gap's footnote in a promoted request is history |
+| 2026-11-11 #118 r2/r5 | Footnotes after a fold: a base-owned gap's footnote, or a duplicate of one the base carries | closed | Dropped at the fold ("not one for a gap the base owns or footnotes") |
+| 2026-11-11 #118 r5 | F3 Completion's gap scope (items only or inherited too) | logged | Report only; production readiness re-checks |
+| 2026-11-11 #118 r5 | F4 authoring footnote sentence chains four modifiers | logged | Both readings act the same |
+| 2026-11-11 #118 r6 | F1 the fold's footnote exception parsed "footnotes" as a noun, losing the duplicate case | closed | "(none whose gap the base owns or already footnotes)" |
+| 2026-11-11 #118 r6 | F2 Completion does not say the input change is made in the input's own workflow | logged | `change-requests.md` rule 8 carries "in its workflow"; no proportionate fix fits |
+| 2026-11-11 #118 r6 | F3 the Justification line gives no link form at point of use | logged | Purpose routes to `change-requests.md`; restating its forms is settled against |
+| 2026-11-11 #118 r6 | Open: a request removing a frame the base added leaves the base's `add` entry dead after a sub-ID fold | logged | Caught at the base's next production readiness (`C2`); authoring's own rule (drop the entry) applies on reopen |
+| 2026-11-11 #118 r7 | F1 readiness 1's leading "open" could qualify "footnote", letting a stale footnote in the live package pass | closed | "no footnote or open `- [ ]` item, request or gap" |
+| 2026-11-11 #118 r7 | Open: an open request under the package gets "returns to authoring" gate wording; `C5` and a nested request section | logged | Same family as the logged gate wording; section placement is the Figma guide's (pass 7) |
+| 2026-11-11 #118 r8 | F1 "(none whose gap …)" read as a description, not a drop instruction | closed | "(drop any whose gap the base owns or already footnotes)" |
+| 2026-11-11 #118 r8 | F2 promotion says "mirrors"; the Figma guide never names its gap annotation a mirror | logged | Routed to `figma-designer-guide.md` § Gaps (pass 7) |
+| 2026-11-11 | Pass closed | closed | Supervisor approved ending after r8 with F1 applied (stop rule b). Rounds r1–r8: 26 · 16.75 · 18.875 · 10.5 · 9.75 · 8.875 · 1.875 · 4.5. Authoring 15,985 / 16,000; promotion 12,098 / 12,100 |

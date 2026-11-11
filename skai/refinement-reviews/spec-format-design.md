@@ -260,3 +260,9 @@ only inherits that question is never named (supervisor, 2026-10-24, after CR-001
 D05, a pure reference to product specs D22). One clause in `spec-file-gaps.md`; compressed by Astra to 1,836 (installed 1848 after keeping the two
 marker-less rules apart); cap **1,850 bytes** (supervisor, 2026-10-24), replacing 1,875; cold series GO.
 
+
+## Amendment — 2026-11-09: Another Artifact's Owner Is Cited by Link (skai#118)
+
+Supersedes "or scoped to another (`base D04`, `product specs D21`)" in the 2026-10-24 footnote amendment (supervisor, 2026-11-07, skai#118; recorded here during that change's refinement pass). A footnote's owning item is `D<n>` of this artifact, or another artifact's item cited by link, the base's included: a reference-style link whose label names the cited package, defined once per file, as `change-requests.md` gives it. Scope words (`base D04`, `product specs D21`) are retired; the tools still read them in older packages without rejecting them. Unchanged: the owner is where the question was raised, never an artifact that only inherits it; questions stay with the owner; no Placeholder clause means nothing to proceed on; numbering, `validate`, `check-changes` pairing (this artifact's own items only) and the page. Cap 1,850 holds (1,818 after the change). Compression round skipped: the change replaced one clause with a shorter one.
+
+Cap for `spec-file-gaps.md` raised to **1,900 bytes** (supervisor, 2026-11-10, after cold round 3 of the #118 pass), replacing 1,850: the Owner sentence names the base among linked owners, and the gaps-tile line states that the tile counts and filters gap items and footnoted ones; every trim set that fit 1,850 dropped spec content.
