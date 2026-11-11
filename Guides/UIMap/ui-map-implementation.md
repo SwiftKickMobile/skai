@@ -54,14 +54,14 @@ match. A mismatch returns to architecture's reopen procedure; implementation nev
 the proposal itself.
 - The official map, the frozen baseline the change is measured against. (For a baseline there is none yet.)
 - The app codebase.
-- The platform convention guide: [`ui-map-swiftui.md`](ui-map-swiftui.md) for iOS/SwiftUI or [`ui-map-compose.md`](ui-map-compose.md) for Compose.
+- The platform guide: [`ui-map-swiftui.md`](ui-map-swiftui.md) for iOS/SwiftUI or [`ui-map-compose.md`](ui-map-compose.md) for Compose; also [`ui-map-form-factors.md`](ui-map-form-factors.md) for a map with `form_factors`.
 - The matching placeholder guide whenever placeholder work is in scope during Audit, Plan, or Build: [`ui-map-swiftui-placeholders.md`](ui-map-swiftui-placeholders.md) or [`ui-map-compose-placeholders.md`](ui-map-compose-placeholders.md). Omit it only when no placeholder work is in scope.
 - The artifact-format references: [`ui-map-implementation-artifacts.md`](ui-map-implementation-artifacts.md) (code-change items + evidence this skill writes) and [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md) (map-change items it reads, change requests it raises).
 - `skai/integration.md` for build/test commands, render overrides, and evidence paths. Do not invent project-specific commands; for rendering, use the SKAI default from [`ui-map-guide.md`](ui-map-guide.md) when no override exists.
 
 Expected when available:
 
-- The project's `README.md` or equivalent project-conventions doc for overrides such as modal styles or folder organization and file layout. Standard guide-covered patterns do not require one.
+- The project's conventions, in this guide's addendum or documents it names, for overrides such as modal styles or folder organization and file layout; standard guide-covered patterns need none.
 - Scoped architecture/change collateral for the active story, and the active upstream requirement/story/bug scope.
 
 If no change package is present, conform code to the official map as the frozen source of truth (the map is unchanged); a missing architecture artifact is not a blocker when the map and codebase are present. If the map (proposed or official) is missing, invalid, or not identifiable, STOP with a blocked gate (see *Gates*). The target package is the one named or already in context; sibling types and promoted packages
@@ -107,7 +107,7 @@ Skeleton:
 
 The stage sections are filled in as the workflow runs. Replace `<Plan | Build>` with exactly one inferred value; a later workflow reads that recorded Mode before acting. Write every section as a record of UI Map conformance within this run's current scope. When the same session also contains separate work, omit that work entirely from Goal, Audit, Discussion, Code Changes, Change Requests, and Evidence — do not mention it to explain exclusions, ownership, or sequencing. `## Code Changes` and `## Evidence` follow the formats in [`ui-map-implementation-artifacts.md`](ui-map-implementation-artifacts.md); `## Change Requests` links the change requests this run raised (format in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md)).
 
-`## Inputs` makes the artifact usable by a later workflow without embedding the UI Map documentation. Record exact paths to the target map, the architecture artifact when one exists, [`ui-map-implementation.md`](ui-map-implementation.md), the selected platform guide, the placeholder guide whenever placeholder work is in scope during Audit, Plan, or Build, and any project-conventions document actually used. A consumer loads those references before acting on the artifact.
+`## Inputs` lets a later workflow use the artifact without embedding the UI Map documentation: record exact paths to the target map, any architecture artifact, [`ui-map-implementation.md`](ui-map-implementation.md), the selected platform guide, and any placeholder or form-factors guide, addendum or project document used. A consumer loads those references before acting on the artifact.
 
 ## Gates
 
@@ -216,13 +216,13 @@ Compare code against the target map for:
 
 - Scenes present in scope for the selected app platform (`platform` omitted or matching), including applicable map scenes with no code yet.
 - Route kinds and presentation mechanics.
-- Modal styles and project-specific presentation overrides.
+- Modal styles and project-specific presentation overrides, and for a map with `form_factors`, which scenes, routes and styles apply on each.
 - Scene/domain identity and code names: derive each in-scope scene's expected code identity from its map ID and the selected platform convention, then compare it to the actual code; labels or equivalent behavior do not substitute for the mapped identity.
 - Canonical folder organization and file layout: derive each scene's expected home and file set from the map and the selected platform or project convention, then compare both to the actual files.
 - Placeholder-scene boundaries for newly scaffolded map scenes.
 - Platform patterns called out by the selected platform convention guide.
 
-A project convention counts only when the project declares it (its README or conventions doc); a pattern the code follows without a declaration is a deviation.
+A project convention counts only when the project's conventions declare it; an undeclared pattern the code follows is a deviation.
 
 Read a route's kind and modal style from the modifier or host it is actually bound to, not from an enum's name. For example, an enum named `MessageRoute` is still modal if bound to `.sheet(item:)`.
 
@@ -232,7 +232,7 @@ Findings are observed deviations only. Inspect the relevant code and project met
 
 Each finding gets one of three dispositions, in order — do it, else stop, and request a map change only as a last resort:
 
-Before assigning a disposition, confirm that the map plus the loaded platform and project guidance define a concrete, verifiable conforming outcome. If required guidance is missing or a map value has no code mapping, STOP in Discussion at a blocked gate before writing Code Changes and ask for it; never turn an unknown outcome into a `handoff`. If instead the target map itself is wrong or infeasible, use **Request change** below.
+Before disposition, confirm the map and loaded platform and project guidance define a concrete, verifiable conforming outcome. If required guidance or a map value's code mapping is missing, STOP in Discussion at a blocked gate before Code Changes and add it to the project's conventions with the supervisor; never make an unknown outcome a `handoff`. If the map is wrong or infeasible, use **Request change** below.
 
 1. **Implement** — a mechanical fix or a placeholder scaffold the skill does itself; becomes a `T#` code-change item. Mechanical changes default here: placeholder scaffolds for new scenes in scope; file/folder moves that mirror the target map's domains; renames that align scene IDs and code names; route enum or route-host placement that follows the platform or declared project convention; missing imports or simple local compile fixes caused by these.
 2. **Hand off** — a concrete, verifiable non-mechanical change outside UI Map implementation ownership that directly affects conformance: the required outcome is already defined, but another workflow, skill, person, or PR must do the work → an unchecked `handoff` `T#`. In Build this stops the run at a blocked gate; in Plan it is part of the spec. Examples: rewriting existing runtime behavior, refactoring cross-cutting navigation infrastructure, or changing a declared project convention to an already-defined pattern. A scene newly added by the active proposed map is UI-map-owned placeholder work in Build or `planned` work in Plan. A pre-existing official-map scene with no code in a shipped or brownfield app is a `handoff` unless the active request explicitly scopes it as new scaffold work. Unrelated feature work elsewhere in the session is not a finding and does not belong in this artifact.

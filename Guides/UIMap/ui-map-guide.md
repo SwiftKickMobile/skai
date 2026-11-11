@@ -33,7 +33,7 @@ The page is static: it holds the map model and loads the viewer (`Bin/ui-map-vie
 
 ## YAML format
 
-A UI Map is a YAML document with a fixed schema. The schema is formally defined in [`ui-map.schema.json`](../../Bin/ui-map.schema.json); this section is the conceptual reference.
+A UI Map is a YAML document whose [schema](../../Bin/ui-map.schema.json) enforces lower snake case (`trail_detail`) for domain and scene IDs, `implements` values, modal styles and form factors; this section is the conceptual reference.
 
 ### Top-level structure
 
@@ -43,6 +43,9 @@ app: <name>
 
 modal_styles:              # required when modal routes exist
   - <style>
+
+form_factors:              # optional
+  - <form-factor>
 
 domains:
   <domain-id>:
@@ -59,6 +62,7 @@ todos:                     # optional
 - `version`: integer, currently always `1`.
 - `app`: human-readable app name.
 - `modal_styles`: project vocabulary of valid modal presentation styles (see [Modal styles](#modal-styles)). Required whenever the map contains a modal route.
+- `form_factors`: optional project vocabulary of form factors (phone, tablet, …). When the map declares it, or your work adds a screen or route that differs by form factor, read [`ui-map-form-factors.md`](ui-map-form-factors.md).
 - `domains`: top-level grouping. Each key is a domain ID; each value is either a *collapsed* or *non-collapsed* domain (see below).
 - `common`: optional list of domain-agnostic scenes (e.g. a reusable Web component) shared across the app.
 - `todos`: optional list of cross-cutting TODOs not tied to a single scene.
@@ -91,7 +95,7 @@ Rule for collapsing: if domain ID == root scene ID, collapse.
 
 ### Scenes
 
-Scenes appear inside route containers or directly under a non-collapsed domain's `scenes:` list. Each scene appears in two forms:
+Scenes appear inside route containers or a non-collapsed domain's `scenes:` list as references or definitions; routes with their own form factors use `to:` (see [`ui-map-form-factors.md`](ui-map-form-factors.md)):
 
 - **Reference** — bare string: `- foo`
 - **Definition** — single-key mapping: `- foo: { ...body... }`
@@ -109,7 +113,7 @@ Scene body fields (optional unless the route context requires them):
 | `todo` | Boolean — scene is unimplemented |
 | `note` | Single free-text annotation |
 | `notes` | Multiple annotations (with optional `at:` for container attachment) |
-| `primary_parent` | Visual canonical parent (for reused scenes with multiple inbound routes) |
+| `primary_parent` | Visual canonical parent (for a scene reached from several parents) |
 
 A leaf scene with no body is written as `foo: {}`.
 
@@ -149,7 +153,7 @@ Declare the project vocabulary once at the top level:
 modal_styles: [sheet, full_screen, card, popover]
 ```
 
-Then tag a scene with `modal_style` wherever it is *defined* (its canonical home). The value must be one of the declared `modal_styles`:
+Then tag a scene with `modal_style` wherever it is *defined* (its canonical home). The value must be one of the declared `modal_styles`, or a map of them by form factor:
 
 ```yaml
 appointment_details:
@@ -164,7 +168,7 @@ media_capture:                     # canonical home
   modal_style: full_screen
 ```
 
-`modal_style` belongs to the scene, not the route — a scene presented modally from several parents carries one agreed presentation style, and implementation must use it. Every scene reached through a `modal` route must declare `modal_style`, and the map must declare that value in its top-level `modal_styles` vocabulary. The renderer rejects a modal destination with no style or a style outside that vocabulary. A map with no modal routes may omit `modal_styles`.
+`modal_style` belongs to the scene, not the route: a scene presented modally from several parents has one agreed style per form factor, which implementation must use. Every modal destination must declare its style in `modal_style` and the map's top-level `modal_styles` vocabulary; the renderer rejects missing or undeclared styles. A map with no modal routes may omit `modal_styles`.
 
 In the render, each modal wrapper gets a callout listing its destinations and required styles.
 
@@ -188,7 +192,7 @@ Scene IDs are globally unique across the whole document.
 
 ### Reused scenes and `primary_parent`
 
-A scene referenced from multiple places renders with one canonical visual instance and pointers everywhere else. When there are multiple inbound references, `primary_parent` picks the visual home:
+A scene referenced from multiple places renders with one canonical visual instance and pointers everywhere else. When several parents reach it, `primary_parent` picks the visual home:
 
 ```yaml
 thumbnail_slider:
@@ -197,7 +201,7 @@ thumbnail_slider:
     - gallery: {}
 ```
 
-With a single inbound reference, `primary_parent` is unnecessary — the only parent is implicitly primary.
+With one inbound parent, even by several routes, `primary_parent` is unnecessary — the only parent is implicitly primary.
 
 Every scene must reach a root through its visual homes. A `primary_parent` that the scene itself leads to forms a loop, and the renderer rejects it.
 
@@ -301,7 +305,7 @@ The sections above define the format; these are the conventions that make a map 
 - **Draw domain boundaries by meaning, then depth.** Group conceptually related scenes into a domain. Promote a self-contained or deeply-nesting subtree to its own domain (referenced from its entry point) to keep trees shallow — but don't spawn a domain mechanically the moment nesting reaches some depth, and don't force unrelated scenes together to fill one.
 - **Weigh whether a feature earns its own domain.** A domain should be a substantial feature area; a small or secondary feature doesn't justify a dedicated domain — group small/secondary features together under one shared domain rather than giving each its own.
 - **Collapse single-root domains.** A feature area with one root scene is one collapsed domain: domain id == root scene id, scene fields written directly, no `scenes:` wrapper. Prefer the concise feature name (`tickets`, not a `tickets` domain wrapping a `tickets_home` scene). Use the non-collapsed `scenes:` form only when a domain genuinely has several top-level scenes with no single root (a multi-root bucket like `assessment`). Don't wrap a lone root scene in `scenes:`, and don't force a multi-root bucket to collapse.
-- **Define each scene where it's reached.** A scene reached by a single route is defined *nested inside that route container*, under its parent, so the folder tree mirrors the navigation. Don't flatten a single-parent scene into a sibling of its parent.
+- **Define each scene where it's reached.** A scene reached from a single parent is defined *nested inside a route container* of that parent, unless it roots its own domain, so the folder tree mirrors the navigation. Don't flatten a single-parent scene into a sibling of its parent.
 
   Wrong — `ticket_detail` is reached only from `tickets_home`, yet defined as its sibling under `scenes:`:
 
@@ -326,7 +330,7 @@ The sections above define the format; these are the conventions that make a map 
             - reassign: { modal_style: sheet }
   ```
 
-- **Reused scenes have one home.** A scene reached from more than one parent is defined once — at a domain's top-level `scenes:` list or in `common:` — and referenced by id from each parent; set `primary_parent` to choose its visual home. Never copy a scene's body to a second place.
+- **Reused scenes have one home.** A scene reached from more than one parent is defined once — as a domain root, in a domain's `scenes:` list, or in `common:` — and referenced by id from each parent; set `primary_parent` to choose its visual home. Never copy a scene's body to a second place.
 - **`common:` is only for domain-agnostic scenes.** Use `common:` for a scene with no feature identity — one that could render anything, like a web view that displays any URL. A *feature* scene that happens to be reused across domains stays in a domain with `primary_parent`; it does not belong in `common:`.
 - **Display and data states are notes, not structure.** Empty, populated, loading, and error are states of one scene — not separate scenes, routes, or `implements` variants. Capture them with `note`/`notes` (or a map TODO); reserve `implements` for genuinely distinct variants of an abstract scene.
 - **Route kind reflects the actual presentation.** Read `nav`/`modal`/`composite`/`tab`/`child` from how a destination is really presented — not from vague wording ("appears", "available from", "can access") and not from an enum's name. Use `modal` when the source says modal/sheet/dialog/popover/full-screen; use `nav` when it says pushed/opens detail/drills in/links to. When the basis is genuinely ambiguous, treat it as a decision to raise, not a guess to bury.

@@ -10,6 +10,9 @@ is also its GitHub release notes.
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
 - **The Compose UI Map guides use SKAI's Compose library.** Compose routing and placeholders now come from a shared library in the SKAI submodule, for Compose Multiplatform and Android-only apps, and the guides match the SwiftUI ones. The library asks for old minimum versions of its dependencies, so adding it doesn't upgrade an app's own libraries.
+- **UI Maps can mark phone- and tablet-only screens and routes.** Declare your form factors, mark only what differs, and the renderer checks the markings agree. The rules are in a separate guide, so maps without form factors read as before. The viewer's form-factor filter comes later.
+- **Your UI Map conventions live in an addendum, not the README.** Move custom modal styles and other UI Map conventions from `README.md` to `skai/addenda/ui-map-implementation-addendum.md`, or to a document it points to.
+- **Map identifiers must be lower snake case.** The renderer now names any ID that isn't, such as `TrailDetail` instead of `trail_detail`.
 - **A new route value shows a new screen.** SwiftUI route enums in the UI Map guide take their identity from their whole value, so changing a route's associated value, such as the item a detail screen shows, presents a new screen instead of keeping the old one.
 - **Placeholder tabs keep their screens and use the scene's tab route.** A SwiftUI placeholder tab no longer rebuilds its screen, losing its state, every time the scene redraws, and a tab bar binds to the view model's tab route enum, as production code does.
 - **Route enums get their own files.** The SwiftUI and Compose UI Map guides now put each route enum in a file beside the view model instead of inside it; projects that prefer the old layout can keep it with a README override.

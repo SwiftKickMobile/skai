@@ -281,6 +281,7 @@ Create or change the app's UI Map as an architecture artifact. Produces a change
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 - Hosting [`Guides/Core/artifact-hosting.md`](Guides/Core/artifact-hosting.md) — read when the artifact does not exist yet: which repository it goes in, and the README link
 - Example [`Guides/UIMap/ui-map-demo.md`](Guides/UIMap/ui-map-demo.md) -- a complete UI Map in YAML with its rendered diagram
+- Form factors [`Guides/UIMap/ui-map-form-factors.md`](Guides/UIMap/ui-map-form-factors.md) — read when the map declares `form_factors`, or the work adds a screen or route that differs by form factor
 
 **Prerequisites:** Product/design/story inputs for a baseline map or scoped map change. Existing maps live at `skai/ui-map/ui-map.yaml`; architecture change artifacts live under `skai/changes/<change-id>/ui-map/`.
 
@@ -296,6 +297,7 @@ Execute or specify the structural code work needed to conform to the target UI M
 - Guide [`Guides/UIMap/ui-map-implementation.md`](Guides/UIMap/ui-map-implementation.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
+- Form factors [`Guides/UIMap/ui-map-form-factors.md`](Guides/UIMap/ui-map-form-factors.md) — read when the map declares `form_factors`, or the work adds a screen or route that differs by form factor
 
 **Prerequisites:** The app codebase and an identifiable target map: either a ready change package at `skai/changes/<change-id>/ui-map/` (proposed map + render + architecture artifact) or the official `skai/ui-map/ui-map.yaml` for conformance work. Run mode (Plan vs Build) is inferred from context.
 

@@ -12,7 +12,7 @@ Platform reference for implementing a UI Map in Compose Multiplatform or Android
 
 Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
-Routing is local, with no central router: the view model emits one-shot navigation effects and the screen dispatches them to a Compose Navigation `NavController` scoped to the scene. Deliberate overrides of any pattern here go in the project's `README.md` or an equivalent conventions doc; "README" here and in the placeholder guide means either.
+Routing is local, with no central router: the view model emits one-shot navigation effects and the screen dispatches them to a Compose Navigation `NavController` scoped to the scene. Deliberate overrides of any pattern here or in the placeholder guide are the project's conventions, reached from `ui-map-implementation-addendum.md`.
 
 ## SKAI Compose library
 
@@ -22,7 +22,7 @@ Inspect the Gradle settings and the consuming module first: a missing include or
 
 ## Scene file layout
 
-Map scene IDs are lower snake case; the package name drops the underscores and each word becomes UpperCamelCase in code types: `trail_detail` becomes:
+The package name drops a map scene ID's underscores and each word becomes UpperCamelCase in code types: `trail_detail` becomes:
 
 ```
 traildetail/
@@ -124,7 +124,7 @@ One `ModalRoute` enum per scene; each destination's required map `modal_style` s
 | `full_screen` | `bottomSheetFullScreenModal<Route>(navHostController = modalNavController) { … }` |
 | `popover` | `dialog<Route> { … }` |
 
-Projects document non-standard styles in `README.md`, each with its builder and the `NavHost` it belongs in. `ModalNavHost` also hosts the M2 `bottomSheet` builder: existing `bottomSheet` destinations stay; new `sheet` destinations use `bottomSheetModal`.
+Projects document non-standard styles in their conventions, each with its builder and the `NavHost` it belongs in. `ModalNavHost` also hosts the M2 `bottomSheet` builder: existing `bottomSheet` destinations stay; new `sheet` destinations use `bottomSheetModal`.
 
 ```kotlin
 // DashboardModalRoute.kt

@@ -21,12 +21,21 @@
       "description": "Project vocabulary of valid modal presentation styles (e.g. sheet, full_screen, card). Required whenever the map contains a modal route; every modal destination's 'modal_style' must be one of these.",
       "type": "array",
       "minItems": 1,
-      "items": { "type": "string", "minLength": 1 }
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/Identifier" }
+    },
+    "form_factors": {
+      "description": "Project vocabulary of form factors (e.g. phone, tablet). Omit when the app has one form factor; a map without it may not mark any screen, route or modal style by form factor. Unmarked means every form factor.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/Identifier" }
     },
     "domains": {
       "description": "Top-level grouping. Each key is a domain ID; the value is a domain definition. A domain is 'collapsed' when its ID matches its single root scene (the value carries scene-level fields directly); otherwise it is non-collapsed and contains a 'scenes' list.",
       "type": "object",
       "minProperties": 1,
+      "propertyNames": { "$ref": "#/$defs/Identifier" },
       "additionalProperties": { "$ref": "#/$defs/Domain" }
     },
     "common": {
@@ -41,6 +50,30 @@
     }
   },
   "$defs": {
+    "Identifier": {
+      "description": "A map identifier (domain or scene ID, implements value, modal style, form factor): lower snake case.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(_[a-z0-9]+)*$"
+    },
+    "FormFactorList": {
+      "description": "The form factors a screen exists on, or a route is used on: a non-empty subset of the document's top-level 'form_factors'.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/Identifier" }
+    },
+    "ModalStyle": {
+      "description": "How a scene is presented when reached by a modal route: one of the document's top-level 'modal_styles' for every form factor, or a map from form factor to style.",
+      "oneOf": [
+        { "$ref": "#/$defs/Identifier" },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "$ref": "#/$defs/Identifier" },
+          "additionalProperties": { "$ref": "#/$defs/Identifier" }
+        }
+      ]
+    },
     "RouteKind": {
       "description": "The five route kinds in the UI Map vocabulary.",
       "enum": ["nav", "modal", "composite", "tab", "child"]
@@ -65,10 +98,10 @@
         "child": { "$ref": "#/$defs/RouteContainer" },
         "implements": { "$ref": "#/$defs/ImplementsList" },
         "platform": { "type": "string" },
+        "form_factor": { "$ref": "#/$defs/FormFactorList" },
         "modal_style": {
           "description": "Required when this collapsed-domain root is reached by a modal route. Must be one of the document's top-level 'modal_styles', and implementations must use it.",
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/ModalStyle"
         },
         "todo": { "type": "boolean" },
         "note": { "type": "string" },
@@ -94,26 +127,41 @@
       }
     },
     "RouteContainer": {
-      "description": "A list of route destinations. Each item is a scene ID (cross-domain or in-domain reference) or a single-key mapping that defines an in-domain scene.",
+      "description": "A list of route destinations. Each item is a scene ID (cross-domain or in-domain reference), a single-key mapping that defines an in-domain scene, or a 'to:' entry for a route with settings of its own.",
       "type": "array",
       "items": { "$ref": "#/$defs/SceneListItem" }
     },
     "SceneListItem": {
-      "description": "A scene reference (bare string scene ID) or a scene definition (single-key mapping; key is the scene ID, value is the scene body).",
+      "description": "A scene reference (bare string scene ID), a scene definition (single-key mapping; key is the scene ID, value is the scene body), or a 'to:' entry for a route with settings of its own.",
       "oneOf": [
         {
           "description": "Cross-reference: scene defined elsewhere in the document.",
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/Identifier"
         },
         {
           "description": "In-place scene definition: single-key mapping from scene ID to scene body.",
           "type": "object",
           "minProperties": 1,
           "maxProperties": 1,
+          "propertyNames": { "$ref": "#/$defs/Identifier" },
           "additionalProperties": { "$ref": "#/$defs/SceneBody" }
-        }
+        },
+        { "$ref": "#/$defs/RouteEntry" }
       ]
+    },
+    "RouteEntry": {
+      "description": "A route with settings of its own. 'to' names the destination scene; 'scene' holds the destination's body when this entry defines it, and is omitted when the scene is defined elsewhere.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["to", "form_factor"],
+      "properties": {
+        "to": { "$ref": "#/$defs/Identifier" },
+        "form_factor": {
+          "description": "The form factors this route is used on; within both its source's and its destination's.",
+          "$ref": "#/$defs/FormFactorList"
+        },
+        "scene": { "$ref": "#/$defs/SceneBody" }
+      }
     },
     "SceneBody": {
       "description": "The definition of a scene's properties. All fields are optional. An empty body {} or null means a leaf scene with no further routes.",
@@ -149,10 +197,13 @@
           "type": "string",
           "minLength": 1
         },
+        "form_factor": {
+          "description": "The form factors this scene exists on, when not every one. Omit for a scene on every form factor.",
+          "$ref": "#/$defs/FormFactorList"
+        },
         "modal_style": {
-          "description": "How this scene is presented when reached by a modal route (e.g. sheet, full_screen, card). Required for every modal destination and must be one of the document's top-level 'modal_styles'. Implementations must use this style.",
-          "type": "string",
-          "minLength": 1
+          "description": "How this scene is presented when reached by a modal route (e.g. sheet, full_screen, card). Required for every modal destination; one of the document's top-level 'modal_styles', or a map from form factor to style. Implementations must use this style.",
+          "$ref": "#/$defs/ModalStyle"
         },
         "todo": {
           "description": "Boolean flag: when true, marks this scene as not yet implemented. Independent of the 'note' field.",
@@ -177,10 +228,7 @@
       "description": "Non-empty list of variant identifiers.",
       "type": "array",
       "minItems": 1,
-      "items": {
-        "type": "string",
-        "minLength": 1
-      }
+      "items": { "$ref": "#/$defs/Identifier" }
     },
     "NotesList": {
       "description": "List of notes attached to a scene or container.",

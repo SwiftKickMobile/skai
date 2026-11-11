@@ -12,11 +12,11 @@ Platform reference for implementing a UI Map in SwiftUI; companion to [`ui-map-g
 
 Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
-Routing is local, with no central router: the view model owns the outgoing route state as properties and the view applies SwiftUI modifiers driven by them. Deliberate overrides of any pattern here go in the project's `README.md` or an equivalent conventions doc — what README means here and in the placeholder guide.
+Routing is local, with no central router: the view model owns the outgoing route state as properties and the view applies SwiftUI modifiers driven by them. Deliberate overrides of any pattern here or in the placeholder guide are the project's conventions, reached from `ui-map-implementation-addendum.md`.
 
 ## Scene file layout
 
-Map scene IDs are lower snake case; each word becomes UpperCamelCase for scene folders and code types: `trail_detail` becomes `TrailDetail`, so its standard layout is:
+Each word of a map scene ID becomes UpperCamelCase for scene folders and code types: `trail_detail` becomes `TrailDetail`, so its standard layout is:
 
 ```
 TrailDetail/
@@ -31,7 +31,7 @@ Every scene, even a leaf with no routes or state, gets a `<Scene>ViewModel`, so 
 
 An optional `Views/` subfolder holds the scene's own small presentational subviews, split out to keep `<Scene>View.swift` uncluttered — never a scene (every scene gets its own folder) or another scene's subviews.
 
-Scenes live under a top-level `Scenes/` folder (root overridable in `README.md`); each domain is a folder directly under it, and a scene's folder sits where the map *defines* it inside `domains:` — never where a reference, `primary_parent`, or other inbound route names it:
+Scenes live under a top-level `Scenes/` folder (root overridable in the project's conventions); each domain is a folder directly under it, and a scene's folder sits where the map *defines* it inside `domains:` — never where a reference, `primary_parent`, or other inbound route names it:
 
 - a collapsed domain (domain id == its root scene) → the domain folder is the root scene's folder (e.g. `Library/LibraryView.swift`);
 - a scene defined inline under a route container → nests inside the container's owning scene's folder (e.g. `App/Login/Welcome/`);
@@ -131,7 +131,7 @@ struct DashboardView: View {
 }
 ```
 
-Non-standard modal styles (third-party libraries, project-specific overlays) the project declares in its `modal_styles` YAML vocabulary and documents, each with its modifier signature and enum-suffix convention, under a **Modal Styles** section of `README.md`.
+Non-standard modal styles (third-party libraries, project-specific overlays) the project declares in its `modal_styles` YAML vocabulary and documents in its conventions, each with its modifier signature and enum-suffix convention.
 
 ## Child routing
 

@@ -442,3 +442,18 @@ Round 2 repairs leave `ui-map-swiftui-placeholders.md` 9 bytes and `ui-map-compo
 | 2026-11-11 57-backout-r2 | F3 scene-name label rule doesn't reach a tab on a real bar | logged | Behind the real-screen deferral; sharpen when the mapping lands |
 | 2026-11-11 57-backout-r2 | F4 SwiftUI library previews omit `systemImage` | logged | Library previews, not operator inputs; guide rule is clear |
 | 2026-11-11 57-backout | Series stop | closed | r2 scored 0 over the current text |
+| 2026-11-11 67-r1 | F1 map guide taught two scene forms, one modal style and multiple-inbound → `primary_parent` as exhaustive | closed | *Scenes*, *Modal styles*, *Reused scenes* and the authoring rule admit the form-factor cases |
+| 2026-11-11 67-r1 | F2 form-factors guide example wasn't a valid map | closed | Full envelope; renders |
+| 2026-11-11 67-r1 | F3 "naming what to declare" overstated the renderer errors | closed | Errors name the conflict; resolve against intended screens and routes |
+| 2026-11-11 67-r1 | F4 code stop missed an unmarked screen with a modal-style map; audit and Inputs didn't carry form factors | closed | Stop covers anything that differs; per-form-factor comparison; Inputs records addenda and documents |
+| 2026-11-11 67-r1 | F5 architecture artifacts over its cap | closed | 5,913 / 5,920 |
+| 2026-11-11 67-r2 | F1 missing form-factor pattern had two homes | closed | Form-factors guide: add it "there, not to the implementation addendum" |
+| 2026-11-11 67-r2 | F2 single-parent nesting rule would flatten a domain root | closed | "unless it roots its own domain" |
+| 2026-11-11 67-r2 | F3 `platform` comparison asserted a codebase count | closed | Deleted |
+| 2026-11-11 67-r2 | F4 Compose modal-style descriptor naming vs its example | closed | camelCase property, exact map ID as `id` |
+| 2026-11-11 67-r3 | F1 reused-scene rule excluded a domain root | closed | "as a domain root, in a domain's `scenes:` list, or in `common:`" |
+| 2026-11-11 67-r3 | F2 valid IDs can convert to reserved words (`class`) | logged | Hypothetical; a failed build stops at the standing blocked gate; first sighting |
+| 2026-11-11 67-r3 | F3 renderer sentence read as rejecting root screens | closed | "non-root screens" |
+| 2026-11-11 67-r4 | F1 reused-scene home list vs "define it under the route you want it drawn in" for a two-parent scene | logged | Older text both sides; the visual-home section falls back when the scene is defined elsewhere; first sighting |
+| 2026-11-11 67-r4 | F2 implementation gates don't show the render or why there is none | logged | Outside #67; candidate for the next implementation-guide pass |
+| 2026-11-11 67 | Series stop | closed | r4 scored 0 over the current text |

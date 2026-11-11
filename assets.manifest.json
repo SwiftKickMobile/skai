@@ -548,6 +548,12 @@
       "tags": ["core"]
     },
     {
+      "id": "guide.ui-map-form-factors",
+      "type": "guide",
+      "sourcePath": "Guides/UIMap/ui-map-form-factors.md",
+      "tags": ["core"]
+    },
+    {
       "id": "guide.ui-map-demo",
       "type": "guide",
       "sourcePath": "Guides/UIMap/ui-map-demo.md",

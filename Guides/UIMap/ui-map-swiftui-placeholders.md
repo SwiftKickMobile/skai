@@ -16,7 +16,7 @@ Everything you write for a person follows [`writing-style.md`](../Core/writing-s
 
 ## Build philosophy
 
-This guide covers the standard patterns — with standard route kinds and modal styles it alone suffices — and the project `README.md` covers overrides and patterns not here (e.g. custom modal styles); a pattern neither supplies means STOP at a blocked gate citing the missing piece, never inventing one.
+This guide covers the standard patterns — with standard route kinds and modal styles it alone suffices — and the project's conventions cover overrides and patterns not here (e.g. custom modal styles); a pattern neither supplies means STOP at a blocked gate citing the missing piece, never inventing one.
 
 ## The one rule: NavigationStack lives at the presentation boundary
 

@@ -26,6 +26,8 @@
   const domainLabel = Object.fromEntries(M.domains.map(d => [d.id, d.label]));
   const KIND = { nav: "Nav", modal: "Modal", composite: "Composite", tab: "Tab", child: "Child" };
   const humanize = id => id.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");   // matches the renderer
+  // A modal style is one style, or a map from form factor to style.
+  const modalStyles = ms => typeof ms === "string" ? [humanize(ms)] : Object.entries(ms).map(([ff, st]) => `${humanize(ff)} · ${humanize(st)}`);
   // Scene-box icons: existence only; the panel spells the content out.
   const ICONS = {
     note: '<path d="M3 2.5h7l3 3V13.5H3z"/><path d="M10 2.5v3h3M5.5 8h5M5.5 10.5h5"/>',
@@ -37,7 +39,7 @@
   const calloutIcons = sc => [
     sc.notes.length ? icon("note", sc.notes.length === 1 ? "1 note" : `${sc.notes.length} notes`) : null,
     sc.implements.length ? icon("implements", `implements ${sc.implements.join(", ")}`) : null,
-    sc.modalStyle ? icon("modal", `modal style: ${sc.modalStyle}`) : null,
+    sc.modalStyle ? icon("modal", `modal style: ${modalStyles(sc.modalStyle).join(", ")}`) : null,
   ].filter(Boolean);
 
   // hops: 1 | 2 | "all" — how far from the selection (or the chosen domains) the filter reaches.
@@ -387,7 +389,7 @@
       ...s.notes.map(n => el("div", { class: "note" }, n.at ? el("span", { class: "k" }, KIND[n.at]) : null, n.text))));
     if (s.implements.length) body.append(el("div", { class: "pg" }, labIcon("implements", "Implements"),
       el("div", { class: "chips" }, ...s.implements.map(i => el("span", { class: "chip" }, humanize(i))))));
-    if (s.modalStyle) body.append(el("div", { class: "pg" }, labIcon("modal", "Modal style"), el("div", { class: "chips" }, el("span", { class: "chip" }, humanize(s.modalStyle)))));
+    if (s.modalStyle) body.append(el("div", { class: "pg" }, labIcon("modal", "Modal style"), el("div", { class: "chips" }, ...modalStyles(s.modalStyle).map(m => el("span", { class: "chip" }, m)))));
     body.append(el("div", { class: "pg" }, el("span", { class: "lab" }, "Specs"), el("span", { class: "empty" }, "No sidecar yet.")));
     panel.append(body);
     return panel;

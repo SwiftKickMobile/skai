@@ -14,7 +14,7 @@ Everything you write for a person follows [`writing-style.md`](../Core/writing-s
 
 ## Build philosophy
 
-Follow this guide for the standard patterns — with standard route kinds and modal styles it alone suffices — and the project `README.md` for overrides and patterns not covered here (e.g. custom modal styles). If a scaffold needs a pattern neither supplies, STOP at a blocked gate citing the missing piece; never invent one.
+Follow this guide for the standard patterns — with standard route kinds and modal styles it alone suffices — and the project's conventions for overrides and patterns not covered here (e.g. custom modal styles). If a scaffold needs a pattern neither supplies, STOP at a blocked gate citing the missing piece; never invent one.
 
 ## The one rule: each scene owns its navigation hosts
 
@@ -62,7 +62,7 @@ Each scene sets `domainColor` to its domain's slot; a scene in a sub-domain uses
 
 ## Modal style descriptors
 
-Generate one `ModalStyles.kt` from the map's complete top-level `modal_styles` list: each style ID as a Kotlin property name, keeping its exact map ID, with a readable title and its declaration index.
+Generate one `ModalStyles.kt` from the map's complete top-level `modal_styles` list: each style as a camelCase Kotlin property, its `id` the exact map ID, with a readable title and its declaration index.
 
 ```kotlin
 // 🟡 UI Map scaffold <change-id>

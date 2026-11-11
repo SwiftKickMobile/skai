@@ -77,7 +77,8 @@ the demo doc and the guide describe the same conventions in prose.
        * Pointer (non-canonical reference) → gray fill `#bdbdbd`, dark text.
    - Drop shadows are disabled via `filter: none` on every classDef.
    - Each scene's label is derived by humanizing its snake_case ID
-     (`appointment_details` → `Appointment Details`).
+     (`appointment_details` → `Appointment Details`); a scene with a
+     `form_factor` adds them after a dot (`Rounds · tablet`).
 
 3. DOMAINS AND PALETTE
    - Each domain in the YAML's `domains:` section maps to a palette color in
@@ -98,7 +99,10 @@ the demo doc and the guide describe the same conventions in prose.
         X to this scene; if X routes to this scene via multiple kinds, the
         kind whose container defines the scene wins, falling back to the first
         declared kind when the scene is defined elsewhere.
-     b. Exactly one inbound reference → that single parent's wrapper.
+     b. Exactly one inbound reference → that single parent's wrapper. Several
+        inbound references all from one parent (a scene reached differently
+        per form factor) → that parent, in the container that defines the
+        scene, else the first route kind.
      c. Zero inbound references → root scene: declared at top level, no
         enclosing wrapper.
      d. Multiple inbound references with no `primary_parent` → semantic error.
@@ -161,7 +165,13 @@ the demo doc and the guide describe the same conventions in prose.
       wrapper, not a single scene, so it can't take a scene's domain color
       the way an implements callout does.
     - The scene's `modal_style` must be one of the document's top-level
-      `modal_styles`; the build step validates this.
+      `modal_styles`; the build step validates this. A `modal_style` map lists
+      each form factor and its style.
+
+10a. CALLOUTS — ROUTE FORM FACTORS
+    - For each route container holding a `to:` entry, emit one callout
+      `ffroute_<sid>_<kind>` listing each marked destination and its form
+      factors in bold, styled and attached like the modal-style callout.
 
 11. WHAT IS NOT RENDERED
     - Top-level `todos:` list: not rendered visually; surfaced via a separate
@@ -178,9 +188,12 @@ the demo doc and the guide describe the same conventions in prose.
     - The model carries, per scene: id, humanized label, domain, canonical
       home (visual parent and route kind, rule 4), route containers in YAML
       order with their destinations, `implements`, `modal_style`, notes
-      (with `at:` when attached to a route container, rule 9), `todo`, and
-      every inbound route. Plus the domain list in palette order (rule 3),
-      the modal-style vocabulary, scene order, and the root scenes.
+      (with `at:` when attached to a route container, rule 9), `todo`, its
+      `form_factor` (`formFactors`, null when unmarked), and every inbound
+      route; a route container with a marked route carries `formFactors`, one
+      entry per destination (null when unmarked). Plus the domain list in
+      palette order (rule 3), the modal-style and form-factor vocabularies,
+      scene order, and the root scenes.
     - Layout: levels as rows — depth in the canonical-home tree — at a fixed
       cell width that never shrinks, the page growing vertically. Each scene's
       route containers sit in the row below it as dashed boxes (composite:
@@ -240,7 +253,14 @@ the demo doc and the guide describe the same conventions in prose.
       `primary_parent` that doesn't actually route to the scene,
       visual homes that form a loop,
       too many domains for the palette, missing modal_style or vocabulary,
-      modal_style outside the vocabulary.
+      modal_style outside the vocabulary, a scene listed twice in one route
+      container, and form factors: marking without a `form_factors`
+      vocabulary, a value outside it, a route marked where its source or
+      destination doesn't exist, a scene whose declared form factors don't
+      match where routes reach it (the message names what to declare), and a
+      `modal_style` map that doesn't match where modal routes present the
+      scene. A schema failure on an identifier names it as not lower snake
+      case.
 """
 
 from __future__ import annotations
@@ -322,6 +342,8 @@ class Model:
     scene_domain: dict[str, str | None] = field(default_factory=dict)  # id -> domain_id
     domain_order: list[str] = field(default_factory=list)  # domains in YAML order
     modal_styles: list[str] = field(default_factory=list)  # project modal-style vocabulary
+    form_factors: list[str] = field(default_factory=list)  # project form-factor vocabulary
+    route_form_factors: dict[tuple[str, str, str], list[str]] = field(default_factory=dict)  # marked routes
     todos: list[dict[str, Any]] = field(default_factory=list)
 
 
@@ -334,9 +356,29 @@ def load_yaml(path: Path) -> dict[str, Any]:
     return yaml.safe_load(path.read_text())
 
 
+IDENTIFIER_PATTERN = "^[a-z][a-z0-9]*(_[a-z0-9]+)*$"
+
+
 def validate_schema(data: dict[str, Any], schema_path: Path) -> None:
+    """Validate against the schema; an identifier that isn't lower snake case is named plainly.
+
+    A bad ID fails every alternative of a `oneOf`, whose own message names no
+    cause, so the pattern failure is dug out of the alternatives' errors.
+    """
     schema = json.loads(schema_path.read_text())
-    jsonschema.validate(data, schema)
+    try:
+        jsonschema.validate(data, schema)
+    except jsonschema.ValidationError as exc:
+        pending = [exc]
+        while pending:
+            error = pending.pop()
+            if error.validator == "pattern" and error.validator_value == IDENTIFIER_PATTERN:
+                raise jsonschema.ValidationError(
+                    f"{error.instance!r} is not lower snake case; map identifiers (domain and "
+                    "scene IDs, implements values, modal styles, form factors) are, e.g. trail_detail"
+                ) from exc
+            pending.extend(error.context)
+        raise
 
 
 # ---------------------------------------------------------------------------
@@ -348,10 +390,23 @@ class SemanticError(ValueError):
     pass
 
 
+def _is_route_entry(item: Any) -> bool:
+    """A `to:` entry: a route with settings of its own (`to: <scene>`, `form_factor`, optional `scene`)."""
+    return isinstance(item, dict) and isinstance(item.get("to"), str)
+
+
 def _scene_id_and_body(item: Any) -> tuple[str, dict[str, Any] | None]:
-    """Split a scene list item into (id, body). String → (id, None) for refs."""
+    """Split a scene list item into (id, body). String → (id, None) for refs.
+
+    A `to:` entry is a reference unless it carries `scene:`, the body of the
+    scene it defines.
+    """
     if isinstance(item, str):
         return item, None
+    if _is_route_entry(item):
+        if "scene" not in item:
+            return item["to"], None
+        return item["to"], (item["scene"] if item["scene"] is not None else {})
     if isinstance(item, dict) and len(item) == 1:
         scene_id = next(iter(item.keys()))
         body = item[scene_id]
@@ -368,10 +423,16 @@ def _walk_item(
     edges: list[tuple[str, str, str]],
     scene_domain: dict[str, str | None],
     definition_site: dict[str, tuple[str | None, str | None]],
+    route_form_factors: dict[tuple[str, str, str], list[str]],
 ) -> None:
     scene_id, body = _scene_id_and_body(item)
     if parent_id is not None and route_kind is not None:
-        edges.append((parent_id, route_kind, scene_id))
+        edge = (parent_id, route_kind, scene_id)
+        if edge in edges:
+            raise SemanticError(f"'{scene_id}' is listed twice in '{parent_id}.{route_kind}'")
+        edges.append(edge)
+        if _is_route_entry(item):
+            route_form_factors[edge] = list(item["form_factor"])
     if body is None:
         return  # bare reference
     if scene_id in scenes:
@@ -382,7 +443,15 @@ def _walk_item(
     for kind in ROUTE_KINDS:
         for sub_item in body.get(kind, []) or []:
             _walk_item(
-                sub_item, scene_id, kind, domain_id, scenes, edges, scene_domain, definition_site
+                sub_item,
+                scene_id,
+                kind,
+                domain_id,
+                scenes,
+                edges,
+                scene_domain,
+                definition_site,
+                route_form_factors,
             )
 
 
@@ -391,6 +460,7 @@ def build_model(data: dict[str, Any]) -> Model:
     edges: list[tuple[str, str, str]] = []
     scene_domain: dict[str, str | None] = {}
     definition_site: dict[str, tuple[str | None, str | None]] = {}
+    route_form_factors: dict[tuple[str, str, str], list[str]] = {}
     domain_order: list[str] = []
 
     for domain_id, domain_data in data["domains"].items():
@@ -398,7 +468,15 @@ def build_model(data: dict[str, Any]) -> Model:
         if "scenes" in domain_data:
             for item in domain_data["scenes"]:
                 _walk_item(
-                    item, None, None, domain_id, scenes, edges, scene_domain, definition_site
+                    item,
+                    None,
+                    None,
+                    domain_id,
+                    scenes,
+                    edges,
+                    scene_domain,
+                    definition_site,
+                    route_form_factors,
                 )
         else:
             _walk_item(
@@ -410,12 +488,21 @@ def build_model(data: dict[str, Any]) -> Model:
                 edges,
                 scene_domain,
                 definition_site,
+                route_form_factors,
             )
 
     common_items = data.get("common", []) or []
     for item in common_items:
         _walk_item(
-            item, None, None, COMMON_DOMAIN_ID, scenes, edges, scene_domain, definition_site
+            item,
+            None,
+            None,
+            COMMON_DOMAIN_ID,
+            scenes,
+            edges,
+            scene_domain,
+            definition_site,
+            route_form_factors,
         )
     if common_items:
         domain_order.append(COMMON_DOMAIN_ID)
@@ -447,6 +534,14 @@ def build_model(data: dict[str, Any]) -> Model:
                 visual_parent[sid] = (pp, kinds[0])
         elif len(inbound[sid]) == 1:
             visual_parent[sid] = inbound[sid][0]
+        elif len({p for p, _ in inbound[sid]}) == 1:
+            # Several routes from one parent and no other (e.g. pushed on a
+            # phone, presented on a tablet): that parent, in the container
+            # that defines the scene, else the first route.
+            parent = inbound[sid][0][0]
+            def_parent, def_kind = definition_site.get(sid, (None, None))
+            kinds = [k for _, k in inbound[sid]]
+            visual_parent[sid] = (parent, def_kind if def_parent == parent and def_kind in kinds else kinds[0])
         elif len(inbound[sid]) == 0:
             visual_parent[sid] = (None, None)
         else:
@@ -492,16 +587,20 @@ def build_model(data: dict[str, Any]) -> Model:
         ms = body.get("modal_style")
         if ms is None:
             continue
-        if not modal_style_set:
-            raise SemanticError(
-                f"Scene '{sid}' declares modal_style '{ms}' but the document "
-                f"has no top-level 'modal_styles' vocabulary"
-            )
-        if ms not in modal_style_set:
-            raise SemanticError(
-                f"Scene '{sid}' modal_style '{ms}' is not in modal_styles "
-                f"{sorted(modal_style_set)}"
-            )
+        for style in ms.values() if isinstance(ms, dict) else [ms]:
+            if not modal_style_set:
+                raise SemanticError(
+                    f"Scene '{sid}' declares modal_style '{style}' but the document "
+                    f"has no top-level 'modal_styles' vocabulary"
+                )
+            if style not in modal_style_set:
+                raise SemanticError(
+                    f"Scene '{sid}' modal_style '{style}' is not in modal_styles "
+                    f"{sorted(modal_style_set)}"
+                )
+
+    form_factors = data.get("form_factors", []) or []
+    _check_form_factors(scenes, edges, inbound, route_form_factors, form_factors)
 
     return Model(
         version=data["version"],
@@ -513,8 +612,120 @@ def build_model(data: dict[str, Any]) -> Model:
         scene_domain=scene_domain,
         domain_order=domain_order,
         modal_styles=modal_styles,
+        form_factors=form_factors,
+        route_form_factors=route_form_factors,
         todos=data.get("todos", []) or [],
     )
+
+
+def _check_form_factors(
+    scenes: dict[str, dict[str, Any]],
+    edges: list[tuple[str, str, str]],
+    inbound: dict[str, list[tuple[str, str]]],
+    route_form_factors: dict[tuple[str, str, str], list[str]],
+    form_factors: list[str],
+) -> None:
+    """Form-factor markings: in the vocabulary, consistent, and declared where needed.
+
+    A scene exists on its declared `form_factor`, else on every form factor. A
+    route is used where its marking (else every form factor), its source and its
+    destination all exist. Each scene must exist exactly where some route from a
+    reachable source reaches it; the error names what to declare.
+    """
+    guide = " (see Guides/UIMap/ui-map-form-factors.md)"
+
+    def fmt(values: set[str] | list[str]) -> str:
+        return "[" + ", ".join(sorted(values)) + "]"
+
+    vocab = set(form_factors)
+    if not vocab:
+        for sid, body in scenes.items():
+            if body.get("form_factor") is not None or isinstance(body.get("modal_style"), dict):
+                raise SemanticError(
+                    f"Scene '{sid}' is marked by form factor but the document has no "
+                    "top-level 'form_factors' vocabulary" + guide
+                )
+        for parent_id, kind, target_id in route_form_factors:
+            raise SemanticError(
+                f"Route '{parent_id}.{kind}' to '{target_id}' is marked by form factor but "
+                "the document has no top-level 'form_factors' vocabulary" + guide
+            )
+        return
+
+    for sid, body in scenes.items():
+        if (unknown := set(body.get("form_factor") or []) - vocab):
+            raise SemanticError(f"Scene '{sid}' form_factor {fmt(unknown)} is not in form_factors {fmt(vocab)}" + guide)
+    for (parent_id, kind, target_id), marked in route_form_factors.items():
+        if (unknown := set(marked) - vocab):
+            raise SemanticError(
+                f"Route '{parent_id}.{kind}' to '{target_id}' form_factor {fmt(unknown)} "
+                f"is not in form_factors {fmt(vocab)}" + guide
+            )
+
+    exists = {sid: set(body.get("form_factor") or vocab) for sid, body in scenes.items()}
+    used: dict[tuple[str, str, str], set[str]] = {}
+    for edge in edges:
+        parent_id, kind, target_id = edge
+        marked = route_form_factors.get(edge)
+        if marked is not None:
+            for end in (parent_id, target_id):
+                if (outside := set(marked) - exists[end]):
+                    raise SemanticError(
+                        f"Route '{parent_id}.{kind}' to '{target_id}' is marked {fmt(marked)}, "
+                        f"but '{end}' exists only on {fmt(exists[end])}" + guide
+                    )
+        used[edge] = (set(marked) if marked is not None else vocab) & exists[parent_id] & exists[target_id]
+        if not used[edge]:
+            raise SemanticError(
+                f"Route '{parent_id}.{kind}' to '{target_id}' can't be used on any form factor: "
+                f"'{parent_id}' exists on {fmt(exists[parent_id])}, '{target_id}' on {fmt(exists[target_id])}" + guide
+            )
+
+    reached = {sid: (set(exists[sid]) if not inbound[sid] else set()) for sid in scenes}
+    changed = True
+    while changed:
+        changed = False
+        for edge in edges:
+            parent_id, _, target_id = edge
+            if not (gain := (used[edge] & reached[parent_id]) - reached[target_id]):
+                continue
+            reached[target_id] |= gain
+            changed = True
+
+    for sid, body in scenes.items():
+        if reached[sid] == exists[sid]:
+            continue
+        if not reached[sid]:
+            raise SemanticError(
+                f"Scene '{sid}' can't be reached on any form factor; check the form factors "
+                "of the routes and scenes that lead to it" + guide
+            )
+        if body.get("form_factor") is None:
+            raise SemanticError(
+                f"Scene '{sid}' is reachable only on {fmt(reached[sid])}; "
+                f"declare form_factor: {fmt(reached[sid])}" + guide
+            )
+        raise SemanticError(
+            f"Scene '{sid}' declares form_factor {fmt(exists[sid])}, but no route reaches it "
+            f"on {fmt(exists[sid] - reached[sid])}" + guide
+        )
+
+    for sid, body in scenes.items():
+        ms = body.get("modal_style")
+        if not isinstance(ms, dict):
+            continue
+        presented: set[str] = set()
+        for parent_id, kind in inbound[sid]:
+            if kind == "modal":
+                presented |= used[(parent_id, kind, sid)] & reached[parent_id]
+        if (unknown := set(ms) - vocab):
+            raise SemanticError(f"Scene '{sid}' modal_style names {fmt(unknown)}, not in form_factors {fmt(vocab)}" + guide)
+        if (missing := presented - set(ms)):
+            raise SemanticError(f"Scene '{sid}' is presented modally on {fmt(missing)} but has no modal_style for it" + guide)
+        if (extra := set(ms) - presented):
+            raise SemanticError(
+                f"Scene '{sid}' has a modal_style for {fmt(extra)}, but no modal route presents it there" + guide
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -577,8 +788,10 @@ def render(model: Model) -> str:
 
     # Canonical scene declarations
     out.append("    %% Canonical scenes")
-    for sid in model.scenes:
-        out.append(f'    {sid}(["{humanize(sid)}"])')
+    for sid, body in model.scenes.items():
+        ff = body.get("form_factor")
+        suffix = f" · {', '.join(ff)}" if ff else ""
+        out.append(f'    {sid}(["{humanize(sid)}{suffix}"])')
     out.append("")
 
     # Anchor the legend to a root scene with an invisible edge. Without this,
@@ -680,6 +893,8 @@ def render(model: Model) -> str:
         for item in modal_targets:
             target_id, _ = _scene_id_and_body(item)
             ms = model.scenes[target_id]["modal_style"]
+            if isinstance(ms, dict):
+                ms = ", ".join(f"{ff} {style}" for ff, style in ms.items())
             lines.append(f"{humanize(target_id)} <b>{ms}</b>")
         if not lines:
             continue
@@ -691,6 +906,29 @@ def render(model: Model) -> str:
         out.append(f"    {callout_id} -.- {sid}_modal")
         mstyle_callout_ids.append(callout_id)
     if mstyle_callout_ids:
+        out.append("")
+
+    # Form-factor callouts: one per route container holding a marked route,
+    # listing each marked destination and the form factors it is used on.
+    ffroute_callout_ids: list[str] = []
+    for sid, body in model.scenes.items():
+        for kind in ROUTE_KINDS:
+            marked = [
+                (target_id, ffs)
+                for (p, k, target_id), ffs in model.route_form_factors.items()
+                if p == sid and k == kind
+            ]
+            if not marked:
+                continue
+            callout_id = f"ffroute_{sid}_{kind}"
+            inner = ", ".join(f"{humanize(t)} <b>{' '.join(ffs)}</b>" for t, ffs in marked)
+            out.append(
+                f"    {callout_id}[/\"<div style='text-align:left'>{inner}</div>\"/]"
+            )
+            out.append(f"    {callout_id} -.- {sid}_{kind}")
+            ffroute_callout_ids.append(callout_id)
+    mstyle_callout_ids.extend(ffroute_callout_ids)
+    if ffroute_callout_ids:
         out.append("")
 
     # ===== Class definitions =====
@@ -880,11 +1118,15 @@ def build_viewer_model(model: Model) -> dict[str, Any]:
     scenes: dict[str, dict[str, Any]] = {}
     for sid, body in model.scenes.items():
         parent, kind = model.visual_parent[sid]
-        routes = [
-            {"kind": k, "targets": [_scene_id_and_body(item)[0] for item in body[k]]}
-            for k in body
-            if k in ROUTE_KINDS and body[k]
-        ]
+        routes = []
+        for k in body:
+            if k not in ROUTE_KINDS or not body[k]:
+                continue
+            targets = [_scene_id_and_body(item)[0] for item in body[k]]
+            route: dict[str, Any] = {"kind": k, "targets": targets}
+            if any((sid, k, t) in model.route_form_factors for t in targets):
+                route["formFactors"] = [model.route_form_factors.get((sid, k, t)) for t in targets]
+            routes.append(route)
         notes: list[dict[str, Any]] = []
         if body.get("note"):
             notes.append({"at": None, "text": body["note"]})
@@ -902,6 +1144,7 @@ def build_viewer_model(model: Model) -> dict[str, Any]:
             "routes": routes,
             "implements": body.get("implements", []) or [],
             "modalStyle": body.get("modal_style"),
+            "formFactors": body.get("form_factor"),
             "notes": notes,
             "todo": bool(body.get("todo")),
             "reachedFrom": [{"source": p, "kind": k} for p, k in model.inbound[sid]],
@@ -910,6 +1153,7 @@ def build_viewer_model(model: Model) -> dict[str, Any]:
         "app": model.app,
         "version": model.version,
         "modalStyles": model.modal_styles,
+        "formFactors": model.form_factors,
         "domains": domains,
         "scenes": scenes,
         "order": list(model.scenes.keys()),
