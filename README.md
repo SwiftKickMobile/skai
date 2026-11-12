@@ -367,7 +367,7 @@ Take a design change from an idea to a completed change package, authored agains
 
 ### Design promotion (skill `skai-design-promotion`)
 
-Fold a completed package into its base: a change's own package into production (drafts moved from the change page, package archived to `skai/promoted/<change-id>/design/`), or a change request's sub-package into its base, production included (frames moved from the request section into the base's drawings, the request's entries appended to a base package's Design Changes, its open items and gaps staying in the archived request, sub-package archived per [`change-requests.md`](Guides/Core/change-requests.md)). The supervisor confirms the base before the drafts are deleted. Promotion refactors the base to absorb the drafts; a draft that needs changing returns the package to authoring. Implementing designs in code is out of scope.
+Fold a completed package into its base, carrying every change to every base frame it affects, not only the frames the package drew: a change's own package into production (drafts copied from the change page, package archived to `skai/promoted/<change-id>/design/`), or a change request's sub-package into its base, production included (frames copied from the request section into the base's drawings, the request's entries appended to a base package's Design Changes, its open items and gaps staying in the archived request, sub-package archived per [`change-requests.md`](Guides/Core/change-requests.md)). The base is backed up first; the supervisor reviews the base before the package archives, and deletes the drafts and backup when ready. Promotion refactors the base to absorb the drafts; a draft that needs changing returns the package to authoring. Implementing designs in code is out of scope.
 
 - Guide [`Guides/Design/design-promotion.md`](Guides/Design/design-promotion.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
@@ -377,8 +377,8 @@ Fold a completed package into its base: a change's own package into production (
 
 **Phases:**
 
-1. **Promotion checks.** Agent renders the page and screens the package for readiness, then writes an unchecked checklist: drafts meet the conventions, inventory matches the drawings, the base absorbs the package, links repoint, drafts deleted, package archived. Gate: supervisor reviews what will land and into which base.
-2. **Execute.** Agent verifies and applies, then stops for the supervisor to review the base in the design file. Gate: supervisor confirms; the change page or request section is deleted and the package archived.
+1. **Promotion checks.** Agent renders the page and screens the package for readiness, then writes an unchecked checklist: drafts meet the conventions, inventory matches the drawings, the base absorbs the package, links repoint, package archived. Gate: supervisor reviews what will land and into which base.
+2. **Execute.** Agent verifies and applies, then stops for the supervisor to review the base in the design file. Gate: supervisor confirms and the package archives; the drafts and backup stay until the supervisor deletes them.
 
 ### Design specs authoring (skill `skai-design-specs-authoring`)
 

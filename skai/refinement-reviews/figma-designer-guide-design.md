@@ -195,3 +195,17 @@ Cap (supervisor, 2026-11-11): the pair **18,100 bytes** (was 18,000; 17,997 befo
 ## Amendment — 2026-11-11: Requests As Folders Of Sub-Packages; Confirming The Route (skai#108, skai#129)
 
 Adopts [`change-requests-design.md`](change-requests-design.md) § Amendment — 2026-11-11: this standard's guides say the items that amendment lists for their kind of guide (artifacts, authoring, promotion, Figma), and every request path, ID and provenance tag in them takes the new form. Caps for this change: `change-requests-design.md` § Amendment — 2026-11-11 (supervisor, 2026-11-11).
+
+## Amendment — 2026-11-11: Container Sections, Backups, Scratch (skai#111, skai#100)
+
+Rulings: skai#111 and skai#100 (supervisor, 2026-11-11; the B1 plan's Q2, Q3, Q10–Q12; the 2026-10-29 page-layout comment on skai#111). Inventory per skai#90, before prose.
+
+1. **Container Section on change pages.** A change page's per-screen Sections sit inside one Section named for the package; request Sections and scratch Sections sit beside it at the page's top level. `Production` keeps its feature areas with no container.
+2. **Backup of the base.** Before a fold changes a package's drawings, a copy of its container Section, `Base — Pre CR-<id>`, gap annotations stripped, stacks under the request Section, left edges aligned, 100 apart. A backup of `Production` goes on a separate page, `Production — Pre <change-id>`, since `Production` holds only approved designs. The supervisor deletes backups.
+3. **Scratch Section**: `Scratch — <topic>`, at the page's top level, for whatever exploration the supervisor wants; outside the structure check; no gap mirrors.
+4. **Unique names** allow the copies a backup or scratch holds, as a request's copies.
+5. **Structure check** (`figma-page-check.js`): one level of nesting in a change page's container Section and backup, as in a request Section; scratch Sections skipped; a backup's stacked placement allowed.
+
+**Cap (supervisor, 2026-11-11, after the proposal review and compression):** the pair **18,820** (compressed 18,860).
+
+**Ruling (supervisor, 2026-11-11, after cold round 1):** a fold into production backs up every page it changes (`Production`, a target-size page, `Components`) as its own page, `<page> — Pre <change-id>`, so a Base review restore puts each back. Supersedes item 2's single `Production — Pre <change-id>` page.

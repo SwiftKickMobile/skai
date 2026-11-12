@@ -123,7 +123,7 @@ def render_change(ch, gloss, links, owners):
     st.RESOLVER["item"] = cid  # the spec renderer's inline() turns a [^n] mark into a link to #gap-<item>-<n>
     ident = links.show(st.inline(links.hide(ch["identity"]), gloss, auto=True))
     summary = (f'<span class="badge">{status}</span><span class="id">{ch["cid"]}</span>'
-               f'<span class="status">{html.escape(ch["op"])} {html.escape(ch["obj"])}</span><span class="title">{ident}</span>')
+               f'<span class="status pill">{html.escape(ch["op"])} {html.escape(ch["obj"])}</span><span class="title">{ident}</span>')
     body = f"<p>{links.show(st.inline(links.hide(ch['description']), gloss, auto=True))}</p>" if ch["description"] else ""
     if ch["subs"]:
         body += "<ul>" + "".join(
@@ -136,38 +136,36 @@ def render_change(ch, gloss, links, owners):
     return f'<details class="item request {status}{gap}" id="{cid}" open><summary>{summary}</summary>{body}{why}{notes}</details>'
 
 
-def page_shell(title, counts, body, gloss, out, subtitle="", tips=""):
-    css, js = st.asset_links(out)
-    sub = f'<div class="sub">{html.escape(subtitle)}</div>' if subtitle else ""
+def page_shell(title, counts, body, gloss, out, tips=""):
+    """title: (document type, package ID), one line as on the spec pages."""
+    css, js = st.asset_tags(out)
+    text, h1 = st.page_title(*title)
     change = "".join(f'<button type="button" data-f="{f}" aria-pressed="false"><span class="badge {b}"></span><b>{counts[k]}</b> {k}</button>'
                      for f, b, k in (("added", "added", "added"), ("modified", "modified", "modified"), ("removed", "retired", "removed")))
     state = st.state_tiles(counts)
     return f"""<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{html.escape(title)}</title><link rel="stylesheet" href="{css}"></head><body>
-<div class="top"><div class="titles"><h1>{html.escape(title).replace(" | ", '<span class="sep">|</span>')}</h1>{sub}</div><div class="seg change" role="group" aria-label="Change">{change}</div>{state}</div><div class="wrap">
+<title>{html.escape(text)}</title>{css}</head><body>
+<div class="top">{h1}<div class="seg change" role="group" aria-label="Change">{change}</div>{state}</div><div class="wrap">
 {body}
 {st.render_popovers(gloss)}{tips}
-<div id="pop"></div></div>
-<script src="{js}"></script>
+<div id="pop" class="popover"></div></div>
+{js}
 </body></html>"""
 
 
 def short_title(folder):
-    """The top bar's name, '<title>: <path>': the path is the change id, then each change
-    request ID (open or promoted) down from the change, joined by ' | ' — 'Offers', 'Offers | CR-01',
-    'Offers | CR-01 | CR-01-01'."""
+    """The top bar's title, (document type, package ID): 'Design', then the change id and each change
+    request ID (open or promoted) down from the change, joined by ' | ' — 'offers', 'offers | CR-01',
+    'offers | CR-01 | CR-01-01'."""
     pkg, ids = st.locate(folder.resolve())  # open or promoted, a request keeps its path
     name = pkg.parent.name if pkg.name == "design" else pkg.name
-    return "Design Change: " + " | ".join([name.replace("-", " ").title()] + ids)
+    return "Design", " | ".join([name] + ids)
 
 
 def render(authoring, specs, out):
     authoring = Path(authoring).resolve()
     out = Path(out) if out else authoring.parent / "design-review.html"
     text = authoring.read_text(encoding="utf-8")
-    tm = re.search(r"^# (.+)$", text, re.M)
-    title = tm.group(1).strip() if tm else ""
-    name = title.split(" — ")[-1].strip()  # the artifact's name: the last dash-separated part of its heading
     linkdefs = {m.group("name"): m.group("target") for m in map(st.LINKDEF_RE.match, text.splitlines()) if m}
     specs = [Path(s) for s in specs]
     gloss = st.prepare(specs[0], specs[1:], None, out) if specs else {}
@@ -193,7 +191,7 @@ def render(authoring, specs, out):
         state = f"no discussion items; {gaps} carried" if n_gap else "no discussion items"
     goal = section(text, "Goal")
     note = st.discussion_note(authoring, disc)
-    head = (f'<div class="item request"><div class="head"><span class="status">{html.escape(state)}</span></div>'
+    head = (f'<div class="item request"><div class="head"><span class="status pill">{html.escape(state)}</span></div>'
             + (f"<p>{links.show(st.inline(links.hide(goal), gloss, auto=True))}</p>" if goal else "")
             + (f'<p class="note">{links.show(st.inline(links.hide(note), gloss, auto=True))}</p>' if note else "") + "</div>")
     body = head + discussion
@@ -207,7 +205,7 @@ def render(authoring, specs, out):
         body += '<section class="file"><h2>Design Changes</h2>' + "".join(cards) + "</section>"
     counts = {"added": sum(c["op"] == "add" for c in changes), "modified": sum(c["op"] == "modify" for c in changes),
               "removed": sum(c["op"] == "remove" for c in changes), "open": n_open, "gaps": n_gap, "resolved": n_done}
-    out.write_text(page_shell(short_title(authoring.parent), counts, body, gloss, out, subtitle=name, tips=""), encoding="utf-8")
+    out.write_text(page_shell(short_title(authoring.parent), counts, body, gloss, out), encoding="utf-8")
     print(f"wrote {out}: {counts}")
 
 

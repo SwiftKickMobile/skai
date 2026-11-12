@@ -12,8 +12,9 @@ or a Mermaid flowchart.
 
 The input is a UI Map YAML document conforming to ui-map.schema.json.
 The primary output is a static HTML page (`--html`) that loads the viewer
-beside this script (ui-map-viewer.v1.js, ui-map-viewer.v1.css; the version bumps only when a
-change would break pages already rendered); no server is needed.
+beside this script (the shared page library skai-pages.v1.css / .js, then
+ui-map-viewer.v2.css / .js; a version bumps only when a change would break pages
+already rendered); no server is needed.
 The Mermaid `flowchart LR` text (bare, no ``` fences) remains available for
 documents that embed a diagram, and `--svg` still renders it through the
 Mermaid CLI.
@@ -169,9 +170,12 @@ the demo doc and the guide describe the same conventions in prose.
     - Cross-platform `platform:` field: not rendered; informational only.
 
 12. HTML OUTPUT (--html)
-    - A static page: the map model inline as `window.UI_MAP` JSON, plus a
-      stylesheet link and script tag for ui-map-viewer.v1.css / ui-map-viewer.v1.js
-      beside this script, referenced by a path relative to the output file.
+    - A static page: the map model inline as `window.UI_MAP` JSON, plus
+      stylesheet links and script tags for the shared page library
+      (skai-pages.v1.css / .js, shared with the spec and design review pages)
+      and ui-map-viewer.v2.css / ui-map-viewer.v2.js beside this script,
+      referenced by a path relative to the output file. No web fonts: the
+      system font, with IDs and route kinds in the system monospace.
       The page works from file:// and from any static server; it needs the
       SKAI checkout at that relative location and nothing else. `--open`
       opens it.
@@ -229,6 +233,10 @@ the demo doc and the guide describe the same conventions in prose.
       shown humanized), and a Specs section reserved for a future sidecar.
       The panel's footprint is a safe area: the layout width does not change
       when it opens, and the canvas scrolls under it.
+    - Top bar: one-line title, "UI Map" then the package's ID in cyan — the
+      change folder above `ui-map/` (a request's IDs chained, "offers | CR-01")
+      for a proposed map, else "Production". The HTML <title> keeps the app's
+      name ("<app> UI Map").
     - Theme: follows the system, with a Theme toggle. The "?" button opens a
       legend: the cell and box vocabulary, the route kinds, and the controls.
 
@@ -247,6 +255,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from html import escape as html_escape
 import html
 import os
@@ -868,10 +877,26 @@ def open_in_browser(path: Path) -> None:
 # HTML output — the interactive viewer (docstring rule 12)
 # ---------------------------------------------------------------------------
 
-VIEWER_ASSETS: tuple[str, ...] = ("ui-map-viewer.v1.css", "ui-map-viewer.v1.js")  # the version bumps only when a change would break pages already rendered; old versions stay beside this script
+VIEWER_ASSETS: tuple[str, ...] = ("skai-pages.v1.css", "ui-map-viewer.v2.css", "skai-pages.v1.js", "ui-map-viewer.v2.js")  # the shared page library, then the viewer's own; a version bumps only when a change would break pages already rendered; old versions stay beside this script
+REQUEST_ID_RE = re.compile(r"CR-\d{2}(?:-\d{2})*")
 
 
-def build_viewer_model(model: Model) -> dict[str, Any]:
+def package_id(input_path: Path) -> str:
+    """The title's package ID: for a map in a `ui-map/` folder of a change package, the change id,
+    then each change request ID down from it, joined by ' | ' (`offers/changes/CR-01/ui-map/` gives
+    'offers | CR-01'); anything else, the official map included, is 'Production'."""
+    folder = input_path.resolve().parent
+    if folder.name != "ui-map" or folder.parent.name == "skai":
+        return "Production"
+    ids: list[str] = []
+    pkg = folder.parent
+    while REQUEST_ID_RE.fullmatch(pkg.name) and pkg.parent.name in ("changes", "promoted") and pkg.parent.parent.name != "skai":
+        ids.insert(0, pkg.name)
+        pkg = pkg.parent.parent
+    return " | ".join([pkg.name] + ids)
+
+
+def build_viewer_model(model: Model, package: str = "Production") -> dict[str, Any]:
     """The JSON model the viewer renders, derived from the resolved Model."""
     domains = [
         {"id": d, "label": humanize(d), "color": DOMAIN_PALETTE[i]}
@@ -908,6 +933,7 @@ def build_viewer_model(model: Model) -> dict[str, Any]:
         }
     return {
         "app": model.app,
+        "package": package,
         "version": model.version,
         "modalStyles": model.modal_styles,
         "domains": domains,
@@ -917,25 +943,26 @@ def build_viewer_model(model: Model) -> dict[str, Any]:
     }
 
 
-def render_html(model: Model, html_path: Path) -> str:
-    """The viewer page: model inline, viewer assets linked relative to html_path."""
+def render_html(model: Model, html_path: Path, package: str = "Production") -> str:
+    """The viewer page: model inline, the shared library and viewer assets linked relative to html_path."""
     asset_dir = Path(__file__).resolve().parent
     rel = os.path.relpath(os.path.abspath(asset_dir), os.path.abspath(html_path.parent)).replace(os.sep, "/")
-    css, js = (html.escape(quote(f"{rel}/{name}", safe="/")) for name in VIEWER_ASSETS)
-    payload = json.dumps(build_viewer_model(model)).replace("</", "<\\/")
+    urls = [(name, html.escape(quote(f"{rel}/{name}", safe="/"))) for name in VIEWER_ASSETS]
+    css = "\n".join(f'<link rel="stylesheet" href="{u}">' for n, u in urls if n.endswith(".css"))
+    js = "\n".join(f'<script src="{u}"></script>' for n, u in urls if n.endswith(".js"))
+    payload = json.dumps(build_viewer_model(model, package)).replace("</", "<\\/")
     return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html_escape(model.app)} UI Map</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="{css}">
+{css}
 </head>
 <body>
 <div id="app"></div>
 <script>window.UI_MAP = {payload};</script>
-<script src="{js}"></script>
+{js}
 </body>
 </html>
 """
@@ -1014,7 +1041,7 @@ def main(argv: list[str] | None = None) -> int:
 
     generated: list[Path] = []
     if args.html:
-        args.html.write_text(render_html(model, args.html), encoding="utf-8")
+        args.html.write_text(render_html(model, args.html, package_id(args.input)), encoding="utf-8")
         generated.append(args.html)
 
     if args.output:

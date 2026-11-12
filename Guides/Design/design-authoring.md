@@ -202,8 +202,11 @@ A Decision that changes an input says so; *Completion* carries it.
 
 ## Mockups
 
-When the Discussion gate advances, draw the whole change on its page or section: everything the
-Goal and Inputs call for, as the decisions and any later feedback currently stand. A decision feedback has
+When the Discussion gate advances, draw the whole change in the package's Section on its page, or its request section: everything the
+Goal and Inputs call for, as the decisions and any later feedback currently stand. Requested
+exploration goes in a scratch Section (the tool guide's), outside the list and structure check; in
+the same session, carry what the supervisor keeps into every affected package frame and list every
+change. A decision feedback has
 changed is updated through *Resolution*, its old outcome in the log; Discussion holds decisions,
 not the scope.
 
@@ -224,8 +227,8 @@ Current from the first drawing; with no mockups, from decisions at the Discussio
 One sequence per package: `V01`, `V02`, …, never renumber or reuse. New frames take the next `V`
 under their screen; new changes take their frame's next sub-ID. Identity: `add` and `modify` use
 the frame name linked to its draft (`[name](<link>)`), or the intended name unlinked without mockups;
-`remove` uses the base design's name, unlinked. Each entry has:
-- **Description** the screen, state or component change in product words, never a visual diff or sample data; about a sentence with mockups; without them, enough to design from.
+`remove` uses the base design's name, unlinked. Use these fields, or sub-IDs as below:
+- **Description** what changed, in a reader's words, about a sentence with mockups (without them, enough to design from): name anything new without describing how it looks; no measurements, style names or sample data. State each change precisely so promotion finds and updates every affected frame. Added ✅ "An empty state for a notebook with no notes." Changed ❌ "The label is subordinate to the price." ✅ "On every offer card the label is smaller and gray, under the price." Removed ✅ "The unread-only notes state goes."
 - **Justification** a reason sentence, then an input citation, `Resolved decision: D<n>` (another package's linked), or `Supervisor input`.
 
 Only inherited gaps get footnotes, one each, not items, on the first entry or sub-change whose change rests on its placeholder, never on what a frame merely keeps from the base; Placeholder is the provisional answer, not the frame ([`spec-file-gaps.md`](../Core/spec-file-gaps.md)).
@@ -236,8 +239,8 @@ Several changes: sub-IDs:
 ### Notes
 
 - V03 modify screen: [notes](<link>)
-  - **01** A `Pinned` group with its own header above the list — pinned notes were easy to miss; Resolved decision: D01
-  - **02** The unread dot on each row goes — unread notes come first, so the dot adds nothing; [NOTES-07]
+  - **01** Pinned notes move into a group with its own header, above the list — pinned notes were easy to miss; Resolved decision: D01
+  - **02** The unread dot goes from every row — unread notes come first, so the dot adds nothing; [NOTES-07]
 ```
 
 ## Completion

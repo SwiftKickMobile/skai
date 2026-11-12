@@ -131,3 +131,4 @@ for both guides against the 19,000 cap; 16,674 after merging the shorter Project
 | 2026-11-11 #118 r4 | F3 § Gaps placement sentence stacks qualifiers; F4 "never inside another" leans on an unstated noun; F5 rule 5 does not say the copy keeps the base name | logged | Cosmetic; every reading acts the same; 4 bytes of headroom |
 | 2026-11-11 #118 r4 | F3/F4 applied on the supervisor's go | closed | § Gaps restructured ("Each gap's mirror is one Dev Mode annotation per change page and per request Section drawing it (a page's request Sections aside), …"); "never inside another Section" |
 | 2026-11-11 | Pass closed | closed | Supervisor ended the pass after r4 (stop rule b). Rounds r1–r4: 8.25 · 9.125 · 7.875 · 7. Pair 18,100 / 18,100 |
+| 2026-11-11 #111 | Container, backup and scratch Sections; production backups per changed page | closed | Refined with the design process guides (#111 pass, closed by clean round r8); pair 18,817 / 18,820 |

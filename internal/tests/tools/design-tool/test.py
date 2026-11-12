@@ -35,11 +35,12 @@ class Render(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertIn("{'added': 1, 'modified': 1, 'removed': 1, 'open': 0, 'gaps': 3, 'resolved': 1}", out, "V04 has no list marker and is not an entry; a gap is not open; every entry that marks a gap counts")
         page = (artifact.parent / "design-review.html").read_text()
-        self.assertIn("<title>Design Change: Package</title>", page, "the bar reads <title>: <path>")
-        self.assertIn('<div class="sub">Pinned Notes</div>', page, "the artifact's name is the subtitle")
-        pass
+        self.assertIn("<title>Design package</title>", page, "the title is the document type, then the package's ID")
+        self.assertIn('<div class="top"><h1 class="title">Design <span class="pkg">package</span></h1>', page, "one line: the type in ink, the ID in cyan")
+        self.assertNotIn("Pinned Notes", page, "no second title line repeats the artifact's name")
+        self.assertIn('<div class="item request"><div class="head"><span class="status pill">discussion complete; 3 gaps carried</span></div><p>', page, "the summary box shows the state and goal, no title line")
         for cid, status, op in [("v01", "modified", "modify screen"), ("v02", "added", "add state"), ("v03", "retired", "remove state")]:
-            self.assertRegex(page, rf'<details class="item request {status}(?: has-gap)?" id="{cid}" open><summary><span class="badge">{status}</span><span class="id">{cid.upper()}</span><span class="status">{op}</span>')
+            self.assertRegex(page, rf'<details class="item request {status}(?: has-gap)?" id="{cid}" open><summary><span class="badge">{status}</span><span class="id">{cid.upper()}</span><span class="status pill">{op}</span>')
         self.assertIn('<a href="https://example.test/file?node-id=1-1">notes</a>', page, "an inline link renders as an anchor")
         self.assertIn('<h3 class="section">Notes</h3>', page, "a heading per screen, in artifact order")
         self.assertIn('<h3 class="section">Note editor</h3>', page)
@@ -56,7 +57,15 @@ class Render(unittest.TestCase):
         self.assertNotIn("[^1]:", page, "the definition is not left in the Why")
         self.assertNotIn('id="v04"', page, "a line without the list marker is not an entry")
         self.assertNotIn("## Inputs", page, "the page shows the card, Discussion and Design Changes only")
-        self.assertIn("Bin/spec-review.v1.css", page, "the shared stylesheet is linked from the checkout")
+        links = re.findall(r'<link rel="stylesheet" href="([^"]+)">', page)
+        scripts = re.findall(r'<script src="([^"]+)"></script>', page)
+        self.assertEqual([Path(h).name for h in links], ["skai-pages.v1.css", "spec-review.v2.css"], "the shared library, then the review pages' own stylesheet")
+        self.assertEqual([Path(h).name for h in scripts], ["skai-pages.v1.js", "spec-review.v2.js"], "the shared library, then the review pages' own script")
+        for href in links + scripts:
+            self.assertFalse(href.startswith("/") or "://" in href, "assets are linked by a relative path: " + href)
+            self.assertTrue((artifact.parent / href).resolve().is_file(), "assets resolve from the page: " + href)
+        self.assertNotIn("Archivo", page)
+        self.assertIn('<div id="pop" class="popover">', page, "the popover is the shared one")
         self.assertNotIn(' open</button>', page, "a gap is not an open item; with none open the tile is absent")
         self.assertIn('<b>3</b> gaps</button>', page, "the gaps tile counts the open gap item and both entries that mark the gap")
         self.assertIn('<b>1</b> resolved</button>', page)
@@ -66,7 +75,8 @@ class Render(unittest.TestCase):
         code, out = self.render(artifact)
         self.assertEqual(code, 0, out)
         page = (artifact.parent / "design-review.html").read_text()
-        self.assertIn("<title>Design Change: Package | CR-01</title>", page)
+        self.assertIn("<title>Design package | CR-01</title>", page)
+        self.assertIn('<h1 class="title">Design <span class="pkg">package<span class="sep">|</span>CR-01</span></h1>', page, "a request chains its IDs after the package's")
         self.assertIn('<a href="../../../package/design-authoring.md">the base</a>', page, "a relative link is rebased from the artifact to the page")
         self.assertIn("no discussion items; 1 gap carried", page, "an inherited gap shows in the card state with no Discussion item")
         self.assertIn("<b>Why</b> Base decision: D01", page)
@@ -79,7 +89,7 @@ class Render(unittest.TestCase):
         shutil.move(str(self.copy / "changes/CR-01/package"), str(moved))
         code, out = self.render(moved / "design-authoring.md")
         self.assertEqual(code, 0, out)
-        self.assertIn("<title>Design Change: Package | CR-01</title>", (moved / "design-review.html").read_text(), "a promoted request keeps its change id and request ID")
+        self.assertIn("<title>Design package | CR-01</title>", (moved / "design-review.html").read_text(), "a promoted request keeps its change id and request ID")
 
     def test_package_built_on_a_sibling_package_links_its_base(self):
         artifact = self.copy / "followup/design-authoring.md"

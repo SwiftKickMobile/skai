@@ -90,17 +90,19 @@ Usage:
         (changes/CR-01/changes/CR-01-01/). A sub-package's drafts layer on those of every existing
         package of its type up the chain, the change's own first (none: production), read from the
         folders by render and check-changes; --base overrides. The page title chains the IDs:
-        "Change Package: offers | CR-01". Open items and gaps stay where they were raised: a package's
+        "Product Specs offers | CR-01". Open items and gaps stay where they were raised: a package's
         page lists the open items of the promoted request sub-packages of its type in its scope (its
         change, or its own request folder), at any depth, under its Discussion and counts them, and
         shows on an open item the decision an open request logged on it.
 
     python3 spec-tool.py check-changes --catalog DIR --drafts DIR --authoring FILE
-        The list-matches-diff check: every added, modified, retired or missing item, glossary
-        entry or index line in the projection has a change-list entry, every added file has one
+        The list-matches-diff check, reading the same comparison the page is rendered from
+        (compare_tree): every added, modified, retired or missing item, glossary entry or index line in the projection has a change-list entry, every added file has one
         (an entry naming it, or naming it in Touches), a changed intro (an index file's reminder
         line too), section line or index line may instead ride in an entry's Touches naming its
-        file (in design specs a spec-file entry also covers its own file's intro and section lines), and no entry names something unchanged or
+        file (in design specs a spec-file entry also covers its own file's intro and section lines,
+        and a changed "#" title takes the file's spec-file entry; the product guide has no entry
+        type for a title, so a product title change is shown on the page and not required), and no entry names something unchanged or
         absent, including a rule (ID-NN, ID-NN-NN) the drafts do not define. An entry's type must
         be one its artifacts guide allows: a product change to a rule goes under "modify
         requirement" on its parent, and a design file never retires. The declared
@@ -115,8 +117,8 @@ Usage:
         fails; an entry about a rule or a known-difference note names an item that shows as modified (an add
         note entry may also name an item added here). A moved item may
         change on the way: then, as for an item in place, its own change (statement, tables, notes, gaps) takes an item- or
-        note-typed entry and each changed rule a rule entry (rules and notes show as added in the new
-        file); all ride on the move; a move missing one fails, as does such an entry on a moved item
+        note-typed entry and each changed rule a rule entry (each rule compared with its
+        old rule in the old home, like a rule in place); all ride on the move; a move missing one fails, as does such an entry on a moved item
         whose text is the same. A gap footnote marker's label is never compared, so renumbering by
         first use is no change. The authoring artifact's "## Decision Log" is checked
         against its Discussion: the section exists once the Discussion has an item and is the
@@ -176,7 +178,11 @@ CHANGE LISTS (what render and check-changes read from the authoring artifact)
 
 RENDER CONVENTIONS (the canonical render spec; update with the code)
 
- 1. Diffing: file by path; intro by text; item by ID (added, modified, retired, missing);
+ 1. Diffing: file by path; its "#" title by text, a changed title shown at the head of its file;
+    intro by text; item by ID (added, modified, retired, missing; an
+    item that moved to another file is the same identity: it shows as added there, its whole body
+    diffed against its old home, which it names, each side's citations resolved through its own
+    file's definitions, and its card in the old file takes an anchor qualified by that file);
     statement by word; rule by ID-NN, including the tables under it; table by header cells, then
     row by key column (added, removed, changed cells, moved); known difference by parent and app;
     glossary entry by term, whatever its optional "##" section (the draft's section headings
@@ -196,9 +202,10 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     Sections are not diffed: a section's name, its order and which items it holds are never
     compared, and an item moving between sections is not a change; a section's orientation line
     is prose and is word-diffed like the intro.
- 2. Package page: title "Change Package: <id>", the id being the change folder above
+ 2. Package page: a one-line title, the document type ("Product Specs", or "Design Specs" for
+    design-spec drafts) then the package's ID in cyan, the id being the change folder above
     product-specs/ or design-specs/ (a legacy requirements/ parent is accepted too; else the drafts'
-    parent); a legend
+    parent), a request's IDs chained after it ("offers | CR-01"); a legend
     two segmented controls in the title bar with the counts, one for change type (added,
     modified, removed, unchanged, added files) and one for Discussion state (open, gaps), each
     change-type segment with its colored square, each segment a toggle: with none pressed everything shows; with any pressed, only the
@@ -206,14 +213,15 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     gap items with the requirements carrying a gap footnote), with the topic headings, file
     sections and Discussion heading left empty hidden; "open" and "gaps" tiles appear only when
     the package has such items; a card with the package's status (open item count, or "discussion complete",
-    either with the count of gaps carried — open items whose last sub-bullet is a Gap line),
-    title, goal and discussion count; a "Documents" box with one linked line per file (square,
+    either with the count of gaps carried — open items whose last sub-bullet is a Gap line)
+    and goal, no title line (the title bar names the package); a "Documents" box with one linked line per file (square,
     name, changed count); the discussion items as collapsible cards (summary: ID, kind, title, "open", "gap" or "resolved"; no square, since squares mean change type; resolved start collapsed, open and gap expanded), in their "###" topic groups in artifact
     order, each a card with its ID, kind, title and its
     sub-bullets as written (Concern, Proposal, Options with their lettered choices, Detail, Why,
     Gap, Decision), citations linked and popovers as elsewhere, so an item can be resolved from the
     page (the artifact's "## Decision Log" is bookkeeping and is not rendered); then each file in
-    order, each file in a section. The page links `spec-review.v1.css` and `spec-review.v1.js` beside this
+    order, each file in a section. The page links the shared page library (`skai-pages.v1.css` and
+    `.js`, shared with the UI Map viewer) and its own `spec-review.v2.css` and `spec-review.v2.js` beside this
     script by a path relative to the output file (like the UI Map viewer): it needs the skai
     checkout at that relative location and nothing else, and a styling or behaviour change there
     reaches every rendered page without a re-render; the version in the name bumps only for a change
@@ -230,22 +238,27 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     heading. A changed intro or section line that no entry names shows the reason of the
     file-level entry (add file or modify file) whose Touches names the file, if there is one; an
     index line shows only the reason of the entry for the file it links; neither ever aggregates
-    the reasons of the changes inside a file.
+    the reasons of the changes inside a file. The page and check-changes read one comparison (compare_tree); each
+    difference the page shows is recorded where it shows, as an HTML comment
+    "<!-- diff: <what>|<name>|<status> -->" (a rule's at the start of its line).
  4. Status is a small colored square, never a text pill: green added, amber modified, red retired
     or removed, gray unchanged. It leads the file heading, item, rule or table row it marks. Rows
     and rules inside an item that is itself new carry no square. A card's status, discussion-kind
     or request-type badge is not a change marker and may be a text pill.
- 5. Cards are white on a very light gray page with a soft shadow; popovers and summary boxes are
-    white too. Section headings and descriptive text are normal weight and color; section
+ 5. The look is the SKAI Design System's (the shared library's tokens): the system font, IDs and
+    references in the system monospace; cards on the light blue-grey ground with the neutral
+    border, radius 10 and the Card shadow; popovers and summary boxes are cards too; a 56px top
+    bar. Section headings and descriptive text are normal weight and color; section
     headings are uppercase. Rule numbers and tables are body size. A glossary entry's Also
     called note is a muted callout under its definition, styled as a known difference is, its
     text never linked.
  6. Whole deletions (retired items, removed rows, rules, entries) are gray strikethrough with no
     tint, including the ID. A retired or missing item's collapsed card holds its whole old body
     (statement, tables, rules, known differences) struck through, with no squares inside, then
-    the retirement statement. Inside a modified block, removed words carry a light red tint with
-    strikethrough and added words a light green tint, at normal weight.
- 7. Every citation and glossary term that resolves is a link: citations as chips, glossary terms
+    the retirement statement. Inside a modified block, removed words are red with strikethrough
+    and added words green, at normal weight, with no highlight.
+ 7. Every citation and glossary term that resolves is a link: citations as plain cyan monospace
+    chips (no tinted background), glossary terms
     as body-colored text with a dashed underline, both with the link pointer. In artifact prose (Discussion, Situations,
     justifications, a request's head) a bare ID and every glossary term are linked the same way at
     render time, outside links and code. Resting the pointer on one for about 400 ms (keyboard focus: at once) opens a popover card with the full cited
@@ -1223,7 +1236,10 @@ def external_doc(name):
 
 
 def ext_tip_id(doc, iid):
-    return f"tip-{anchor(iid)}-at-{anchor(Path(doc).as_posix())}"
+    """An outside document's item's tooltip ID, keyed by the document's path from the first layer
+    (the catalog), so a committed page reads the same on every machine."""
+    key = os.path.relpath(Path(doc).resolve(), LAYERS[0]) if LAYERS else Path(doc).name
+    return f"tip-{anchor(iid)}-at-{anchor(Path(key).as_posix())}"
 
 
 def href_for(name):
@@ -1503,7 +1519,10 @@ def moved_keys(old_keys, new_keys):
     return set(b) - kept
 
 
-def render_rules(old_rules, new_rules, parent, gloss, tag=True):
+def render_rules(old_rules, new_rules, parent, gloss, tag=True, mark=True):
+    """The rules of an item, diffed by number. With `mark`, each rule that differs carries its
+    difference (diff_mark, with the status rule_status gives check-changes); a body copied for a
+    popover or a struck-through old item is not marked."""
     o = {r.num: r for r in old_rules}
     n = {r.num: r for r in new_rules}
     out, changed = ["<ul>"], False
@@ -1520,7 +1539,7 @@ def render_rules(old_rules, new_rules, parent, gloss, tag=True):
                 body, cls = word_diff(orule.text, nrule.text, gloss), "mod"
             else:
                 body, cls = inline(nrule.text, gloss), ""
-            kids, kc = render_rules(orule.children, nrule.children, rid, gloss) if (orule.children or nrule.children) else ("", False)
+            kids, kc = render_rules(orule.children, nrule.children, rid, gloss, mark=mark) if (orule.children or nrule.children) else ("", False)
             tbl = ""
             for idx in range(max(len(orule.tables), len(nrule.tables))):
                 h, tc = render_table(orule.tables[idx] if idx < len(orule.tables) else None,
@@ -1531,17 +1550,19 @@ def render_rules(old_rules, new_rules, parent, gloss, tag=True):
         elif nrule:
             changed = True
             body, cls = inline(nrule.text, gloss), ("add" if tag else "")
-            kids, _ = render_rules([], nrule.children, rid, gloss, tag) if nrule.children else ("", False)
+            kids, _ = render_rules([], nrule.children, rid, gloss, tag, mark) if nrule.children else ("", False)
             tbl = "".join(render_table(None, t, gloss, tag)[0] for t in nrule.tables)
         else:
             changed = True
             body, cls = f'<del>{inline_old(orule.text, gloss)}</del>', "rem"
-            kids = render_rules(orule.children, [], rid, gloss)[0] if orule.children else ""
+            kids = render_rules(orule.children, [], rid, gloss, mark=False)[0] if orule.children else ""  # they go with their rule
             tbl = "".join(render_table(t, None, gloss)[0] for t in orule.tables)
-        mark = '<span class="badge"></span>' if cls else ""
+        status = rule_status(orule, nrule)
+        diff = diff_mark("rule", rid, status) if mark and status != "unchanged" else ""
+        badge = '<span class="badge"></span>' if cls else ""
         why = why_for(RULE_CHANGES, {anchor(rid)}, what="rule")  # a rule's own entry carries its reason, whether or not the rule gets a marker (a table-only change, a rule inside an added item)
         why = f' <span class="why">— {inline_why(why, gloss)}</span>' if why else ""
-        out.append(f'<li class="{cls}" data-rid="{rid}">{mark}<span class="rid">{num}</span> {body}{why}{tbl}{kids}</li>')
+        out.append(f'<li class="{cls}" data-rid="{rid}">{diff}{badge}<span class="rid">{num}</span> {body}{why}{tbl}{kids}</li>')
     out.append("</ul>")
     return "".join(out), changed
 
@@ -1764,7 +1785,10 @@ def render_gaps(it, aid, gloss):
                       for g in it.gaps), aid, gloss)
 
 
-def render_item(old: Item, new: Item, gloss, why):
+def render_item(old: Item, new: Item, gloss, why, moved_from=""):
+    """(status, card). With `moved_from`, `old` is the item in its old home: the card shows it added,
+    diffed against that old version and naming the old home, and the status is the comparison's
+    (modified or unchanged)."""
     status, parts = "", []
     RESOLVER["item"] = anchor(new.id if new else old.id)
     if old is None:
@@ -1819,7 +1843,9 @@ def render_item(old: Item, new: Item, gloss, why):
     aid = anchor(iid) + ("-retired" if (new and new.retired) else "")
     if new and new.gaps:
         parts.append(render_gaps(new, anchor(iid), gloss))
-    return status, card(status, aid, iid, "".join(parts), why, gloss, " has-gap" if (new and new.gaps) else "")
+    if moved_from:
+        parts.append(f"<p><i>Moved from {html.escape(moved_from)}.</i></p>")
+    return status, card("added" if moved_from else status, aid, iid, "".join(parts), why, gloss, " has-gap" if (new and new.gaps) else "")
 
 
 def card(status, aid, name, body, why="", gloss=None, extra=""):
@@ -1838,7 +1864,7 @@ def render_plain_item(it: Item, gloss):
     for t in it.tables:
         parts.append(render_table(None, t, gloss, tag=False)[0])
     if it.rules:
-        parts.append(render_rules([], it.rules, it.id, gloss, tag=False)[0])
+        parts.append(render_rules([], it.rules, it.id, gloss, tag=False, mark=False)[0])
     for k in it.knowns:
         parts.append(f'<blockquote><b>Known difference — {html.escape(k.app)}:</b> {inline(k.text, gloss)}</blockquote>')
     return "".join(parts)
@@ -1858,7 +1884,7 @@ def item_tips(items, gloss, scope="", source="", linkdefs=None, path=None):
     as that document defines them."""
     src = f'<div class="pop-src">{html.escape(source)}</div>' if source else ""
     return rendered_under(linkdefs or {}, path, lambda: "".join(
-        f'<template id="tip-gap-{scope_key(scope)}-{did.lower()}">{src}<div class="pop-head"><span class="id">{did}</span> <span class="status">{html.escape(it["kind"])}</span></div>'
+        f'<template id="tip-gap-{scope_key(scope)}-{did.lower()}">{src}<div class="pop-head"><span class="id">{did}</span> <span class="status pill">{html.escape(it["kind"])}</span></div>'
         f'<p>{inline(it["title"], gloss, auto=True)}</p>' + (f"<ul>{bullet_list(it['bullets'], gloss)}</ul>" if it["bullets"] else "") + "</template>"
         for did, it in items.items()))
 
@@ -1898,17 +1924,20 @@ class Entry:
     path: Path = None
     file: str = ""  # draft-relative path of the file it belongs to
     own: bool = True  # a modified item whose own prose, tables, notes and gaps are unchanged (only its rules moved) is not own
+    moved: tuple = ()  # an item or glossary entry that moved here: (old home, its comparison with the old home: modified | unchanged, whether its own text changed)
 
 
 def render_glossary(old: Spec, new: Spec, gloss, changes, elsewhere=None, rel="glossary.md"):
     """The intro, then entries by term in the draft's order, its section headings between them, then removed ones.
     An entry new to this file whose term sits in another baseline glossary file (`elsewhere`:
-    term -> (definition, note, file, its link definitions)) moved here: it stays added, and its definition and note are
-    diffed against their old home."""
+    term -> (definition, note, file, its root-relative link definitions, the parsed file)) moved here: it stays
+    added, and its definition and note are diffed against their old home, the old text compared and
+    resolved through the old home's own definitions at the old home's place."""
     o = {t: (x, ln) for t, x, ln in (old.items if old else [])}
     n = {t: (x, ln) for t, x, ln in new.items}
     out, section = intro_entries(old, new, gloss, changes, rel), None
     for term in [t for t, _, _ in new.items] + [t for t in o if t not in n]:
+        moved_from = ()
         ot, nt = o.get(term), n.get(term)
         aid = anchor(term)
         if nt and new.entry_sections.get(term) != section:
@@ -1923,19 +1952,22 @@ def render_glossary(old: Spec, new: Spec, gloss, changes, elsewhere=None, rel="g
         elif ot and nt:
             status, body = "modified", f"<p>{word_diff(ot[0], nt[0], gloss)}</p>"
         elif moved:
-            mt, ma, mrel, mdefs = elsewhere[term]
-            status, here = "added", LINKS["old"]
-            LINKS["old"] = mdefs  # the old text reads with its old home's link definitions
-            body = (f"<p>{inline(nt[0], gloss) if same(mt, nt[0]) else word_diff(mt, nt[0], gloss)}</p>"
+            mt, ma, mrel, mdefs, mspec = elsewhere[term]
+            status, here = "added", (LINKS["old"], OLD_CTX["linkdefs"], OLD_CTX["doc"])
+            LINKS["old"], OLD_CTX["linkdefs"], OLD_CTX["doc"] = mdefs, mspec.linkdefs, Path(mspec.path).resolve()  # the old text reads with its old home's link definitions
+            kept = same(mt, nt[0])
+            body = (f"<p>{inline(nt[0], gloss) if kept else word_diff(mt, nt[0], gloss)}</p>"
                     + also_called(ma, na, "modified") + f"<p><i>Moved from {html.escape(mrel)}.</i></p>")
-            LINKS["old"] = here
+            LINKS["old"], OLD_CTX["linkdefs"], OLD_CTX["doc"] = here
+            moved_from = (mrel, "unchanged" if kept and ma == na else "modified", not (kept and ma == na))
         elif nt:
             status, body = "added", f"<p>{inline(nt[0], gloss)}</p>"
         else:
             status, body = "removed", f"<p><del>{inline_old(ot[0], gloss)}</del></p>"
         if not moved:  # a moved entry's note is already diffed against its old home
             body += also_called(oa if ot else na, na if nt else "", status)
-        out.append(Entry(card(status, aid, term, body, why, gloss), "glossary entry", term, {aid}, status, (nt or ot)[1]))
+        cid = f"{aid}-in-{anchor(rel)}" if not nt and aid in RESOLVER["anchors"] else aid  # moved: the term's anchor belongs to its new home; the old home's card is qualified by its file
+        out.append(Entry(card(status, cid, term, body, why, gloss), "glossary entry", term, {aid}, status, (nt or ot)[1], moved=moved_from))
     return out
 
 
@@ -2055,8 +2087,12 @@ def why_for(changes, keys, file="", what=None):
     line sharing a name never lend each other a reason); when none does and `file` is given, of
     the one entry whose Touches names that file, so an intro, section line or covered file shows
     the reason of the entry that covers it, as check-changes accepts it; when several entries cover
-    the file, one line names them and the reasons stay on the items they change."""
+    the file, one line names them and the reasons stay on the items they change. An intro or
+    section line takes the reason of a file entry naming its file first, as check-changes takes
+    that entry as covering it: the entry naming it, before the entries touching it."""
     hits = [c for c in changes if c.keys & keys and c.why and (what is None or kind_matches(c.type, what))]
+    if not hits and file and what in ("intro", "section line"):
+        hits = [c for c in changes if re.search(r"file", c.type) and c.keys & {file} and c.why]
     if not hits and file:
         cover = [c for c in changes if c.touched & {file, Path(file).name} and c.why]
         if len(cover) == 1:
@@ -2282,7 +2318,7 @@ def check_decision_log(path, text):
     return issues
 
 
-ASSETS = ("spec-review.v1.css", "spec-review.v1.js")  # beside this script, linked by a path relative to the output file; the version bumps only when a change would break pages already rendered (see internal/maintain-skai.md)
+ASSETS = ("skai-pages.v1.css", "spec-review.v2.css", "skai-pages.v1.js", "spec-review.v2.js")  # the shared page library, then the review pages' own; beside this script, linked by a path relative to the output file; a version bumps only when a change would break pages already rendered (see internal/maintain-skai.md)
 
 
 BUCKET = {"added": "added", "modified": "modified", "retired": "retired", "missing": "retired", "removed": "retired", "unchanged": "unchanged"}
@@ -2296,6 +2332,18 @@ def tables_same(a, b):
         len(r) == len(q) and all(same(c, d) for c, d in zip(r, q)) for r, q in zip(cells(x), cells(y))) for x, y in zip(a, b))
 
 
+def rule_status(orule, nrule):
+    """A rule's own status, the one the page marks and check-changes judges: added, removed,
+    retired, modified (its text or tables), else unchanged. A child rule's change is the child's."""
+    if orule is None:
+        return "added"
+    if nrule is None:
+        return "removed"
+    if nrule.retired and not orule.retired:
+        return "retired"
+    return "modified" if not same(orule.text, nrule.text) or not tables_same(orule.tables, nrule.tables) else "unchanged"
+
+
 def rule_entries(old_rules, new_rules, parent):
     """One Entry per rule (and child rule) of an item, keyed by its ID-NN anchor, with the rule's
     own status: added, removed, retired, modified (its text or tables), else unchanged. A change in a
@@ -2307,9 +2355,7 @@ def rule_entries(old_rules, new_rules, parent):
         orule, nrule = o.get(num), n.get(num)
         rid = f"{parent}-{num}"
         if orule and nrule:
-            status = ("retired" if nrule.retired and not orule.retired
-                      else "modified" if not same(orule.text, nrule.text) or not tables_same(orule.tables, nrule.tables) else "unchanged")
-            out.append(Entry("", "rule", rid, {anchor(rid)}, status, nrule.line))
+            out.append(Entry("", "rule", rid, {anchor(rid)}, rule_status(orule, nrule), nrule.line))
             out += rule_entries(orule.children, nrule.children, rid)
         elif nrule:
             out.append(Entry("", "rule", rid, {anchor(rid)}, "added", nrule.line))
@@ -2328,11 +2374,14 @@ def item_own_changed(old, new):
             or {(g.scope, g.did, g.placeholder) for g in old.gaps} != {(g.scope, g.did, g.placeholder) for g in new.gaps})
 
 
-def render_tree(bases, drafts, gloss, changes, prefix=""):
-    """Diff every file under drafts against the first base root that has it.
-    Returns (sections, toc, totals, entries); entries include one per file."""
-    sections, toc, all_entries = [], [], []
-    totals = {"added files": 0, "added": 0, "modified": 0, "retired": 0, "unchanged": 0}
+def compare_tree(bases, drafts, gloss, changes, prefix=""):
+    """The one comparison of the drafts with their base, read by both the page and check-changes so
+    the two can never disagree on what changed: per draft file, (its file Entry, its Entries, the
+    parsed draft). Each Entry is a difference (or an unchanged part) with its status, keys and
+    place; a moved item or glossary entry carries its comparison with its old home; and its card is
+    rendered from that same comparison."""
+    out = []
+    moved_items, moved_terms = baseline_items(bases), baseline_entries(bases)
     for draft in sorted(drafts.rglob("*.md")):
         rel = draft.relative_to(drafts).as_posix()
         new = parse(draft)
@@ -2343,18 +2392,38 @@ def render_tree(bases, drafts, gloss, changes, prefix=""):
         OLD_CTX["linkdefs"], OLD_CTX["doc"] = (old.linkdefs if old else {}), (base.resolve() if base else None)
         LINKS["old"], LINKS["new"] = (rebased_linkdefs(old, broot) if old else {}), rebased_linkdefs(new, drafts)  # root-relative, so a target reads the same from any layer
         if new.kind == "glossary":
-            entries = render_glossary(old, new, gloss, changes, {t: v for t, v in baseline_entries(bases).items() if v[2] != rel}, rel)
+            entries = render_glossary(old, new, gloss, changes, {t: v for t, v in moved_terms.items() if v[2] != rel}, rel)
         elif new.kind == "index":
             entries = render_index(old, new, gloss, changes, rel)
         else:
-            entries = render_spec(old, new, gloss, changes, prefix, rel)
+            entries = render_spec(old, new, gloss, changes, prefix, rel, {i: v for i, v in moved_items.items() if v[3] != rel})
         for e in entries:
             e.path, e.file = (base if e.status == "missing" else draft), rel
+            if e.status != "unchanged" and e.html:  # the page marks each difference where it shows it (a rule's mark is on its line)
+                e.html = diff_mark(e.what, e.name, e.status) + e.html
+        kind = "added" if old is None else ("modified" if any(e.status != "unchanged" for e in entries) else "unchanged")
+        out.append((Entry("", "file", rel, {rel}, kind, 1, draft, rel), entries, new))
+    return out
+
+
+def diff_mark(what, name, status):
+    """The page's record of one difference it shows, as check-changes judges it: an HTML comment
+    before the card (or at the start of a rule's line), so it changes nothing a reader sees."""
+    return f"<!-- diff: {html.escape(f'{what}|{name}|{status}')} -->"
+
+
+def render_tree(bases, drafts, gloss, changes, prefix=""):
+    """The page's file sections from compare_tree.
+    Returns (sections, toc, totals, entries); entries include one per file."""
+    sections, toc, all_entries = [], [], []
+    totals = {"added files": 0, "added": 0, "modified": 0, "retired": 0, "unchanged": 0}
+    for fe, entries, new in compare_tree(bases, drafts, gloss, changes, prefix):
+        rel, kind = fe.name, fe.status
+        for e in entries:
             if e.what in ("item", "glossary entry", "index line"):
                 totals[BUCKET[e.status]] += 1
         n_changed = sum(1 for e in entries if e.status != "unchanged")
-        kind = "added" if old is None else ("modified" if n_changed else "unchanged")
-        all_entries += [Entry("", "file", rel, {rel}, kind, 1, draft, rel)] + entries
+        all_entries += [fe] + entries
         if kind == "unchanged":
             continue
         totals["added files"] += kind == "added"
@@ -2372,24 +2441,53 @@ def render_tree(bases, drafts, gloss, changes, prefix=""):
 
 
 def baseline_entries(bases):
-    """term -> (definition, Also called note, file, its link definitions) across the baseline's
-    glossary files, each file taken from the first base root that has it."""
+    """term -> (definition, Also called note, file, its link definitions made root-relative, the
+    parsed file) across the baseline's glossary files, each file taken from the first base root
+    that has it."""
     files, out = {}, {}
     for b in bases:
         for g in b.rglob("glossary.md"):
-            files.setdefault(g.relative_to(b).as_posix(), g)
-    for rel, g in sorted(files.items()):
+            files.setdefault(g.relative_to(b).as_posix(), (g, b))
+    for rel, (g, b) in sorted(files.items()):
         sp = parse(g)
         for t, x, _ in sp.items:
-            out[t] = (x, sp.entry_alts.get(t, ("",))[0], rel, sp.linkdefs)
+            out[t] = (x, sp.entry_alts.get(t, ("",))[0], rel, rebased_linkdefs(sp, b), sp)
     return out
 
 
-def render_spec(old: Spec, new: Spec, gloss, changes, prefix, rel):
+def baseline_items(bases):
+    """ID -> (item, its parsed file, its root, file) across the baseline's spec files, each file
+    taken from the first base root that has it."""
+    files, out = {}, {}
+    for b in bases:
+        for p in b.rglob("*.md"):
+            files.setdefault(p.relative_to(b).as_posix(), (p, b))
+    for rel, (p, b) in sorted(files.items()):
+        if kind_of(p) == "spec":
+            sp = parse(p)
+            for it in sp.items:
+                out.setdefault(it.id, (it, sp, b, rel))
+    return out
+
+
+def under_home(spec, root, fn):
+    """`fn()` with the old side read as `spec` (another file of the baseline) reads: its link
+    definitions made root-relative for comparing, its own at its place for rendering."""
+    saved = LINKS["old"], OLD_CTX["linkdefs"], OLD_CTX["doc"]
+    LINKS["old"], OLD_CTX["linkdefs"], OLD_CTX["doc"] = rebased_linkdefs(spec, root), spec.linkdefs, Path(spec.path).resolve()
+    try:
+        return fn()
+    finally:
+        LINKS["old"], OLD_CTX["linkdefs"], OLD_CTX["doc"] = saved
+
+
+def render_spec(old: Spec, new: Spec, gloss, changes, prefix, rel, elsewhere=None):
     """Entries for a spec file: intro, section headings with their lines, items in file order,
     then items and section lines the base has that the draft lacks. An intro or section line that
     is added, changed or removed carries the reason of the entry naming it, else of the entries
-    whose Touches name the file."""
+    whose Touches name the file. An item new to this file that another baseline file holds
+    (`elsewhere`: ID -> (item, its file, root, file path)) moved here: it shows added, diffed against
+    its old home, which it names."""
     o = {it.id: it for it in old.items} if old else {}
     old_sections = ({it.section for it in old.items} | set(old.sections)) if old else set()
     out = intro_entries(old, new, gloss, changes, rel)
@@ -2409,14 +2507,27 @@ def render_spec(old: Spec, new: Spec, gloss, changes, prefix, rel):
                     out.append(Entry(prose_card(word_diff("", desc_new, gloss), True, why_for(changes, {anchor(section)}, rel, "section line"), gloss), "section line", section, {anchor(section)}, "added", prose_line(new.raw, head)))
                 elif desc_new:
                     out.append(Entry(prose_card(inline(desc_new, gloss)), "section line", section, {anchor(section)}, "unchanged", prose_line(new.raw, head)))
-        status, h = render_item(o.get(it.id), it, gloss, why_for(changes, {anchor(it.id)}, what="item"))
+        home = (elsewhere or {}).get(it.id) if it.id not in o else None
+        if home:
+            moved_status, h = under_home(home[1], home[2], lambda: render_item(home[0], it, gloss, why_for(changes, {anchor(it.id)}, what="item"), home[3]))
+            status = "added"
+        else:
+            status, h = render_item(o.get(it.id), it, gloss, why_for(changes, {anchor(it.id)}, what="item"))
         if prefix:
             h = h.replace(' id="', f' id="{prefix}', 1)
+        if home:  # its own text and rules compared with its old home, as its card shows them
+            own, rules = under_home(home[1], home[2], lambda: (item_own_changed(home[0], it), rule_entries(home[0].rules, it.rules, it.id)))
+            out.append(Entry(h, "item", it.id, {anchor(it.id)}, status, it.line, moved=(home[3], moved_status, own)))
+            out += rules
+            continue
         out.append(Entry(h, "item", it.id, {anchor(it.id)}, status, it.line, own=status != "modified" or item_own_changed(o.get(it.id), it)))
         out += rule_entries(o[it.id].rules if it.id in o else [], it.rules, it.id)
     for k, it in o.items():
         if k not in {it.id for it in new.items}:
-            out.append(Entry(render_item(it, None, gloss, why_for(changes, {anchor(k)}, what="item"))[1], "item", k, {anchor(k)}, "missing", it.line))
+            h = render_item(it, None, gloss, why_for(changes, {anchor(k)}, what="item"))[1]
+            if anchor(k) in RESOLVER["anchors"]:  # moved: the item's anchor belongs to its new home, so a link to it lands there; this card's is qualified by its old file
+                h = h.replace(f' id="{anchor(k)}"', f' id="{anchor(k)}-in-{anchor(rel)}"', 1)
+            out.append(Entry(h, "item", k, {anchor(k)}, "missing", it.line))
     for sec, desc_new in new.sections.items():  # a section with orientation text and no item under it
         if sec in seen or not desc_new:
             continue
@@ -2438,15 +2549,21 @@ def render_spec(old: Spec, new: Spec, gloss, changes, prefix, rel):
 
 
 def intro_entries(old, new, gloss, changes, rel):
-    """The file's intro (a spec file's opening paragraphs, an index file's reminder line) diffed
-    by text: a modified intro is a prose card with its square, carrying the reason of the entry
-    whose Touches names the file."""
+    """The file's '#' title, then its intro (a spec file's opening paragraphs, an index file's
+    reminder line), each diffed by text: a changed one is a prose card with its square; a title
+    carries the reason of the file entry naming the file, an intro that of the entry whose Touches
+    names the file."""
+    out = []
+    if old and collapse(old.title) != collapse(new.title):
+        head = next((i for i, l in enumerate(new.raw) if H1_RE.match(l)), 0)
+        out.append(Entry(prose_card("<b>Title:</b> " + word_diff(old.title, new.title), True, why_for(changes, {rel, Path(rel).name}, rel, "title"), gloss),
+                         "title", new.title, {rel}, "modified", head + 1))
     intro_new, intro_old = " ".join(new.intro), " ".join(old.intro) if old else ""
     if old and not same(intro_old, intro_new):
-        return [Entry(prose_card(word_diff(intro_old, intro_new, gloss), True, why_for(changes, {"intro"}, rel, "intro"), gloss), "intro", "intro", {"intro"}, "modified", prose_line(new.raw, 0))]
+        return out + [Entry(prose_card(word_diff(intro_old, intro_new, gloss), True, why_for(changes, {"intro"}, rel, "intro"), gloss), "intro", "intro", {"intro"}, "modified", prose_line(new.raw, 0))]
     if intro_new:
-        return [Entry(prose_card(inline(intro_new, gloss)), "intro", "intro", {"intro"}, "unchanged", prose_line(new.raw, 0))]
-    return []
+        return out + [Entry(prose_card(inline(intro_new, gloss)), "intro", "intro", {"intro"}, "unchanged", prose_line(new.raw, 0))]
+    return out
 
 
 def prose_card(body, modified=False, why="", gloss=None):
@@ -2470,6 +2587,20 @@ def asset_links(out):
     return tuple(html.escape(quote(f"{rel}/{name}", safe="/")) for name in ASSETS)
 
 
+def asset_tags(out):
+    """The page's stylesheet links and script tags, each in ASSETS order (the shared library first)."""
+    urls = list(zip(ASSETS, asset_links(out)))
+    return ("".join(f'<link rel="stylesheet" href="{u}">' for n, u in urls if n.endswith(".css")),
+            "".join(f'<script src="{u}"></script>' for n, u in urls if n.endswith(".js")))
+
+
+def page_title(doc_type, pkg_id):
+    """The one-line title as (text, h1): the document type in ink, then the package's ID in cyan,
+    a request's IDs chained with ` | `."""
+    ident = html.escape(pkg_id).replace(" | ", '<span class="sep">|</span>')
+    return f"{doc_type} {pkg_id}", f'<h1 class="title">{html.escape(doc_type)} <span class="pkg">{ident}</span></h1>'
+
+
 def state_tiles(totals):
     """The discussion-state tiles: open (unresolved, not a gap), gaps, resolved — a partition of the
     items, each tile a filter, shown only for the states the page has."""
@@ -2478,24 +2609,25 @@ def state_tiles(totals):
     return f'<div class="seg state" role="group" aria-label="State">{tiles}</div>' if tiles else ""
 
 
-def page_shell(title, summary_totals, head, sections, gloss, out, subtitle=""):
-    css, js = asset_links(out)
-    sub = f'<p class="subtitle">{html.escape(subtitle)}</p>' if subtitle else ""
+def page_shell(title, summary_totals, head, sections, gloss, out):
+    """title: (document type, package ID)."""
+    css, js = asset_tags(out)
+    text, h1 = page_title(*title)
     return f"""<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{html.escape(title)}</title><link rel="stylesheet" href="{css}"></head><body>
-<div class="top"><h1>{html.escape(title)}</h1><div class="seg change" role="group" aria-label="Change"><button type="button" data-f="added" aria-pressed="false"><span class="badge added"></span><b>{summary_totals['added']}</b> added</button><button type="button" data-f="modified" aria-pressed="false"><span class="badge modified"></span><b>{summary_totals['modified']}</b> modified</button><button type="button" data-f="removed" aria-pressed="false"><span class="badge retired"></span><b>{summary_totals['retired']}</b> removed</button><button type="button" data-f="unchanged" aria-pressed="false"><span class="badge unchanged"></span><b>{summary_totals['unchanged']}</b> unchanged</button><button type="button" data-f="files" aria-pressed="false"><span class="badge added"></span><b>{summary_totals['added files']}</b> added files</button></div>{state_tiles(summary_totals)}</div><div class="wrap">{sub}
+<title>{html.escape(text)}</title>{css}</head><body>
+<div class="top">{h1}<div class="seg change" role="group" aria-label="Change"><button type="button" data-f="added" aria-pressed="false"><span class="badge added"></span><b>{summary_totals['added']}</b> added</button><button type="button" data-f="modified" aria-pressed="false"><span class="badge modified"></span><b>{summary_totals['modified']}</b> modified</button><button type="button" data-f="removed" aria-pressed="false"><span class="badge retired"></span><b>{summary_totals['retired']}</b> removed</button><button type="button" data-f="unchanged" aria-pressed="false"><span class="badge unchanged"></span><b>{summary_totals['unchanged']}</b> unchanged</button><button type="button" data-f="files" aria-pressed="false"><span class="badge added"></span><b>{summary_totals['added files']}</b> added files</button></div>{state_tiles(summary_totals)}</div><div class="wrap">
 
 {head}{''.join(sections)}
 {render_popovers(gloss)}
-<div id="pop"></div></div>
-<script src="{js}"></script>
+<div id="pop" class="popover"></div></div>
+{js}
 </body></html>"""
 
 
 def toc_html(toc):
     if not toc:
         return ""
-    return '<nav class="toc"><div class="toc-title">Documents</div><ol>' + "".join(
+    return '<nav class="toc card"><div class="toc-title">Documents</div><ol>' + "".join(
         f'<li><span class="badge {k}"></span><a href="#{fid}">{html.escape(rel)}</a><span class="n">{n} changed</span></li>'
         for fid, k, rel, n in toc) + "</ol></nav>"
 
@@ -2574,8 +2706,7 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
         gaps = f"{n_gap} gap{'s' if n_gap != 1 else ''}"
         state = ((f"discussion complete; {gaps} carried" if n_gap else "discussion complete") if items and not n_open
                  else (f"{n_open} open" + (f", {gaps}" if n_gap else "") if n_open else "no discussion items"))
-        head += (f'<div class="item request"><div class="head"><span class="status">{html.escape(state)}</span>'
-                 f'<span class="title">{html.escape(title)}</span></div>'
+        head += (f'<div class="item request"><div class="head"><span class="status pill">{html.escape(state)}</span></div>'
                  + (f"<p>{inline(goal, gloss, auto=True)}</p>" if goal else "")
                  + (f'<p class="note">{inline(note, gloss, auto=True)}</p>' if note else "") + "</div>")
     if situations:
@@ -2587,7 +2718,7 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
     totals["open"] = (sum(1 for _, items in disc for it in items if not it["done"] and not it["gap"]) if disc else 0) + p_open
     totals["resolved"] = sum(1 for _, items in disc for it in items if it["done"]) if disc else 0
     head += toc_html(toc) + discussion
-    page = page_shell(f"Change Package: {package_id(drafts)}", totals, head, sections, gloss, out)
+    page = page_shell(("Design Specs" if design else "Product Specs", package_id(drafts)), totals, head, sections, gloss, out)
     out.write_text(page, encoding="utf-8")
     print(f"wrote {out}: {totals}")
 
@@ -2636,8 +2767,8 @@ def render_discussion_item(it, gloss, pending=(), prefix=""):
     done = it["done"]
     state, status = ("resolved", "added") if done else ("gap", "modified") if it["gap"] else ("open", "modified")
     head = (f'<summary><span class="id">{it["id"]}</span>'
-            f'<span class="status">{html.escape(it["kind"])}</span><span class="title">{inline(it["title"], gloss, auto=True)}</span>'
-            f'<span class="state">{state}</span></summary>')
+            f'<span class="status pill">{html.escape(it["kind"])}</span><span class="title">{inline(it["title"], gloss, auto=True)}</span>'
+            f'<span class="state state-label">{state}</span></summary>')
     bullets = bullet_list(it["bullets"], gloss)
     bullets += "".join(f'<li><b>Decided in request <a href="{html.escape(page)}">{html.escape(nnn)}</a></b>, checked off when it promotes: '
                        f'{under_request(request, lambda: inline(text, gloss, auto=True))}</li>' for nnn, text, page, request in pending if not done)
@@ -2705,7 +2836,7 @@ def kind_matches(change_type, what):
     if "index" in change_type:
         return what == "index line"
     if re.search(r"file|folder", change_type):
-        return what == "file"
+        return what in ("file", "title")  # a file's title is the file's own: its file entry names it
     if "rule" in change_type:
         return what == "rule"
     return what == "item"
@@ -2750,7 +2881,7 @@ def check_changes(catalog, drafts, authoring, bases=()):
                     log_issues.append(Issue(d, g.line, f"gap footnote [^{g.label}] names {g.did}, which is not an open gap item in ## Discussion"))
     log_issues += [Issue(authoring, disc_items[d]["line"], f"{d} is a gap but no draft marks it with a gap footnote") for d in sorted(open_gaps - marked)]
     gloss = prepare(catalog, bases, drafts, drafts.parent / "product-specs-review.html")
-    _, _, _, entries = render_tree([*reversed(bases), catalog], drafts, gloss, changes)
+    entries = [e for fe, es, _ in compare_tree([*reversed(bases), catalog], drafts, gloss, changes) for e in [fe, *es]]
     added_files = {e.name for e in entries if e.what == "file" and e.status == "added"}
     design = drafts.name == "proposed-design-specs"  # design specs list every changed rule; product specs list requirements
     allowed = DESIGN_CHANGE_TYPES if design else PRODUCT_CHANGE_TYPES
@@ -2761,7 +2892,8 @@ def check_changes(catalog, drafts, authoring, bases=()):
     bad_rules = [c for c in changes if c not in bad_types and c.rule and c.rule not in rules]
     issues += [Issue(authoring, c.line, f"{c.cid} names rule {c.rule}, which is not in the drafts") for c in bad_rules]
     changes = [c for c in changes if c not in bad_types and c not in bad_rules]
-    missing_items = {e.name for e in entries if e.what == "item" and e.status in ("missing", "retired")}
+    retired_here = {(e.file, e.name) for e in entries if e.what == "item" and e.status in ("missing", "retired")}
+    moved_ids = {k for c in changes if c.type.split()[0] == "move" for k in c.keys}
     matched, covering, actual = set(), set(), {}  # actual: cid -> {(what, name, status)} it names
     for e in entries:
         if e.what == "section":
@@ -2780,8 +2912,10 @@ def check_changes(catalog, drafts, authoring, bases=()):
             continue
         if e.what == "rule" and not design:
             continue  # product specs list at requirement grain: a changed rule rides on its item's entry
-        if e.what == "rule" and design and rule_parent(e.name) in missing_items:
-            continue  # the item itself is missing or retired; its entry covers its rules
+        if e.what == "title" and not design:
+            continue  # the product artifacts guide has no entry type for a file's title: shown on the page, not required here
+        if e.what == "rule" and design and ((e.file, rule_parent(e.name)) in retired_here or anchor(rule_parent(e.name)) in moved_ids):
+            continue  # the item is retired here, and its entry covers its rules; or it moved, and the move check below judges them
         if e.what == "item" and design and not e.own and all(
                 any(c.keys & r.keys and kind_matches(c.type, "rule") for c in changes) for r in entries if r.what == "rule" and r.status != "unchanged" and rule_parent(r.name) == e.name):
             continue  # only its rules changed, and each has its own entry
@@ -2806,11 +2940,11 @@ def check_changes(catalog, drafts, authoring, bases=()):
             continue
         op = c.type.split()[0]
         found = {s for _, _, s in actual[c.cid]}
-        if part(c) and any(c.keys & m.keys for m in moves):
-            ok = "added" in found and found <= {"added", "missing", "removed"}  # a moved item's parts show as added in its new file; the move check below judges the change
+        if part(c) and "known-difference" in c.type and any(c.keys & m.keys for m in moves):
+            ok = "added" in found and found <= {"added", "missing", "removed"}  # a note names its item, which shows added in its new file; the move check below judges the change (a rule is compared with its old home like any rule)
         elif "known-difference" in c.type:
             ok = found <= ({"modified", "added"} if op == "add" else {"modified"})  # a note shows as its item modified, or added with a new item
-        elif op == "move" or (op == "modify" and any(c.keys & m.keys for m in moves)):
+        elif op == "move" or (op == "modify" and "rule" not in c.type and any(c.keys & m.keys for m in moves)):
             ok = found in ({"added", "missing"}, {"added", "removed"})  # an item leaves a file; a glossary entry leaves a glossary file
         else:
             ok = found <= {"add": {"added"}, "modify": {"modified"}, "retire": {"retired", "removed", "missing"}}.get(op, set())
@@ -2822,9 +2956,11 @@ def check_changes(catalog, drafts, authoring, bases=()):
             continue  # not a move; reported above
         for what, name in {(w, n) for w, n, _ in actual[m.cid] if w in ("item", "glossary entry")}:
             modifies = [c for c in changes if riding(c, m)]
-            status = (moved_item_status if what == "item" else moved_entry_status)(name, [*reversed(bases), catalog], drafts)
+            home = next((e for e in entries if e.what == what and e.name == name and e.moved), None)  # its comparison with its old home, as the page shows it
+            status = home.moved[1] if home else "unchanged"
             if status == "modified" and what == "item":  # like an item in place: its own change and each changed rule take entries
-                own, changed_rules = moved_item_parts(name, [*reversed(bases), catalog], drafts)
+                own = home.moved[2]
+                changed_rules = [(r.name, r.status) for r in entries if r.what == "rule" and r.file == home.file and rule_parent(r.name) == name and r.status != "unchanged"]
                 if own and not any("rule" not in c.type for c in modifies):
                     issues.append(Issue(authoring, m.line, f"{m.cid} declares move but item {name} also changed; a modify entry is needed"))
                 for rid, how in changed_rules:
@@ -2847,63 +2983,6 @@ def describe(what, name):
     return what if name == what else f"{what} {name}"
 
 
-def moved_entry_status(term, baseline, drafts):
-    """Whether a glossary entry that left one glossary file for another changed on the way: its
-    definition and Also called note in the baseline (the catalog with any --base layered over it,
-    `baseline` listing the roots first-wins as render_tree takes them) against the draft's, keyed
-    by term across files."""
-    def find(*roots):
-        files = {}
-        for root in roots:
-            for g in Path(root).rglob("glossary.md"):
-                files.setdefault(g.relative_to(root).as_posix(), g)
-        for _, g in sorted(files.items()):
-            sp = parse(g)
-            for t, text, _ in sp.items:
-                if t == term:
-                    return text, sp.entry_alts.get(t, ("",))[0]
-        return None
-    old, new = find(*baseline), find(drafts)
-    return "unchanged" if old is None or new is None or (same(old[0], new[0]) and old[1] == new[1]) else "modified"
-
-
-def moved_item_status(iid, baseline, drafts):
-    """Whether an item that left one file for another changed on the way: the baseline's copy (the
-    first root in `baseline` that holds it: the nearest base, then the catalog) diffed against the
-    draft's, each read with its own link definitions."""
-    def find(root):
-        for p in sorted(Path(root).rglob("*.md")):
-            s = parse(p)
-            for it in (s.items if s.kind == "spec" else []):
-                if it.id == iid:
-                    return it, s, root
-        return None, None, None
-    old, os_, oroot = next(((it, sp, r) for root in baseline for it, sp, r in [find(root)] if it), (None, None, None))
-    new, ns, nroot = find(drafts)
-    if not old or not new:
-        return "unchanged"
-    LINKS["old"], LINKS["new"] = rebased_linkdefs(os_, oroot), rebased_linkdefs(ns, nroot)  # the two files sit in different folders
-    return render_item(old, new, {}, "")[0]
-
-
-def moved_item_parts(iid, baseline, drafts):
-    """(own changed, [(rule ID, status)]) for a moved item, read as moved_item_status reads it: whether
-    its statement, tables, notes, gaps or retirement changed, and each rule that did."""
-    def find(root):
-        for p in sorted(Path(root).rglob("*.md")):
-            s = parse(p)
-            for it in (s.items if s.kind == "spec" else []):
-                if it.id == iid:
-                    return it, s, root
-        return None, None, None
-    old, os_, oroot = next(((it, sp, r) for root in baseline for it, sp, r in [find(root)] if it), (None, None, None))
-    new, ns, nroot = find(drafts)
-    if not old or not new:
-        return False, []
-    LINKS["old"], LINKS["new"] = rebased_linkdefs(os_, oroot), rebased_linkdefs(ns, nroot)
-    return item_own_changed(old, new), [(e.name, e.status) for e in rule_entries(old.rules, new.rules, iid) if e.status != "unchanged"]
-
-
 def rebased_linkdefs(spec, root):
     """A file's link definitions with each local target made root-relative, so two files in
     different folders compare by what they point at, not by how they spell the way there."""
@@ -2915,8 +2994,9 @@ def rebased_linkdefs(spec, root):
         if not path:
             return "#" + frag if frag else ""
         rel = os.path.normpath(os.path.join(folder, path)).replace(os.sep, "/")
-        if rel.startswith(".."):  # the link leaves this root: the same file in another layer, or something external
-            rel = logical_path(Path(spec.path).parent / path) or rel
+        if rel.startswith(".."):  # the link leaves this root: the same file in another layer, or a document outside the projection, named from the first layer so every layer spells it alike
+            disk = (Path(spec.path).parent / path).resolve()
+            rel = logical_path(disk) or (os.path.relpath(disk, LAYERS[0]).replace(os.sep, "/") if LAYERS else disk.as_posix())
         return rel + ("#" + frag if frag else "")
     return {name: rebase(target) for name, target in spec.linkdefs.items()}
 

@@ -9,6 +9,9 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **Every review page and the UI Map page share one look.** One system font, the Design System's colors in light and dark, and a one-line title naming the document type and the package; pages rendered earlier keep working as they were.
+- **The spec review page is tested case by case.** Moves, outside citations and file-level reasons now render correctly, and a page renders the same on every machine.
+- **Merging a design change carries it everywhere it applies.** Promotion now checks every frame of the base against the change list and carries each change to the frames the drafts didn't redraw, with a backup taken first; nothing is deleted until you delete it. Change lists say plainly what changed, and change pages get a scratch area for exploring.
 - **A change request can change several kinds of document at once.** A request is now one folder, `changes/CR-01/`, with a part for each document type it changes, so a design request can carry the product spec changes it needs. Updating moves your existing requests to the new layout with two-digit IDs, after you approve the mapping.
 - **The agent asks whether you meant a change request.** When your words don't say whether work edits a package directly or files a request, it asks before creating anything, and no guide picks that route for you any more.
 - **Change requests against change requests work end to end in design.** A nested request's Figma Section is named by its number path (`CR-001-002`), keeps that name when a fold re-files it, and passes the structure check; a fold puts a request's change to a known frame under the base's entry.

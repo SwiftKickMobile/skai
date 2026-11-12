@@ -411,3 +411,31 @@ Caps: `design-authoring.md` 16,000 holds (15,953 before this pass); `design-prom
 ## Amendment — 2026-11-11: Requests As Folders Of Sub-Packages; Confirming The Route (skai#108, skai#129)
 
 Adopts [`change-requests-design.md`](change-requests-design.md) § Amendment — 2026-11-11: this standard's guides say the items that amendment lists for their kind of guide (artifacts, authoring, promotion, Figma), and every request path, ID and provenance tag in them takes the new form. Caps for this change: `change-requests-design.md` § Amendment — 2026-11-11 (supervisor, 2026-11-11).
+
+## Amendment — 2026-11-11: A Fold Carries Every Change; The Change List Says What Changed; Scratch (skai#111, skai#106, skai#100)
+
+Rulings: skai#111 (body updated 2026-11-11, with the CR-001 fold's prototyped process and mistakes in its comments), skai#106 and skai#100 (supervisor, 2026-11-11; the B1 plan's Q1–Q3, Q7–Q12). Supersedes `C3`'s "designs outside the inventory change only by the placement and relocation the tool guide needs to absorb them", § Amendment — 2026-10-24's "not a visual diff" for modify entries, and the base review's "restore the base from version history". Inventory per skai#90, before prose.
+
+**design-promotion.md must say:**
+
+1. **A package's drafts illustrate its changes; the fold carries every change across the whole base.** This holds for every fold: a request into its base package, and a change's own package into `Production`. A changed screen is drawn once or twice to show a change; the fold applies that change to every base frame it affects, whether or not the package redrew it.
+2. **Work from the change list, change by change.** List the rules the changes set (each: what it says, the entries that set it); audit every base frame against them, by rule and by eye, hosts behind sheets, dialogs and popovers included; record the audit in a working document (frame, rules that apply, what changes). Updates that follow from the package's changes are applied; removing a frame, or redrawing beyond the package's changes, goes to the supervisor.
+3. **Back up the base before it changes, and copy, never move.** The backup and the drafts stay until the supervisor deletes them (supervisor, 2026-11-11: for now). Where they go is the tool guide's.
+4. **Apply, then look.** Screenshot every touched frame; check what copying can break (pairings such as a tab's unread dot and unseen content on screen, a header pattern that belongs to one stage, component references to the request's copies).
+5. **Record it.** Into a package: the package's entries append per `change-requests.md` (unchanged), and changes propagated to the base's own frames are recorded on the base's entries (a sentence on an add entry, a sub-change on a modify entry, a remove entry for a trim). Into production: the evidence carries it.
+6. **Evidence names every base frame inspected and what was applied**, so a frame swap cannot pass as a fold.
+7. **Base review**: a requested design change restores the base from the backup and returns to authoring; advancing the gate no longer deletes the drafts (`C5` runs only when the supervisor asks).
+8. The prototype's independent cold review of the fold (step 11) is a candidate step; the proposal review weighs whether it earns a place.
+
+**design-authoring.md must say:**
+
+9. **The change list is written for the promoting agent as well as for people** (supervisor, 2026-11-11): it follows `writing-style.md` and states precisely each change the fold must carry, so the promoter can find every frame it affects.
+10. **Description says what changed; Justification says why (skai#106; supervisor, 2026-11-11).** For every entry, the Description says what changed in a reader's words: anything new is named, not described (no account of its design); no measurements, style names or sample data. Why it was added, changed or removed is the Justification's. The rule itself lists no element kinds (screen, state, component, card): it holds at any level. One example each for added, changed (with a ❌) and removed.
+11. **Scratch (skai#100), kept minimal** (supervisor, 2026-11-11: rapid, low-friction exploration; don't over-engineer). The supervisor may ask for exploratory work in a scratch Section on the change page; it is outside the change list and the structure check. Scratch is settled in the session that made it: what the supervisor keeps is carried into the package's frames, every change to every frame it affects, and listed.
+12. Drawings sit in the package's container Section on the change page; the tool guide owns its form.
+
+**Writing style:** unchanged (supervisor, 2026-11-11). It covers everything a person reads, not only designs, so the visual wording of a modify entry stays in `design-authoring.md`; rule 3 is about naming the thing, not the instance, and does not conflict.
+
+**Tools:** `figma-page-check.js` per the tool guide's amendment of the same date.
+
+**Caps (supervisor, 2026-11-11, after the proposal review and compression; a little under the compressed sizes):** `design-promotion.md` **13,350** (compressed 13,390); `design-authoring.md` **16,650** (16,681). The writing style guide is unchanged (supervisor, 2026-11-11).
