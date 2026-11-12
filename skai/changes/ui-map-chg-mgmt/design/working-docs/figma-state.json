@@ -1,0 +1,35 @@
+{
+ "fileKey": "YiKIvXCvCu8XyS149IT3hS",
+ "page": "69:1736",
+ "sections": {
+  "UI Map": "69:1737",
+  "Review": "69:1738",
+  "Components": "69:1739",
+  "Review Pages": "91:2633"
+ },
+ "frames": {
+  "ui map — changes": "69:1740",
+  "ui map — changed scene selected": "69:1782",
+  "ui map — changes help": "69:1821",
+  "review": "69:1967",
+  "design review — title": "91:2734",
+  "ui map — hops menu": "103:2811",
+  "ui map — changes on": "107:2856",
+  "ui map — production top bar": "96:2795",
+  "product specs review — title and summary": "91:2634"
+ },
+ "components": {
+  "Scene Cell": "69:2024",
+  "Change Marker": "69:2113",
+  "Change Badge": "69:2809",
+  "Tab": "69:2853",
+  "Panel Change": "88:2652",
+  "Change Top Bar": "69:2924",
+  "Review Top Bar": "91:2619",
+  "Top Bar": "96:2748",
+  "Search Field": "102:2821",
+  "Hops": "103:2789",
+  "Hops Menu": "103:2793",
+  "Change Icon": "111:3069"
+ }
+}
