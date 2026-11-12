@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-demo
 Managed-Source: Guides/UIMap/ui-map-demo.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-11-12
 
 # UI Map Demo
 
@@ -23,6 +23,7 @@ version: 1
 app: LumenNotes
 
 modal_styles: [sheet, full_screen, popover]
+form_factors: [phone, tablet]
 
 domains:
   app:                                    # collapsed (domain == root scene)
@@ -38,7 +39,11 @@ domains:
     tab:
       - notes:
           nav:
-            - note                        # cross-domain ref
+            - to: note                    # cross-domain ref, pushed on a phone
+              form_factor: [phone]
+          composite:
+            - to: note                    # beside the notes list on a tablet
+              form_factor: [tablet]
       - folders: {}
       - trash: {}
     modal:
@@ -51,9 +56,11 @@ domains:
   note:                                   # collapsed
     composite:
       - editor                            # cross-domain ref
+      - outline:
+          form_factor: [tablet]           # tablet only
     modal:
       - tag_picker:
-          modal_style: popover
+          modal_style: { phone: sheet, tablet: popover }
       - attachment_viewer:
           modal_style: full_screen
       - share_sheet:
@@ -122,6 +129,7 @@ flowchart LR
     tag_picker(["Tag Picker"])
     attachment_viewer(["Attachment Viewer"])
     share_sheet(["Share Sheet"])
+    outline(["Outline · tablet"])
     profile(["Profile"])
     search(["Search"])
     editor(["Editor"])
@@ -161,6 +169,11 @@ flowchart LR
         note
     end
 
+    notes -->|"<span style='background:white;border:1px solid black;padding:4px 8px'>Composite</span>"| notes_composite
+    subgraph notes_composite[" "]
+        note_at_notes_composite(["Note"])
+    end
+
     note -->|"<span style='background:white;border:1px solid black;padding:4px 8px'>Modal</span>"| note_modal
     subgraph note_modal[" "]
         direction LR
@@ -172,7 +185,9 @@ flowchart LR
 
     note -->|"<span style='background:white;border:1px solid black;padding:4px 8px'>Composite</span>"| note_composite
     subgraph note_composite[" "]
+        direction LR
         editor
+        outline
     end
 
     profile -->|"<span style='background:white;border:1px solid black;padding:4px 8px'>Nav</span>"| profile_nav
@@ -190,15 +205,20 @@ flowchart LR
 
     mstyle_library[/"<div style='text-align:left'>Profile <b>sheet</b>, Search <b>full_screen</b></div>"/]
     mstyle_library -.- library_modal
-    mstyle_note[/"<div style='text-align:left'>Tag Picker <b>popover</b>, Attachment Viewer <b>full_screen</b>, Share Sheet <b>sheet</b>, Search <b>full_screen</b></div>"/]
+    mstyle_note[/"<div style='text-align:left'>Tag Picker <b>phone sheet, tablet popover</b>, Attachment Viewer <b>full_screen</b>, Share Sheet <b>sheet</b>, Search <b>full_screen</b></div>"/]
     mstyle_note -.- note_modal
+
+    ffroute_notes_nav[/"<div style='text-align:left'>Note <b>phone</b></div>"/]
+    ffroute_notes_nav -.- notes_nav
+    ffroute_notes_composite[/"<div style='text-align:left'>Note <b>tablet</b></div>"/]
+    ffroute_notes_composite -.- notes_composite
 
     classDef app_domain fill:#8AD1FA,stroke:#8AD1FA,color:#231f20,filter:none
     class leg_app,app,login app_domain
     classDef library_domain fill:#EFD74E,stroke:#EFD74E,color:#231f20,filter:none
     class leg_library,library,notes,folders,trash library_domain
     classDef note_domain fill:#FE9CA8,stroke:#FE9CA8,color:#231f20,filter:none
-    class leg_note,note,tag_picker,attachment_viewer,share_sheet note_domain
+    class leg_note,note,tag_picker,attachment_viewer,share_sheet,outline note_domain
     classDef other_domain fill:#78DB85,stroke:#78DB85,color:#231f20,filter:none
     class leg_other,profile,search,editor other_domain
     classDef common_domain fill:#D39AE7,stroke:#D39AE7,color:#231f20,filter:none
@@ -206,20 +226,20 @@ flowchart LR
     classDef app_todo fill:#8AD1FA4C,stroke:#8AD1FA,stroke-width:2px,color:#231f20,filter:none
     class welcome app_todo
     classDef pointer fill:#bdbdbd,stroke:#bdbdbd,color:#231f20,filter:none
-    class search_at_note_modal pointer
+    class note_at_notes_composite,search_at_note_modal pointer
     classDef mutex fill:#ffffff,stroke:#999,stroke-dasharray:10 5,filter:none
     class app_child,login_nav,library_modal,library_tab,notes_nav,note_modal,profile_nav mutex
     classDef composite fill:#f0f0f0,stroke:#f0f0f0,stroke-width:0px,filter:none
-    class note_composite composite
+    class notes_composite,note_composite composite
     classDef legendBox fill:#F5F5F5,stroke:#B5B5B5,color:#231f20,filter:none
     class domain_legend legendBox
     class impl_web common_domain
     classDef note fill:#fff7d6,stroke:#d4c171,color:#231f20,filter:none
     class note_welcome,note_library note
     classDef modalStyle fill:#ffffff,stroke:#999,stroke-dasharray:10 5,color:#231f20,filter:none
-    class mstyle_library,mstyle_note modalStyle
+    class mstyle_library,mstyle_note,ffroute_notes_nav,ffroute_notes_composite modalStyle
     classDef smallFont font-size:13px
-    class impl_web,note_welcome,note_library,mstyle_library,mstyle_note,leg_app,leg_library,leg_note,leg_other,leg_common smallFont
+    class impl_web,note_welcome,note_library,mstyle_library,mstyle_note,ffroute_notes_nav,ffroute_notes_composite,leg_app,leg_library,leg_note,leg_other,leg_common smallFont
 ```
 
 ## Notes on what's where
@@ -233,6 +253,7 @@ flowchart LR
 - **Mutex vs. composite wrappers are visually distinct.** Mutex wrappers use a dashed border with white fill; composite wrappers use light-gray fill with no border.
 - **`Implements:` callouts.** Right-leaning parallelograms attached to the abstract scene via a dashed connector, with single-line comma-separated implementations. Fill matches the attached scene's domain color.
 - **Modal-style callouts.** The project declares a `modal_styles` vocabulary; each scene reached by a modal route tags itself with a `modal_style`. For every modal wrapper, the render emits a callout — a parallelogram styled like the mutex wrapper (white fill, dashed gray border) — listing each destination and its bolded style on a single comma-separated line. The callout annotates the wrapper, not any one scene.
+- **Form factors.** The map declares `form_factors: [phone, tablet]`. `Outline` exists on tablets only, so its label reads `Outline · tablet`. `Note` is pushed from `Notes` on a phone and shown beside it on a tablet: two routes, each a `to:` entry with its own `form_factor`, so the render draws Note in full under the first and a gray pointer under the second, and a callout on each route box names its form factors. `Tag Picker`'s modal style differs by form factor, so the modal-style callout lists both.
 - **TODO scenes and notes.** `Welcome` is flagged `todo: true` in YAML. A TODO scene keeps its domain identity but signals the unimplemented state: full-opacity domain color as a 2px stroke, with the domain color at 0.3 alpha as the fill. `Welcome` also has a `note:` rendering as a pale-yellow sticky-note callout (a `tag-rect` shape). The two are independent — a scene can have either, both, or neither.
 - **Container-attached notes.** A `notes:` entry on a scene can use `at: <route-kind>` to attach to a route container (wrapper) rather than the scene itself.
 - **Left-to-right layout.** The render is `flowchart LR`, laid out by Mermaid's ELK engine with simple node placement: depth runs left to right and siblings stack top to bottom, so a deep map stays compact rather than very wide.

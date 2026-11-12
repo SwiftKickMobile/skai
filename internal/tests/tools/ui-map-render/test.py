@@ -3,7 +3,8 @@
 Run after any change to ui-map-render.py: python3 internal/tests/tools/ui-map-render/test.py
 Renders the guide's YAML block with `uv run` (the renderer declares its own dependencies) and checks
 the Mermaid text matches the guide's Mermaid block exactly, and that the HTML page links the shared
-page library and the viewer by relative paths, loads no web font, and titles itself by package.
+page library and the viewer by relative paths, loads no web font, titles itself by package, and
+carries the demo's form factors for the viewer's drop-down.
 A change package's page (fixtures below, in temporary folders) carries the Review tab, change badges
 and side panel entries from its architecture artifact's Discussion and Map Changes; an entry naming a
 scene the proposed map lacks fails the render, except a removed scene or a list pending re-derivation;
@@ -70,6 +71,18 @@ class HtmlPage(unittest.TestCase):
             self.assertNotIn("fonts.googleapis", text, "no web font: the system font")
             self.assertIn(f"<title>{model['app']} UI Map</title>", text, "the HTML title keeps the app's name")
             self.assertEqual(model["package"], "Production", "the official map is titled UI Map Production")
+
+    def test_page_model_carries_the_demo_form_factors(self):
+        with tempfile.TemporaryDirectory() as directory:
+            model = self.render_at(directory, "skai/ui-map/ui-map.yaml")[2]
+            scenes = model["scenes"]
+            self.assertEqual(model["formFactors"], ["phone", "tablet"], "the page shows its form-factor drop-down for two or more")
+            self.assertEqual(scenes["outline"]["formFactors"], ["tablet"])
+            self.assertIsNone(scenes["note"]["formFactors"], "a scene on every form factor is unmarked")
+            routes = {r["kind"]: r for r in scenes["notes"]["routes"]}
+            self.assertEqual((routes["nav"]["formFactors"], routes["composite"]["formFactors"]), ([["phone"]], [["tablet"]]),
+                             "each route into Note carries its own form factors, for the gray-out and the route label's icon")
+            self.assertEqual(scenes["tag_picker"]["modalStyle"], {"phone": "sheet", "tablet": "popover"})
 
     def test_title_names_the_change_package_and_its_requests(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -20,16 +20,23 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .tools { display: flex; align-items: center; gap: var(--sp-20); margin-left: auto; white-space: nowrap; }
 .tools .info { margin-left: calc(var(--sp-10) - var(--sp-20)); }
 /* the hops drop-down: a fixed width that fits its longest choice, so it never moves */
-.hops { position: relative; }
+.hops, .ff { position: relative; }
 .hopsbtn { display: flex; align-items: center; justify-content: space-between; width: 70px; height: 30px; padding: 0 var(--sp-5) 0 var(--sp-10);
   border: 1px solid var(--line2); border-radius: var(--r-5); background: var(--surface); font: var(--type-small); color: var(--ink); }
 .hopsbtn .ic { color: var(--dim); }
-.hops .menu { position: absolute; top: calc(100% + var(--sp-5)); left: 0; z-index: 6; width: 100px; padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-1);
+/* the form-factor drop-down: every choice stacked in the button, only the current one visible, so it is
+   as wide as its longest choice, up to the Changes toggle's width; a longer choice cuts off */
+.ffbtn { width: auto; max-width: 84px; gap: var(--sp-5); }
+.ffv { display: grid; min-width: 0; text-align: left; }
+.ffv > span { grid-area: 1 / 1; visibility: hidden; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ffv > span.cur { visibility: visible; }
+.hops .menu, .ff .menu { position: absolute; top: calc(100% + var(--sp-5)); left: 0; z-index: 6; width: 100px; padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-1);
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-5); box-shadow: var(--shadow-card); }
-.hops .opt { display: flex; align-items: center; gap: var(--sp-5); height: 28px; padding: 0 var(--sp-10) 0 var(--sp-5); border-radius: var(--r-4); font: var(--type-small); color: var(--ink); text-align: left; }
-.hops .opt:hover, .hops .opt[aria-selected="true"] { background: var(--raised); }
-.hops .opt .ic { color: var(--cyan); }
-.hops .opt .nochk { display: inline-block; width: 13px; }
+.ff .menu { width: auto; white-space: nowrap; }
+:is(.hops, .ff) .opt { display: flex; align-items: center; gap: var(--sp-5); height: 28px; padding: 0 var(--sp-10) 0 var(--sp-5); border-radius: var(--r-4); font: var(--type-small); color: var(--ink); text-align: left; }
+:is(.hops, .ff) .opt:hover, :is(.hops, .ff) .opt[aria-selected="true"] { background: var(--raised); }
+:is(.hops, .ff) .opt .ic { color: var(--cyan); }
+:is(.hops, .ff) .opt .nochk { display: inline-block; width: 13px; }
 /* search, with a cross that clears it while it has a value */
 .find { position: relative; display: flex; align-items: center; }
 .find input { width: 190px; height: 28px; padding: 0 var(--sp-25) 0 var(--sp-10); border: 1px solid var(--line2); border-radius: var(--r-5); background: var(--surface); color: var(--ink); font: var(--type-body); }
@@ -70,6 +77,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .dag.focus .box.near { opacity: 1; }
 .box.on { border-color: var(--edge-lit); background: color-mix(in oklab, var(--cyan) 6%, transparent); }
 .box.composite.on { background: color-mix(in oklab, var(--cyan) 12%, transparent); }
+/* not on the chosen form factor: grayed out as search grays a non-match, whatever else is lit, and not clickable; connectors stay */
+.dag .st.ffout, .dag.focus .st.ffout { color: var(--faint); background: color-mix(in oklab, var(--slate) 45%, var(--ground)); border: 0; }
+.dag .box.ffout, .dag.focus .box.ffout { opacity: .25; }
 /* A cell: the title is centred in the whole cell; the swatch and icons overlay its top corners. */
 /* --bc is the cell's border colour, which the change badge takes too */
 .nb { --bc: var(--line2); position: absolute; width: var(--bw); height: 64px; background: var(--raised); border: 1px solid var(--bc);
@@ -91,6 +101,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .dag.focus .nb.near { opacity: 1; --bc: color-mix(in oklab, var(--cyan) 55%, var(--line2)); }
 .dag.focus .nb.match { opacity: 1; --bc: var(--cyan); }
 .nb.sel, .dag.focus .nb.sel { opacity: 1; --bc: var(--cyan); box-shadow: 0 0 0 2px var(--cyan), 0 0 0 4px color-mix(in oklab, var(--cyan) 25%, transparent); z-index: 2; }
+.dag .nb.ffout, .dag.focus .nb.ffout { opacity: .28; pointer-events: none; }
 .nb.flash { animation: flash .9s ease-out; }
 @keyframes flash { 0% { box-shadow: 0 0 0 6px color-mix(in oklab, var(--orange) 60%, transparent); } 100% { box-shadow: 0 0 0 2px var(--cyan); } }
 /* the change badge: set into the cell's bottom right corner, only its inner corner rounded */
@@ -122,10 +133,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .pg .lab { margin-bottom: var(--sp-10); display: block; }
 .pg p { margin: 0 0 var(--sp-10); font: var(--type-body); color: var(--dim); }
 .links { display: flex; flex-direction: column; gap: var(--sp-2); }
-.lk { display: grid; grid-template-columns: 70px 9px minmax(0, 1fr) auto; align-items: center; gap: var(--sp-10); padding: var(--sp-4) var(--sp-5); border-radius: var(--r-4); text-align: left; font: var(--type-body); }
+.lk { display: grid; grid-template-columns: 70px 9px minmax(0, 1fr) auto auto; align-items: center; gap: var(--sp-10); padding: var(--sp-4) var(--sp-5); border-radius: var(--r-4); text-align: left; font: var(--type-body); }
 .lk:hover { background: var(--raised); }
 .lk .k { font: var(--type-mono-label); letter-spacing: .04em; text-transform: uppercase; color: var(--dim); }
 .lk .where { font: var(--type-mono-label); color: var(--faint); }
+.lk .ffs { font: var(--type-small); color: var(--faint); }
 .empty { color: var(--faint); font: var(--type-body); }
 .panel .note { font: var(--type-body); color: var(--ink); background: var(--raised);
   border-left: 2px solid var(--line2); border-radius: 0 var(--r-4) var(--r-4) 0; padding: var(--sp-5) var(--sp-10); margin: var(--sp-4) 0; }

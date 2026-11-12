@@ -8,6 +8,7 @@
 // empty rows; "All" keeps the whole map and dims instead.
 // A change package's page (M.review) adds a Review tab, change badges on the scenes its Map Changes
 // name, a Changes toggle and the scene's change entries in the side panel.
+// A map with two or more form factors adds a drop-down that grays out what does not exist on the chosen one.
 (function () {
   "use strict";
   const M = window.UI_MAP;
@@ -40,12 +41,14 @@
     change: '<path d="M8 3 13.5 12.5h-11z"/>',
     chevron: '<path d="M4.5 6.5 8 10l3.5-3.5"/>',
     check: '<path d="M3.5 8.5 6.5 11.5 12.5 4.5"/>',
+    formFactor: '<rect x="1.5" y="2.5" width="8.5" height="11" rx="1.5"/><rect x="11.5" y="6.5" width="3" height="7" rx="1"/>',
   };
   const icon = (name, title) => svgEl(`<svg class="ic" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><title>${title}</title>${ICONS[name]}</svg>`);
   const calloutIcons = sc => [
     sc.notes.length ? icon("note", sc.notes.length === 1 ? "1 note" : `${sc.notes.length} notes`) : null,
     sc.implements.length ? icon("implements", `implements ${sc.implements.join(", ")}`) : null,
     sc.modalStyle ? icon("modal", `modal style: ${modalStyles(sc.modalStyle).join(", ")}`) : null,
+    sc.formFactors ? icon("formFactor", `form factors: ${sc.formFactors.map(humanize).join(", ")}`) : null,
   ].filter(Boolean);
 
   const R = M.review;   // null on the production map
@@ -53,9 +56,10 @@
   const htmlFrag = h => { const t = document.createElement("template"); t.innerHTML = h; return t.content; };
 
   // hops: 1 | 2 | "all" — how far from the selection (or the chosen domains) the filter reaches.
+  // ff: the chosen form factor, null for All; what doesn't exist on it is grayed out, whatever else is set.
   // tab: "map" | "review"; changes: the Changes toggle; review: the Review tab's pressed filters.
   // The page follows the system theme.
-  const state = { selected: null, panel: true, domains: new Set(), query: "", hops: 1, hopsOpen: false, help: false,
+  const state = { selected: null, panel: true, domains: new Set(), query: "", hops: 1, hopsOpen: false, ff: null, ffOpen: false, help: false,
     tab: "map", changes: false, review: new Set() };
 
   // ---- facts ----
@@ -66,6 +70,33 @@
   const noteAt = (s, kind) => s.notes.filter(n => n.at === kind);
   const generalNotes = s => s.notes.filter(n => !n.at);
   const appearances = sid => S[sid].reachedFrom.map(r => ({ ...r, canonical: isCanonical(sid, r.source, r.kind) }));
+  // Form factors: the drop-down shows only for two or more. A route's own form factors (null when
+  // unmarked); a placement exists on the chosen form factor when its scene, its route's source and
+  // its route all do.
+  const FF = M.formFactors || [];
+  const ffOn = ffs => !state.ff || !ffs || ffs.includes(state.ff);
+  const routeFF = (source, kind, t) => { const r = S[source].routes.find(r => r.kind === kind); return r && r.formFactors ? r.formFactors[r.targets.indexOf(t)] : null; };
+  const placementOn = (it, box) => ffOn(S[it.id].formFactors) && (!box.source || (ffOn(S[box.source].formFactors) && ffOn(routeFF(box.source, box.kind, it.id))));
+  // Where a scene is drawn in full for the chosen form factor: its home, unless the form factor doesn't
+  // use the home route and another route into the scene is used; then the first such route's cell is
+  // drawn in full and the home cell as a reused one. Nothing moves; only the two cells swap their look
+  // and the scene's connectors start from the full one. Keyed by scene: the full cell's key.
+  function fullHomes() {
+    const out = {};
+    if (!state.ff) return out;
+    const used = (source, kind, sid) => ffOn(S[source].formFactors) && ffOn(routeFF(source, kind, sid));
+    for (const sid of M.order) {
+      const sc = S[sid];
+      if (!sc.parent || !ffOn(sc.formFactors) || used(sc.parent, sc.parentKind, sid)) continue;
+      const alt = sc.reachedFrom.find(a => !(a.source === sc.parent && a.kind === sc.parentKind) && used(a.source, a.kind, sid));
+      if (alt) out[sid] = key(sid, alt.source, alt.kind);
+    }
+    return out;
+  }
+  // A full cell stays while its scene exists; a reused cell goes with its route.
+  const cellOn = (it, box, full) => full ? ffOn(S[it.id].formFactors) : placementOn(it, box);
+  // A route label marks a box holding any route with form factors of its own; the panel says which.
+  const routeMarked = (source, kind) => { const r = S[source].routes.find(r => r.kind === kind); return !!(r && r.formFactors && r.formFactors.some(Boolean)); };
   const neighbours = sid => [...new Set([...S[sid].reachedFrom.map(r => r.source), ...S[sid].routes.flatMap(r => r.targets)])];
 
   // Scenes shown under the current filter; null = everything.
@@ -309,6 +340,8 @@
       }
       const offX = Math.max(0, t.x - padL), offY = Math.max(0, t.y - padT), scrollX = Math.max(0, padL - t.x), scrollY = Math.max(0, padT - t.y);
       const L = lit();
+      const H = fullHomes();
+      const isFull = (it, k) => H[it.id] && pos[H[it.id]] ? H[it.id] === k : it.canonical;
       const q = state.query.trim().toLowerCase();
       const matches = q ? new Set(M.order.filter(s => S[s].label.toLowerCase().includes(q) || s.includes(q))) : null;
       const lightChanged = state.changes ? changed : null;   // the Changes toggle shows changed scenes as search shows its matches
@@ -324,23 +357,27 @@
         const matched = box.items.some(it => (matches && matches.has(it.id)) || (lightChanged && lightChanged.has(it.id)));
         // A route box is "on" when its connector is: it belongs to the selected scene, or holds it.
         const on = !!(L && edge && L.edges.has(edge) && (box.source === state.selected || box.items.some(it => it.id === state.selected)));
-        dag.append(el("div", { class: `box ${box.bare ? "bare" : box.kind || "root"}` + (litBox || inDomain || matched ? " near" : "") + (on ? " on" : ""), "data-key": box.bare ? `bare:${box.items[0].id}` : edge || "root", style: `left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px` }));
+        const out = box.items.some(it => placementOn(it, box)) ? "" : " ffout";   // the box, its connector and label exist while any placement in it does
+        dag.append(el("div", { class: `box ${box.bare ? "bare" : box.kind || "root"}` + (litBox || inDomain || matched ? " near" : "") + (on ? " on" : "") + out, "data-key": box.bare ? `bare:${box.items[0].id}` : edge || "root", style: `left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px` }));
         if (box.source) {
-          const s = pos[box.source]; const sx = s.x + IW / 2, sy = s.y + IH, ex = b.x + b.w / 2, ey = b.y, mid = (sy + ey) / 2;
+          const s = pos[H[box.source]] || pos[box.source]; const sx = s.x + IW / 2, sy = s.y + IH, ex = b.x + b.w / 2, ey = b.y, mid = (sy + ey) / 2;
           paths.push(`<path class="e ${box.kind}${on ? " on" : ""}" d="M${sx} ${sy} C${sx} ${mid} ${ex} ${mid} ${ex} ${ey}"/>`);
-          labels.push(el("span", { class: "st" + (on ? " on" : ""), "data-key": `label:${edge}`, style: `left:${ex}px;top:${ey - 12}px` }, KIND[box.kind], noteAt(S[box.source], box.kind).length ? icon("note", "note on this route") : null));
+          labels.push(el("span", { class: "st" + (on ? " on" : "") + out, "data-key": `label:${edge}`, style: `left:${ex}px;top:${ey - 12}px` }, KIND[box.kind], noteAt(S[box.source], box.kind).length ? icon("note", "note on this route") : null,
+            routeMarked(box.source, box.kind) ? icon("formFactor", "used on only some form factors") : null));
         }
         for (const it of box.items) {
-          const k = itemKey(it, box); const sc = S[it.id]; const p = pos[k];
-          let cls = "nb" + (it.canonical ? "" : " ph") + (sc.todo ? " todo" : "");
-          if (L) { if (it.canonical && it.id === state.selected) cls += " sel"; else if (L.keys.has(k)) cls += " near"; }
+          const k = itemKey(it, box); const sc = S[it.id]; const p = pos[k]; const full = isFull(it, k);
+          const cellOut = !cellOn(it, box, full);   // grayed out: a reused cell drops its lighter look and grays like any other, keeping its arrow
+          let cls = "nb" + (full || cellOut ? "" : " ph") + (sc.todo ? " todo" : "");
+          if (L) { if (full && it.id === state.selected) cls += " sel"; else if (L.keys.has(k)) cls += " near"; }
           if (state.domains.has(sc.domain)) cls += " near";
           if ((matches && matches.has(it.id)) || (lightChanged && lightChanged.has(it.id))) cls += " match";
+          if (cellOut) cls += " ffout";
           dag.append(el("button", { class: cls, "data-key": k, style: `left:${p.x}px;top:${p.y}px`,
-            title: it.canonical ? sc.id : `${sc.id} · reused here; canonical under ${sc.parent}`,
-            onclick: () => select(it.canonical && it.id === state.selected ? null : it.id, !it.canonical) },   // clicking the selected cell again clears
+            title: full ? sc.id : `${sc.id} · reused here; drawn in full elsewhere`,
+            onclick: () => select(full && it.id === state.selected ? null : it.id, !full) },   // clicking the selected cell again clears
             el("div", { class: "nbtop" }, el("i", { class: "dm", style: `--c:${domainColor[sc.domain]}`, title: domainLabel[sc.domain] }),
-              el("span", { class: "icons" }, ...(it.canonical ? calloutIcons(sc) : [icon("reuse", "reused scene; click to go to its home")]))),
+              el("span", { class: "icons" }, ...(full ? calloutIcons(sc) : [icon("reuse", "reused scene; click to go to its home")]))),
             el("div", { class: "nmw" }, el("div", { class: "nm" }, sc.label)),
             changed.has(it.id) ? changeBadge() : null));
         }
@@ -371,6 +408,11 @@
     state.hopsOpen = open;
     $("#app > .top").replaceWith(renderTop());
   }
+  function ffMenu(open) {
+    if (state.ffOpen === open) return;
+    state.ffOpen = open;
+    $("#app > .top").replaceWith(renderTop());
+  }
   function renderTop() {
     const tab = (id, text) => el("button", { class: "tab", role: "tab", "aria-selected": String(state.tab === id), onclick: () => go(id) }, text);
     const tools = state.tab === "map" ? mapTools() : reviewTools();
@@ -379,6 +421,18 @@
       R ? el("div", { class: "tabs", role: "tablist" }, tab("map", "Map"), tab("review", "Review")) : null,
       el("div", { class: "tools" }, ...tools,
         el("button", { class: "info", "aria-label": "How to read this map", title: "How to read this map", onclick: () => { state.help = true; render(); } }, "?")));
+  }
+  // The form-factor drop-down: All, then each form factor. Every choice sits in the button, only the
+  // current one visible, so the button is as wide as its longest choice (up to a cap; longer cuts off).
+  function formFactorTool() {
+    if (FF.length < 2) return null;
+    const choices = [[null, "All"], ...FF.map(f => [f, humanize(f)])];
+    return el("div", { class: "ff" },
+      el("button", { class: "hopsbtn ffbtn", "aria-haspopup": "listbox", "aria-expanded": String(state.ffOpen), "aria-label": "Form factor",
+        onclick: () => ffMenu(!state.ffOpen) }, el("span", { class: "ffv" }, ...choices.map(([v, t]) => el("span", { class: v === state.ff ? "cur" : null }, t))), icon("chevron", "")),
+      state.ffOpen ? el("div", { class: "menu", role: "listbox", "aria-label": "Form factor" }, ...choices.map(([v, t]) =>
+        el("button", { class: "opt", role: "option", "aria-selected": String(state.ff === v), onclick: () => { state.ff = v; state.ffOpen = false; render(); } },
+          state.ff === v ? icon("check", "") : el("i", { class: "nochk" }), t))) : null);
   }
   // The hops drop-down appears only while the map is filtered; it sits before the domain filters, so they never move.
   function mapTools() {
@@ -394,6 +448,7 @@
             state.hops === v ? icon("check", "") : el("i", { class: "nochk" }), t))) : null) : null,
       el("div", { class: "seg legend", role: "group", "aria-label": "Domains" }, ...M.domains.map(d => el("button", { type: "button", "data-f": d.id, "aria-pressed": String(state.domains.has(d.id)) },
         el("span", { class: "badge", style: `background:${d.color}` }), el("b", {}, count(d.id)), d.label))),
+      formFactorTool(),
       R ? el("div", { class: "seg changes", role: "group", "aria-label": "Changes" },
         el("button", { type: "button", "data-f": "changes", "aria-pressed": String(state.changes) }, el("b", {}, changed.size), "Changes")) : null,
       el("div", { class: "find" },
@@ -469,6 +524,7 @@
     const a = e.target.closest && e.target.closest('a[href^="#"]');
     if (a && $("#app").contains(a)) { e.preventDefault(); go(decodeURIComponent(a.getAttribute("href").slice(1))); }
     if (state.hopsOpen && !(e.target.closest && e.target.closest(".hops"))) hopsMenu(false);
+    if (state.ffOpen && !(e.target.closest && e.target.closest(".ff"))) ffMenu(false);
   });
   addEventListener("hashchange", () => { if (location.hash) go(decodeURIComponent(location.hash.slice(1)), false); });
 
@@ -476,12 +532,16 @@
     const panel = el("div", { class: "panel" });
     const s = state.selected && S[state.selected]; if (!s) return panel;
     const apps = appearances(s.id);
+    const H = fullHomes();
+    const fullAt = (t, source, kind) => H[t] ? H[t] === key(t, source, kind) : isCanonical(t, source, kind);   // the panel's home/reused follow the drawing
     panel.append(el("div", { class: "phead" },
       el("div", { class: "row1" }, el("h2", {}, s.label), el("button", { class: "close", onclick: () => { holdPlace = true; state.panel = false; render(); }, "aria-label": "Close" }, "×")),
       el("p", { class: "sub" }, el("span", { class: "dom" }, el("i", { class: "dm", style: `--c:${domainColor[s.domain]}` }), `${domainLabel[s.domain]} domain`), s.todo ? ["·", "TODO"] : null)));
     const body = el("div", { class: "pbody" });
-    const link = (id, kind, where) => el("button", { class: "lk", onclick: () => select(id, true) },
-      el("span", { class: "k" }, kind ? KIND[kind] : ""), el("i", { class: "dm", style: `--c:${domainColor[S[id].domain]}` }), el("span", {}, S[id].label), el("span", { class: "where" }, where || ""));
+    // A route row names the route's own form factors, when it has them, before home or reused.
+    const link = (id, kind, where, ffs) => el("button", { class: "lk", onclick: () => select(id, true) },
+      el("span", { class: "k" }, kind ? KIND[kind] : ""), el("i", { class: "dm", style: `--c:${domainColor[S[id].domain]}` }), el("span", {}, S[id].label),
+      el("span", { class: "ffs" }, ffs ? ffs.map(humanize).join(", ") : ""), el("span", { class: "where" }, where || ""));
     // Callout sections carry the same icons as the scene cell, in their heading's colour.
     const labIcon = (name, text) => el("span", { class: "lab withicon" }, icon(name, text), text);
     // Changes first: the scene's Map Changes entries as cards, each ID linking to the entry in the Review tab.
@@ -489,9 +549,9 @@
     if (mine) body.append(el("div", { class: "pg changes" }, labIcon("change", "Changes"), ...mine.map(htmlFrag)));
     // Reached from: one row per route into this scene; "home" marks the route under which its canonical cell is drawn.
     body.append(el("div", { class: "pg" }, el("span", { class: "lab" }, "Reached from"),
-      el("div", { class: "links" }, ...(apps.length ? apps.map(a => link(a.source, a.kind, apps.length > 1 ? (a.canonical ? "home" : "reused") : null)) : [el("span", { class: "empty" }, "root")]))));
+      el("div", { class: "links" }, ...(apps.length ? apps.map(a => link(a.source, a.kind, apps.length > 1 ? (fullAt(s.id, a.source, a.kind) ? "home" : "reused") : null, routeFF(a.source, a.kind, s.id))) : [el("span", { class: "empty" }, "root")]))));
     const opens = s.routes.flatMap(r => [
-      ...r.targets.map(t => link(t, r.kind, isCanonical(t, s.id, r.kind) ? null : "reused")),
+      ...r.targets.map((t, i) => link(t, r.kind, fullAt(t, s.id, r.kind) ? null : "reused", r.formFactors ? r.formFactors[i] : null)),
       ...noteAt(s, r.kind).map(n => el("div", { class: "note" }, el("span", { class: "k" }, KIND[r.kind]), n.text))]);
     body.append(el("div", { class: "pg" }, el("span", { class: "lab" }, "Opens"),
       el("div", { class: "links" }, ...(opens.length ? opens : [el("span", { class: "empty" }, "nothing")]))));
@@ -500,6 +560,7 @@
     if (s.implements.length) body.append(el("div", { class: "pg" }, labIcon("implements", "Implements"),
       el("div", { class: "chips" }, ...s.implements.map(i => el("span", { class: "chip" }, humanize(i))))));
     if (s.modalStyle) body.append(el("div", { class: "pg" }, labIcon("modal", "Modal style"), el("div", { class: "chips" }, ...modalStyles(s.modalStyle).map(m => el("span", { class: "chip" }, m)))));
+    if (s.formFactors) body.append(el("div", { class: "pg" }, labIcon("formFactor", "Form factors"), el("div", { class: "chips" }, ...s.formFactors.map(f => el("span", { class: "chip" }, humanize(f))))));
     panel.append(body);
     return panel;
   }
@@ -524,7 +585,8 @@
             R ? row(cell("Scene", "", [], changeBadge()), "The scene is changed in this change package: the scene itself or one of its outgoing connections. Select it to read its changes in the side panel.") : null,
             row(el("span", { class: "licons" }, icon("note", "")), "The scene has a note. Select it to read the note in the side panel."),
             row(el("span", { class: "licons" }, icon("implements", "")), "The scene implements several variants, for example a reusable Web scene that displays the Privacy Policy and the Terms of Service; the panel lists them."),
-            row(el("span", { class: "licons" }, icon("modal", "")), "The scene opens as a modal and declares its modal style; the panel names it.")),
+            row(el("span", { class: "licons" }, icon("modal", "")), "The scene opens as a modal and declares its modal style; the panel names it."),
+            FF.length >= 2 ? row(el("span", { class: "licons" }, icon("formFactor", "")), "The scene exists on only some form factors, such as phones or tablets; the panel lists them.") : null),
           el("div", { class: "pg" }, el("span", { class: "lab" }, "Route boxes"),
             row(el("span", { class: "box sample nav" }), "A set of mutually exclusive routes of one kind from one scene: the parent reaches exactly one of the scenes inside at a time."),
             row(el("span", { class: "box sample composite" }), "The parts that make up a composite parent. They are embedded, not routed to.")),
@@ -534,10 +596,11 @@
             row(route("tab"), "The child is one of the parent's tabs."),
             row(route("child"), "The parent embeds the child as a subview and routes to it."),
             row(route("composite"), "The parent embeds the child as a subview without any routing."),
-            row(el("span", { class: "st static" }, "Nav", icon("note", "")), "A note is attached to this route; the parent's panel shows it.")),
+            row(el("span", { class: "st static" }, "Nav", icon("note", "")), "A note is attached to this route; the parent's panel shows it."),
+            FF.length >= 2 ? row(el("span", { class: "st static" }, "Nav", icon("formFactor", "")), "A route here is used on only some form factors; the parent's panel lists them.") : null),
           el("div", { class: "pg" }, el("span", { class: "lab" }, "Using the viewer"),
             el("p", {}, "Click a scene to see only the scenes connected to it; the clicked scene stays where it is and the rest of the map collapses around it. The hops menu in the top bar sets how far: 1 hop shows direct connections, 2 hops one step further, All keeps the whole map and dims what is unconnected. Click the scene again, click an empty part of the map, or press Escape to restore the map. Closing the side panel leaves the scene selected."),
-            el("p", {}, "Click domains in the top bar to filter to those domains and their connections; click a domain again to drop it. Type in the search box to highlight scenes; Enter selects the first match, and the cross clears the search."),
+            el("p", {}, "Click domains in the top bar to filter to those domains and their connections; click a domain again to drop it. Type in the search box to highlight scenes; Enter selects the first match, and the cross clears the search." + (FF.length >= 2 ? " Choose a form factor in the top bar to gray out the scenes and routes that don't exist on it." : "")),
             R ? el("p", {}, "Turn on Changes to highlight the scenes this change package changes and dim the rest. The Review tab holds the package's discussion and its list of map changes: a change's scene links to it on the map, and a change's ID in the side panel links to it in the Review tab.") : null))));
   }
 
@@ -557,6 +620,7 @@
   document.addEventListener("keydown", e => {
     if (e.key !== "Escape") return;
     if (state.hopsOpen) hopsMenu(false);
+    else if (state.ffOpen) ffMenu(false);
     else if (state.help) { state.help = false; render(); }
     else if (state.tab === "map") select(null);
   });

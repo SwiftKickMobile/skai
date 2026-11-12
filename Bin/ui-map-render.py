@@ -214,8 +214,8 @@ the demo doc and the guide describe the same conventions in prose.
       window; a line too wide to fit stays flush left.
     - Cells: neutral boxes with the title centred (two lines, then clipped), a
       domain colour swatch top-left and icons top-right marking only the
-      existence of callouts — notes, implements, modal style — whose content the
-      side panel shows. A pointer (rule 6) is a lighter cell with a reuse
+      existence of callouts — notes, implements, modal style, form factors —
+      whose content the side panel shows. A pointer (rule 6) is a lighter cell with a reuse
       arrow; clicking it selects the canonical scene.
     - Selection: clicking a scene filters the page to its connected
       neighbourhood (1 hop by default; 2 hops or All from the control in the
@@ -231,6 +231,20 @@ the demo doc and the guide describe the same conventions in prose.
       matches and dims the rest; Enter selects the first; a cross inside the
       box, shown while it has a value, clears it. While a selection or domain
       filter narrows the map, nothing is dimmed.
+    - Form factors: when the map declares two or more, a drop-down (All, then
+      each form factor) grays out what doesn't exist on the chosen one, as
+      search dims a non-match, whatever else is selected, filtered or
+      searched; grayed cells take no clicks. A scene's own cell grays when the
+      scene doesn't exist; a route box and its label gray when no route in
+      it does (connectors stay at full strength) (a route exists when its scene, its source and the
+      route itself do), and a reused cell grays with its route, dropping its
+      lighter look for a plain cell's, its reuse arrow kept. When the
+      chosen form factor doesn't use a scene's home route but uses another
+      route into it, that route's cell is drawn in full and the home cell as
+      a grayed reused one; nothing moves, the scene's connectors start from
+      the full cell, and the panel's home/reused follow. A route label
+      carries the form-factor icon when any route in its box has form factors
+      of its own; the source's panel lists them.
     - Placement after a selection, in priority order: the selected cell is
       fully visible and clear of the side panel; as much cell area as possible
       is visible, counted continuously so that closing a gap always beats
@@ -250,9 +264,10 @@ the demo doc and the guide describe the same conventions in prose.
     - Side panel for the selected scene: its domain, then Changes on a change
       package's page (below), Reached from (every inbound route with its
       kind, tagged home/reused when the scene appears more than once), Opens
-      (per route kind, with route notes inline), Notes, Implements, Modal
-      style (each headed by the cell's icon, in the heading's colour; ids
-      shown humanized). Headings carry no counts. The panel's footprint is a
+      (per route kind, with route notes inline; a route's own form factors
+      before home/reused), Notes, Implements, Modal style, Form factors
+      (each headed by the cell's icon, in the heading's colour; ids shown
+      humanized). Headings carry no counts. The panel's footprint is a
       safe area: the layout width does not change when it opens, and the
       canvas scrolls under it.
     - Top bar: one-line title, "UI Map" then the package's ID in cyan — the
@@ -262,10 +277,13 @@ the demo doc and the guide describe the same conventions in prose.
       All; a fixed width, shown only while a selection or domain filter
       narrows the map, before the domain filters so they never move), the
       domain filters in the review pages' filter style (each domain's colour,
-      scene count and name), the Changes toggle on a change package's page,
+      scene count and name), the form-factor drop-down (as wide as its
+      longest choice, at most 84px, cutting off a longer one), the Changes
+      toggle on a change package's page,
       the search box, and "?", which opens a legend: the cell and box
-      vocabulary, the change badge on a change package's page, the route
-      kinds, and the controls. No theme or reset button.
+      vocabulary, the change badge on a change package's page, the
+      form-factor icon on cells and route labels on a map with form factors,
+      the route kinds, and the controls. No theme or reset button.
     - A change package's page (the input in a change package's `ui-map/`
       folder, with `ui-map-architecture.md` beside it) reads that artifact's
       Discussion and `## Map Changes`: `### <domain>` headings, entries
