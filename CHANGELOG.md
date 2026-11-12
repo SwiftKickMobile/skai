@@ -9,6 +9,8 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **Review pages.** A design or spec review page no longer fails to render when a gap's owning item links another package's item.
+
 ## Release 17 — 2026-11-12
 
 Technical document: [`Releases/release-17.md`](Releases/release-17.md).

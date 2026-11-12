@@ -123,5 +123,27 @@ class Render(unittest.TestCase):
         self.assertIn('id="rcr-02-d05"', page)
         self.assertRegex(page, r'<div class="gapbody"><a class="ref" href="\.\./promoted/CR-02/package/design-review\.html#d05" data-tip="tip-gap-linked-\d+-d05">D05</a> the empty group')
 
+    def test_owner_item_linking_a_further_artifact_gets_its_tooltip_too(self):
+        third = self.copy / "third/package"
+        third.mkdir(parents=True)
+        (third / "design-authoring.md").write_text(
+            "# Design — Third\n\n## Goal\n\nA third package.\n\n## Discussion\n\n"
+            "- [x] D07 [Proposal] Badges are round\n  - **Concern** No shape was given.\n  - **Decision** Round.\n\n"
+            "## Decision Log\n\n- D07 decided — round.\n")
+        other = self.copy / "other/package"
+        other.mkdir(parents=True)
+        (other / "design-authoring.md").write_text(
+            "# Design — Other\n\n## Goal\n\nAnother package.\n\n## Discussion\n\n"
+            "- [ ] D05 [Question] Which badge color?\n  - **Concern** It builds on [D07][third D07].\n  - **Gap** Gray.\n\n"
+            "## Decision Log\n\n- D05 gap — gray stands in.\n\n[third D07]: ../../third/package/design-authoring.md#d07\n")
+        artifact = self.copy / "package/design-authoring.md"
+        text = artifact.read_text().replace("**Gap:** D02. Placeholder: the empty group", "**Gap:** [D05][other D05]. Placeholder: the empty group", 1)
+        artifact.write_text(text + "\n[other D05]: ../other/package/design-authoring.md#d05\n")
+        code, out = self.render(artifact)
+        self.assertEqual(code, 0, out)
+        page = (artifact.parent / "design-review.html").read_text()
+        self.assertRegex(page, r'<template id="tip-gap-linked-\d+-d05">', "the gap owner's item has its tooltip")
+        self.assertRegex(page, r'<template id="tip-gap-linked-\d+-d07">', "an artifact first reached from inside a tooltip gets tooltips of its own")
+
 if __name__ == "__main__":
     unittest.main()

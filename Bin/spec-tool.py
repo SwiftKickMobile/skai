@@ -1890,8 +1890,15 @@ def item_tips(items, gloss, scope="", source="", linkdefs=None, path=None):
 
 
 def owner_tips(owners, gloss):
-    """Popovers for every owning artifact's items; the specs alias shares the product specs' templates."""
-    return "".join(item_tips(items, gloss, scope, page, linkdefs, path) for scope, (page, items, linkdefs, path) in owners.items() if scope != "specs")
+    """Popovers for every owning artifact's items; the specs alias shares the product specs' templates.
+    An item's text can link a further artifact, which rendering reads in as a new owner; owners added
+    that way get their popovers in a later pass, until a pass adds none."""
+    done, out = set(), []
+    while pending := [(scope, info) for scope, info in list(owners.items()) if scope != "specs" and scope not in done]:
+        for scope, (page, items, linkdefs, path) in pending:
+            done.add(scope)
+            out.append(item_tips(items, gloss, scope, page, linkdefs, path))
+    return "".join(out)
 
 
 def render_popovers(gloss):
