@@ -299,3 +299,19 @@ Inventory for `design-specs.md` § Items, added to the definition: an item state
 Evidence: Offers OFFER-ACTIVITY-03 (product specs, 2026-10-22) existed to hold a gap footnote and said only that the hub owes a notification nothing; the design specs guide defines an item by its heading, opening sentence, rules and data, so the same empty item would pass here too.
 
 Size: the guide 14,947 → draft 15,142 → compressed by Astra to 15,116; the set 47,495 → 47,664. Cap (supervisor, 2026-10-26): the set **47,650** (was 47,500), a little under the compressed size. Cold series RG with the two other amendments of the same date.
+
+## Amendment — 2026-11-10: Items Stay Where Raised; Allowed Change Types (skai#117, skai#118)
+
+Design specs adopt [`product-specs-system-design.md`](product-specs-system-design.md) § Amendment — 2026-11-10 with `S` for `R` and `C3`/`C4` for `C7`/`C8`; the shared rules are `change-requests.md`'s ([`change-requests-design.md`](change-requests-design.md)). Recorded during the refinement pass for those changes.
+
+1. **Change item source**: `design-specs-artifacts.md`'s Source line ("as the product spec guide") inherits the linked citation of another package's item; no design-specs text.
+2. **Readiness into production** (`design-specs-promotion.md` condition 1): no open item, gap or request in the package or any promoted request under it, however deep.
+3. **Folding into a package** (`C3`): the type guide writes the drafts as whole files; folding change items, footnotes, base-item decisions and open requests, and naming the request in Assumptions and TODOs, follow `change-requests.md`, named by file. `C3` validates the base; the base is re-rendered after the request is archived, so its page shows the request's items where they now live.
+4. **Archive**: the package moves with its pages, `working-docs/` and `promoted-change-requests/`; open requests never reach archive.
+5. **Moves** (skai#117): only items and glossary entries move, and only to another file (the tool keys glossary entries by term, so a new section in the same glossary is no change); a glossary entry moves with its item (§ Decisions 5); a section change within one file, glossary or spec, takes no entry. Root creation is one `add spec file` entry, the rest in Touches. `check-changes` rejects a change type the artifacts guide does not list.
+
+Cap (supervisor, 2026-11-10, after cold round 4): the set **47,700** (was 47,650; 47,459 before this pass), for two wording repairs the round found with 6 bytes of headroom. Compression round skipped: each change replaces a clause in place.
+
+## Amendment — 2026-11-11: Requests As Folders Of Sub-Packages; Confirming The Route (skai#108, skai#129)
+
+Adopts [`change-requests-design.md`](change-requests-design.md) § Amendment — 2026-11-11: this standard's guides say the items that amendment lists for their kind of guide (artifacts, authoring, promotion, Figma), and every request path, ID and provenance tag in them takes the new form. Caps for this change: `change-requests-design.md` § Amendment — 2026-11-11 (supervisor, 2026-11-11).

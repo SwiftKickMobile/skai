@@ -113,3 +113,22 @@ for both guides against the 19,000 cap; 16,674 after merging the shorter Project
 | 2026-10-28 GA r2 | F2 canvas order undefined where § Gaps uses it | closed | supervisor ruling: down a column, then across columns, in the layout ordering rule |
 | 2026-10-28 GA r3 | F2 a package drawn on two concept pages has no first occurrence | logged | no occurrence; blocked gate covers it; sharpen the layout rule after a ruling if it occurs |
 | 2026-10-28 GA r5 | Terminal by ruling: three logged branches stay unimplemented | converged | stop rule (b), supervisor 2026-10-28 |
+| 2026-11-11 #118 r1 | F1 structure check rejected a `CR-001-002` Section | closed | `figma-page-check.js` pattern widened; test extended |
+| 2026-11-11 #118 r1 | F2 "folds them into the page's Sections" wrong for a request against a request | closed | "the base's Sections" |
+| 2026-11-11 #118 r1 | F3 "the package's drawings" no longer located a promoted request's annotation | closed | "across the drawings holding it" |
+| 2026-11-11 #118 r1 | F4 design authoring restated the old request Section name and place | closed | Points at the tool guide's request section |
+| 2026-11-11 #118 r1 | F5 two open requests could both be `CR-001` on one page; F6 nothing triggered the re-filed rename | closed | Name by request path (`CR-001-002`), which a fold's re-filing keeps |
+| 2026-11-11 #118 r2 | F1 "one annotation across the drawings holding it" read per container or in total | closed | "per change page or request Section drawing it … first frame there"; "that frame" |
+| 2026-11-11 #118 r2 | F2 Frames rule 5 required renaming a request's copies, against the process guides' match by frame name | closed | "a request's copies aside; any other copy is renamed first" |
+| 2026-11-11 #118 r2 | F3 a fold of a modified frame can drop the mirror when `C5` deletes the request Section | logged | Per-container rule makes the base page's annotation derivable; a point-of-use restatement belongs in promotion |
+| 2026-11-11 #118 r2 | F4 "its base's page" had no referent for a request base; "request path" vs file paths | closed | "the page holding its base"; "its number path" |
+| 2026-11-11 #118 r2 | F5 the structure check run on one Section cannot see it nested in another | logged | Past a rule; a page-level run catches it |
+| 2026-11-11 #118 r3 | F1 "move it when that frame changes" named the wrong trigger | closed | "move it when another becomes first" |
+| 2026-11-11 #118 r3 | F2 "across its screen Sections" did not say whose | closed | "across its own screen Sections" |
+| 2026-11-11 #118 r3 | F3 "renamed first" had no "before what" | closed | "any other copy is renamed" |
+| 2026-11-11 #118 r3 | F4 a request deciding a base gap keeps the copied annotation until the fold | logged | Off-normal; converges at the fold; escalation route |
+| 2026-11-11 #118 r4 | F1/F2 spec did not record the per-Section mirror rule or the request-copy frame-name exception | closed — spec | Amendment 2026-11-11 items 4 and 5 |
+| 2026-11-11 #118 r4 | F3 § Gaps placement sentence stacks qualifiers; F4 "never inside another" leans on an unstated noun; F5 rule 5 does not say the copy keeps the base name | logged | Cosmetic; every reading acts the same; 4 bytes of headroom |
+| 2026-11-11 #118 r4 | F3/F4 applied on the supervisor's go | closed | § Gaps restructured ("Each gap's mirror is one Dev Mode annotation per change page and per request Section drawing it (a page's request Sections aside), …"); "never inside another Section" |
+| 2026-11-11 | Pass closed | closed | Supervisor ended the pass after r4 (stop rule b). Rounds r1–r4: 8.25 · 9.125 · 7.875 · 7. Pair 18,100 / 18,100 |
+| 2026-11-11 #111 | Container, backup and scratch Sections; production backups per changed page | closed | Refined with the design process guides (#111 pass, closed by clean round r8); pair 18,817 / 18,820 |

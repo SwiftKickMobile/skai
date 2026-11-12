@@ -1,0 +1,91 @@
+/* spec-review.v2.css — what only the spec and design review pages need; loads after skai-pages.v1.css,
+   which holds the tokens, the title bar, segmented controls, squares, cards, pills, references and popover. */
+.wrap { max-width: 900px; margin: auto; padding: var(--sp-20) var(--sp-15) var(--sp-25); }
+.top .seg.change { margin-left: auto; }
+h2 { font: var(--type-section-heading); margin: var(--sp-40) 0 var(--sp-10); border-bottom: 1px solid var(--line); padding-bottom: var(--sp-5); }
+h2 .badge { margin-right: var(--sp-10); width: 14px; height: 14px; }
+h3.section { font: var(--type-group-label); margin: var(--sp-20) 0 var(--sp-5); text-transform: uppercase; letter-spacing: .04em; }
+p { margin: var(--sp-5) 0; }
+ul { padding-left: var(--sp-20); margin: var(--sp-5) 0; }
+li { margin: var(--sp-2) 0; }
+blockquote { border-left: 3px solid var(--line); margin: var(--sp-10) 0; padding: var(--sp-2) var(--sp-10); color: var(--dim); }
+code { font-family: var(--mono); font-size: .87em; }
+a, a:visited { color: var(--cyan); }
+
+/* ---- cards: every .item is the shared card ---- */
+.item { background: var(--surface); border: 1px solid var(--neutral-line); border-radius: var(--r-10); box-shadow: var(--shadow-card);
+  padding: var(--sp-10) var(--sp-15); margin: var(--sp-10) 0; }
+.item:target { outline: 2px solid var(--cyan); }
+.item.prose { border: 0; background: none; box-shadow: none; padding: 0; margin: var(--sp-4) 0 var(--sp-10); }
+.item.prose > p.intro { margin: 0; }
+.head { display: flex; gap: var(--sp-10); align-items: center; margin-bottom: var(--sp-4); }
+details.item { padding: var(--sp-5) var(--sp-15); }
+details.item[open] { padding: var(--sp-15); }
+details.item summary { cursor: pointer; list-style: none; display: flex; gap: var(--sp-10); align-items: center; flex-wrap: wrap; }
+details.item summary::-webkit-details-marker { display: none; }
+details.item[open] summary { margin-bottom: var(--sp-4); }
+details.item[open] > :last-child, details.item[open] > ul > li:last-child { margin-bottom: 0; }
+.item .title { font: var(--type-reading-strong); }
+.item .title a, .item .title a:visited { text-decoration: none; }
+.item .title a:hover { text-decoration: underline; }
+.item.request .status, #pop .pop-head .status { vertical-align: middle; }
+
+/* ---- IDs, citations, terms ---- */
+.id, .rid { font: var(--type-mono-strong); }
+.rid { margin-right: var(--sp-4); }
+.retired .id, .removed .id, .missing .id, li.rem .rid, li.ret .rid { text-decoration: line-through; color: var(--faint); }
+span.term, a.term, a.term:visited, .term { color: inherit; border-bottom: 1px dashed var(--dim); cursor: pointer; text-decoration: none; }
+a.link, a.link:visited { color: inherit; text-decoration: underline; text-decoration-color: var(--dim); }
+
+/* ---- change-type squares by context ---- */
+.added .badge, tr.add .badge, li.add > .badge { background: var(--added); }
+.modified .badge, tr.mod .badge, li.mod > .badge { background: var(--modified); }
+.retired .badge, .missing .badge, .removed .badge, tr.rem .badge, li.rem > .badge, li.ret > .badge { background: var(--removed); }
+details.item.unchanged summary .badge { background: var(--unchanged); }
+table.t td .badge, table.t th .badge { margin-right: var(--sp-5); }
+li > .badge { margin-right: var(--sp-4); }
+p.intro { margin: var(--sp-4) 0 var(--sp-10); }
+p.intro .badge { margin-right: var(--sp-10); }
+
+/* ---- deletions and changed words: color only, no highlight ---- */
+del { text-decoration: line-through; color: var(--faint); }
+del .ref, del .term { opacity: .6; }
+del.w { color: var(--red); }
+ins.w { text-decoration: none; color: var(--green); }
+
+/* ---- justifications, tables, documents box ---- */
+.why { font: var(--type-caption); color: var(--dim); border-top: 1px dashed var(--line); margin-top: var(--sp-10); padding-top: var(--sp-5); }
+.why b { color: var(--ink); }
+li > span.why { display: inline; border: 0; margin: 0; padding: 0; }
+.file-why { font: var(--type-caption); color: var(--dim); margin: 0 0 var(--sp-10); }
+table.t { border-collapse: collapse; width: 100%; margin: var(--sp-10) 0; }
+table.t td, table.t th { border-bottom: 1px solid var(--line); padding: var(--sp-4) var(--sp-10); text-align: left; vertical-align: top; }
+.toc { margin: var(--sp-15) 0; }
+.toc .toc-title { font: var(--type-title); margin-bottom: var(--sp-5); }
+.toc ol { list-style: none; margin: 0; padding: 0; }
+.toc li { display: flex; align-items: center; gap: var(--sp-10); padding: var(--sp-3) 0; }
+.toc a { font: var(--type-mono-body); font-size: 13px; color: var(--cyan); text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+.toc .n { font: var(--type-caption); color: var(--dim); }
+
+/* ---- Discussion ---- */
+details.discussion .state { margin-left: auto; }
+details.discussion > ul { margin-top: var(--sp-10); }
+
+/* ---- gap footnotes ---- */
+.gapnotes { margin: var(--sp-10) 0 var(--sp-2); padding: var(--sp-10); background: var(--raised); border-radius: var(--r-5); }
+.gapnote { font: var(--type-caption); display: flex; gap: var(--sp-10); align-items: flex-start; }
+.gapnote + .gapnote { margin-top: var(--sp-5); }
+.gapnote .gapbody { flex: 1; }
+.gapnote .gapbody > div + div { margin-top: var(--sp-2); }
+sup.fn { font: 700 10px/1 var(--font); vertical-align: super; display: inline-flex; align-items: center; justify-content: center; height: 15px; min-width: 15px;
+  padding: 0 var(--sp-4); border-radius: var(--r-4); color: var(--surface); background: var(--ink); margin-left: var(--sp-2); }
+sup.fn a { color: inherit; text-decoration: none; }
+.gapnote sup.fn { vertical-align: top; margin: var(--sp-2) 0 0; }
+ol.gaps { margin: 0; padding-left: var(--sp-20); }
+
+/* ---- popover content ---- */
+#pop .pop-head { margin-bottom: var(--sp-4); display: flex; gap: var(--sp-10); align-items: center; }
+#pop .pop-src { font: var(--type-mono-body); color: var(--dim); margin-bottom: var(--sp-4); }
+#pop li.hit { outline: 2px solid var(--cyan); border-radius: var(--r-4); }
+#pop .id { font: var(--type-mono-body); font-weight: 700; }

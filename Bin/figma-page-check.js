@@ -6,38 +6,49 @@
 // finding per breach, naming the node, the rule and what was measured. Rules checked:
 //
 //   loose      a node on a page that is not a Section, or a non-screen node in a Section
-//   nesting    a Section inside a Section anywhere but inside a request Section (`CR-<nnn> — …`),
-//              or deeper than one level
+//   nesting    a Section inside a Section on a `Production` page, or deeper than one level; on a change
+//              page a top-level Section (the package's, a request's `CR-01 — …`, a backup) may hold one level
+//   backup     a backup Section (`Base — Pre CR-01`) not stacked 100 under a Section with its left edge aligned
+//              (checked on a page; a Section target cannot see its neighbours)
 //   prefix     a name carrying a concept prefix (`a · name`, `A — name`)
 //   fill       a Section whose fill is not SECTION_FILL
 //   padding    content closer to, or farther from, a Section's edge than PADDING
 //   columns    columns not COLUMN_GAP apart, or states not STATE_GAP apart within a column
-//   sections   sibling Sections not SECTION_GAP apart, or tops not aligned
+//   sections   sibling Sections not SECTION_GAP apart, or tops not aligned (backups aside)
 //
+// A scratch Section (`Scratch — …`) is skipped: exploration is outside the check.
 // The checks are pure over a tree of {type, name, x, y, width, height, fills, children}; the
 // test under internal/tests/tools/figma-page-check/ runs them on a mock without Figma.
 const TARGET_ID = "";
 const SECTION_FILL = "#FAFAFA";
 const PADDING = 50, COLUMN_GAP = 50, STATE_GAP = 100, SECTION_GAP = 100, TOLERANCE = 1;
 const PREFIX = /^[a-z] · |^[A-Z] — /;
-const REQUEST = /^CR-\d+ — /;
+const BACKUP = /^Base — Pre /, SCRATCH = /^Scratch — /;
+const PRODUCTION = /^Production\b/;  // `Production` and its target-size pages hold no nested Sections
 const SCREEN_TYPES = new Set(["FRAME", "COMPONENT", "INSTANCE", "COMPONENT_SET"]);
 
 function hex(c) { return "#" + [c.r, c.g, c.b].map(v => Math.round(v * 255).toString(16).padStart(2, "0")).join("").toUpperCase(); }
 function near(a, b) { return Math.abs(a - b) <= TOLERANCE; }
 
-function check(root) {
+function check(root, pageName) {
   const findings = [];
   const add = (node, rule, detail) => findings.push({ node: node.name, id: node.id, rule, detail });
   const isPage = root.type === "PAGE";
-  const sections = isPage ? root.children.filter(n => n.type === "SECTION") : [root];
+  const production = PRODUCTION.test(isPage ? root.name : pageName || "");
+  const sections = (isPage ? root.children.filter(n => n.type === "SECTION") : [root]).filter(s => !SCRATCH.test(s.name));
   if (isPage) root.children.filter(n => n.type !== "SECTION").forEach(n => add(n, "loose", `${n.type} on the page, not in a Section`));
-  for (const s of sections) checkSection(s, 0, add);
-  checkSiblings(sections, add);
+  for (const s of sections) checkSection(s, 0, add, production);
+  checkSiblings(sections.filter(s => !BACKUP.test(s.name)), add);
+  if (isPage) for (const b of sections.filter(s => BACKUP.test(s.name))) checkBackup(b, sections, add);  // placement needs the page
   return { target: root.name, sections: sections.length, findings };
 }
 
-function checkSection(s, depth, add) {
+function checkBackup(b, sections, add) {
+  const above = sections.find(s => s !== b && near(s.x, b.x) && near(b.y, s.y + s.height + SECTION_GAP));
+  if (!above) add(b, "backup", `not stacked ${SECTION_GAP} under a Section with its left edge aligned`);
+}
+
+function checkSection(s, depth, add, production) {
   if (PREFIX.test(s.name)) add(s, "prefix", "concept prefix in the name");
   const fill = s.fills && s.fills.length && s.fills[0].type === "SOLID" ? hex(s.fills[0].color) : "none";
   if (fill !== SECTION_FILL) add(s, "fill", `${fill}, expected ${SECTION_FILL}`);
@@ -45,7 +56,7 @@ function checkSection(s, depth, add) {
   const nested = kids.filter(k => k.type === "SECTION");
   const screens = kids.filter(k => SCREEN_TYPES.has(k.type));
   kids.filter(k => k.type !== "SECTION" && !SCREEN_TYPES.has(k.type)).forEach(k => add(k, "loose", `${k.type} in a Section`));
-  if (nested.length && !(REQUEST.test(s.name) && depth === 0)) add(s, "nesting", `${nested.length} Section(s) inside a Section that is not a request`);
+  if (nested.length && production) add(s, "nesting", `${nested.length} Section(s) inside a Section on a Production page`);
   if (nested.length && depth > 0) add(s, "nesting", "nested deeper than one level");
   for (const k of [...screens, ...nested]) if (PREFIX.test(k.name)) add(k, "prefix", "concept prefix in the name");
   const content = [...screens, ...nested];
@@ -57,7 +68,7 @@ function checkSection(s, depth, add) {
   }
   checkColumns(s, screens, add);
   checkSiblings(nested, add);
-  for (const n of nested) checkSection(n, depth + 1, add);
+  for (const n of nested) checkSection(n, depth + 1, add, production);
 }
 
 function checkColumns(s, screens, add) {
@@ -92,4 +103,5 @@ function r(n) { return Math.round(n); }
 const target = TARGET_ID ? await figma.getNodeByIdAsync(TARGET_ID) : figma.currentPage;
 if (!target) throw new Error("no node with id " + TARGET_ID);
 if (target.type === "PAGE") await figma.setCurrentPageAsync(target);
-return check(target);
+let page = target; while (page && page.type !== "PAGE") page = page.parent;
+return check(target, page ? page.name : "");

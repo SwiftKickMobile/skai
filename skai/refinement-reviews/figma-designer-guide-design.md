@@ -178,3 +178,34 @@ Compression (Astra, 2026-10-28): the pair 18,037 bytes; cap **18,000 bytes**, se
 2026-10-28, replacing the 17,850 above; the installed text trimmed to fit.
 Ruling (supervisor, 2026-10-28, series GA round 2's logged finding): canvas order runs down a
 column, then across columns; stated once in the Canvas layout ordering rule, which § Gaps relies on.
+
+## Amendment — 2026-11-11: Owner Paths, Request Sections, Mirrors (skai#118)
+
+Recorded during the refinement pass for skai#118 (`design-process-design.md` § Amendment — 2026-11-11).
+
+1. **Owner-path updates** (§ Gaps): a gap annotation's `Owner:` line is updated when the owning artifact's path changes, as when promotion archives a request whose gap stays open where it was raised.
+2. **Mirror** (§ Gaps): the gap annotation is the design file's mirror of a gap, the word the design process guides use for it.
+3. **Request Sections** (§ Pages): a request's Section is named `CR-<nnn> — <name>`, `<nnn>` its number path from the package: `001-002` for request 002 against request 001, the same name a fold gives it when it re-files the request as `001-002`, so no rename and no two Sections share a name (corrected after cold round 1); promotion folds a request's frames into its base's Sections (a package's, or its base request's); a request against a request gets its own Section on the page holding its base's drafts, never inside its base's Section, so deleting that Section at promotion leaves the open request's drafts.
+
+4. **One mirror per change page and per request Section** (§ Gaps; supersedes § Amendment — 2026-10-28 item 3's "once in the package's section"): each change page and each request Section that draws a gap carries one mirror, on the first frame in canvas order drawing it; a page's count excludes its request Sections, so a request that copies a frame carrying a base gap mirrors it in its own Section. First-frame placement and "a later frame carries none" stand (recorded after cold round 4).
+5. **Frame names** (§ Frames rule 5): frame names are unique per page, with one exception: a request's copy of a base frame keeps the base frame's name, which the process guides use to match a change to its frame; any other copy is renamed (recorded after cold round 4).
+
+Cap (supervisor, 2026-11-11): the pair **18,100 bytes** (was 18,000; 17,997 before this pass). Compression round skipped: clause additions in place.
+
+## Amendment — 2026-11-11: Requests As Folders Of Sub-Packages; Confirming The Route (skai#108, skai#129)
+
+Adopts [`change-requests-design.md`](change-requests-design.md) § Amendment — 2026-11-11: this standard's guides say the items that amendment lists for their kind of guide (artifacts, authoring, promotion, Figma), and every request path, ID and provenance tag in them takes the new form. Caps for this change: `change-requests-design.md` § Amendment — 2026-11-11 (supervisor, 2026-11-11).
+
+## Amendment — 2026-11-11: Container Sections, Backups, Scratch (skai#111, skai#100)
+
+Rulings: skai#111 and skai#100 (supervisor, 2026-11-11; the B1 plan's Q2, Q3, Q10–Q12; the 2026-10-29 page-layout comment on skai#111). Inventory per skai#90, before prose.
+
+1. **Container Section on change pages.** A change page's per-screen Sections sit inside one Section named for the package; request Sections and scratch Sections sit beside it at the page's top level. `Production` keeps its feature areas with no container.
+2. **Backup of the base.** Before a fold changes a package's drawings, a copy of its container Section, `Base — Pre CR-<id>`, gap annotations stripped, stacks under the request Section, left edges aligned, 100 apart. A backup of `Production` goes on a separate page, `Production — Pre <change-id>`, since `Production` holds only approved designs. The supervisor deletes backups.
+3. **Scratch Section**: `Scratch — <topic>`, at the page's top level, for whatever exploration the supervisor wants; outside the structure check; no gap mirrors.
+4. **Unique names** allow the copies a backup or scratch holds, as a request's copies.
+5. **Structure check** (`figma-page-check.js`): one level of nesting in a change page's container Section and backup, as in a request Section; scratch Sections skipped; a backup's stacked placement allowed.
+
+**Cap (supervisor, 2026-11-11, after the proposal review and compression):** the pair **18,820** (compressed 18,860).
+
+**Ruling (supervisor, 2026-11-11, after cold round 1):** a fold into production backs up every page it changes (`Production`, a target-size page, `Components`) as its own page, `<page> — Pre <change-id>`, so a Base review restore puts each back. Supersedes item 2's single `Production — Pre <change-id>` page.

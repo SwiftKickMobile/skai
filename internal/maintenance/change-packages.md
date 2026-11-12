@@ -24,7 +24,7 @@ skai/
       design-specs/
 ```
 
-`<change-id>` groups related work. Each `<type>` folder is one independent package; the parent is a grouping directory, not a package. Current types are `product-specs`, `ui-map`, `design` and `design-specs`. Add future types here when defining their workflows. Each type owns all its drafts, review and execution artifacts, change requests, evidence and working documents (its `working-docs/` folder, per `Guides/Core/working-doc-conventions.md`) under its folder. Do not share evidence or requests at the grouping-directory level.
+`<change-id>` groups related work. Each `<type>` folder is one independent package; the parent is a grouping directory, not a package. Current types are `product-specs`, `ui-map`, `design` and `design-specs`. Add future types here when defining their workflows. Each type owns all its drafts, review and execution artifacts, evidence and working documents (its `working-docs/` folder, per `Guides/Core/working-doc-conventions.md`) under its folder. Do not share evidence at the grouping-directory level.
 
 Use a short, stable kebab-case change ID. Use a supplied ID; if it is unclear, propose one and obtain supervisor resolution before creation. When deriving a proposal from a branch, use its final component (`work/billing-ui` → `billing-ui`). Reuse the ID for related types, including in different canonical repositories, and link their resolved locations. Do not reuse a promoted ID/type pair for a new proposal.
 
@@ -42,10 +42,10 @@ Downstream workflows should be able to understand a package's items, paths and c
 without reading how the author drafted them. Use stable IDs and the shared Discussion schema;
 separate review decisions, proposed canonical changes and implementation tasks.
 
-A change request is a package whose base is another open package of the same type, at
-`<base>/change-requests/<nnn>/` with the same layout, authored and promoted under the same rules; its
-promotion folds it into the base and archives it at `<base>/promoted-change-requests/<nnn>/`
-(`Guides/Core/change-requests.md`). Promotion may precede implementation when the workflow
+A change request is a folder of sub-packages, one per type it changes, at
+`skai/changes/<change-id>/changes/CR-<id>/<type>/` (nested: `changes/CR-01/changes/CR-01-01/`), each with its
+type's layout, authored and promoted under the same rules; `Guides/Core/change-requests.md` owns each
+sub-package's base, promotion and archive path. Promotion may precede implementation when the workflow
 explicitly supports that (UI Map Plan); archival closes the proposal, not pending downstream tasks.
 The UI Map guides still carry their own request-on-reopen model until their refinement.
 

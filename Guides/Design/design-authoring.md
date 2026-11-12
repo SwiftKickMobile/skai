@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-authoring
 Managed-Source: Guides/Design/design-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-28
+Managed-Updated-At: 2026-11-11
 
 # Design Authoring
 
@@ -19,7 +19,8 @@ Everything you write for a person follows [`writing-style.md`](../Core/writing-s
 
 ## The change package
 
-Against production: `skai/changes/<change-id>/design/`. Contents:
+A change's own package, `skai/changes/<change-id>/design/`, uses a supplied change ID; else propose a
+short kebab-case one and block before creation. Contents:
 
 | Path | What it is |
 | --- | --- |
@@ -29,12 +30,10 @@ Against production: `skai/changes/<change-id>/design/`. Contents:
 | `evidence/` | promotion's check output; may be absent |
 | `working-docs/` | working documents |
 
-Draw against production on the **change page** the tool guide names; requests use a **request section**
-`CR-<nnn> — <name>` on the base's page for additions and changes only. Change screens on copies of
+Draw against production on the **change page** the tool guide names; requests use the **request section**
+it names, for additions and changes only. Change screens on copies of
 base frames, never in place. Other types for the same change share its `<change-id>` and
 update freely; promotion archives each type independently.
-
-Use the input's change ID; otherwise propose a short kebab-case default and block before creation.
 
 ### Artifact skeleton
 
@@ -52,16 +51,13 @@ Use the input's change ID; otherwise propose a short kebab-case default and bloc
 
 ## Phases
 
-Authoring alternates between two phases, never both at once:
+Authoring alternates between two phases, never both at once, until Review advances:
 
 1. **Discussion.** Items are raised and resolved. Nothing is drawn.
 2. **Mockups.** The agent draws or adjusts in the design file; the supervisor reviews the designs.
    If the supervisor, asked at the tool-access blocked gate, rules no mockups can be drawn,
    record it under `## Assumptions and TODOs`; nothing is drawn, and the Design Changes list
    stands in for the drawings below.
-
-The phases alternate until the supervisor advances the
-Review gate.
 
 ## Gates
 
@@ -94,7 +90,7 @@ Workflow-specific gate notes:
   - Blocked: `⏳ GATE: Blocked: <N> open items in Discussion. Resolve them to proceed to Mockups.`
   - Planned: `⏳ GATE: Next: Discussion complete<; N open gaps carried>. Say "next" to draw the mockups on <page or section> (with no mockups: to write Design Changes).`
 - After the trace pass, Review covers drawings and rendered Design Changes (list alone with no
-  mockups). Feedback follows *Mockups*; the supervisor's `next` approves and runs *Completion*.
+  mockups); there, ask each changed input's route. Feedback follows *Mockups*; the supervisor's `next` approves and runs *Completion*.
   - `⏳ GATE: Next: Reconcile the inputs and complete <package>. Say "next" or what to change.`
 
 Planned gates for this workflow:
@@ -138,16 +134,17 @@ items are supervisor decisions) or Review: the supervisor inspects the drawings 
 
 ## Initiation
 
-The workflow starts on an explicit signal — "design X", "mock up X", "backfill the designs",
+The workflow starts on an explicit signal — "design X", "mock up X", "backfill the designs" or
 "request a design change to <package>".
 
 On the signal:
 
 1. Read the tool guide.
-2. Reopen a named or contextual package for this work if it has no `design-promotion.md` or was
-   returned to authoring; promotion holds its packages, closed ones need new packages.
-   A request signal follows the shared guide: reopen or create `<base>/change-requests/<nnn>/`.
-3. Otherwise resolve the path, create the artifact, and record `## Goal` and `## Inputs`.
+2. Per `change-requests.md`, settle whether work is a request; for one, reopen or create its `design/`
+   sub-package, else reopen a named or contextual `design/` package or create one. Reopen only without
+   `design-promotion.md` or when returned to authoring; promotion holds its packages, closed ones need
+   new packages.
+3. For any new package, resolve the path, create the artifact and record `## Goal` and `## Inputs`.
 4. Open the first Discussion phase.
 
 On reopen, a resolved `- [x] D<n>` keeps its number, Concern, Options and
@@ -205,8 +202,11 @@ A Decision that changes an input says so; *Completion* carries it.
 
 ## Mockups
 
-When the Discussion gate advances, draw the whole change on its page or section: everything the
-Goal and Inputs call for, as the decisions and any later feedback currently stand. A decision feedback has
+When the Discussion gate advances, draw the whole change in the package's Section on its page, or its request section: everything the
+Goal and Inputs call for, as the decisions and any later feedback currently stand. Requested
+exploration goes in a scratch Section (the tool guide's), outside the list and structure check; in
+the same session, carry what the supervisor keeps into every affected package frame and list every
+change. A decision feedback has
 changed is updated through *Resolution*, its old outcome in the log; Discussion holds decisions,
 not the scope.
 
@@ -227,11 +227,11 @@ Current from the first drawing; with no mockups, from decisions at the Discussio
 One sequence per package: `V01`, `V02`, …, never renumber or reuse. New frames take the next `V`
 under their screen; new changes take their frame's next sub-ID. Identity: `add` and `modify` use
 the frame name linked to its draft (`[name](<link>)`), or the intended name unlinked without mockups;
-`remove` uses the base design's name, unlinked. Each entry has:
-- **Description** the screen, state or component change in product words, never a visual diff or sample data; about a sentence with mockups; without them, enough to design from.
+`remove` uses the base design's name, unlinked. Use these fields, or sub-IDs as below:
+- **Description** what changed, in a reader's words, about a sentence with mockups (without them, enough to design from): name anything new without describing how it looks; no measurements, style names or sample data. State each change precisely so promotion finds and updates every affected frame. Added ✅ "An empty state for a notebook with no notes." Changed ❌ "The label is subordinate to the price." ✅ "On every offer card the label is smaller and gray, under the price." Removed ✅ "The unread-only notes state goes."
 - **Justification** a reason sentence, then an input citation, `Resolved decision: D<n>` (another package's linked), or `Supervisor input`.
 
-Inherited gaps get one footnote each, not items, on the first entry or sub-change whose change rests on its placeholder, never on what a frame merely keeps from the base; Placeholder is the provisional answer, not the frame ([`spec-file-gaps.md`](../Core/spec-file-gaps.md)).
+Only inherited gaps get footnotes, one each, not items, on the first entry or sub-change whose change rests on its placeholder, never on what a frame merely keeps from the base; Placeholder is the provisional answer, not the frame ([`spec-file-gaps.md`](../Core/spec-file-gaps.md)).
 
 Several changes: sub-IDs:
 
@@ -239,21 +239,21 @@ Several changes: sub-IDs:
 ### Notes
 
 - V03 modify screen: [notes](<link>)
-  - **01** A `Pinned` group with its own header above the list — pinned notes were easy to miss; Resolved decision: D01
-  - **02** The unread dot on each row goes — unread notes come first, so the dot adds nothing; [NOTES-07]
+  - **01** Pinned notes move into a group with its own header, above the list — pinned notes were easy to miss; Resolved decision: D01
+  - **02** The unread dot goes from every row — unread notes come first, so the dot adds nothing; [NOTES-07]
 ```
 
 ## Completion
 
-On Review's `next`, reconcile drawings against every input but the base; file against each the
-decisions changed, with drafts, per the shared guide. Update
+On Review's `next`, reconcile drawings against every input but the base; route each input the
+decisions changed as the supervisor picked, with drafts, per `change-requests.md`. Update
 `## Assumptions and TODOs` and `## Out of scope`; name requests or needs, outcomes and downstream
 work owed (design specs, say). End with
 `🏁 Complete. Let me know if anything needs adjustment.` Invoke promotion separately.
 
 ## Artifact maintenance
 
-Through every phase, update `design-authoring.md` before speaking. Apply changes, never merely
+Once created, update `design-authoring.md` before speaking. Apply changes, never merely
 describe them. On every material change and before every gate, render `design-review.html`
 beside it.
 

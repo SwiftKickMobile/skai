@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.dev-specs-authoring
 Managed-Source: Guides/DevSpecs/dev-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-11
 
 # Dev Specs Authoring
 
@@ -264,7 +264,7 @@ without another approval.
 
 Invoke sibling workflows only when their owned artifact is needed:
 
-- If the project has an official UI Map, invoke [`../UIMap/ui-map-architecture.md`](../UIMap/ui-map-architecture.md) for a new or changed scene, route, or domain. Without an official map, invoke it only after the supervisor approves a material discussion item (`D#`) adopting one; otherwise
+- If the project has a production UI Map, invoke [`../UIMap/ui-map-architecture.md`](../UIMap/ui-map-architecture.md) for a new or changed scene, route, or domain. Without a production map, invoke it only after the supervisor approves a material discussion item (`D#`) adopting one; otherwise
   describe the UI design here. Its completed package becomes an input.
 - If a product specs catalog omits existing shipping behavior this work needs, invoke [`../ProductSpecs/product-specs-authoring.md`](../ProductSpecs/product-specs-authoring.md). It owns the
   backfill package and gates. Run the backfill here only if an open discussion item (`D#`) or the current

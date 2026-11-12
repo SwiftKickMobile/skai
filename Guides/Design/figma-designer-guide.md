@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.designer-guide
 Managed-Source: Guides/Design/figma-designer-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-28
+Managed-Updated-At: 2026-11-11
 
 # Figma Designer Guide
 
@@ -24,10 +24,15 @@ domains or scenes.
      [design conventions](#design-conventions).
 
    A change page, named for its change package, holds its drafts until they reach `Production`:
-   one concept per page, its letter in the page name. A request uses one `CR-<nnn> — <name>`
-   Section on the base's page, the same per-screen Sections inside holding only added or changed
-   frames, a changed screen as a copy. Promotion folds them into the page's Sections and deletes
-   the request Section.
+   one concept per page, its letter in the page name, its per-screen Sections inside one Section
+   named for the package. A request uses one `<request ID> — <name>`
+   Section (`CR-01`, or `CR-01-01` against `CR-01`), never inside another Section, on its base's draft page (a change page when the base is production), per-screen Sections inside holding only added or changed
+   frames, a changed screen as a copy. Promotion backs up the base, then copies them into its
+   Sections: the base's package or request Section copied as `Base — Pre CR-01`, gap annotations
+   stripped, 100px under the request Section, left-aligned; into production, each page the fold
+   changes (`Production`, `Components`, a size page) as `<page> — Pre <change-id>`. A top-level
+   `Scratch — <topic>` Section holds exploration. The supervisor deletes request, scratch
+   and backup Sections and pages.
 
 2. **Production is canonical.** `Production` holds the approved design of every screen (plus a page
    per further target size; see [Multiple target sizes](figma-designer-guide-multiple-sizes.md)).
@@ -60,14 +65,14 @@ designer makes them; the guide does not.
 
 2. **Sections share one look.** Sections are filled #FAFAFA, lighter than the canvas, so white
    content stands out. A Section fits its content with 50px padding; Sections sit 100px apart with
-   their tops aligned.
+   their tops aligned, but for a backup stacked under its request.
 
 3. **Each page type fills its Sections differently**, as below.
 
 | Page | Sections are | Inside a Section |
 | --- | --- | --- |
 | `Production` (and its target-size pages) | Feature areas | Screens |
-| Change pages and request Sections | One per screen, named for it plainly; `Components` | States; new components |
+| Change pages | The package's Section; request, backup and scratch Sections | Package, request and backup Sections: one Section per screen, named for it plainly, and `Components` |
 | `Components` | Component families (`Controls`, `Icons`, `Images`) | Component sets, components, and reference frames |
 | `Design System` | Foundation topics (`Conventions`, `Colors`, `Text Styles`, `Dimensions`) | Documentation frames |
 | Asset pages (an app icon page) | Asset groups | Frames set up for export |
@@ -105,7 +110,8 @@ designer makes them; the guide does not.
    kit's (rule 6 under Components).
 
 7. **Only screens or crops inside a screen Section** (frames, components, or instances); a
-   request Section holds screen Sections, a `Components` Section components.
+   package, request or backup Section holds screen Sections, a `Components` Section components;
+   a scratch Section holds anything and is not checked.
 
 ### Components page
 
@@ -151,7 +157,7 @@ designer makes them; the guide does not.
 
 5. **Unique names.** Screen frames are named `screen — state` in lowercase with a spaced em dash:
    `notes — empty`, `note editor — date picker`. No suffix means the default state. No two frames
-   on a page share a name; a copied frame is renamed before anything else.
+   on a page share a name, copies in a request, backup or scratch Section aside; any other copy is renamed.
 
 6. **Frames are never rotated.** A landscape design is a landscape target size, not a rotated frame.
 
@@ -231,12 +237,12 @@ designer makes them; the guide does not.
 
 ## Gaps
 
-Gaps are items or footnotes per design authoring. Once drawn, each gap gets one Dev Mode annotation
-across the package's drawings (its change page or request Section, whatever their screen Sections), on
-its placeholder node in the first frame drawing it in canvas order; move it when that changes. Three lines: `<owning item ID>: <the question>`, `Placeholder: <what is drawn>`,
+Gaps are items or footnotes per design authoring. Each gap's mirror is one Dev Mode annotation per change page and
+per request Section drawing it (a page's request Sections aside), on the placeholder node of the first frame
+there drawing it, in canvas order; move it when another frame becomes first. Three lines: `<owning item ID>: <the question>`, `Placeholder: <what is drawn>`,
 `Owner: <owning artifact path relative to skai/changes/>`. Use node `annotations`, keeping others, in the
 file's yellow `Gap` category (`figma.annotations`; create it if missing). Update on placeholder or owner-path changes;
-remove when the owning item closes; never in `Production`.
+remove when the owning item closes; never in `Production`, a backup or scratch.
 
 ## Working a backfill
 

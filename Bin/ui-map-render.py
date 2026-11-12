@@ -10,9 +10,11 @@
 ui-map-render.py — render a UI Map YAML document as an interactive HTML page
 or a Mermaid flowchart.
 
-The input is a UI Map YAML document conforming to ui-map.schema.json.
+The input is a UI Map YAML document conforming to ui-map.schema.json, or a
+UI Map change package's folder (rule 12, request layering).
 The primary output is a static HTML page (`--html`) that loads the viewer
-beside this script (ui-map-viewer.v1.js, ui-map-viewer.v1.css; the version bumps only when a
+beside this script (the shared page library, then the viewer's own stylesheet
+and script, in the versions VIEWER_ASSETS names; a version bumps only when a
 change would break pages already rendered); no server is needed.
 The Mermaid `flowchart LR` text (bare, no ``` fences) remains available for
 documents that embed a diagram, and `--svg` still renders it through the
@@ -21,6 +23,7 @@ Mermaid CLI.
 Usage:
     uv run ui-map-render.py <input.yaml> --html <output.html>    # the interactive map
     uv run ui-map-render.py <input.yaml> --html <o.html> --open  # render, then open it
+    uv run ui-map-render.py <package>/ui-map --html <o.html>   # a package's page: its map, else the nearest up its chain
     uv run ui-map-render.py <input.yaml>                     # write Mermaid to stdout
     uv run ui-map-render.py <input.yaml> -o <output.mmd>     # write Mermaid to a file
     uv run ui-map-render.py <input.yaml> --markdown          # wrap in ```mermaid fences
@@ -179,9 +182,14 @@ the demo doc and the guide describe the same conventions in prose.
     - Cross-platform `platform:` field: not rendered; informational only.
 
 12. HTML OUTPUT (--html)
-    - A static page: the map model inline as `window.UI_MAP` JSON, plus a
-      stylesheet link and script tag for ui-map-viewer.v1.css / ui-map-viewer.v1.js
-      beside this script, referenced by a path relative to the output file.
+    - A static page: the map model inline as `window.UI_MAP` JSON, plus
+      stylesheet links and script tags for the shared page library (shared
+      with the spec and design review pages) and the viewer's own stylesheet
+      and script beside this script, in the versions VIEWER_ASSETS names,
+      referenced by a path relative to the output file; a change package's
+      page also links the review pages' stylesheet (REVIEW_ASSET) for its
+      Review tab. No web fonts: the system font, with IDs and route kinds in
+      the system monospace. The page follows the system theme.
       The page works from file:// and from any static server; it needs the
       SKAI checkout at that relative location and nothing else. `--open`
       opens it.
@@ -193,7 +201,8 @@ the demo doc and the guide describe the same conventions in prose.
       route; a route container with a marked route carries `formFactors`, one
       entry per destination (null when unmarked). Plus the domain list in
       palette order (rule 3), the modal-style and form-factor vocabularies,
-      scene order, and the root scenes.
+      scene order, the root scenes, and `review` (below; null on the
+      production map).
     - Layout: levels as rows — depth in the canonical-home tree — at a fixed
       cell width that never shrinks, the page growing vertically. Each scene's
       route containers sit in the row below it as dashed boxes (composite:
@@ -214,11 +223,14 @@ the demo doc and the guide describe the same conventions in prose.
       selected cell, its route boxes, every box holding it, and their
       connectors and labels are highlighted; All shows the whole map and dims
       the unconnected parts instead. Clicking the selected cell again,
-      clicking empty canvas, Escape, or Clear restores the full map; closing
-      the side panel instead leaves the scene selected and the view filtered,
+      clicking empty canvas, or Escape restores the full map; closing the
+      side panel instead leaves the scene selected and the view filtered,
       uncovering the part of the map it hid without moving anything (see
-      Placement). The domain legend filters the same way (multi-select). A
-      search box highlights matches; Enter selects the first.
+      Placement). The domain filters filter the same way (multi-select; a
+      domain is dropped by clicking it again). A search box highlights
+      matches and dims the rest; Enter selects the first; a cross inside the
+      box, shown while it has a value, clears it. While a selection or domain
+      filter narrows the map, nothing is dimmed.
     - Placement after a selection, in priority order: the selected cell is
       fully visible and clear of the side panel; as much cell area as possible
       is visible, counted continuously so that closing a gap always beats
@@ -235,15 +247,63 @@ the demo doc and the guide describe the same conventions in prose.
       elements fade out, arriving ones fade in. The side panel slides in when
       it opens and changes content in place while open. A window resize
       reflows without animating. Off under prefers-reduced-motion.
-    - Side panel for the selected scene: its domain, Reached from (every
-      inbound route with its kind, tagged home/reused when the scene appears
-      more than once), Opens (per route kind, with route notes inline),
-      Notes, Implements, Modal style (each headed by the cell's icon; ids
-      shown humanized), and a Specs section reserved for a future sidecar.
-      The panel's footprint is a safe area: the layout width does not change
-      when it opens, and the canvas scrolls under it.
-    - Theme: follows the system, with a Theme toggle. The "?" button opens a
-      legend: the cell and box vocabulary, the route kinds, and the controls.
+    - Side panel for the selected scene: its domain, then Changes on a change
+      package's page (below), Reached from (every inbound route with its
+      kind, tagged home/reused when the scene appears more than once), Opens
+      (per route kind, with route notes inline), Notes, Implements, Modal
+      style (each headed by the cell's icon, in the heading's colour; ids
+      shown humanized). Headings carry no counts. The panel's footprint is a
+      safe area: the layout width does not change when it opens, and the
+      canvas scrolls under it.
+    - Top bar: one-line title, "UI Map" then the package's ID in cyan — the
+      change folder above `ui-map/` (a request's IDs chained, "offers | CR-01")
+      for a proposed map, else "Production". The HTML <title> keeps the app's
+      name ("<app> UI Map"). On the right: the hops drop-down (1 hop, 2 hops,
+      All; a fixed width, shown only while a selection or domain filter
+      narrows the map, before the domain filters so they never move), the
+      domain filters in the review pages' filter style (each domain's colour,
+      scene count and name), the Changes toggle on a change package's page,
+      the search box, and "?", which opens a legend: the cell and box
+      vocabulary, the change badge on a change package's page, the route
+      kinds, and the controls. No theme or reset button.
+    - A change package's page (the input in a change package's `ui-map/`
+      folder, with `ui-map-architecture.md` beside it) reads that artifact's
+      Discussion and `## Map Changes`: `### <domain>` headings, entries
+      `- M<n> <operation> <element>: <identity>` (operation add, remove, move,
+      modify; element domain, scene, route, scene-attribute; the identity a
+      scene ID, or a domain ID for a domain change) with Description and
+      Justification, or numbered sub-changes `- **01** <change> — <reason>`,
+      and gap footnotes. Its top bar adds Map and Review tabs; the page opens
+      on Map.
+        * Change badges: a scene is changed when an entry names it — a scene,
+          route or attribute entry, except a removed scene; a domain change
+          marks nothing. Every cell of a changed scene, reused ones too,
+          carries the badge: a square in the cell's border colour in its
+          bottom right corner, with a triangle.
+        * The Changes toggle shows the changed-scene count; on, it shows
+          changed scenes as search shows its matches.
+        * The side panel of a changed scene opens with Changes: one card per
+          entry naming it — marker, ID linking to the entry in the Review tab,
+          type, then the description and reason, or the numbered changes with
+          their reasons (reasons without their source), then gap footnotes.
+        * The Review tab is the design review page's layout: the summary box
+          (state and goal), the Discussion, then Map Changes under each
+          domain's heading with its colour square, each entry a card whose
+          header shows its marker, ID, type and the scene's name linking to
+          it on the map; a domain change names its domain unlinked, a removed
+          scene is greyed and unlinked. Its top bar filters by change type
+          (added, modified, removed, moved) and by the discussion states the
+          package has (open, gaps, resolved), as on the review pages.
+        * A list whose first line is `Pending re-derivation.` (a reopened
+          package's inherited list) is shown with that line and not checked.
+        * Links: `#map`, `#review`, `#scene=<id>` and an element of the
+          Review tab (`#m3`, `#d01`) open that tab, scene or entry.
+    - Request layering: a request's `ui-map/` sub-package renders the
+      nearest proposed map up its chain — its own `proposed-ui-map.yaml`,
+      else each base package's (spec-tool.py's chain_bases), else the
+      production map `skai/ui-map/ui-map.yaml` — with its own architecture
+      artifact. Pass the package folder (or its missing proposed map) to use
+      it; an existing YAML file is always rendered as given.
 
 13. ERRORS
     - Schema validation runs first (unless --no-validate); failures abort.
@@ -260,13 +320,18 @@ the demo doc and the guide describe the same conventions in prose.
       match where routes reach it (the message names what to declare), and a
       `modal_style` map that doesn't match where modal routes present the
       scene. A schema failure on an identifier names it as not lower snake
-      case.
+      case. On a change package's page, it also fails on a Map Changes entry
+      not in the entry format or naming a scene or domain not on the
+      proposed map (except one it removes; never checked while the list is
+      pending re-derivation).
 """
 
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
+import re
 from html import escape as html_escape
 import html
 import os
@@ -281,6 +346,13 @@ from typing import Any
 
 import jsonschema
 import yaml
+
+# The review pages' renderer, for a change package's Review tab: its Discussion, summary box and
+# change cards (design-tool.py), and through it spec-tool.py's request chain and citation links.
+_dt_spec = importlib.util.spec_from_file_location("design_tool", Path(__file__).with_name("design-tool.py"))
+dt = importlib.util.module_from_spec(_dt_spec)
+_dt_spec.loader.exec_module(dt)
+st = dt.st
 
 ROUTE_KINDS: tuple[str, ...] = ("nav", "modal", "composite", "tab", "child")
 
@@ -1106,11 +1178,172 @@ def open_in_browser(path: Path) -> None:
 # HTML output — the interactive viewer (docstring rule 12)
 # ---------------------------------------------------------------------------
 
-VIEWER_ASSETS: tuple[str, ...] = ("ui-map-viewer.v1.css", "ui-map-viewer.v1.js")  # the version bumps only when a change would break pages already rendered; old versions stay beside this script
+VIEWER_ASSETS: tuple[str, ...] = ("skai-pages.v1.css", "ui-map-viewer.v2.css", "skai-pages.v1.js", "ui-map-viewer.v2.js")  # the shared page library, then the viewer's own; a version bumps only when a change would break pages already rendered; old versions stay beside this script
+REVIEW_ASSET = "spec-review.v2.css"  # a change package's page also takes the review pages' cards for its Review tab, after the library and before the viewer's own
+MAP_FILE = "proposed-ui-map.yaml"
+ARTIFACT_FILE = "ui-map-architecture.md"
 
 
-def build_viewer_model(model: Model) -> dict[str, Any]:
-    """The JSON model the viewer renders, derived from the resolved Model."""
+def package_id(input_path: Path) -> str:
+    """The title's package ID: for a map in a `ui-map/` folder of a change package, the change id,
+    then each change request ID down from it, joined by ' | ' (`offers/changes/CR-01/ui-map/` gives
+    'offers | CR-01'); anything else, the production map included, is 'Production'."""
+    folder = package_folder(input_path)
+    if folder.name != "ui-map" or folder.parent.name == "skai":
+        return "Production"
+    pkg, ids = st.locate(folder)
+    return " | ".join([pkg.parent.name] + ids)
+
+
+def package_folder(input_path: Path) -> Path:
+    """The folder the input names: itself when it is a folder, else the folder holding the file."""
+    path = input_path.resolve()
+    return path if path.is_dir() else path.parent
+
+
+def map_source(input_path: Path) -> Path:
+    """The YAML to render. A file that exists is itself. A UI Map package folder, or its missing
+    `proposed-ui-map.yaml`, takes the nearest proposed map up its request chain (its own, then
+    each package spec-tool.py's chain_bases walks), else the production map, `skai/ui-map/ui-map.yaml`,
+    as a request's drafts layer over its bases', nearest winning."""
+    if input_path.is_file():
+        return input_path
+    folder = package_folder(input_path)
+    for pkg in [folder] + st.chain_bases(folder):
+        if (pkg / MAP_FILE).is_file():
+            return pkg / MAP_FILE
+    own = st.locate(folder)[0]  # skai/changes/<change-id>/ui-map
+    return own.parent.parent.parent / "ui-map" / "ui-map.yaml"
+
+
+# ---------------------------------------------------------------------------
+# Map Changes: a change package's Review tab, change badges and side panel entries
+# ---------------------------------------------------------------------------
+
+MAP_CHANGE_RE = re.compile(r"^- (?P<cid>M\d+) (?P<op>add|remove|move|modify) (?P<obj>domain|scene|route|scene-attribute): (?P<identity>`.+`|[^`\s].*?)\s*$", re.M)
+MAP_CHANGE_LINE_RE = re.compile(r"^- M\d+\b.*$", re.M)
+MAP_STATUS = {"add": "added", "modify": "modified", "remove": "removed", "move": "moved"}
+SOURCE_RE = re.compile(r";\s*(?:Upstream requirement|Supervisor input|Resolved decision|Agent proposal|Guide convention|"
+                       r"Project convention|Map|Migration mapping|Change request)(?::.*)?\Z", re.S)  # a reason's trailing source
+
+
+PENDING_LINE = "Pending re-derivation."
+
+
+def map_changes_pending(text: str) -> bool:
+    """Whether `## Map Changes` is an inherited list a reopen marked pending (its first line is
+    `Pending re-derivation.`): shown, but not current, so never checked against the map."""
+    body = re.search(r"^## Map Changes\s*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
+    return bool(body) and body.group(1).strip().startswith(PENDING_LINE)
+
+
+def parse_map_changes(text: str) -> list[dict[str, Any]]:
+    """The `## Map Changes` entries in artifact order, as design-tool.py parses Design Changes
+    ({cid, op, obj, identity, description, justification, section, subs, gaps}, `section` the
+    `### <domain>` heading). A line that starts like an entry but is not one is an error, unless
+    the list is pending re-derivation."""
+    body = re.search(r"^## Map Changes\s*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
+    for line in MAP_CHANGE_LINE_RE.findall(body.group(1) if body and not map_changes_pending(text) else ""):
+        if not MAP_CHANGE_RE.match(line):
+            raise SemanticError(f"Map Changes entry '{line}' is not '- M<n> <operation> <element>: <identity>' "
+                                "(operation add, remove, move or modify; element domain, scene, route or scene-attribute)")
+    changes = dt.parse_changes(text, "Map Changes", MAP_CHANGE_RE)
+    for c in changes:  # an identity in backticks may hold any character the map's IDs can
+        if c["identity"].startswith("`"):
+            c["identity"] = c["identity"][1:-1]
+    return changes
+
+
+def check_map_changes(changes: list[dict[str, Any]], model: Model) -> None:
+    """Every entry names a scene or domain on the proposed map, except one it removes."""
+    for c in changes:
+        if c["op"] == "remove" and c["obj"] in ("scene", "domain"):
+            continue
+        known = model.domain_order if c["obj"] == "domain" else model.scenes
+        if c["identity"] not in known:
+            raise SemanticError(f"Map Changes {c['cid']} ({c['op']} {c['obj']}) names {c['obj'] if c['obj'] == 'domain' else 'scene'} "
+                                f"'{c['identity']}', which is not on the proposed map")
+
+
+def changed_scene(c: dict[str, Any]) -> str | None:
+    """The scene an entry marks on the map: a scene, route or attribute entry's identity, except a
+    removed scene's; none for a domain's own change."""
+    return None if c["obj"] == "domain" or (c["op"] == "remove" and c["obj"] == "scene") else c["identity"]
+
+
+def build_review(artifact: Path, model: Model, html_path: Path) -> dict[str, Any]:
+    """The Review tab and the change marks for a change package's page, from its architecture
+    artifact: the summary box, the Discussion and the Map Changes cards as HTML; the counts its
+    filters show; the changed scenes in map order; and each changed scene's side panel cards."""
+    text = artifact.read_text(encoding="utf-8")
+    out_dir = html_path.resolve().parent
+    linkdefs = {m.group("name"): m.group("target") for m in map(st.LINKDEF_RE.match, text.splitlines()) if m}
+    gloss: dict[str, Any] = {}
+    st.RESOLVER["out_dir"] = out_dir
+    st.set_resolver(linkdefs, artifact.resolve())
+    links = dt.Links(artifact.resolve().parent, out_dir)
+    disc = st.parse_discussion(text)
+    changes = parse_map_changes(text)
+    pending = map_changes_pending(text)
+    if not pending:
+        check_map_changes(changes, model)
+    owners = st.gap_owners(artifact, disc)
+    if "base" in owners:  # a base's items are read on its map page's Review tab
+        base_page = owners["base"][3].with_name(MAP_FILE).with_suffix(".html")
+        owners["base"] = (os.path.relpath(base_page, out_dir).replace(os.sep, "/"),) + tuple(owners["base"][1:])
+    st.RESOLVER["gap_owners"] = owners
+    body, states = dt.summary(text, artifact, disc, sum(1 for c in changes if c["gaps"]), gloss, links)
+    rendered = lambda s: links.show(st.inline(links.hide(s), gloss, auto=True))
+    domains = {d: i for i, d in enumerate(model.domain_order)}
+    cards, last, panel = [], None, {}
+    for c in changes:
+        if c["section"] != last:
+            did = c["section"].strip().lower().replace(" ", "_")
+            square = f'<i class="dm" style="--c:{DOMAIN_PALETTE[domains[did]]}"></i>' if did in domains else ""
+            cards.append(f'<h3 class="section">{square}{html_escape(humanize(did) if did in domains else c["section"])}</h3>' if c["section"] else "")
+            last = c["section"]
+        sid = changed_scene(c) if c["identity"] in model.scenes else None  # a pending list may name scenes the map no longer has
+        label = html_escape(humanize(c["identity"]))
+        ident = (f'<a class="scene" href="#scene={c["identity"]}" data-scene="{c["identity"]}">{label}</a>' if sid
+                 else f'<span class="gone">{label}</span>' if c["op"] == "remove" else label)
+        cards.append(dt.render_change({**c, "obj": c["obj"].replace("-", " ")}, gloss, links, owners, ident))
+        if sid:
+            panel.setdefault(sid, []).append(panel_change(c, rendered, gloss, owners))
+    if changes:
+        note = f'<p class="file-why">{PENDING_LINE} This list is from an earlier pass and may not match the map.</p>' if pending else ""
+        body += '<section class="file"><h2>Map Changes</h2>' + note + "".join(cards) + "</section>"
+    counts = {status: sum(MAP_STATUS[c["op"]] == status for c in changes) for status in MAP_STATUS.values()}
+    return {
+        "html": body + st.render_popovers(gloss),
+        "counts": {**counts, **states},
+        "changed": [sid for sid in model.scenes if sid in panel],
+        "changes": panel,
+    }
+
+
+def panel_change(c: dict[str, Any], rendered: Any, gloss: dict[str, Any], owners: dict[str, Any]) -> str:
+    """One entry as the side panel's card: its marker, its ID linking to the entry in the Review
+    tab and its type; then what changes and why, or the numbered changes with their reasons; then
+    its gap footnotes. Reasons drop their source, which the Review tab keeps."""
+    cid = c["cid"].lower()
+    st.RESOLVER["item"] = cid  # a [^n] mark links to the footnote in the Review tab
+    reason = lambda s: (lambda r: r + "." if r and r[-1] not in ".!?" else r)(SOURCE_RE.sub("", s).strip())
+    body = f"<p>{rendered(c['description'])}</p>" if c["description"] else ""
+    if c["subs"]:
+        body += "<ul>" + "".join(f'<li><span class="rid">{num}</span>{rendered(text)}'
+                                 + (f' <span class="why">— {rendered(reason(why))}</span>' if reason(why) else "") + "</li>"
+                                 for num, text, why in c["subs"]) + "</ul>"
+    if reason(c["justification"]):
+        body += f'<p class="reason">{rendered(reason(c["justification"]))}</p>'
+    notes = st.gap_notes(((label, dt.owner_ref(owner, owners), placeholder) for label, owner, placeholder in c["gaps"]), f"p{cid}", gloss)
+    return (f'<div class="item pchange {MAP_STATUS[c["op"]]}"><div class="head"><span class="badge"></span>'
+            f'<a class="id" href="#{cid}">{c["cid"]}</a><span class="status pill">{html_escape(c["op"])} {html_escape(c["obj"].replace("-", " "))}</span></div>'
+            f"{body}{notes}</div>")
+
+
+def build_viewer_model(model: Model, package: str = "Production", review: dict[str, Any] | None = None) -> dict[str, Any]:
+    """The JSON model the viewer renders, derived from the resolved Model; a change package's
+    page adds its Review tab and change marks (build_review)."""
     domains = [
         {"id": d, "label": humanize(d), "color": DOMAIN_PALETTE[i]}
         for i, d in enumerate(model.domain_order)
@@ -1151,6 +1384,7 @@ def build_viewer_model(model: Model) -> dict[str, Any]:
         }
     return {
         "app": model.app,
+        "package": package,
         "version": model.version,
         "modalStyles": model.modal_styles,
         "formFactors": model.form_factors,
@@ -1158,28 +1392,31 @@ def build_viewer_model(model: Model) -> dict[str, Any]:
         "scenes": scenes,
         "order": list(model.scenes.keys()),
         "roots": [sid for sid, (p, _) in model.visual_parent.items() if p is None],
+        "review": review,
     }
 
 
-def render_html(model: Model, html_path: Path) -> str:
-    """The viewer page: model inline, viewer assets linked relative to html_path."""
+def render_html(model: Model, html_path: Path, package: str = "Production", review: dict[str, Any] | None = None) -> str:
+    """The viewer page: model inline, the shared library and viewer assets linked relative to html_path."""
     asset_dir = Path(__file__).resolve().parent
     rel = os.path.relpath(os.path.abspath(asset_dir), os.path.abspath(html_path.parent)).replace(os.sep, "/")
-    css, js = (html.escape(quote(f"{rel}/{name}", safe="/")) for name in VIEWER_ASSETS)
-    payload = json.dumps(build_viewer_model(model)).replace("</", "<\\/")
+    names = VIEWER_ASSETS if review is None else (VIEWER_ASSETS[0], REVIEW_ASSET) + VIEWER_ASSETS[1:]
+    urls = [(name, html.escape(quote(f"{rel}/{name}", safe="/"))) for name in names]
+    css = "\n".join(f'<link rel="stylesheet" href="{u}">' for n, u in urls if n.endswith(".css"))
+    js = "\n".join(f'<script src="{u}"></script>' for n, u in urls if n.endswith(".js"))
+    payload = json.dumps(build_viewer_model(model, package, review)).replace("</", "<\\/")
     return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html_escape(model.app)} UI Map</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="{css}">
+{css}
 </head>
 <body>
 <div id="app"></div>
 <script>window.UI_MAP = {payload};</script>
-<script src="{js}"></script>
+{js}
 </body>
 </html>
 """
@@ -1237,7 +1474,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.open and not (args.html or args.svg):
         parser.error("--open requires --html or --svg")
 
-    data = load_yaml(args.input)
+    source = map_source(args.input)
+    if not source.is_file():
+        print(f"No UI Map to render: {source}", file=sys.stderr)
+        return 2
+    data = load_yaml(source)
 
     if not args.no_validate:
         schema_path = args.schema or (Path(__file__).parent / "ui-map.schema.json")
@@ -1247,9 +1488,15 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Schema validation failed: {exc.message}", file=sys.stderr)
             return 2
 
+    # A change package's page carries its Review tab, read from the architecture artifact beside the
+    # input (a request's own, whichever package's map it shows); its Map Changes are checked either way.
+    package = package_id(args.input)
+    artifact = package_folder(args.input) / ARTIFACT_FILE
     try:
         model = build_model(data)
         mermaid = render(model)
+        review = build_review(artifact, model, args.html or artifact.with_name("proposed-ui-map.html")) \
+            if package != "Production" and artifact.is_file() else None
     except SemanticError as exc:
         print(f"UI Map error: {exc}", file=sys.stderr)
         return 3
@@ -1258,7 +1505,7 @@ def main(argv: list[str] | None = None) -> int:
 
     generated: list[Path] = []
     if args.html:
-        args.html.write_text(render_html(model, args.html), encoding="utf-8")
+        args.html.write_text(render_html(model, args.html, package, review), encoding="utf-8")
         generated.append(args.html)
 
     if args.output:

@@ -1,0 +1,116 @@
+/* skai-pages.v1.css — the shared look of every page SKAI renders (spec and design review pages,
+   the UI Map viewer): the Design System's tokens, light and dark, and the controls the pages share.
+   Each page family links this first, then its own stylesheet for what is specific to it.
+   Versioned like the page assets (internal/maintain-skai.md): a change that would alter pages
+   already rendered is a new version beside this one. */
+:root {
+  color-scheme: light;
+  /* colors (names from the SKAI Figma file's Design System) */
+  --ground: #EFF3F4; --surface: #FFFFFF; --raised: #F6F9F9; --line: #D8E3E6; --line2: #BFD0D5;
+  --ink: #10222A; --dim: #557079; --faint: #8FA6AD;
+  --cyan: #0A7E96; --orange: #B07A08; --slate: #CBD8DC; --cyan-tint: #CEE5EA;
+  --green: #3D8B4F; --red: #B8433A; --neutral-line: #E3E3E3;
+  --cyan-05: #0A7E960D; --ink-05: #10222A0D; --black-20: #00000033; --black-35: #00000059;
+  /* domains: the same in both modes */
+  --domain-blue: #8AD1FA; --domain-yellow: #EFD74E; --domain-pink: #FE9CA8; --domain-green: #78DB85; --domain-purple: #D39AE7;
+  --domain-orange: #FFB677; --domain-periwinkle: #87AFFF; --domain-teal: #37D8CB; --domain-magenta: #F277D5;
+  /* change types */
+  --added: var(--green); --modified: var(--orange); --removed: var(--red); --unchanged: var(--faint); --moved: var(--cyan);
+  /* effects */
+  --shadow-card: 0 1px 3px #00000014, 0 4px 12px #0000000F;
+  --shadow-cell: 0 1px 2px #10222A0D;
+  --shadow-panel: -12px 0 32px #00000033;
+  --shadow-dialog: 0 16px 48px #00000033;
+  /* type: the system font; IDs and route kinds in the system monospace */
+  --font: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --type-section-heading: 700 24px/1.3 var(--font);
+  --type-heading: 600 20px/1.3 var(--font);
+  --type-reading: 400 15px/1.5 var(--font);
+  --type-reading-strong: 600 15px/1.5 var(--font);
+  --type-group-label: 700 15px/1.4 var(--font);
+  --type-mono-strong: 700 15px/1.5 var(--mono);
+  --type-title: 700 14px/1.4 var(--font);
+  --type-caption: 400 13px/1.45 var(--font);
+  --type-caption-strong: 700 13px/1.45 var(--font);
+  --type-body: 400 12px/1.45 var(--font);
+  --type-body-medium: 500 12px/1.45 var(--font);
+  --type-body-strong: 600 12px/1.45 var(--font);
+  --type-pill: 600 12px/1.3 var(--font);
+  --type-state-label: 400 12px/1.3 var(--font);
+  --type-mono-body: 400 12px/1.45 var(--mono);
+  --type-small: 400 11px/1.5 var(--font);
+  --type-small-strong: 600 11px/1.5 var(--font);
+  --type-section-label: 600 10px/1.3 var(--font);
+  --type-mono-label: 400 10px/1.3 var(--mono);
+  /* dimensions */
+  --sp-1: 1px; --sp-2: 2px; --sp-3: 3px; --sp-4: 4px; --sp-5: 5px; --sp-10: 10px; --sp-15: 15px; --sp-20: 20px; --sp-25: 25px; --sp-30: 30px; --sp-40: 40px;
+  --r-2: 2px; --r-3: 3px; --r-4: 4px; --r-5: 5px; --r-10: 10px;
+  --bar-height: 56px;
+}
+/* Dark follows the system; a page may pin a theme with data-theme on the root element. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #08181F; --surface: #0E242E; --raised: #15323C; --line: #365C69; --line2: #628E9E;
+    --ink: #E4F0F3; --dim: #B6CBD3; --faint: #809EA9;
+    --cyan: #2DC8E0; --orange: #F5B840; --slate: #27454F; --cyan-tint: #144552;
+    --green: #5CC46F; --red: #EE7B6F; --neutral-line: #333333;
+    --cyan-05: #2DC8E00D; --ink-05: #E4F0F30D;
+    --shadow-card: 0 1px 3px #00000080, 0 4px 12px #00000059;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #08181F; --surface: #0E242E; --raised: #15323C; --line: #365C69; --line2: #628E9E;
+  --ink: #E4F0F3; --dim: #B6CBD3; --faint: #809EA9;
+  --cyan: #2DC8E0; --orange: #F5B840; --slate: #27454F; --cyan-tint: #144552;
+  --green: #5CC46F; --red: #EE7B6F; --neutral-line: #333333;
+  --cyan-05: #2DC8E00D; --ink-05: #E4F0F30D;
+  --shadow-card: 0 1px 3px #00000080, 0 4px 12px #00000059;
+}
+
+/* ---- base ---- */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--ground); color: var(--ink); font: var(--type-reading); -webkit-font-smoothing: antialiased; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.lab { font: var(--type-section-label); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.hid { display: none !important; }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+/* ---- title bar: one line, the document type in ink, then the package's ID in cyan ---- */
+.top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: var(--sp-20); height: var(--bar-height); padding: 0 var(--sp-20);
+  background: var(--surface); border-bottom: 1px solid var(--line); }
+.top .title { margin: 0; font: var(--type-heading); white-space: nowrap; color: var(--ink); }
+.top .title .pkg { color: var(--cyan); }
+.top .title .sep { color: var(--faint); font-weight: 400; margin: 0 var(--sp-5); }
+
+/* ---- segmented controls: .seg toggles each button (multi-select); .seg.single keeps one pressed ---- */
+.seg { display: inline-flex; align-items: center; flex: none; border: 1px solid var(--line2); border-radius: var(--r-5); padding: var(--sp-2); gap: var(--sp-2); background: var(--surface); }
+.seg button { font: var(--type-body); color: var(--dim); background: none; border: 0; border-radius: var(--r-3); padding: var(--sp-3) var(--sp-10);
+  cursor: pointer; display: inline-flex; align-items: center; gap: var(--sp-5); white-space: nowrap; }
+.seg button b { font-weight: 600; color: var(--ink); }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--raised); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line2); }
+
+/* ---- change-type squares ---- */
+.badge { display: inline-block; flex: none; width: 12px; height: 12px; border-radius: var(--r-3); background: var(--unchanged); vertical-align: middle;
+  font-size: 0; color: transparent; overflow: hidden; }
+.badge.added { background: var(--added); }
+.badge.modified { background: var(--modified); }
+.badge.removed, .badge.retired, .badge.missing { background: var(--removed); }
+.badge.unchanged { background: var(--unchanged); }
+.badge.moved { background: var(--moved); }
+
+/* ---- cards, pills, references ---- */
+.card { background: var(--surface); border: 1px solid var(--neutral-line); border-radius: var(--r-10); box-shadow: var(--shadow-card); padding: var(--sp-10) var(--sp-15); }
+.pill { display: inline-block; font: var(--type-pill); color: var(--ink); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap;
+  border: 1px solid var(--neutral-line); border-radius: var(--r-10); padding: var(--sp-1) var(--sp-10); }
+.state-label { font: var(--type-state-label); color: var(--faint); text-transform: uppercase; letter-spacing: .04em; }
+.ref, a.ref, a.ref:visited { font: var(--type-mono-body); color: var(--cyan); text-decoration: none; white-space: nowrap; }
+a.ref:hover { text-decoration: underline; }
+span.ref { color: var(--dim); }
+
+/* ---- popover: a floating card a hover or focus opens (see skai-pages.v1.js) ---- */
+.popover { position: absolute; z-index: 10; display: none; max-width: 560px; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line); border-radius: var(--r-10); box-shadow: var(--shadow-dialog); padding: var(--sp-10) var(--sp-15); font: var(--type-caption); }

@@ -274,7 +274,7 @@ Audit an approved dev specs design against the codebase, create its concrete tas
 
 ### UI Map architecture (skill `skai-ui-map-architecture`)
 
-Create or change the app's UI Map as an architecture artifact. Produces a change package under `skai/changes/<change-id>/ui-map/` containing the architecture artifact, `proposed-ui-map.yaml`, and `proposed-ui-map.html`; the official map stays frozen during architecture.
+Create or change the app's UI Map as an architecture artifact. Produces a change package under `skai/changes/<change-id>/ui-map/` containing the architecture artifact, `proposed-ui-map.yaml`, and `proposed-ui-map.html`, or, for a **change request**, its `ui-map/` sub-package (per [`Guides/Core/change-requests.md`](Guides/Core/change-requests.md)); the base, the production map or a request's base package, stays frozen during architecture.
 
 - Guide [`Guides/UIMap/ui-map-architecture.md`](Guides/UIMap/ui-map-architecture.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
@@ -288,18 +288,18 @@ Create or change the app's UI Map as an architecture artifact. Produces a change
 **Phases:**
 
 1. **Discussion.** Agent digests the inputs, drafts topic-organized map decisions with inline `- [ ]` items (questions, proposals, tradeoffs), and maintains a provisional proposed map and render as soon as there is enough structure to review. The preview reflects the agent's current recommendations and is updated as decisions change. Gate: supervisor resolves every discussion item.
-2. **Map changes.** Agent diffs the frozen official map against the reviewed proposal, records the differences as typed map-change items, finalizes deferrals and assumptions/TODOs, and validates and renders the finished proposal. Ends with `🏁 Complete.` once the valid architecture package is in place.
+2. **Map changes.** Agent diffs the frozen base against the reviewed proposal, records the differences as typed map-change items grouped by domain, finalizes deferrals and assumptions/TODOs, and validates and renders the finished proposal. Ends with `🏁 Complete.` once the valid architecture package is in place.
 
 ### UI Map implementation (skill `skai-ui-map-implementation`)
 
-Execute or specify the structural code work needed to conform to the target UI Map. The target is the proposed map when an architecture change package exists, or the official map for a no-package conformance run. The guide covers the audit, alignment discussion, checkbox-tracked code changes and their ownership dispositions, placeholder scaffolding, build verification, change requests back to architecture, and promotion of an approved proposed map.
+Execute or specify the structural code work needed to conform to the target UI Map. The target is the proposed map when an architecture change package exists, or the production map for a no-package conformance run. The guide covers the audit, alignment discussion, checkbox-tracked code changes and their ownership dispositions, placeholder scaffolding, build verification, map changes it asks for (by the route the supervisor picks), and promotion of an approved proposed map.
 
 - Guide [`Guides/UIMap/ui-map-implementation.md`](Guides/UIMap/ui-map-implementation.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 - Form factors [`Guides/UIMap/ui-map-form-factors.md`](Guides/UIMap/ui-map-form-factors.md) — read when the map declares `form_factors`, or the work adds a screen or route that differs by form factor
 
-**Prerequisites:** The app codebase and an identifiable target map: either a ready change package at `skai/changes/<change-id>/ui-map/` (proposed map + render + architecture artifact) or the official `skai/ui-map/ui-map.yaml` for conformance work. Run mode (Plan vs Build) is inferred from context.
+**Prerequisites:** The app codebase and an identifiable target map: either a ready change package at `skai/changes/<change-id>/ui-map/` (proposed map + render + architecture artifact) or the production `skai/ui-map/ui-map.yaml` for conformance work. Run mode (Plan vs Build) is inferred from context.
 
 **Stages:**
 
@@ -352,7 +352,7 @@ requirement text and IDs remain unchanged.
 
 ### Design authoring (skill `skai-design-authoring`)
 
-Take a design change from an idea to a completed change package, authored against a **base**: production for a package under `skai/changes/<change-id>/design/`, drafted on a change page named `<change-id>` in the project's design file; or another open design package for a **change request**, a package of the same shape under `<base>/change-requests/<nnn>/`, drafted in a request section on the base's change page. The base stays unchanged during authoring. Sources are open-ended -- an idea, sketches, a brief, a product spec package, an existing app to backfill from. The artifact's rendered page, `design-review.html` beside it (from [`Bin/design-tool.py`](Bin/design-tool.py)), is the supervisor's view: package card, Discussion, change list. The process guide is tool-agnostic and loads the conventions guide for the project's design tool (Figma today).
+Take a design change from an idea to a completed change package, authored against a **base**: production for a package under `skai/changes/<change-id>/design/`, drafted on its change page in the project's design file (named per the design tool's conventions guide); or, for a **change request**, the nearest design package up its chain, else production: the request's `design/` sub-package under `skai/changes/<change-id>/changes/CR-<id>/`, drafted in a request section on the base's page (a change page for production). The base stays unchanged during authoring. Sources are open-ended -- an idea, sketches, a brief, a product spec package, an existing app to backfill from. The artifact's rendered page, `design-review.html` beside it (from [`Bin/design-tool.py`](Bin/design-tool.py)), is the supervisor's view: package card, Discussion, change list. The process guide is tool-agnostic and loads the conventions guide for the project's design tool (Figma today).
 
 - Guide [`Guides/Design/design-authoring.md`](Guides/Design/design-authoring.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
@@ -365,22 +365,22 @@ Take a design change from an idea to a completed change package, authored agains
 
 1. **Discussion.** Agent seeds topic-organized `- [ ]` items for the decisions it needs -- a proposed departure from the base, something that looks like a defect, an open product question -- each with a written recommendation. Nothing is drawn. Gate: supervisor resolves each item. If the supervisor rules at the tool-access blocked gate that no mockups can be drawn, the typed Design Changes list, written from the decisions, stands in for the drawings from here on.
 2. **Mockups.** Agent draws the whole change on the change page or request section and keeps the Design Changes list current with the drawings (a heading per screen in canvas order, one `V<n>` entry per frame with add / modify / remove, a description and a justification, several changes to one frame as numbered sub-changes); before the review gate it traces every drawn state to an input and every input requirement to a drawing. Supervisor reviews the drawings and the rendered list. Feedback goes into the designs; anything needing a decision is parked and opens the next Discussion phase. Gate: "next" is the supervisor's approval.
-3. **Completion.** Agent reconciles the drawings against every input but the base and, for each input the decisions changed, files a change request through that input's own process (with drafts) or tells the supervisor what the input needs; names what the package owes downstream. Ends with `🏁 Complete.`
+3. **Completion.** Agent reconciles the drawings against every input but the base and, routes each input the decisions changed as the supervisor picked, an edit in that input's own process or a change request, with drafts; names what the package owes downstream. Ends with `🏁 Complete.`
 
 ### Design promotion (skill `skai-design-promotion`)
 
-Fold a completed package into its base: into production (drafts moved from the change page, package archived to `skai/promoted/<change-id>/design/`) or into the parent package for a change request (frames moved from the request section into the base's drawings, the request's entries appended to the base's Design Changes, its open gaps carried into the base's Discussion, package archived to `<base>/promoted-change-requests/<nnn>/`). The supervisor confirms the base before the drafts are deleted. Promotion refactors the base to absorb the drafts; a draft that needs changing returns the package to authoring. Implementing designs in code is out of scope.
+Fold a completed package into its base, carrying every change to every base frame it affects, not only the frames the package drew: a change's own package into production (drafts copied from the change page, package archived to `skai/promoted/<change-id>/design/`), or a change request's sub-package into its base, production included (frames copied from the request section into the base's drawings, the request's entries appended to a base package's Design Changes, its open items and gaps staying in the archived request, sub-package archived per [`change-requests.md`](Guides/Core/change-requests.md)). The base is backed up first; the supervisor reviews the base before the package archives, and deletes the drafts and backup when ready. Promotion refactors the base to absorb the drafts; a draft that needs changing returns the package to authoring. Implementing designs in code is out of scope.
 
 - Guide [`Guides/Design/design-promotion.md`](Guides/Design/design-promotion.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when readiness finds an open gap; the package returns to authoring to resolve it
 
-**Prerequisites:** A completed change package: its non-gap items resolved (gaps too, into production), its Design Changes current, and every change request it filed against an input ruled under that input's process.
+**Prerequisites:** A completed change package: its non-gap items resolved (gaps too, into production), its Design Changes current, and the outcome applied for every non-base input its decisions changed, by the route the supervisor picked.
 
 **Phases:**
 
-1. **Promotion checks.** Agent renders the page and screens the package for readiness, then writes an unchecked checklist: drafts meet the conventions, inventory matches the drawings, the base absorbs the package, links repoint, drafts deleted, package archived. Gate: supervisor reviews what will land and into which base.
-2. **Execute.** Agent verifies and applies, then stops for the supervisor to review the base in the design file. Gate: supervisor confirms; the change page or request section is deleted and the package archived.
+1. **Promotion checks.** Agent renders the page and screens the package for readiness, then writes an unchecked checklist: drafts meet the conventions, inventory matches the drawings, the base absorbs the package, links repoint, package archived. Gate: supervisor reviews what will land and into which base.
+2. **Execute.** Agent verifies and applies, then stops for the supervisor to review the base in the design file. Gate: supervisor confirms and the package archives; the drafts and backup stay until the supervisor deletes them.
 
 ### Design specs authoring (skill `skai-design-specs-authoring`)
 

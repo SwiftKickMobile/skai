@@ -56,3 +56,74 @@ Target: `Guides/Core/known-gaps.md` and `Guides/Core/process-flow.md` § Structu
 | 2026-10-26 GL r4 | the standard's decision 3 said `render` shows the Decision Log, which left the page 2026-10-21 | closed (standard) | decision 3 records the 2026-10-21 change |
 | 2026-10-26 GL r4 | the six inlined Decision Log sentences omit the owner's "no dates" | logged | pre-existing propagation drift, outside the series' scope; one clause in the six copies on the supervisor's say |
 | 2026-10-26 GL | Series GL converged: clean round over the binding target at r4 | converged | stop rule (a) |
+| 2026-11-07 r1 | F1 rule 6 "there" and "the base's author" unanchored; restates change-requests' who and where | closed | "a promoted request's as change-requests.md says" |
+| 2026-11-07 r1 | F2 rule 6 dropped the spec's "or renumbers" | closed | "never moves, renumbers or resolves a gap" |
+| 2026-11-07 r1 | F3 rule 6 said promotion resolves a gap by folding a ruling | closed | "a fold only records a ruling the request already holds" |
+| 2026-11-07 r1 | F4 rule 7 names an input catch-up rule no guide contains | closed | "your workflow's input-change and Discussion rules"; spec requirement 6 corrected |
+| 2026-11-07 r1 | F5 where a promoted request's gap is edited | rejected | Rules 5 and 7 cover the base's inherited marker |
+| 2026-11-07 r1 | F6 rule 3 "mark them" read as inherited only | logged | Tool stops with a clear message |
+| 2026-11-07 r2 | F1 rule 7 points at input-change rules most workflows lack (round-1 repair) | closed | "Use your workflow's Discussion rules"; a differing answer is a Discussion item |
+| 2026-11-07 r2 | F2 rules 2, 5, 8 hard-code "file a change request" | routed | #129: the supervisor picks the route |
+| 2026-11-07 r2 | F3 rule 3 names artifacts, not the guide owning the marker form | closed | Footnotes per `spec-file-gaps.md`; UI Map and Figma mirrors per their guides |
+| 2026-11-07 r2 | F4 no ❌ for a question the supervisor can rule now | closed | Supervisor, 2026-11-07: the agent raises Discussion items; only the supervisor declares one a gap, when they cannot answer it. Rule 1 and process-flow's **Gap** label now say so; design specs amended |
+| 2026-11-07 r2 | F5 rule 6 hands off how as well as who and where | logged | Cosmetic; change-requests' "as that request's own" routes back to rule 4 |
+| 2026-11-07 r2 | F6 mark/marks/marker mixed; rule 7 restates rule 5's clearing | closed | "marker" throughout; rule 7's clause removed |
+| 2026-11-07 r3 | F1 rule 7 has no trigger; "nothing changes" on adoption reads as contradicting rule 5's marker clearing; spec correction still said "input-change" | closed | Lead "When an upstream gap closes"; "Adopted as written: only the marker clears"; spec correction aligned to round 2 F1 (Discussion rules only) |
+| 2026-11-07 r3 | F2 rule 3's lead "Keep gaps open" reads as forbidding resolution before completion | closed | "Open gaps never block authoring's completion" (spec requirement 3) |
+| 2026-11-07 r3 | F3 rule 2 has the agent record a placeholder; the supervisor's ruling sets it | closed | "propose one whenever you can" |
+| 2026-11-07 r3 | Trims for the above | applied | Rule 4 "the Decision Log"; rule 6 colon list. Rule 8 trim declined: "The supervisor starts promotion" drops the imperative |
+| 2026-11-07 r4 | F1 rule 7's "Omitted upstream: remove the dependent part" is not in the spec and skips the Discussion bar | closed | Omission joins the differing-answer case: a Discussion item; spec requirement 6 notes it |
+| 2026-11-07 r4 | F2 rule 4 makes the agent the one who resolves a gap | closed | "The supervisor closes your own gaps one of three ways" |
+| 2026-11-07 r4 | F3 rule 3's lead does not head its body | closed | Lead joined to the formats sentence |
+| 2026-11-07 r4 | F4 "decide and record it for review" names no record | logged | Spec does not name it either; workflow guides own the record |
+| 2026-11-07 r4 | F5 own gap with no placeholder: rule 2 does not say nothing proceeds | closed (2026-11-09) | Stranded, not broken; spec-file-gaps and the authoring guides cover it |
+| 2026-11-07 r4 | F6 nothing detects that an inherited marker's owner closed | logged | Stranded, not broken; blocked gate escalates; tooling territory |
+| 2026-11-07 r5 | F1 rule 3's lead puts inherited gaps under Discussion and Decision Log formats (round-4 repair) | closed | Rule 3 keeps own gaps and the marker forms; inherited clause moved to rule 5's lead |
+| 2026-11-07 r5 | F2 rule 7 leaves the marker unstated for a differing answer; "its omission" has no fixed referent | closed | Lead "clear the marker and use your workflow's Discussion rules"; "the dependent part omitted upstream" |
+| 2026-11-07 r5 | F3 rule 5's lead is a label | closed | "Inherit upstream gaps as markers, not items, on what stands on the placeholder" |
+| 2026-11-07 r5 | F4 "Out of scope" names a section dev specs and UI Map implementation lack | logged | Spec requirement 4 names it; stranded, not broken |
+| 2026-11-07 r5 | F5 item state after "request a placeholder upstream" unstated | logged | The supervisor's ruling says it |
+| 2026-11-07 r6 | F1 rule 6 drops the spec's "one of rule 4's three ways" for a promoted request's gap | closed | "a promoted request's by (4), where `change-requests.md` says" |
+| 2026-11-07 r6 | F2 rules 5 and 7 both state marker clearing (round-5 repair) | closed | Rule 5 "proceed without a decision until the owning item closes (7)"; rule 7 owns clearing |
+| 2026-11-07 r6 | F3 managed header date stale | closed | 2026-11-07 |
+| 2026-11-07 r6 | F4 rule 3's lead does not announce the representation list | logged | Cosmetic; guide read whole |
+| 2026-11-07 r6 | F5 "fold" unglossed | logged | Cosmetic; the link beside it defines it |
+| 2026-11-07 r6 | Open question: which of the three ways a request's base-gap decision records | routed | `change-requests.md` / process-flow; design-guides pass |
+| 2026-11-07 r7 | F1 rule 7 names no act on the drafts; its tail "a Discussion item" overrides the Discussion bar (round-2 repair) | closed | "clear the marker, build on the outcome and use your workflow's Discussion rules"; tail removed (spec requirement 6: normal Discussion bar) |
+| 2026-11-07 r7 | F2 rule 6's promoted-request clause verb-less; pointer floats | closed | "a promoted request's too, where `change-requests.md` says; inherited markers…" |
+| 2026-11-07 r7 | F3 a bare "gap" ruling: does the item's proposed placeholder stand? | closed | Supervisor, 2026-11-09: no; the supervisor supplies placeholders. Rule 2 "the supervisor's to supply" (my round-3 "propose one" was wrong) |
+| 2026-11-07 r7 | F4 rule 1 dropped the spec's "yet" | logged | Cosmetic; the sentence's earlier "yet" carries it |
+| 2026-11-09 r8 | F1 rule 7 "build on the outcome and use" sequences redraft before the Discussion bar (round-7 repair) | closed | "under your workflow's Discussion rules" (spec requirement 6's word) |
+| 2026-11-09 r8 | F2 rule 6 "where change-requests.md says" reads two ways | closed | "as" |
+| 2026-11-09 r8 | F3 rule 6 "owners" reads as people | closed | "owning items" |
+| 2026-11-09 r8 | F4 "the marker" singular where a gap has several marks (footnote and Figma mirror) | closed | "markers" in rules 4 and 7 |
+| 2026-11-09 r8 | F5 rule 4's record list omits removing the Gap line | logged | process-flow and every authoring guide state it; spec enumerates the same list |
+| 2026-11-09 | Supervisor ruling: rule 5's "request a placeholder upstream" route | closed | Removed; a bare upstream gap is intentional; the agent omits the dependent part, or waits at a blocked gate if its absence blocks progress; spec amended |
+| 2026-11-09 r9 | F1 rule 3 "never block" contradicts rule 5's wait (2026-11-09 ruling's application) | closed | "except as rule 5 says"; spec requirement 3 noted |
+| 2026-11-09 r9 | F2 bare upstream gap: is the omitted part marked? | closed | Unmarked: a marker blocks production, which the omission avoids; follows from the ruling |
+| 2026-11-09 r9 | F3 rule 4 "the artifact's markers" unbound | closed | "remove its markers" |
+| 2026-11-09 r9 | F4 rule 7 clears markers before building on the outcome | closed | Reordered |
+| 2026-11-09 r9 | F5 managed header date | closed | 2026-11-09 |
+| 2026-11-09 r9 | O1–O4 (request into base with open gaps implied; rule 2 / rule 5 no-placeholder overlap; blocked gate as a push; rule 6 density) | logged | Stranded or cosmetic |
+| 2026-11-09 r10 | F1 rule 7's tail dropped the spec's "is a change" | closed | "is a change that may undercut an approved decision" (spec requirement 6 wording; reviewer's "revisit decisions" not taken: it reads as the agent re-deciding) |
+| 2026-11-09 r10 | F2 rule 5 omits before judging; "(Out of scope)" reads as a label | closed | Reviewer's text: judge first, wait or omit, "recorded under Out of scope" |
+| 2026-11-09 r10 | F3 the Out of scope record need not name the owning item | logged | Adds a required field; not occurred |
+| 2026-11-09 | Supervisor: restore content cut to meet caps | applied | Rule 1 "blocking", rule 4 "artifact's", rule 8 "No owner field;"; size met by reviewer tightening |
+| 2026-11-09 | Compression review (Fable) after the restore | applied | 3,405 -> 3,350; seven wording changes in rules 2, 4, 6, 8, each checked against the spec; two rejected (rule 3 "logged", rule 4 "one of") and replaced by the reviewer |
+| 2026-11-09 r11 | F1 rule 6: "inherited markers wait" reads as the package waiting in promotion | closed | Reviewer's text: returns to authoring for all three kinds; trim rule 5 "proceed, no decision, until" (spec wording) |
+| 2026-11-09 r11 | F2 rule 5's wait for a bare upstream gap leaves no record in the package | closed, no change | Supervisor, 2026-11-09: the block determination is not documented |
+| 2026-11-09 r12 | F1 rule 3 "Mark own and inherited gaps" contradicts rule 5's unmarked omission | closed | "Mark own gaps and inherited placeholders"; reviewer's trim in rule 6 "records the request's ruling" (spec amendment item 4 kept) |
+| 2026-11-09 r12 | F2 rule 7 "dependent part omitted upstream" flips the term's owner | closed | "the gap closed upstream as omitted" |
+| 2026-11-09 r12 | F3 rule 5 "missing part … omit it" referents | logged | Cosmetic; the reviewer's "cannot proceed" would change "blocks progress", which is the supervisor's test |
+| 2026-11-09 r13 | F1 rule 6's fold clause omits the check-off the spec requires (amendment item 4) | closed | "a fold's check-off records the request's ruling"; reviewer's trim rule 4 "not the artifact's concern" (spec wording); its rule-7 trim declined ("the gap omitted upstream" loosens round 12's fix) |
+| 2026-11-09 r13 | F2 rule 2's "file a change request upstream" could be stretched to a bare upstream gap | logged | Rule 5's if/else closes it; wording tracked under the separate route issue |
+| 2026-11-09 r13 | F3 promotion gate templates do not require listing gaps | logged | Promotion guides' boundary |
+| 2026-11-09 r14 | F1 rule 6 "a fold's check-off" names no object; reads as checking off the request's own gaps (round-13 repair) | closed | Reviewer's text "a fold checks off base items already ruled in the request"; trim rule 7 "or an upstream omission" (spec wording); its rule-4 trim declined (restored word) |
+| 2026-11-09 r14 | F2 "markers … in promoted requests too" sends a literal reader to archived drafts | logged | Tool and promotion guides resolve it; spec line could be tightened at its next amendment |
+| 2026-11-09 r15 | F1 rule 7: the differing-answer sentence names the hazard, not the act; the Discussion-rules clause sits in the lead | logged | Reviewer's fix would re-open round 8's build-before-ruling order; supervisor approved ending the pass with it logged (2026-11-09) |
+| 2026-11-09 | Pass closed | closed | Stop rule (b): supervisor approved the logged ledger after round 15 (1.875). Size 3,346 / 3,350 |
+| 2026-11-09 | Supervisor: drop "recorded under Out of scope" from rule 5's bare-upstream case | closed | No placeholder means no upstream rule; nothing to call out. Spec amendment added; own-gap Omitted closure unchanged |
+| 2026-11-11 | Drive-by from design pass 6 r1: rule 3 said design change lists footnote own gaps; design guides keep own gaps as items | closed | "inherited only in design change lists" (3,332 / 3,350) |
+| 2026-11-11 #108 DS-b r10 (routed) | Rule 2 sent a wrong-seeming placeholder upstream as a change request, overriding the supervisor's route choice (#129) | closed | "if it seems wrong, follow `change-requests.md` rule 8." Reviewed in #108 pass 4's rounds |
+| 2026-11-11 #108 D r4 | Rule 2 sent a wrong-seeming base placeholder to rule 8, which excludes the base (second sighting; logged in D r3) | closed | "**Build on the placeholder, the supervisor's provisional answer, until closure.** … Never second-guess it; if it seems wrong, ask the supervisor; non-base inputs follow `change-requests.md` rule 8." Spec amendment aligned. 3,350 / 3,350 |
+| 2026-11-11 | Rule 2 route change reviewed in #108 pass 4 | closed | Pass closed by supervisor ruling after r14; no further finding on rule 2 after r4 |

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-authoring
 Managed-Source: Guides/DesignSpecs/design-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-11
 
 # Design Specs Authoring
 
@@ -23,10 +23,10 @@ Everything you write for a person follows [`writing-style.md`](../Core/writing-s
 
 [Artifact formats § The Package](design-specs-artifacts.md#the-package) owns contents, path and
 decoupling; read [`change-requests.md`](../Core/change-requests.md) for the **base**.
-For a production base, use the supplied change ID or propose a short kebab-case ID (from a branch,
-its final component) and block before creation. Check active and promoted paths: reopen unpromoted work; use new IDs for promoted ID/type pairs.
+For a change's own package, use a supplied change ID; else propose a short kebab-case ID (a
+branch's final component) and block before creation. Check active and promoted paths: reopen unpromoted work; use new IDs for promoted ID/type pairs.
 Sibling types update freely while the change
-is open; a consumer wanting it changed files a request against it.
+is open; a consumer wanting it changed takes the route `change-requests.md` has the supervisor pick.
 
 ### What `proposed-design-specs/` Holds
 
@@ -133,15 +133,13 @@ links to drafts; specs carry no Discussion citations but a gap footnote's `D#`.
 
 ## Initiation
 
-Begin on explicit intent to write, backfill or audit specs, or request a package change; prior
-conversation is context.
+Begin on explicit intent to write, backfill or audit specs, or a change request; prior conversation is context.
 
 1. For first specs, follow [artifact hosting](../Core/artifact-hosting.md) and add the README link.
 2. Read [content rules](design-specs.md), existing specs, affected requirements and the design tool
    guide ([Figma](../Design/figma-designer-guide.md)).
-3. For a request, reopen or create `<base>/change-requests/<nnn>/` per the shared guide; otherwise
-   reopen named or contextual unpromoted work, or resolve the ID and check its paths for a new
-   package. Create the artifact with Goal/Inputs.
+3. Per `change-requests.md`, settle whether the work is a request; for one, reopen or create its `design-specs/` sub-package; otherwise
+   reopen named or contextual unpromoted work, or resolve the ID and check its paths. Create the artifact with Goal/Inputs.
 4. Infer mode; read *Working a Baseline* before code.
 5. Draft under `proposed-design-specs/` and seed Discussion.
 
@@ -206,10 +204,10 @@ above.
 
 ### Requirements Gaps
 
-Never quietly add a product guarantee or narrow one. Draft a product-specs
-package against the subject's open package; if none is open, send the gap to product specs authoring. Link the work in a Discussion item; draft per *Drafting*.
-Apply the recorded outcome — keep, revise, remove or wait — before resolving it. After promotion into the product
-spec package, cite the requirement's draft ID.
+Never quietly add a product guarantee or narrow one. The product specs change by the route
+`change-requests.md` has the supervisor pick. Link the work in Discussion; draft per *Drafting*.
+Resolve it only on an applied outcome — keep, revise or remove the draft; unless removed, cite
+the requirement's draft ID.
 
 ## Discussion
 

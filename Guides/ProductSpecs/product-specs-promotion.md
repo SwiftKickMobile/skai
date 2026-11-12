@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-promotion
 Managed-Source: Guides/ProductSpecs/product-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-11
 
 # Product Specs Promotion
 
@@ -117,26 +117,25 @@ unchecked: retain `C1`–`C6`, repair/verify without rewording, check `C7`, arch
 intervening base edits or uncertain outcomes block; never assume unrecorded writes. Checked `C7`
 resumes archival only, from the active or promoted location. Never re-promote archived packages.
 
-Before writing, require an absent promoted path (`skai/promoted/<change-id>/product-specs/`, or
-`<base>/promoted-change-requests/<nnn>/`); find live incoming references from catalog/app repositories,
+Before writing, require an absent `product-specs/` destination (*Archive the package*); find live incoming references from catalog/app repos,
 related packages and dev specs. Collisions or inaccessible required references block; never
 overwrite or merge destinations.
 
 ### Readiness screen
 
-First run `validate <catalog root> <drafts>`, `check-changes` and `render` for a current review page;
+Run `validate <catalog root> <drafts>`, `check-changes` and `render`;
 then verify before writing `## Promotion Checks`:
 
-1. Into production: no open `- [ ]` item in `## Discussion`, gap
-   ([`known-gaps.md`](../Core/known-gaps.md)) or request under the package or its promoted requests.
+1. Into production: the change holds no other open `product-specs/` request part, and the package and the change's promoted ones, at any depth,
+   hold no open `- [ ]` item in `## Discussion` or gap ([`known-gaps.md`](../Core/known-gaps.md)).
 2. `validate` reports no fault in a file the package holds and no conflict the projection
    introduces; a fault already in an untouched base file never blocks: start a package against the base.
 3. `check-changes` passes: every change has a `## Requirement Changes` entry or Touches line at the
    artifacts guide's grain, with the right operation; no entry names an unchanged or absent target.
 4. Every modified or retired ID or glossary entry has its sweep under `## Verification`.
-5. Apply the outcome of every request this package filed against an input ([`change-requests.md`](../Core/change-requests.md)), now and at the base write.
+5. Apply outcomes for non-base inputs its decisions changed ([`change-requests.md`](../Core/change-requests.md) rule 8), now and at the base write.
 
-Record failures in `## Evidence`, not a checks section, and return to authoring.
+Record failures in `## Evidence`, not checks, and return to authoring. Pending outcomes (5) and open request parts (1) are not failures: record them there; name them at the failure's gate, or at the standard blocked gate if none.
 
 ## Promotion Checks
 
@@ -167,10 +166,9 @@ Verify changed content at its projected base location; unchanged content never b
   destination links, no Discussion citations, checkboxes or `🟡`, and only retirement marks and
   known-difference notes beside contracts; read back and run `validate <catalog root>` (a fault
   readiness missed is `C7`'s, wherever reported). Keep the approved diff; do not render after
-  writing. Into a package: replace its drafts; per the shared guide, append entries to its
-  `## Requirement Changes`, fold footnotes, base-item decisions and open requests, and name the
-  request in `## Assumptions and TODOs`; validate and
-  render the base, whose author reconciles its list on reopen. Repair mechanically, never reword; record the write outcome,
+  writing. Into a package, per `change-requests.md`: append entries to its
+  `## Requirement Changes`, fold footnotes and base-item decisions, and name the
+  request in `## Assumptions and TODOs`; validate the base, whose author reconciles its list on reopen. Repair mechanically, never reword; record the write outcome,
   then confirmation/repair results, keeping failures. Check `C7` only on confirmed success, then archive.
 - `C8 Archive the package` — *Archive the package* below; promotion completes only after verified
   write and archival.
@@ -209,16 +207,15 @@ Use `output` on success only if persisted. Silence never passes: unresolved path
 
 After verified `C7`, execute `C8`:
 
-1. Move the package intact (pages, `working-docs/`,
-   `promoted-change-requests/`): `skai/changes/<change-id>/product-specs/` to
-   `skai/promoted/<change-id>/product-specs/` in the catalog repository; a request to
-   `<base>/promoted-change-requests/<nnn>/`. Leave siblings; remove only empty grouping directories.
+1. Move the package intact (pages, `working-docs/`): `skai/changes/<change-id>/product-specs/` to
+   `skai/promoted/<change-id>/product-specs/` in the catalog repository, with its promoted request
+   parts; a request's sub-package to its destination; both per `change-requests.md`. Leave siblings; remove only empty grouping directories.
 2. Repair live incoming links across those repositories, related packages and dev specs, and
    relative links inside moved files, preserving target identities, prose, IDs, decisions and
    recorded results; annotate historical paths with current locations. Inaccessible or unrepaired
    required links block.
 3. Verify archived files/links, absence of the active type path and preserved siblings; record move
-   and link evidence, then check `C8` in the archived `product-specs-promotion.md`.
+   and link evidence, re-render a request's base package, if any, then check `C8` in the archived `product-specs-promotion.md`.
 
 On failure, report the specs written but package not yet archived at the standard blocked gate;
 resume archival only at either package path, never overwriting a destination or repeating `C7`.

@@ -35,7 +35,7 @@ SUB_RE = re.compile(r"^  - \*\*(?P<num>\d{2})\*\* (?P<text>.+?)\s*$", re.M)
 HEADING_RE = re.compile(r"^### (?P<name>.+?)\s*$", re.M)
 GAP_DEF_RE = re.compile(r"^[ \t]*\[\^(?P<label>[A-Za-z0-9-]+)\]:[ \t]*\*\*Gap:\*\*[ \t]*(?P<text>.+?)[ \t]*$", re.M)
 MD_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)\s]+)\)")
-STATUS = {"add": "added", "modify": "modified", "remove": "retired"}
+STATUS = {"add": "added", "modify": "modified", "remove": "retired", "move": "moved"}  # move: a UI Map change (ui-map-render.py reuses these cards)
 
 
 def section(text, name):
@@ -67,18 +67,19 @@ class Links:
         return f'<a href="{html.escape(url)}">{html.escape(label)}</a>'
 
 
-def parse_changes(text):
-    """The '## Design Changes' entries in artifact order: {cid, op, obj, identity, description,
+def parse_changes(text, heading="Design Changes", change_re=CHANGE_RE):
+    """The '## <heading>' entries (`change_re` matching an entry's line, with groups cid, op, obj
+    and identity) in artifact order: {cid, op, obj, identity, description,
     justification, section, subs, gaps}; `section` is the `###` heading the entry sits under ("" with
     none), `subs` the numbered sub-changes [(num, text, justification)] of a frame changed in
     several ways (the justification is what follows the last ' — ' of the line), `gaps` the
     footnotes defined under the entry, each (label, owning item, the provisional answer the entry
     builds on); one footnote per gap, on the first entry whose change rests on it, the question staying with its owner."""
-    body = re.search(r"^## Design Changes\s*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
+    body = re.search(rf"^## {re.escape(heading)}\s*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
     if not body:
         return []
     src = body.group(1)
-    heads = list(CHANGE_RE.finditer(src))
+    heads = list(change_re.finditer(src))
     headings = [(m.start(), m.group("name").strip()) for m in HEADING_RE.finditer(src)]
     out = []
     for c, nxt in zip(heads, heads[1:] + [None]):
@@ -114,16 +115,16 @@ def owner_ref(owner, owners):
     return st.gap_owner_chip(m.group("scope").strip().lower(), m.group("did"), owners) if m else html.escape(owner)
 
 
-def render_change(ch, gloss, links, owners):
+def render_change(ch, gloss, links, owners, ident=None):
     """One change as a card: the badge says add, modify or remove; the summary carries the ID,
-    the object and the identity, linked into the design file; the description and the
-    justification follow."""
+    the object and the identity, linked into the design file (`ident`, already HTML, replaces it);
+    the description and the justification follow."""
     status = STATUS[ch["op"]]
     cid = ch["cid"].lower()
     st.RESOLVER["item"] = cid  # the spec renderer's inline() turns a [^n] mark into a link to #gap-<item>-<n>
-    ident = links.show(st.inline(links.hide(ch["identity"]), gloss, auto=True))
+    ident = ident if ident is not None else links.show(st.inline(links.hide(ch["identity"]), gloss, auto=True))
     summary = (f'<span class="badge">{status}</span><span class="id">{ch["cid"]}</span>'
-               f'<span class="status">{html.escape(ch["op"])} {html.escape(ch["obj"])}</span><span class="title">{ident}</span>')
+               f'<span class="status pill">{html.escape(ch["op"])} {html.escape(ch["obj"])}</span><span class="title">{ident}</span>')
     body = f"<p>{links.show(st.inline(links.hide(ch['description']), gloss, auto=True))}</p>" if ch["description"] else ""
     if ch["subs"]:
         body += "<ul>" + "".join(
@@ -136,44 +137,36 @@ def render_change(ch, gloss, links, owners):
     return f'<details class="item request {status}{gap}" id="{cid}" open><summary>{summary}</summary>{body}{why}{notes}</details>'
 
 
-def page_shell(title, counts, body, gloss, out, subtitle="", tips=""):
-    css, js = st.asset_links(out)
-    sub = f'<div class="sub">{html.escape(subtitle)}</div>' if subtitle else ""
+def page_shell(title, counts, body, gloss, out, tips=""):
+    """title: (document type, package ID), one line as on the spec pages."""
+    css, js = st.asset_tags(out)
+    text, h1 = st.page_title(*title)
     change = "".join(f'<button type="button" data-f="{f}" aria-pressed="false"><span class="badge {b}"></span><b>{counts[k]}</b> {k}</button>'
                      for f, b, k in (("added", "added", "added"), ("modified", "modified", "modified"), ("removed", "retired", "removed")))
     state = st.state_tiles(counts)
     return f"""<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{html.escape(title)}</title><link rel="stylesheet" href="{css}"></head><body>
-<div class="top"><div class="titles"><h1>{html.escape(title).replace(" | ", '<span class="sep">|</span>')}</h1>{sub}</div><div class="seg change" role="group" aria-label="Change">{change}</div>{state}</div><div class="wrap">
+<title>{html.escape(text)}</title>{css}</head><body>
+<div class="top">{h1}<div class="seg change" role="group" aria-label="Change">{change}</div>{state}</div><div class="wrap">
 {body}
 {st.render_popovers(gloss)}{tips}
-<div id="pop"></div></div>
-<script src="{js}"></script>
+<div id="pop" class="popover"></div></div>
+{js}
 </body></html>"""
 
 
 def short_title(folder):
-    """The top bar's name, '<title>: <path>': the path is the change id, then each change
-    request number down from skai/changes/<id>/design/, joined by ' | ' — 'Offers', 'Offers | 001',
-    'Offers | 001 | 002'."""
-    parts = list(folder.resolve().parts)
-    path = []
-    while len(parts) >= 2 and parts[-2] == "change-requests":
-        path.insert(0, parts[-1])
-        parts = parts[:-2]
-    if parts and parts[-1] == "design":
-        parts = parts[:-1]
-    path.insert(0, parts[-1].replace("-", " ").title() if parts else folder.name)
-    return "Design Change: " + " | ".join(path)
+    """The top bar's title, (document type, package ID): 'Design', then the change id and each change
+    request ID (open or promoted) down from the change, joined by ' | ' — 'offers', 'offers | CR-01',
+    'offers | CR-01 | CR-01-01'."""
+    pkg, ids = st.locate(folder.resolve())  # open or promoted, a request keeps its path
+    name = pkg.parent.name if pkg.name == "design" else pkg.name
+    return "Design", " | ".join([name] + ids)
 
 
 def render(authoring, specs, out):
     authoring = Path(authoring).resolve()
     out = Path(out) if out else authoring.parent / "design-review.html"
     text = authoring.read_text(encoding="utf-8")
-    tm = re.search(r"^# (.+)$", text, re.M)
-    title = tm.group(1).strip() if tm else ""
-    name = title.split(" — ")[-1].strip()  # the artifact's name: the last dash-separated part of its heading
     linkdefs = {m.group("name"): m.group("target") for m in map(st.LINKDEF_RE.match, text.splitlines()) if m}
     specs = [Path(s) for s in specs]
     gloss = st.prepare(specs[0], specs[1:], None, out) if specs else {}
@@ -184,25 +177,7 @@ def render(authoring, specs, out):
     changes = parse_changes(text)
     owners = st.gap_owners(authoring, disc)
     st.RESOLVER["gap_owners"] = owners
-    discussion, (p_open, p_gap) = st.render_discussion(disc, gloss, authoring)
-    items = [it for _, its in disc for it in its]
-    n_gap_items = sum(1 for it in items if not it["done"] and it["gap"])
-    n_done = sum(1 for it in items if it["done"])
-    n_open = len(items) - n_done - n_gap_items + p_open  # promoted requests' open items count too: they stay there
-    n_gap = n_gap_items + p_gap + sum(1 for c in changes if c["gaps"])  # open gap items plus footnoted entries
-    gaps = f"{n_gap} gap{'s' if n_gap != 1 else ''}"
-    if n_open:
-        state = f"{n_open} open" + (f", {gaps}" if n_gap else "")
-    elif items:
-        state = f"discussion complete; {gaps} carried" if n_gap else "discussion complete"
-    else:  # inherited gaps show even with no Discussion item
-        state = f"no discussion items; {gaps} carried" if n_gap else "no discussion items"
-    goal = section(text, "Goal")
-    note = st.discussion_note(authoring, disc)
-    head = (f'<div class="item request"><div class="head"><span class="status">{html.escape(state)}</span></div>'
-            + (f"<p>{links.show(st.inline(links.hide(goal), gloss, auto=True))}</p>" if goal else "")
-            + (f'<p class="note">{links.show(st.inline(links.hide(note), gloss, auto=True))}</p>' if note else "") + "</div>")
-    body = head + discussion
+    body, states = summary(text, authoring, disc, sum(1 for c in changes if c["gaps"]), gloss, links)
     if changes:
         cards, last = [], None
         for c in changes:
@@ -212,9 +187,34 @@ def render(authoring, specs, out):
             cards.append(render_change(c, gloss, links, owners))
         body += '<section class="file"><h2>Design Changes</h2>' + "".join(cards) + "</section>"
     counts = {"added": sum(c["op"] == "add" for c in changes), "modified": sum(c["op"] == "modify" for c in changes),
-              "removed": sum(c["op"] == "remove" for c in changes), "open": n_open, "gaps": n_gap, "resolved": n_done}
-    out.write_text(page_shell(short_title(authoring.parent), counts, body, gloss, out, subtitle=name, tips=""), encoding="utf-8")
+              "removed": sum(c["op"] == "remove" for c in changes), **states}
+    out.write_text(page_shell(short_title(authoring.parent), counts, body, gloss, out), encoding="utf-8")
     print(f"wrote {out}: {counts}")
+
+
+def summary(text, authoring, disc, footnoted, gloss, links):
+    """(the summary box, its state and the goal, then the Discussion section; the state counts
+    {open, gaps, resolved}) for an authoring artifact whose change entries carry `footnoted` gap
+    footnotes between them. The caller sets st.RESOLVER's gap owners first."""
+    discussion, (p_open, p_gap) = st.render_discussion(disc, gloss, authoring)
+    items = [it for _, its in disc for it in its]
+    n_gap_items = sum(1 for it in items if not it["done"] and it["gap"])
+    n_done = sum(1 for it in items if it["done"])
+    n_open = len(items) - n_done - n_gap_items + p_open  # promoted requests' open items count too: they stay there
+    n_gap = n_gap_items + p_gap + footnoted  # open gap items plus footnoted entries
+    gaps = f"{n_gap} gap{'s' if n_gap != 1 else ''}"
+    if n_open:
+        state = f"{n_open} open" + (f", {gaps}" if n_gap else "")
+    elif items:
+        state = f"discussion complete; {gaps} carried" if n_gap else "discussion complete"
+    else:  # inherited gaps show even with no Discussion item
+        state = f"no discussion items; {gaps} carried" if n_gap else "no discussion items"
+    goal = section(text, "Goal")
+    note = st.discussion_note(authoring, disc)
+    head = (f'<div class="item request"><div class="head"><span class="status pill">{html.escape(state)}</span></div>'
+            + (f"<p>{links.show(st.inline(links.hide(goal), gloss, auto=True))}</p>" if goal else "")
+            + (f'<p class="note">{links.show(st.inline(links.hide(note), gloss, auto=True))}</p>' if note else "") + "</div>")
+    return head + discussion, {"open": n_open, "gaps": n_gap, "resolved": n_done}
 
 
 def main(argv):

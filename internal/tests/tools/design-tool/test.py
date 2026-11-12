@@ -35,11 +35,12 @@ class Render(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertIn("{'added': 1, 'modified': 1, 'removed': 1, 'open': 0, 'gaps': 3, 'resolved': 1}", out, "V04 has no list marker and is not an entry; a gap is not open; every entry that marks a gap counts")
         page = (artifact.parent / "design-review.html").read_text()
-        self.assertIn("<title>Design Change: Package</title>", page, "the bar reads <title>: <path>")
-        self.assertIn('<div class="sub">Pinned Notes</div>', page, "the artifact's name is the subtitle")
-        pass
+        self.assertIn("<title>Design package</title>", page, "the title is the document type, then the package's ID")
+        self.assertIn('<div class="top"><h1 class="title">Design <span class="pkg">package</span></h1>', page, "one line: the type in ink, the ID in cyan")
+        self.assertNotIn("Pinned Notes", page, "no second title line repeats the artifact's name")
+        self.assertIn('<div class="item request"><div class="head"><span class="status pill">discussion complete; 3 gaps carried</span></div><p>', page, "the summary box shows the state and goal, no title line")
         for cid, status, op in [("v01", "modified", "modify screen"), ("v02", "added", "add state"), ("v03", "retired", "remove state")]:
-            self.assertRegex(page, rf'<details class="item request {status}(?: has-gap)?" id="{cid}" open><summary><span class="badge">{status}</span><span class="id">{cid.upper()}</span><span class="status">{op}</span>')
+            self.assertRegex(page, rf'<details class="item request {status}(?: has-gap)?" id="{cid}" open><summary><span class="badge">{status}</span><span class="id">{cid.upper()}</span><span class="status pill">{op}</span>')
         self.assertIn('<a href="https://example.test/file?node-id=1-1">notes</a>', page, "an inline link renders as an anchor")
         self.assertIn('<h3 class="section">Notes</h3>', page, "a heading per screen, in artifact order")
         self.assertIn('<h3 class="section">Note editor</h3>', page)
@@ -56,22 +57,39 @@ class Render(unittest.TestCase):
         self.assertNotIn("[^1]:", page, "the definition is not left in the Why")
         self.assertNotIn('id="v04"', page, "a line without the list marker is not an entry")
         self.assertNotIn("## Inputs", page, "the page shows the card, Discussion and Design Changes only")
-        self.assertIn("Bin/spec-review.v1.css", page, "the shared stylesheet is linked from the checkout")
+        links = re.findall(r'<link rel="stylesheet" href="([^"]+)">', page)
+        scripts = re.findall(r'<script src="([^"]+)"></script>', page)
+        self.assertEqual([Path(h).name for h in links], ["skai-pages.v1.css", "spec-review.v2.css"], "the shared library, then the review pages' own stylesheet")
+        self.assertEqual([Path(h).name for h in scripts], ["skai-pages.v1.js", "spec-review.v2.js"], "the shared library, then the review pages' own script")
+        for href in links + scripts:
+            self.assertFalse(href.startswith("/") or "://" in href, "assets are linked by a relative path: " + href)
+            self.assertTrue((artifact.parent / href).resolve().is_file(), "assets resolve from the page: " + href)
+        self.assertNotIn("Archivo", page)
+        self.assertIn('<div id="pop" class="popover">', page, "the popover is the shared one")
         self.assertNotIn(' open</button>', page, "a gap is not an open item; with none open the tile is absent")
         self.assertIn('<b>3</b> gaps</button>', page, "the gaps tile counts the open gap item and both entries that mark the gap")
         self.assertIn('<b>1</b> resolved</button>', page)
 
     def test_request_page_names_its_path_and_rewrites_relative_links(self):
-        artifact = self.copy / "package/change-requests/001/design-authoring.md"
+        artifact = self.copy / "changes/CR-01/package/design-authoring.md"
         code, out = self.render(artifact)
         self.assertEqual(code, 0, out)
         page = (artifact.parent / "design-review.html").read_text()
-        self.assertIn("<title>Design Change: Package | 001</title>", page)
-        self.assertIn('<a href="../../design-authoring.md">the base</a>', page, "a relative link is rebased from the artifact to the page")
+        self.assertIn("<title>Design package | CR-01</title>", page)
+        self.assertIn('<h1 class="title">Design <span class="pkg">package<span class="sep">|</span>CR-01</span></h1>', page, "a request chains its IDs after the package's")
+        self.assertIn('<a href="../../../package/design-authoring.md">the base</a>', page, "a relative link is rebased from the artifact to the page")
         self.assertIn("no discussion items; 1 gap carried", page, "an inherited gap shows in the card state with no Discussion item")
         self.assertIn("<b>Why</b> Base decision: D01", page)
-        self.assertIn('<a class="ref" href="../../design-review.html#d02" data-tip="tip-gap-base-d02">D02</a>', page, "a base item shows its ID alone, links to the base's page and carries its tooltip")
-        self.assertIn('<template id="tip-gap-base-d02"><div class="pop-src">../../design-review.html</div>', page, "the tooltip of another document's item starts with that document's review page path")
+        self.assertIn('<a class="ref" href="../../../package/design-review.html#d02" data-tip="tip-gap-base-d02">D02</a>', page, "a base item shows its ID alone, links to the base's page and carries its tooltip")
+        self.assertIn('<template id="tip-gap-base-d02"><div class="pop-src">../../../package/design-review.html</div>', page, "the tooltip of another document's item starts with that document's review page path")
+
+    def test_archived_request_page_keeps_its_path_in_the_title(self):
+        moved = self.copy / "promoted/CR-01/package"
+        moved.parent.mkdir(parents=True)
+        shutil.move(str(self.copy / "changes/CR-01/package"), str(moved))
+        code, out = self.render(moved / "design-authoring.md")
+        self.assertEqual(code, 0, out)
+        self.assertIn("<title>Design package | CR-01</title>", (moved / "design-review.html").read_text(), "a promoted request keeps its change id and request ID")
 
     def test_package_built_on_a_sibling_package_links_its_base(self):
         artifact = self.copy / "followup/design-authoring.md"
@@ -83,27 +101,27 @@ class Render(unittest.TestCase):
 
 
     def test_base_shows_a_requests_pending_decision_and_its_promoted_requests_open_items(self):
-        request = self.copy / "package/change-requests/001/design-authoring.md"
+        request = self.copy / "changes/CR-01/package/design-authoring.md"
         request.write_text(request.read_text().replace("## Decision Log\n", "## Decision Log\n\n- [D02][base D02] decided — the group collapses.\n", 1)
-                           + "\n[base D02]: ../../design-authoring.md#d02\n")
-        promoted = self.copy / "package/promoted-change-requests/002"
+                           + "\n[base D02]: ../../../package/design-authoring.md#d02\n")
+        promoted = self.copy / "promoted/CR-02/package"
         promoted.mkdir(parents=True)
         (promoted / "design-authoring.md").write_text(
             "# Design — Pin Badge\n\n## Goal\n\nBadge pinned notes.\n\n## Discussion\n\n"
             "- [ ] D05 [Question] Which badge color?\n  - **Gap** Gray stands in until the brand team picks one.\n\n"
             "## Decision Log\n\n- D05 gap — gray stands in.\n")
         artifact = self.copy / "package/design-authoring.md"
-        text = artifact.read_text().replace("**Gap:** D02. Placeholder: the empty group", "**Gap:** [D05][002 D05]. Placeholder: the empty group", 1)
-        artifact.write_text(text + "\n[002 D05]: promoted-change-requests/002/design-authoring.md#d05\n")
+        text = artifact.read_text().replace("**Gap:** D02. Placeholder: the empty group", "**Gap:** [D05][CR-02 D05]. Placeholder: the empty group", 1)
+        artifact.write_text(text + "\n[CR-02 D05]: ../promoted/CR-02/package/design-authoring.md#d05\n")
         code, out = self.render(artifact)
         self.assertEqual(code, 0, out)
         self.assertIn("'gaps': 4", out, "the promoted request's open gap counts on the base")
         page = (artifact.parent / "design-review.html").read_text()
         d02 = re.search(r'<details[^>]* id="d02" open>.*?</details>', page, re.S).group(0)
-        self.assertIn('Decided in request <a href="change-requests/001/design-review.html">001</a>', d02, "the base item stays open and shows the request's pending decision")
-        self.assertIn('Open in promoted request <a href="promoted-change-requests/002/design-review.html">002</a>', page)
-        self.assertIn('id="r002-d05"', page)
-        self.assertRegex(page, r'<div class="gapbody"><a class="ref" href="promoted-change-requests/002/design-review\.html#d05" data-tip="tip-gap-linked-\d+-d05">D05</a> the empty group')
+        self.assertIn('Decided in request <a href="../changes/CR-01/package/design-review.html">CR-01</a>', d02, "the base item stays open and shows the request's pending decision")
+        self.assertIn('Open in promoted request <a href="../promoted/CR-02/package/design-review.html">CR-02</a>', page)
+        self.assertIn('id="rcr-02-d05"', page)
+        self.assertRegex(page, r'<div class="gapbody"><a class="ref" href="\.\./promoted/CR-02/package/design-review\.html#d05" data-tip="tip-gap-linked-\d+-d05">D05</a> the empty group')
 
 if __name__ == "__main__":
     unittest.main()

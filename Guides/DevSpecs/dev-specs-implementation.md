@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.dev-specs-implementation
 Managed-Source: Guides/DevSpecs/dev-specs-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-11
 
 # Dev Specs Implementation
 
@@ -179,7 +179,7 @@ and integration commands needed to make the design executable. Reference the des
 If the design links a UI Map change package, invoke [`../UIMap/ui-map-implementation.md`](../UIMap/ui-map-implementation.md) during the audit in the larger-feature context; it owns map conformance planning and gates. After completion, carry each
 `planned` and `handoff` item as an outer task, using the returned artifact path under
 `skai/promoted/<change-id>/ui-map/` after promotion. If the design already links a promoted Plan,
-consume its pending items there without promoting again; check the current official map for later
+consume its pending items there without promoting again; check the current production map for later
 changes before relying on the plan. For a no-proposal conformance run, use its working-doc session path. In both
 cases, Realizes names the sibling artifact path and item ID. Give the outer task `Disposition handoff`
 only if this workflow also does not own the work. The sibling owns map promotion. When an outer task

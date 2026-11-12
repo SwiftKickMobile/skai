@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-artifacts
 Managed-Source: Guides/ProductSpecs/product-specs-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-11-11
 
 # Product Specs Artifact Formats
 
@@ -16,17 +16,15 @@ Typed formats for product spec workflows. Content rules:
 
 ## The Package
 
-In the catalog's repository, `skai/changes/<change-id>/product-specs/`; after promotion,
-`skai/promoted/<change-id>/product-specs/`. Promoted packages are closed; new work needs a new ID/type pair. Sibling packages of other types
-are independent. For the **base** and requests, read
-[`change-requests.md`](../Core/change-requests.md). Supervisor input during authoring is a decision, never a request.
+In the catalog's repository, `skai/changes/<change-id>/product-specs/`; after promotion into production,
+`skai/promoted/<change-id>/product-specs/`, closed; new work needs a new change ID. Sibling packages of other types
+are independent. For the **base** and requests, whose `product-specs/` sub-packages use this layout, read
+[`change-requests.md`](../Core/change-requests.md).
 
 ```
 product-specs-authoring.md        authoring's artifact; ## Requirement Changes
 proposed-product-specs/**         drafts mirroring the catalog: touched files only, each whole
 product-specs-review.html         the rendered review page
-change-requests/<nnn>/            open requests, each with this layout
-promoted-change-requests/<nnn>/   promoted requests
 product-specs-promotion.md        promotion's artifact; may be absent
 evidence/                         persisted check output; may be absent
 working-docs/                     working documents; the tool ignores it
@@ -55,7 +53,7 @@ target identity. Entries omit spec text; the page shows each difference under it
 ```
 
 - **ID** `R01`, `R02`, …: never renumbered or reused. Entries run in catalog order, no checkbox.
-- **Type** `add folder` | `add file` | `add requirement` | `modify requirement` |
+- **Type** `add folder` | `add file` | `modify file` | `add requirement` | `modify requirement` |
   `retire requirement` | `add glossary entry` | `modify glossary entry` | `retire glossary entry`.
   *Modify vs. retire* in the catalog guide decides between the two; a note-only change is
   `modify requirement`; a retired glossary entry is removed.
@@ -65,11 +63,11 @@ target identity. Entries omit spec text; the page shows each difference under it
   `Agent inference` | `Change request` | `Catalog`. A Justification is a reason a reader follows
   without opening anything, then its source. `Design` names the screen or state by product
   name, never a design-tool link; `Resolved decision: D#` cites a Discussion item,
-  linked when another package's; `Agent inference` draws first scrutiny; promotion ends a folded entry's Justification
-  with `; Change request: <nnn> R<n>`.
+  another package's by `change-requests.md`'s link; `Agent inference` draws first scrutiny; promotion ends a folded entry's Justification
+  with `; Change request: CR-<id> R<n>`.
 
 `check-changes` confirms the list matches the projection: entries name every changed requirement
-and glossary entry; entries or `Touches` lines name every changed index line, intro or added file;
+and glossary entry; entries or `Touches` lines name every changed index line, title, intro or added file;
 nothing names unchanged content.
 
 **Implementation words in a reason are a signal.** ❌ `The list is rebuilt whenever either stream

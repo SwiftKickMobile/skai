@@ -302,3 +302,42 @@ fresh clean round, not merely the score. No binding-target edit followed that re
 | 2026-10-26 RG r1 | the catalog's requirement definition gained a substantive test that promotion's C4 did not apply | closed | C4 names the requirement definition |
 | 2026-10-26 RG r3 | the authoring guides' Discussion eligibility and no-items sentences left no room for a decision within the author's authority | closed (routed) | what the supervisor must settle; draft settled behavior and your own authorized choices; no-items says nothing waits on the supervisor |
 | 2026-10-26 RG r4 | the content guides' known-differences bullets called a difference a gap | closed | difference terminology in both bullets |
+
+## 2026-11-10 — skai#118 redo (pass 4: process-flow and product-specs guides)
+
+| Pass date | Finding | Disposition | Evidence |
+|---|---|---|---|
+| 2026-11-10 | Routed: spec authoring guides have no gate named "review gate" for change-requests rule 8 | logged | Rule predates #118; outside this change |
+| 2026-11-10 r1 | F1 Decision Log linked form reads as a fourth state; the own-item check reads as covering linked entries | closed | Linked form its own clause; "each own item's last entry" |
+| 2026-11-10 r1 | F2 readiness 1's promoted-requests scope binds to "request" only | closed | "the package and its promoted requests hold no open …" |
+| 2026-11-10 r1 | F3 `C7` renders the base before the request is archived; the page omits its open items | closed | "and render" dropped at `C7`; Archive step 3 re-renders a request's base |
+| 2026-11-10 r1 | F4 "Gaps block promotion" unqualified | closed | "…into production" |
+| 2026-11-10 r1 | F5 `C7` "replace its drafts" | closed | Deleted; `C7`'s first sentence owns the write |
+| 2026-11-10 r1 | F6 "Promoted packages are closed" vs resolving a promoted request's leftover items | closed | "after promotion into production, …, closed" |
+| 2026-11-10 r1 | F7 Source gives no route for another package's citation; the example's shortcut link reads as own | closed | "another package's by the shared guide's link" |
+| 2026-11-10 r1 | F8 `change-requests.md` 4.1 "bare `D<n>`" vs own citations written as links | logged | Routed to `change-requests.md`; pass closed; follow-up |
+| 2026-11-10 r1 | Open: authoring guides' inlined log format lacks the linked form | logged | Adjacent to the settled linked-`reopened` item |
+| 2026-11-10 r2 | F1+F2 "the shared guide" names no file (artifacts Source; `C7`) | closed | "`change-requests.md`'s link"; "per `change-requests.md`:" |
+| 2026-11-10 r2 | F3 Decision Log linked clause has no trigger | closed | "another package's item ruled here is logged by its link" |
+| 2026-11-10 r2 | F4 readiness 1 reads one level of promoted requests | closed | "every promoted request under it" |
+| 2026-11-10 r2 | F5 `C7` validates before `C8` moves the request folded links point at | logged | Both link paths converge; validate or archive repair catches it |
+| 2026-11-10 r2 | F6 "do not render after writing" unscoped beside the base re-render | logged | Cosmetic; step 3 is explicit and later |
+| 2026-11-10 r2 | Open: process-flow's linked form has no pointer to the label form; artifacts' restated log format lacks the linked form; `product-specs-authoring.md:157` "per the shared guide" | logged | Bytes / older text outside the change |
+| 2026-11-10 r3 | F1 spec amendment item 1 says tools check only own entries; the tool also checks linked `decided` (open, reachable target); spec said "an artifact" where `change-requests.md` limits it to a request ruling its base's item | closed — spec | Amendment item 1 corrected; guides unchanged (process-flow does not say "only") |
+| 2026-11-10 r3 | F2 readiness 1 blocks on a promoted request's open item; the "resolve it in that request" route is only in `change-requests.md` | logged | Purpose's "per `change-requests.md`" reaches it; the page lists those items under "Open in promoted request" |
+| 2026-11-10 r3 | F3 "closed; new work needs a new ID/type pair" is a coinage; archived requests' editability left to inference | closed | Drive-by: "new work needs a new change ID" |
+| 2026-11-10 r3 | F4 `C7`'s production-only clauses and "its list" referent loose; "fold footnotes" maps to rule 4.1 by inference | logged | Cosmetic; the list matches spec item 4; `change-requests.md` rule 4 is the stepwise authority |
+| 2026-11-10 | Pass closed | closed | Supervisor, 2026-11-10, after r3 (score 7.625, guides needed no fix): end the pass with the unimplemented ledger logged (r2 F5, r2 F6, r3 F2, r3 F4), stop rule (b). `process-flow.md` 21,479 → 21,524 / 21,550; `product-specs-artifacts.md` 5,417 → 5,427 / 5,450; `product-specs-promotion.md` 15,469 → 15,478 / 15,550 |
+| 2026-11-10 | Drive-by during pass 5: `product-specs-authoring.md` step 3 "per the shared guide" names no file | closed | "per `change-requests.md`" (+4; 18,888 / 18,900) |
+| 2026-11-10 | Drive-by during pass 5: readiness 1 "every promoted request under it" may read as one level | closed | ", at any depth" (15,493 / 15,550) |
+| 2026-11-11 #108 PS r1 | New request missed artifact creation; archive re-rendered a production base; "supervisor input is never a request"; requests listed among package contents | closed | Step 4 covers any new package; "base package, if any"; sentence later deleted; "promotion artifacts" only |
+| 2026-11-11 #108 PS r2 | References sweep sent another input's citation to its owner, bypassing the supervisor's route | closed | "or another affected input by the route `change-requests.md` has the supervisor pick" |
+| 2026-11-11 #108 PS r3 | "Supervisor input … never a request" still competed with an explicit request; `C7` recovery scoped to production | closed | Sentence deleted; recovery rule on its own line |
+| 2026-11-11 #108 PS r4 | Catalog hosting set up before the request question | logged | With no catalog there is nothing to file against; hosting is needed either way |
+| 2026-11-11 #108 PS r4 | Readiness 5 summarized rule 8 as filed requests only | closed | "every input this package's decisions changed (rule 8)"; supervisor: no further round |
+| 2026-11-11 | #108/#129 pass 2 closed | closed | Supervisor ended after r4 |
+| 2026-11-11 #108 DS r3 (swept) | Promotion readiness sent a pending input outcome back to authoring; rule 8 says pending ones block | closed | "A pending outcome (5) is no failure: record it there and wait at the standard blocked gate naming it." Cap 15,620 (supervisor) |
+| 2026-11-11 #108 DS r4–r5 (swept) | The pre-write check did not say which folder must be absent for a request part | closed | "require an absent `product-specs/` destination (*Archive the package*)"; archive defers the request destination to `change-requests.md` |
+| 2026-11-11 #108 PS r5 | "Against production" change-ID selection read as covering a production-based request part, overriding request selection | closed | "For a change's own package, use a supplied change ID or propose … (a branch's final component)"; same in `design-specs-authoring.md` and `design-authoring.md` (swept) |
+| 2026-11-11 #108 PS r5 | Promotion 8 over the 15,620 cap | closed | Readiness 1 "request part"; "record it there; wait …". 15,618 |
+| 2026-11-11 #108 DS-b r9 | Readiness 5 dropped rule 8's base exception | closed | "5. Apply outcomes for non-base inputs its decisions changed (…rule 8), now and at the base write." |

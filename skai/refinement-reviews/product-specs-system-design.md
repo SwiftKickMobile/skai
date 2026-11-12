@@ -608,3 +608,23 @@ Size: draft 10,715, compressed by Astra to 10,507 (the definition merged into th
 ## Amendment — 2026-10-26 (no-placeholder Gap line)
 
 The Gap line's no-placeholder form is "no placeholder" (was "no placeholder; waiting on <what>", 2026-10-21): what is awaited belongs in the Concern, and no line of an item names who is to answer (supervisor, 2026-10-26; `known-gaps-design.md` § Amendment — 2026-10-26, the Gap line). Changed in `process-flow.md` § Sub-bullet labels, the maintainer reference and the seven inlined copies (product specs, design specs, design, work spec creation, UI Map architecture and implementation). Deletions only; process-flow 21,530 bytes (cap 21,550 held). Cold series GL.
+
+## Amendment — 2026-11-07: The Supervisor Declares Gaps
+
+`process-flow.md` § Sub-bullet labels: the **Gap** line is added only once the supervisor rules the item a gap (its answer awaits knowledge from outside this work); the agent never marks one itself (supervisor, 2026-11-07; `known-gaps-design.md` § Amendment — 2026-11-07: The Supervisor Declares Gaps). The authoring guides' inlined Discussion formats name only the line's form and do not change. Size: 21,453 before, 21,479 after; cap 21,550 holds.
+
+## Amendment — 2026-11-10: Items Stay Where Raised; Other Packages' Items Cited by Link (skai#118)
+
+Records skai#118 (supervisor, 2026-11-07) for this system's guides, during that change's refinement pass. The shared rules are `change-requests.md`'s (`change-requests-design.md`, amendments 2026-11-07 and 2026-11-09); these guides point at them.
+
+1. **Decision Log** (`process-flow.md`): besides `decided`, `gap` and `reopened` for its own items, an artifact logs a ruling made in it on another package's item with that item linked, `- [<ID>][…] decided — …` or `reopened`; in practice only a request ruling its base's item (`change-requests.md`). Tools check the artifact's own items' last entries against their state, and a linked `decided` for a reachable target where the item is still open (corrected 2026-11-10 after cold round 3: the tool checks linked entries too).
+2. **Change item source** (`product-specs-artifacts.md`): `Resolved decision: D#` cites a Discussion item, linked when it is another package's; `Base decision: D#` is retired.
+3. **Readiness into production** (`product-specs-promotion.md`): no open item, gap or request under the package or any of its promoted requests.
+4. **Folding into a package** (`C7`): the type guide writes the drafts; folding change items, footnotes, base-item decisions and open requests, and naming the request in Assumptions, follow the shared guide.
+5. **Archive**: the package moves with its pages, `working-docs/` and `promoted-change-requests/`; open requests never reach archive (production readiness forbids them; a fold moves them into the base).
+
+Caps hold: `process-flow.md` 21,550 (21,479), `product-specs-artifacts.md` 5,450 (5,417), `product-specs-promotion.md` 15,550 (15,469). Compression round skipped: each change replaced a clause or sentence in place.
+
+## Amendment — 2026-11-11: Requests As Folders Of Sub-Packages; Confirming The Route (skai#108, skai#129)
+
+Adopts [`change-requests-design.md`](change-requests-design.md) § Amendment — 2026-11-11: this standard's guides say the items that amendment lists for their kind of guide (artifacts, authoring, promotion, Figma), and every request path, ID and provenance tag in them takes the new form. Caps for this change: `change-requests-design.md` § Amendment — 2026-11-11 (supervisor, 2026-11-11).
