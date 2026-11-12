@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-artifacts
 Managed-Source: Guides/DesignSpecs/design-specs-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-10
+Managed-Updated-At: 2026-11-11
 
 # Design Spec Artifact Formats
 
@@ -18,14 +18,14 @@ The package mirrors the product spec package
 ## The Package
 
 `skai/changes/<change-id>/design-specs/`; after promotion into production, `skai/promoted/<change-id>/design-specs/`.
-For the **base** and requests, read [`change-requests.md`](../Core/change-requests.md).
+For the **base** and request `design-specs/` sub-packages using this layout, read [`change-requests.md`](../Core/change-requests.md).
 Packages depend only on their base and cited draft requirements in active product spec packages
-until promotion repoints them. Input citations, such as requests in other packages, are not dependencies.
+until promotion repoints them. Input citations, such as other packages' requests, are not dependencies; promotion
+applies outcomes for non-base inputs this package changes (`change-requests.md` rule 8).
 
 The layout is the product spec package's, with `design-specs-authoring.md` (`## Spec Changes`),
 `proposed-design-specs/**` (touched files only, each whole),
-`design-specs-review.html`, `change-requests/<nnn>/` and `promoted-change-requests/<nnn>/` holding
-requests of this layout, `design-specs-promotion.md`, `evidence/` and `working-docs/`. The page follows the
+`design-specs-review.html`, `design-specs-promotion.md`, `evidence/` and `working-docs/`. The page follows the
 product spec guide's render/link rules. Checked `C3` means the base is written; `C4`, archived.
 
 ## Spec Change Items
@@ -50,7 +50,7 @@ resolved target identity. Entries omit spec text; the page shows each difference
   moved item or entry whose text changes also takes entries for what changed; otherwise promotion verifies
   identical prose and resolved targets; it repoints incoming links. Draft every file whose links a move
   changes, in Touches after the `from → to`.
-- **Source** as the product spec guide, after the reason; `Catalog` is existing specs or requirements.
+- **Source** as the product spec guide, after the reason; a folded entry's tag ends `S<n>`; `Catalog` is existing specs or requirements.
 
 `check-changes` confirms the list matches the projection.
 

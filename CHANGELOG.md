@@ -9,6 +9,8 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **A change request can change several kinds of document at once.** A request is now one folder, `changes/CR-01/`, with a part for each document type it changes, so a design request can carry the product spec changes it needs. Updating moves your existing requests to the new layout with two-digit IDs, after you approve the mapping.
+- **The agent asks whether you meant a change request.** When your words don't say whether work edits a package directly or files a request, it asks before creating anything, and no guide picks that route for you any more.
 - **Change requests against change requests work end to end in design.** A nested request's Figma Section is named by its number path (`CR-001-002`), keeps that name when a fold re-files it, and passes the structure check; a fold puts a request's change to a known frame under the base's entry.
 - **`check-changes` stops rejecting two valid design entries.** Changed rules and notes on a moved item, and a known-difference note on a new item, can now be listed the way the guide says; a gap footnote whose owner in another package has closed is now reported before promotion, not after.
 - **Open items stay where they were raised.** Promoting a change request no longer moves or renumbers its open Discussion items and gaps. Items in other packages, the base's included, are cited by link, so moving a package only updates links; the base's page lists open items left in its promoted requests.

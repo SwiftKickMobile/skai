@@ -11,7 +11,7 @@ Print `📖 SKAI guide: design-promotion` now, as a line of its own. Read this g
 ## Purpose
 
 Fold the completed package ([`design-authoring.md`](design-authoring.md)) into its **base** per
-[`change-requests.md`](../Core/change-requests.md): change page to production, request section to parent package.
+[`change-requests.md`](../Core/change-requests.md): a change page's or request section's drafts into it.
 After supervisor confirmation, delete drafts and archive the package.
 
 Refactor the base to absorb drafts; any redesign returns to authoring. For Figma, load
@@ -63,11 +63,11 @@ Workflow-specific gate notes:
   - `⏳ GATE: Next: Review <production | the base's drawings and Design Changes>. Say "next" to confirm and delete <the change page | the request section> <name>, or what to change.`
 
 Workflow-specific blocked gates:
-- A readiness failure (conditions 1–3, or 5 when an outcome invalidates mockups), a `C1` or `C2`
-  failure, or a design change the supervisor asks for at either gate: only authoring resolves them; each takes:
+- A readiness failure (1–3 except an open request part; 5 if an outcome invalidates mockups), `C1` or `C2`
+  failure, or a design change requested at either gate returns to authoring:
   `⏳ GATE: Blocked: <C1 | C2 | readiness condition | requested design change> — <what failed>. The package returns to authoring; re-run promotion once it is resolved.`
-- An existing promoted path (condition 4) or a request without an outcome (condition 5) takes the
-  standard blocked gate naming it.
+- Without a failure, open request parts, existing destinations and pending outcomes take the
+  standard blocked gate naming all; otherwise name them at the failure's gate.
 - A `C3` (base) or `C4` (links) fault is a promotion mistake repaired in place, never by
   redesigning; one needing access or a library the agent lacks takes the standard blocked line.
 
@@ -108,33 +108,33 @@ Base review gate: the supervisor looks at the base before the drafts are deleted
 Begin only on an explicit signal ("promote the designs"), never automatically after authoring.
 
 Read the tool guide. The package is the one named or already in context; one already holding an
-unfinished `design-promotion.md` continues (*Advance intent*), `C3` re-checking condition 5; the
+unfinished `design-promotion.md` continues (*Advance intent*), `C3` re-checking 1, 4 and 5; the
 readiness screen is for a new run.
 
 ### Readiness screen
 
 Render the page, then verify before writing the checks:
 
-1. Into production: no footnote or open `- [ ]` item, request or gap ([`known-gaps.md`](../Core/known-gaps.md)) in the
-   package, nor in its promoted requests at any depth, where a closed gap's footnote is history.
+1. Into production: no other open `design/` request part in the change; no footnote or open Discussion item or gap
+   ([`known-gaps.md`](../Core/known-gaps.md)) in the package, nor, but for closed gaps' footnotes, in the change's promoted `design/` sub-packages, at any depth.
 2. `## Design Changes` is current, Review advanced and inputs reconciled (authoring's *Completion*).
 3. `add` and `modify` entries link drafts on the change page or request section, unless the
    no-mockups ruling under `## Assumptions and TODOs` leaves them unlinked; unlinked entries never
    enter production. `remove` entries name the base design.
-4. The promoted path (*C6*) does not exist.
-5. Every request this package filed against an input has its outcome applied ([`change-requests.md`](../Core/change-requests.md)), now and at the base write.
+4. The `design/` destination (*C6*) is absent.
+5. Every non-base input this package's decisions changed has its outcome applied ([`change-requests.md`](../Core/change-requests.md) rule 8), now and at the base write.
 
-A failure is a blocked gate, recorded in `## Evidence` instead of a checks section.
+Record blockers in `## Evidence`, not checks; block.
 
 ## Promotion Checks
 
-Write one `- [ ] C<n> <identity>` item per check, in execution order.
+Write `- [ ] C<n> <identity>` items in execution order.
 
 - `C1 Drafts meet the conventions` — with drawings, run and pass the tool guide's structure
-  check; drafts follow the guide and, into production, mirror no gap. A script covers what it tests; inspect the rest.
+  check; drafts follow the guide and, into production, mirror no gap. Inspect what the script does not test.
 - `C2 Inventory matches the drawings` — per section, each linked `## Design Changes` entry has a
   draft; every screen draft of this package has an entry.
-- `C3 The base absorbs the package` — with condition 5 still met, per entry:
+- `C3 The base absorbs the package` — with conditions 1, 4 and 5 met, per entry:
   update changed screens in the base to match drafts, keeping identities; place new screens or
   states and integrate needed components per the tool guide; delete removed designs. Into
   production, the per-screen sections do not survive: every column is regrouped into
@@ -143,20 +143,19 @@ Write one `- [ ] C<n> <identity>` item per check, in execution order.
   needs to absorb them. Into a package, fold screen sections into same-named base sections
   (create missing ones), and:
   - Append entries to the base's `## Design Changes`, each under its screen: next `V`
-    numbers, or sub-IDs under a frame the base lists, Descriptions kept, bare `D<n>` linked to the request, each Justification or sub-change ending `; Change request: <nnn> V<n>`. Undrawn entries stay unlinked
+    numbers, or sub-IDs under a frame the base lists, Descriptions kept, bare `D<n>` linked to the request, each Justification or sub-change ending `; Change request: CR-<id> V<n>`. Undrawn entries stay unlinked
     and return the base to Mockups to draw them.
-  - Fold footnotes (drop any whose gap the base owns or already footnotes), decisions on base items (each still open) and open requests per
+  - Fold footnotes (drop any whose gap the base owns or already footnotes) and decisions on base items (each still open) per
     `change-requests.md`, mirrors per the tool guide; name the request in the base's `## Assumptions and TODOs`.
 - `C4 Links point at the base` — repoint `add` and `modify` links, appended entries' too,
   to the base's drawings; a `remove` entry keeps its name; re-render every page whose
   artifact changed, this package's too.
 - `C5 Delete the drafts` — after Base review advances, delete the change page or request section,
   if any.
-- `C6 Archive the package` — move the folder intact with `working-docs/`
-  and `promoted-change-requests/` if present: to `skai/promoted/<change-id>/design/` for production,
-  leaving siblings and removing an empty `<change-id>` folder; to
-  `<base>/promoted-change-requests/<nnn>/` for a package. Repair links into and inside the moved
-  files and mirrors' owner paths, keeping targets; re-render moved pages and a request's base, verify the move and check
+- `C6 Archive the package` — move the folder intact with `working-docs/`: to
+  `skai/promoted/<change-id>/design/` for a change's own package, with its promoted request parts per `change-requests.md`, leaving siblings and removing
+  an empty `<change-id>` folder; a request's sub-package to its destination per `change-requests.md`. Repair links into and inside moved
+  files and mirrors' owner paths, keeping targets; re-render moved pages and a request's base, if a package, verify the move and check
   `C6` in the archived artifact.
 
 **Excerpt** (at the Base review gate: `C1`–`C4` checked, `C5`–`C6` unchecked):

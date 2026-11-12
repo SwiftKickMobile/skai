@@ -191,3 +191,7 @@ Recorded during the refinement pass for skai#118 (`design-process-design.md` § 
 5. **Frame names** (§ Frames rule 5): frame names are unique per page, with one exception: a request's copy of a base frame keeps the base frame's name, which the process guides use to match a change to its frame; any other copy is renamed (recorded after cold round 4).
 
 Cap (supervisor, 2026-11-11): the pair **18,100 bytes** (was 18,000; 17,997 before this pass). Compression round skipped: clause additions in place.
+
+## Amendment — 2026-11-11: Requests As Folders Of Sub-Packages; Confirming The Route (skai#108, skai#129)
+
+Adopts [`change-requests-design.md`](change-requests-design.md) § Amendment — 2026-11-11: this standard's guides say the items that amendment lists for their kind of guide (artifacts, authoring, promotion, Figma), and every request path, ID and provenance tag in them takes the new form. Caps for this change: `change-requests-design.md` § Amendment — 2026-11-11 (supervisor, 2026-11-11).

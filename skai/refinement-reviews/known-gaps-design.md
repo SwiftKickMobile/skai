@@ -161,3 +161,7 @@ Same day, cold round 9: requirement 3 gains the exception: a bare upstream gap w
 ## Amendment — 2026-11-09: No Out of Scope Record for a Bare Upstream Gap
 
 Supersedes "(Out of scope)" in the bare-upstream amendment above and "the Out of scope record keeps it visible" in its round-9 note (supervisor, 2026-11-09, after the pass closed). With no placeholder the upstream rule does not exist, so downstream has nothing to call out; if the upstream gap is later answered, that reaches downstream as an ordinary change (rule 7). The own-gap "Omitted" closure keeps its Out of scope record: there it records the supervisor's decision. Size: rule 5 shorter.
+
+## Amendment — 2026-11-11: The Supervisor Picks The Route (skai#129)
+
+Rule 2's "file a change request upstream" hard-coded a route; a placeholder that seems wrong goes to the supervisor; for a non-base input, by `change-requests.md` rule 8, where the supervisor picks a direct edit or a request (the base is excluded there; corrected after #108 pass 4 round 4) (supervisor's #129 ruling; found by #108 design specs round 10). Size: 3,332 → 3,336; cap 3,350 holds (rule 6 already links `change-requests.md`).

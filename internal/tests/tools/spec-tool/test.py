@@ -561,7 +561,7 @@ class Writers(unittest.TestCase):
 
     def test_render_citation_into_another_artifact_keeps_that_artifact(self):
         authoring = self.copy / "package/product-specs-authoring.md"
-        authoring.write_text(authoring.read_text().replace("[D1]: #stage-definitions", "[D1]: change-requests/001/product-specs-authoring.md#stage-definitions", 1))
+        authoring.write_text(authoring.read_text().replace("[D1]: #stage-definitions", "[D1]: ../changes/CR-01/package/product-specs-authoring.md#stage-definitions", 1))
         page = self.copy / "package/product-specs-review.html"
         code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
                           "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
@@ -570,13 +570,13 @@ class Writers(unittest.TestCase):
         self.assertIn('<h3 class="section" id="stage-definitions">', html, "the page has a same-named local topic")
         card = re.search(r'id="stage-01".*?<div class="why"><b>Why</b> (.*?)</div>', html, re.S)
         self.assertIsNotNone(card)
-        self.assertRegex(card.group(1), r'href="[^"]*change-requests/001/product-specs-authoring\.md#stage-definitions"', "a citation into another artifact is not shortened to the same-named local anchor")
+        self.assertRegex(card.group(1), r'href="[^"]*changes/CR-01/package/product-specs-authoring\.md#stage-definitions"', "a citation into another artifact is not shortened to the same-named local anchor")
 
     def test_render_id_reference_defined_in_another_artifact_keeps_that_artifact(self):
         authoring = self.copy / "package/product-specs-authoring.md"
         text = authoring.read_text()
         self.assertIn("[STAGE-01]: proposed-product-specs/domains/workflow-stage.md#stage-01", text)
-        authoring.write_text(text.replace("[STAGE-01]: proposed-product-specs/domains/workflow-stage.md#stage-01", "[STAGE-01]: change-requests/001/proposed-product-specs/domains/workflow-stage.md#stage-01", 1))
+        authoring.write_text(text.replace("[STAGE-01]: proposed-product-specs/domains/workflow-stage.md#stage-01", "[STAGE-01]: ../changes/CR-01/package/proposed-product-specs/domains/workflow-stage.md#stage-01", 1))
         page = self.copy / "package/product-specs-review.html"
         code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
                           "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
@@ -584,7 +584,7 @@ class Writers(unittest.TestCase):
         html = page.read_text()
         d1 = re.search(r'<details class="item request discussion[^"]*" id="d1".*?</details>', html, re.S)
         self.assertIsNotNone(d1)
-        self.assertRegex(d1.group(0), r'href="[^"]*change-requests/001/proposed-product-specs/domains/workflow-stage\.md#stage-01"', "an ID reference the artifact defines in another document keeps that document, though the page has an item of that ID")
+        self.assertRegex(d1.group(0), r'href="[^"]*changes/CR-01/package/proposed-product-specs/domains/workflow-stage\.md#stage-01"', "an ID reference the artifact defines in another document keeps that document, though the page has an item of that ID")
 
     def test_render_gap_tooltip_keeps_the_items_nested_bullets(self):
         page = self.copy / "package/product-specs-review.html"
@@ -604,7 +604,29 @@ class Writers(unittest.TestCase):
         html = page.read_text()
         tip = re.search(r'<template id="tip-gap-[^"]*-d2">.*?</template>', html, re.S)
         self.assertIsNotNone(tip, "the open Tradeoff D2 has a gap tooltip")
-        self.assertRegex(tip.group(0), r'href="[^"]*change-requests/001/product-specs-authoring\.md"', "a reference-style citation in the owning item keeps its link in the tooltip, resolved by the artifact's own definitions")
+        self.assertRegex(tip.group(0), r'href="[^"]*changes/CR-01/package/product-specs-authoring\.md"', "a reference-style citation in the owning item keeps its link in the tooltip, resolved by the artifact's own definitions")
+
+    def test_request_base_walks_up_the_chain_then_to_production(self):
+        spec = importlib.util.spec_from_file_location("st", TOOL); st = importlib.util.module_from_spec(spec); spec.loader.exec_module(st)
+        change = self.copy / "offers"
+        nested = change / "changes/CR-01/changes/CR-01-01/product-specs"
+        for d in (change / "product-specs", change / "changes/CR-01/product-specs", change / "changes/CR-01/design", nested, change / "changes/CR-01/changes/CR-01-01/design-specs"):
+            d.mkdir(parents=True, exist_ok=True)
+            (d / "a-authoring.md").write_text("# A\n")
+        self.assertEqual(st.chain_bases(nested), [change / "changes/CR-01/product-specs", change / "product-specs"], "the parent request's sub-package first, then the change's own")
+        self.assertEqual(st.base_authoring(nested / "a-authoring.md", ""), (change / "changes/CR-01/product-specs/a-authoring.md").resolve())
+        self.assertEqual(st.package_id(nested / "proposed-product-specs"), "offers | CR-01 | CR-01-01")
+        self.assertEqual(st.chain_bases(change / "changes/CR-01/changes/CR-01-01/design"), [change / "changes/CR-01/design"])
+        self.assertEqual(st.chain_bases(change / "changes/CR-01/changes/CR-01-01/design-specs"), [], "no package of its type up the chain: production")
+        self.assertIsNone(st.base_authoring(change / "changes/CR-01/changes/CR-01-01/design-specs/a-authoring.md", ""))
+        shutil.rmtree(change / "changes/CR-01/product-specs")
+        self.assertEqual(st.chain_bases(nested), [change / "product-specs"], "a parent request without the type passes to the change's own package")
+        self.assertIsNone(st.request_folder(self.copy / "skai/changes/CR-01/product-specs"), "a change named like a request is never read as one")
+        promoted = change / "promoted/CR-02/product-specs"
+        promoted.mkdir(parents=True)
+        (promoted / "a-authoring.md").write_text("# A\n")
+        self.assertEqual([rid for rid, _ in st.request_subpackages(change / "product-specs/a-authoring.md", "promoted")], ["CR-02"])
+        self.assertEqual([rid for rid, _ in st.request_subpackages(change / "product-specs/a-authoring.md", "changes")], ["CR-01-01"], "open sub-packages of the type at any depth")
 
     def test_target_identity_qualifies_headings_by_document_but_not_item_ids(self):
         spec = importlib.util.spec_from_file_location("st", TOOL); st = importlib.util.module_from_spec(spec); spec.loader.exec_module(st)
@@ -613,14 +635,14 @@ class Writers(unittest.TestCase):
 
     def test_render_same_id_in_another_document_gets_its_own_tooltip(self):
         authoring = self.copy / "package/product-specs-authoring.md"
-        authoring.write_text(authoring.read_text().replace("[STAGE-01]: proposed-product-specs/domains/workflow-stage.md#stage-01", "[STAGE-01]: change-requests/001/proposed-product-specs/domains/workflow-stage.md#stage-01", 1))
+        authoring.write_text(authoring.read_text().replace("[STAGE-01]: proposed-product-specs/domains/workflow-stage.md#stage-01", "[STAGE-01]: ../changes/CR-01/package/proposed-product-specs/domains/workflow-stage.md#stage-01", 1))
         page = self.copy / "package/product-specs-review.html"
         code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
                           "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
         html = page.read_text()
         d1 = re.search(r'<details class="item request discussion[^"]*" id="d1".*?</details>', html, re.S).group(0)
-        link = re.search(r'<a class="ref" href="[^"]*change-requests/001/[^"]*#stage-01"([^>]*)>STAGE-01</a>', d1)
+        link = re.search(r'<a class="ref" href="[^"]*changes/CR-01/package/[^"]*#stage-01"([^>]*)>STAGE-01</a>', d1)
         self.assertIsNotNone(link, "the citation links to the other document")
         tipid = re.search(r'data-tip="([^"]+)"', link.group(1))
         self.assertIsNotNone(tipid, "it carries a tooltip")
@@ -679,7 +701,7 @@ class Writers(unittest.TestCase):
 
     def test_render_every_chip_has_a_tooltip_and_item_references_are_chips(self):
         for args, page in [(("--catalog", "catalog", "--drafts", "package/proposed-product-specs", "--authoring", "package/product-specs-authoring.md"), "package/product-specs-review.html"),
-                           (("--catalog", "catalog", "--drafts", "package/change-requests/001/proposed-product-specs", "--authoring", "package/change-requests/001/product-specs-authoring.md"), "package/change-requests/001/product-specs-review.html")]:
+                           (("--catalog", "catalog", "--drafts", "changes/CR-01/package/proposed-product-specs", "--authoring", "changes/CR-01/package/product-specs-authoring.md"), "changes/CR-01/package/product-specs-review.html")]:
             code, lines = run("render", *args, fixtures=self.copy)
             self.assertEqual(code, 0, lines)
             html = (self.copy / page).read_text()
@@ -704,43 +726,43 @@ class Writers(unittest.TestCase):
         self.assertEqual(bare, [], "design page: every chip carries a tooltip")
 
     def test_request_package_renders_and_checks_against_its_base(self):
-        drafts = "package/change-requests/001/proposed-product-specs"
-        page = self.copy / "package/change-requests/001/product-specs-review.html"
+        drafts = "changes/CR-01/package/proposed-product-specs"
+        page = self.copy / "changes/CR-01/package/product-specs-review.html"
         code, lines = run("render", "--catalog", "catalog", "--drafts", drafts, fixtures=self.copy)
         self.assertEqual(code, 0, lines)
         html = page.read_text(encoding="utf-8")
-        self.assertIn("Change Package: package | 001", html)  # the base's id, then the request's number
+        self.assertIn("Change Package: package | CR-01", html)  # the base's id, then the request's number
         self.assertIn("tip-gap-base-d3", html)  # a footnote naming the base's item resolves to it
         self.assertTrue(any("'gaps': 1" in ln for ln in lines), lines)
         code, lines = run("check-changes", "--catalog", "catalog", "--drafts", drafts,
-                          "--authoring", "package/change-requests/001/product-specs-authoring.md", fixtures=self.copy)
+                          "--authoring", "changes/CR-01/package/product-specs-authoring.md", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
         code, lines = run("validate", "catalog", drafts, fixtures=self.copy)  # the base's drafts come in between on their own
         self.assertEqual(code, 0, lines)
         self.assertEqual(issues(lines), [], lines)
 
     def test_request_deciding_a_base_item_shows_on_the_base_and_needs_it_open(self):
-        request = self.copy / "package/change-requests/001/product-specs-authoring.md"
+        request = self.copy / "changes/CR-01/package/product-specs-authoring.md"
         request.write_text(request.read_text().replace("## Decision Log\n", "## Decision Log\n\n- [D2][base D2] decided — Option A: a missing date keeps it active.\n", 1)
-                           + "[base D2]: ../../product-specs-authoring.md#d2\n[base D1]: ../../product-specs-authoring.md#d1\n")
-        code, lines = run("check-changes", "--catalog", "catalog", "--drafts", "package/change-requests/001/proposed-product-specs",
-                          "--authoring", "package/change-requests/001/product-specs-authoring.md", fixtures=self.copy)
+                           + "[base D2]: ../../../package/product-specs-authoring.md#d2\n[base D1]: ../../../package/product-specs-authoring.md#d1\n")
+        code, lines = run("check-changes", "--catalog", "catalog", "--drafts", "changes/CR-01/package/proposed-product-specs",
+                          "--authoring", "changes/CR-01/package/product-specs-authoring.md", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
         code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
         d2 = re.search(r'<details[^>]* id="d2" open>.*?</details>', (self.copy / "package/product-specs-review.html").read_text(), re.S)
-        self.assertIn('Decided in request <a href="change-requests/001/product-specs-review.html">001</a>', d2.group(0), "the base item stays open and shows the request's pending decision")
+        self.assertIn('Decided in request <a href="../changes/CR-01/package/product-specs-review.html">CR-01</a>', d2.group(0), "the base item stays open and shows the request's pending decision")
         request.write_text(request.read_text().replace("- [D2][base D2] decided", "- [D1][base D1] decided", 1))
-        code, lines = run("check-changes", "--catalog", "catalog", "--drafts", "package/change-requests/001/proposed-product-specs",
-                          "--authoring", "package/change-requests/001/product-specs-authoring.md", fixtures=self.copy)
-        self.assertTrue(any("[D1][base D1] is decided but ../../product-specs-authoring.md has no open item D1" in ln for ln in issues(lines)), lines)
+        code, lines = run("check-changes", "--catalog", "catalog", "--drafts", "changes/CR-01/package/proposed-product-specs",
+                          "--authoring", "changes/CR-01/package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertTrue(any("[D1][base D1] is decided but ../../../package/product-specs-authoring.md has no open item D1" in ln for ln in issues(lines)), lines)
         request.write_text(request.read_text().replace("- [D1][base D1] decided", "- base D3 decided", 1))  # the older form still reads
-        code, lines = run("check-changes", "--catalog", "catalog", "--drafts", "package/change-requests/001/proposed-product-specs",
-                          "--authoring", "package/change-requests/001/product-specs-authoring.md", fixtures=self.copy)
+        code, lines = run("check-changes", "--catalog", "catalog", "--drafts", "changes/CR-01/package/proposed-product-specs",
+                          "--authoring", "changes/CR-01/package/product-specs-authoring.md", fixtures=self.copy)
         self.assertTrue(any("still marks base D3, which this request decides" in ln for ln in issues(lines)), lines)  # the base's footnotes and the request's own
 
     def test_open_items_stay_in_a_promoted_request_and_a_footnote_links_them(self):
-        promoted = self.copy / "package/promoted-change-requests/002"
+        promoted = self.copy / "promoted/CR-02/package"
         promoted.mkdir(parents=True)
         (promoted / "product-specs-authoring.md").write_text(
             "# Product Specs Authoring — Reminder Sound\n\n## Goal\n\nPick the reminder sound.\n\n## Discussion\n\n"
@@ -749,8 +771,8 @@ class Writers(unittest.TestCase):
             "## Decision Log\n\n- D6 decided — They do.\n- D5 gap — The default chime stands in.\n")
         spec = self.copy / "package/proposed-product-specs/domains/suggestion.md"
         text = spec.read_text().replace("validity ends[^1] |", "validity ends[^1][^2] |", 1)
-        text = text.replace("Expiration arrives.\n", "Expiration arrives.\n[^2]: **Gap:** [D5][002 D5]. Placeholder: the default chime.\n", 1)
-        spec.write_text(text + "[002 D5]: ../../promoted-change-requests/002/product-specs-authoring.md#d5\n")
+        text = text.replace("Expiration arrives.\n", "Expiration arrives.\n[^2]: **Gap:** [D5][CR-02 D5]. Placeholder: the default chime.\n", 1)
+        spec.write_text(text + "[CR-02 D5]: ../../../promoted/CR-02/package/product-specs-authoring.md#d5\n")
         args = ("--catalog", "catalog", "--drafts", "package/proposed-product-specs", "--authoring", "package/product-specs-authoring.md")
         code, lines = run("check-changes", *args, fixtures=self.copy)
         self.assertEqual(code, 0, lines)
@@ -759,31 +781,31 @@ class Writers(unittest.TestCase):
         code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
         page = (self.copy / "package/product-specs-review.html").read_text()
-        self.assertIn('Open in promoted request <a href="promoted-change-requests/002/product-specs-review.html">002</a>', page)
-        self.assertIn('id="r002-d5"', page, "the promoted request's open item shows under its own anchor")
-        d5 = re.search(r'<details[^>]* id="r002-d5".*?</details>', page, re.S).group(0)
-        self.assertRegex(d5, r'href="promoted-change-requests/002/product-specs-review\.html#d6"', "its own items are the request's, not the page's")
+        self.assertIn('Open in promoted request <a href="../promoted/CR-02/package/product-specs-review.html">CR-02</a>', page)
+        self.assertIn('id="rcr-02-d5"', page, "the promoted request's open item shows under its own anchor")
+        d5 = re.search(r'<details[^>]* id="rcr-02-d5".*?</details>', page, re.S).group(0)
+        self.assertRegex(d5, r'href="\.\./promoted/CR-02/package/product-specs-review\.html#d6"', "its own items are the request's, not the page's")
         self.assertRegex(d5, r'<a class="ref" href="#d1" data-tip="tip-gap-own-d1">base D1</a>', "its base is this package")
-        self.assertRegex(page, r'<a class="ref" href="promoted-change-requests/002/product-specs-review\.html#d5" data-tip="(tip-gap-linked-\d+-d5)">D5</a>')
+        self.assertRegex(page, r'<a class="ref" href="\.\./promoted/CR-02/package/product-specs-review\.html#d5" data-tip="(tip-gap-linked-\d+-d5)">D5</a>')
         self.assertIn('<template id="tip-gap-linked-', page, "the linked owner gets its tooltip")
         self.assertTrue(any("'gaps': 3" in ln for ln in lines), lines)  # the base's gap item, its footnoted requirement and the promoted request's gap item
-        spec.write_text(spec.read_text().replace("[D5][002 D5]", "[D7][002 D5]", 1))
+        spec.write_text(spec.read_text().replace("[D5][CR-02 D5]", "[D7][CR-02 D5]", 1))
         code, lines = run("check-changes", *args, fixtures=self.copy)
         self.assertTrue(any("links D7, which its target does not hold" in ln for ln in issues(lines)), lines)
 
     def test_a_link_named_with_a_scope_word_reaches_its_definition(self):
-        promoted = self.copy / "package/promoted-change-requests/009"
+        promoted = self.copy / "promoted/CR-09/package"
         promoted.mkdir(parents=True)
         (promoted / "product-specs-authoring.md").write_text(
             "# Product Specs Authoring — Snooze\n\n## Goal\n\nSnooze.\n\n## Discussion\n\n"
             "- [ ] D3 [Question] How long a snooze lasts\n\n## Decision Log\n")
-        request = self.copy / "package/change-requests/001/product-specs-authoring.md"
+        request = self.copy / "changes/CR-01/package/product-specs-authoring.md"
         request.write_text(request.read_text().replace("the open question base D3", "the open question [D3][base D3]", 1)
-                           + "[base D3]: ../../promoted-change-requests/009/product-specs-authoring.md#d3\n")
-        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/change-requests/001/proposed-product-specs", fixtures=self.copy)
+                           + "[base D3]: ../../../promoted/CR-09/package/product-specs-authoring.md#d3\n")
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "changes/CR-01/package/proposed-product-specs", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
-        page = (self.copy / "package/change-requests/001/product-specs-review.html").read_text()
-        self.assertRegex(page, r'<a class="ref" href="\.\./\.\./promoted-change-requests/009/product-specs-review\.html#d3"[^>]*>D3</a>',
+        page = (self.copy / "changes/CR-01/package/product-specs-review.html").read_text()
+        self.assertRegex(page, r'<a class="ref" href="\.\./\.\./\.\./promoted/CR-09/package/product-specs-review\.html#d3"[^>]*>D3</a>',
                          "the definition decides, though the package this request sits under has its own D3")
 
     def test_convert_old_shape_validates_and_is_idempotent(self):

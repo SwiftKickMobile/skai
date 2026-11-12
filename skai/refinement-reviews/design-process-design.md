@@ -407,3 +407,7 @@ The design guides adopt [`product-specs-system-design.md`](product-specs-system-
 5. **Completion** names the gaps left open, where they were raised.
 
 Caps: `design-authoring.md` 16,000 holds (15,953 before this pass); `design-promotion.md` **12,100** (was 12,000; 11,878 before this pass; supervisor, 2026-11-11, after cold round 5, so the fold rulings are written out rather than compressed). Compression round skipped: each change replaces a clause in place.
+
+## Amendment — 2026-11-11: Requests As Folders Of Sub-Packages; Confirming The Route (skai#108, skai#129)
+
+Adopts [`change-requests-design.md`](change-requests-design.md) § Amendment — 2026-11-11: this standard's guides say the items that amendment lists for their kind of guide (artifacts, authoring, promotion, Figma), and every request path, ID and provenance tag in them takes the new form. Caps for this change: `change-requests-design.md` § Amendment — 2026-11-11 (supervisor, 2026-11-11).

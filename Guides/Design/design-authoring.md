@@ -19,7 +19,8 @@ Everything you write for a person follows [`writing-style.md`](../Core/writing-s
 
 ## The change package
 
-Against production: `skai/changes/<change-id>/design/`. Contents:
+A change's own package, `skai/changes/<change-id>/design/`, uses a supplied change ID; else propose a
+short kebab-case one and block before creation. Contents:
 
 | Path | What it is |
 | --- | --- |
@@ -33,8 +34,6 @@ Draw against production on the **change page** the tool guide names; requests us
 it names, for additions and changes only. Change screens on copies of
 base frames, never in place. Other types for the same change share its `<change-id>` and
 update freely; promotion archives each type independently.
-
-Use the input's change ID; otherwise propose a short kebab-case default and block before creation.
 
 ### Artifact skeleton
 
@@ -135,16 +134,17 @@ items are supervisor decisions) or Review: the supervisor inspects the drawings 
 
 ## Initiation
 
-The workflow starts on an explicit signal — "design X", "mock up X", "backfill the designs",
+The workflow starts on an explicit signal — "design X", "mock up X", "backfill the designs" or
 "request a design change to <package>".
 
 On the signal:
 
 1. Read the tool guide.
-2. Reopen a named or contextual package for this work if it has no `design-promotion.md` or was
-   returned to authoring; promotion holds its packages, closed ones need new packages.
-   A request signal follows `change-requests.md`: reopen or create `<base>/change-requests/<nnn>/`.
-3. Otherwise resolve the path, create the artifact, and record `## Goal` and `## Inputs`.
+2. Per `change-requests.md`, settle whether work is a request; for one, reopen or create its `design/`
+   sub-package, else reopen a named or contextual `design/` package or create one. Reopen only without
+   `design-promotion.md` or when returned to authoring; promotion holds its packages, closed ones need
+   new packages.
+3. For any new package, resolve the path, create the artifact and record `## Goal` and `## Inputs`.
 4. Open the first Discussion phase.
 
 On reopen, a resolved `- [x] D<n>` keeps its number, Concern, Options and
@@ -250,7 +250,7 @@ work owed (design specs, say). End with
 
 ## Artifact maintenance
 
-Through every phase, update `design-authoring.md` before speaking. Apply changes, never merely
+Once created, update `design-authoring.md` before speaking. Apply changes, never merely
 describe them. On every material change and before every gate, render `design-review.html`
 beside it.
 

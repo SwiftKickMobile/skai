@@ -6,7 +6,7 @@
 // finding per breach, naming the node, the rule and what was measured. Rules checked:
 //
 //   loose      a node on a page that is not a Section, or a non-screen node in a Section
-//   nesting    a Section inside a Section anywhere but inside a request Section (`CR-<nnn> — …`, `CR-<nnn>-<nnn> — …`),
+//   nesting    a Section inside a Section anywhere but inside a request Section (`CR-01 — …`, `CR-01-01 — …`),
 //              or deeper than one level
 //   prefix     a name carrying a concept prefix (`a · name`, `A — name`)
 //   fill       a Section whose fill is not SECTION_FILL
@@ -20,7 +20,7 @@ const TARGET_ID = "";
 const SECTION_FILL = "#FAFAFA";
 const PADDING = 50, COLUMN_GAP = 50, STATE_GAP = 100, SECTION_GAP = 100, TOLERANCE = 1;
 const PREFIX = /^[a-z] · |^[A-Z] — /;
-const REQUEST = /^CR-\d+(-\d+)* — /;  // a request's number path from the package: CR-001, or CR-001-002 for 002 against 001
+const REQUEST = /^CR-\d{2}(-\d{2})* — /;  // a request's ID: CR-01, or CR-01-01 for one against CR-01
 const SCREEN_TYPES = new Set(["FRAME", "COMPONENT", "INSTANCE", "COMPONENT_SET"]);
 
 function hex(c) { return "#" + [c.r, c.g, c.b].map(v => Math.round(v * 255).toString(16).padStart(2, "0")).join("").toUpperCase(); }

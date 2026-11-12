@@ -24,8 +24,8 @@ domains or scenes.
      [design conventions](#design-conventions).
 
    A change page, named for its change package, holds its drafts until they reach `Production`:
-   one concept per page, its letter in the page name. A request uses one `CR-<nnn> — <name>`
-   Section, `<nnn>` its number path (`001-002`: 002 against 001), never inside another Section, on the page holding its base, the same per-screen Sections inside holding only added or changed
+   one concept per page, its letter in the page name. A request uses one `<request ID> — <name>`
+   Section (`CR-01`, or `CR-01-01` against `CR-01`), never inside another Section, on its base's draft page (a change page when the base is production), the same per-screen Sections inside holding only added or changed
    frames, a changed screen as a copy. Promotion folds them into the base's Sections and deletes
    the request Section.
 

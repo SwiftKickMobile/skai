@@ -119,3 +119,10 @@
 | 2026-11-09 r28 | Open question: a `decided` log line on a non-base input passes every check and is never folded | logged | Against the tool; the guide gives only the base case (settled) |
 | 2026-11-09 r28 | Open question: nested requests both labelled `001` can need two `[001 D<n>]` definitions in one file | logged | Adds a concrete case to the logged nested-label item |
 | 2026-11-09 | Pass closed | closed | Supervisor, 2026-11-09, after r28 (score 1, one cosmetic finding logged): end the pass with every logged finding above left unimplemented (stop rule b). `change-requests.md` 3,488 / 3,600 |
+| 2026-11-11 #108 C r1 | F1 rule 6's production readiness unscoped (where to look, type qualifier, a part counting against itself) | closed | "no other open request part of its type in the change" |
+| 2026-11-11 #108 C r1 | F2 over the 4,220 cap | closed | Wording tightened, nothing dropped |
+| 2026-11-11 #108 C r2 | F1 the move-up step sat under "Into a package" | closed | Moved into rule 4's body for any base |
+| 2026-11-11 #108 C r2 | F2 rule 3's reopen sentence could override a direct-edit answer | closed | "For a request, reopen an open one …" |
+| 2026-11-11 #108 C r2 | F3 rule 6's promoted parts not scoped to the whole change | closed | "any promoted part of its type there" |
+| 2026-11-11 #108 C r3 | Type promotion screens said "no open request sub-package", self-blocking a production-based part | closed (routed) | "no other open" in the three screens |
+| 2026-11-11 | #108/#129 pass 1 closed | closed | Clean round r3; 4,219 / 4,220 |

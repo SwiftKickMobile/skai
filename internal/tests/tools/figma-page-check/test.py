@@ -37,8 +37,8 @@ BAD = section("A — Bad", 200 + CLEAN["width"] + 100, 250, [
     {"type": "TEXT", "name": "stray text", "id": "stray", "x": 50, "y": 1900, "width": 100, "height": 20, "children": []},
 ], fill=WHITE)
 NESTED = section("Not A Request", BAD["x"] + BAD["width"] + 100, 200, [section("Inner", 50, 50, [frame("s", 50, 50)])])
-REQUEST = section("CR-001 — Pin menu", NESTED["x"] + NESTED["width"] + 100, 200, [section("Note editor", 50, 50, [frame("note editor — pin menu", 50, 50)])])
-NESTED_REQUEST = section("CR-001-002 — Pin order", REQUEST["x"] + REQUEST["width"] + 100, 200, [section("Pinned list", 50, 50, [frame("pinned list — order", 50, 50)])])  # a request against request 001
+REQUEST = section("CR-01 — Pin menu", NESTED["x"] + NESTED["width"] + 100, 200, [section("Note editor", 50, 50, [frame("note editor — pin menu", 50, 50)])])
+NESTED_REQUEST = section("CR-01-01 — Pin order", REQUEST["x"] + REQUEST["width"] + 100, 200, [section("Pinned list", 50, 50, [frame("pinned list — order", 50, 50)])])  # a request against CR-01
 PAGE = {"type": "PAGE", "name": "Page", "id": "page", "children": [CLEAN, BAD, NESTED, REQUEST, NESTED_REQUEST, frame("loose frame", 0, 0)]}
 
 HARNESS = """
@@ -65,7 +65,7 @@ class Check(unittest.TestCase):
 
     def test_clean_section_has_no_findings(self):
         names = {f["node"] for f in self.report["findings"]}
-        for clean in ("Notes", "notes", "notes — empty", "note editor", "CR-001 — Pin menu", "Note editor", "note editor — pin menu", "CR-001-002 — Pin order", "Pinned list"):
+        for clean in ("Notes", "notes", "notes — empty", "note editor", "CR-01 — Pin menu", "Note editor", "note editor — pin menu", "CR-01-01 — Pin order", "Pinned list"):
             self.assertNotIn(clean, names, clean)
 
     def test_every_rule_fires_once_where_planted(self):

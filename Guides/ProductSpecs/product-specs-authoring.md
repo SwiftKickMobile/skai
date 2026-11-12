@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-authoring
 Managed-Source: Guides/ProductSpecs/product-specs-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-10
+Managed-Updated-At: 2026-11-11
 
 # Product Specs Authoring
 
@@ -26,16 +26,17 @@ Everything you write for a person follows [`writing-style.md`](../Core/writing-s
 
 [`product-specs-artifacts.md`](product-specs-artifacts.md) § The Package owns the path and contents:
 `product-specs-authoring.md`, drafts in `proposed-product-specs/`, `product-specs-review.html`,
-requests and promotion artifacts; read [`change-requests.md`](../Core/change-requests.md) for the **base**.
+promotion artifacts; read [`change-requests.md`](../Core/change-requests.md) for the **base** and requests.
 
-Against production, use a supplied change ID or propose a short kebab-case one (from a branch,
-its final component) and block before creation. Check the active and promoted paths:
-reopen unpromoted work; a recorded `C7` write with repair or archival pending returns to promotion,
-not drafting; a closed `C7` ID/type pair needs a new ID.
+For a change's own package, use a supplied change ID; else propose a short kebab-case one (a
+branch's final component) and block before creation. Check the active and promoted paths:
+reopen unpromoted work; a closed `C7` ID/type pair needs a new ID.
+
+Any recorded `C7` write with repair or archival pending returns to promotion, not drafting.
 
 Sibling types for the same change are independent: each in its canonical repository, linked by
 resolved paths, archived separately and updating freely while the change is open. Consumers wanting
-changes file requests against them.
+changes take the route `change-requests.md` has the supervisor pick.
 
 ### What `proposed-product-specs/` holds
 
@@ -148,16 +149,15 @@ supervisor.
 
 ## Initiation
 
-Start on an explicit signal: "write", "backfill", "update the requirements for X" or
-"request a change to <package>". Earlier context sets no entry point or mode.
+Start on an explicit signal: "write", "backfill", "update the requirements for X" or "request a change to <package>". Earlier context sets no entry point or mode.
 
 1. When the catalog does not exist yet, follow [`artifact-hosting.md`](../Core/artifact-hosting.md)
    to settle where it lives and link it from the README.
 2. Read [`product-specs-catalog.md`](product-specs-catalog.md) and the existing catalog.
-3. For a request, reopen or create `<base>/change-requests/<nnn>/` per `change-requests.md`; otherwise
+3. Per `change-requests.md`, settle whether the work is a request; for one, reopen or create its `product-specs/` sub-package; otherwise
    reopen unpromoted work named or in context, including another workflow's seed (*Reopening*).
-4. For other new packages, resolve the change ID and check its paths; create the artifact with
-   `## Goal` and `## Inputs`.
+4. For other new packages, resolve the change ID and check its paths. Any new package, a request's too,
+   gets the artifact with `## Goal` and `## Inputs`.
 5. Infer the mode. Baseline: read [`product-specs-baseline.md`](product-specs-baseline.md) before
    reading the implementation.
 6. Draft (*Drafting*), starting with the concept inventory, and seed `## Discussion`.
@@ -214,9 +214,8 @@ and add a new one. **Before modifying or retiring an ID or a glossary
 entry, run the tool's `references`** (the ID, or the term for every linked occurrence) over the
 catalog, the design specs and the active packages and decide per citation whether it still holds: a
 catalog citation that does not is re-pointed by drafting its file into the package; one in the
-design specs by a package against their open package, else as input for design specs authoring;
-one in a dev spec or another package is not the author's to edit — name it in the sweep for that
-artifact's owner. Record the sweep under `## Verification`. Ambiguous calls become Discussion items: they burn an ID and re-point every dev spec citing it.
+design specs or another affected input by the route `change-requests.md` has the supervisor
+pick; name others in the sweep for their owner. Record the sweep under `## Verification`. Ambiguous calls become Discussion items: they burn an ID and re-point every dev spec citing it.
 
 ## Discussion
 

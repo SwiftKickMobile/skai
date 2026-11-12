@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs-promotion
 Managed-Source: Guides/DesignSpecs/design-specs-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-10
+Managed-Updated-At: 2026-11-11
 
 # Design Specs Promotion
 
@@ -107,26 +107,25 @@ confirmation/repair there (keep `C1`–`C2`, repair without rewording, verify, c
 checked `C3` resumes archival only. Changed drafts, intervening base edits or uncertain outcomes block;
 never assume unrecorded writes or reopen or re-promote archived drafts.
 
-Before writing, require an absent promoted path (*Archive the Package*); find live incoming references from specs/app repos,
+Before writing, require no `design-specs/` destination (*Archive the Package*); find live incoming references from specs/app repos,
 related packages and dev specs. Collisions or inaccessible required references block; never
 overwrite or merge into a promoted path.
 
 ### Readiness Screen
 
-First run `validate <specs root> <drafts>`, `check-changes` and `render` for a current review page;
-then verify:
+Run `validate <specs root> <drafts>`, `check-changes` and `render` for a current page; then verify:
 
-1. Into production: no open Discussion item, gap ([`known-gaps.md`](../Core/known-gaps.md)) or
-   request in the package or any promoted request under it, at any depth.
+1. Into production: no other open `design-specs/` request part in the change; no open Discussion item or gap
+   ([`known-gaps.md`](../Core/known-gaps.md)) in the package or the change's promoted `design-specs/` sub-packages, at any depth.
 2. `validate` reports no fault in a held file and no conflict the projection introduces; a fault already in an untouched base file never blocks: start a package against the base.
 3. `check-changes` passes: every change has a `## Spec Changes` entry or Touches line at the artifact
    formats' granularity, with the right operation; no entry names an unchanged or absent target.
 4. Every modified or retired ID or glossary entry has its sweep under `## Verification`.
-5. Apply the outcome of every request this package filed against an input ([`change-requests.md`](../Core/change-requests.md)), now and at the base write.
+5. Apply outcomes for non-base inputs its decisions changed ([`change-requests.md`](../Core/change-requests.md) rule 8), now and at the base write.
 
-Record failures in Evidence, not Promotion Checks, and return to authoring. Then, into production,
-require every cited requirement's contract to be canonical (`C2` repoints draft links). Otherwise,
-record it in Evidence and wait at the standard blocked gate naming it; do not return the package.
+Record failures in Evidence, not checks; return to authoring. Pending outcomes (5), open request parts (1), and cited requirements not canonical into
+production (`C2` repoints draft links) are not failures: record them there; name them at the failure's
+gate, or the standard blocked gate if none.
 
 ## Promotion Checks
 
@@ -147,8 +146,8 @@ Use readiness output as evidence for tool-covered checks; inspect the rest.
   reported): intended link targets; no Discussion citations, checkboxes or `🟡`; only retirement
   marks and labeled known differences beside contracts. Keep the approved diff; do not render
   after writing. Into a package, per `change-requests.md`: append entries to its
-  `## Spec Changes`, fold footnotes, base-item decisions and open requests, and name the request in
-  Assumptions and TODOs; validate the base, whose author reconciles its list on reopen. Record the write outcome; repair mechanically, never reword; check `C3`
+  `## Spec Changes`, fold footnotes and base-item decisions, and name the request in
+  Assumptions and TODOs; validate the base, whose author reconciles its list on reopen. Record the outcome; repair mechanically, never reword; check `C3`
   only on confirmed success.
 - `C4 Archive the package` — *Archive the Package* below; promotion completes only after verified
   write and archival.
@@ -176,15 +175,15 @@ Result first; inspections name repeatable inputs. Silence never passes: unresolv
 
 After verified `C3`, execute `C4`:
 
-1. Move the package intact (pages, `working-docs/`,
-   `promoted-change-requests/`): `skai/changes/<change-id>/design-specs/` to
-   `skai/promoted/<change-id>/design-specs/`; a request to `<base>/promoted-change-requests/<nnn>/`.
+1. Move the package intact (pages, `working-docs/`): `skai/changes/<change-id>/design-specs/` to
+   `skai/promoted/<change-id>/design-specs/` with its promoted request parts; a request's
+   sub-package to its destination; both per `change-requests.md`.
    Preserve siblings; remove only empty grouping directories.
 2. Repair live incoming links (repositories, packages, dev specs) and relative links inside moved
    files, preserving target identities, prose, IDs, decisions and recorded results; annotate
    historical paths with current locations. Inaccessible or unrepaired required links block.
 3. Verify archived files/links, the absent active path and preserved siblings; record move/link
-   evidence, re-render a request's base, then check `C4` in the archived artifact.
+   evidence, re-render a request's base package, if any, then check `C4` in the archived artifact.
 
 On failure, report the specs written but package not yet archived at the standard blocked gate;
 resume archival only, wherever the package now sits, never repeating `C3`.

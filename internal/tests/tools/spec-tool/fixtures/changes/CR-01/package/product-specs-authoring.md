@@ -8,7 +8,7 @@ Let the home view order notebooks by how much they need the owner, which needs a
 
 ## Inputs
 
-- The base: the Suggestions package, [its notes](../../product-specs-authoring.md) and drafts.
+- The base: the Suggestions package, [its notes](../../../package/product-specs-authoring.md) and drafts.
 - The home view design.
 
 ## Mode

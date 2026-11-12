@@ -624,3 +624,7 @@ Records skai#118 (supervisor, 2026-11-07) for this system's guides, during that 
 5. **Archive**: the package moves with its pages, `working-docs/` and `promoted-change-requests/`; open requests never reach archive (production readiness forbids them; a fold moves them into the base).
 
 Caps hold: `process-flow.md` 21,550 (21,479), `product-specs-artifacts.md` 5,450 (5,417), `product-specs-promotion.md` 15,550 (15,469). Compression round skipped: each change replaced a clause or sentence in place.
+
+## Amendment — 2026-11-11: Requests As Folders Of Sub-Packages; Confirming The Route (skai#108, skai#129)
+
+Adopts [`change-requests-design.md`](change-requests-design.md) § Amendment — 2026-11-11: this standard's guides say the items that amendment lists for their kind of guide (artifacts, authoring, promotion, Figma), and every request path, ID and provenance tag in them takes the new form. Caps for this change: `change-requests-design.md` § Amendment — 2026-11-11 (supervisor, 2026-11-11).

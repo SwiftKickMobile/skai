@@ -85,13 +85,15 @@ Usage:
         folder (the drafts' parent) as product-specs-review.html or design-specs-review.html; a
         legacy proposed-requirements drafts folder is a product-specs package.
 
-    A change request is a package whose base is another package: drafts under
-        <base>/change-requests/<nnn>/ or <base>/promoted-change-requests/<nnn>/ layer on the base's
-        drafts of the same name (and the base's own bases), read from the folder by render and
-        check-changes; --base overrides. The page title chains the ids: "Change Package: offers | 001".
-        Open items and gaps stay where they were raised: a package's page lists the open items of
-        its promoted requests (and theirs) under its Discussion and counts them, and shows on an
-        open item the decision an open request logged on it.
+    A change request is a folder of sub-packages, one per type: <parent>/changes/CR-01/<type>/
+        open or <parent>/promoted/CR-01/<type>/ promoted, the parent a change or a request
+        (changes/CR-01/changes/CR-01-01/). A sub-package's drafts layer on those of every existing
+        package of its type up the chain, the change's own first (none: production), read from the
+        folders by render and check-changes; --base overrides. The page title chains the IDs:
+        "Change Package: offers | CR-01". Open items and gaps stay where they were raised: a package's
+        page lists the open items of the promoted request sub-packages of its type in its scope (its
+        change, or its own request folder), at any depth, under its Discussion and counts them, and
+        shows on an open item the decision an open request logged on it.
 
     python3 spec-tool.py check-changes --catalog DIR --drafts DIR --authoring FILE
         The list-matches-diff check: every added, modified, retired or missing item, glossary
@@ -1557,8 +1559,7 @@ def gap_notes(notes, aid, gloss):
 
 def gap_owners(authoring, disc):
     """The artifacts whose Discussion items a gap footnote may name, by scope: "" is this artifact
-    (items from `disc`); "base" the parent package of a change request (the folder above
-    `change-requests/` or `promoted-change-requests/`, same artifact name), or else the package
+    (items from `disc`); "base" a change request sub-package's base (base_authoring), or else the package
     of the same type named first under `## Inputs`; "product specs" and "specs" the product specs
     artifact this artifact or its base links; "base product specs" the one the base links. Each maps to (its review
     page's href relative to this page, "" for this page; {D: item}); the href doubles as the
@@ -1624,13 +1625,70 @@ def link_owner_chip(did, target):
 
 
 def base_authoring(authoring, text):
-    """A package's base authoring artifact: a change request's parent package (the folder above
-    `change-requests/` or `promoted-change-requests/`, same artifact name), else its `## Inputs`
-    base; None when it builds on production."""
+    """A package's base authoring artifact: for a change request's sub-package, the nearest package
+    of its type up the chain (chain_bases), None when there is none (production); else its
+    `## Inputs` base; None when it builds on production."""
     authoring = Path(authoring).resolve()
-    if authoring.parent.parent.name in ("change-requests", "promoted-change-requests"):
-        return authoring.parent.parent.parent / authoring.name
+    if request_folder(authoring.parent):
+        bases = chain_bases(authoring.parent)
+        return bases[0] / authoring.name if bases else None
     return input_base(authoring, text)
+
+
+REQUEST_ID_RE = re.compile(r"CR-\d{2}(?:-\d{2})*")
+
+
+def request_folder(pkg):
+    """The change request folder (`CR-01`, `CR-01-01`) a type folder sits in, when it is a request's
+    sub-package: `<parent>/changes/CR-01/<type>/` open or `<parent>/promoted/CR-01/<type>/` promoted,
+    the parent being a change or a request. None for a change's own package; `skai/changes/` and
+    `skai/promoted/` hold changes, never requests."""
+    req = Path(pkg).parent
+    container = req.parent
+    if REQUEST_ID_RE.fullmatch(req.name) and container.name in ("changes", "promoted") and container.parent.name != "skai":
+        return req
+    return None
+
+
+def locate(pkg):
+    """(the change's own package of this type, [request IDs down the chain]) for a type folder:
+    `offers/changes/CR-01/changes/CR-01-01/design` gives (`offers/design`, [CR-01, CR-01-01]),
+    whether or not that package exists."""
+    pkg, ids = Path(pkg), []
+    while (req := request_folder(pkg)):
+        ids.insert(0, req.name)
+        pkg = req.parent.parent / pkg.name
+    return pkg, ids
+
+
+def chain_bases(pkg):
+    """The existing packages of this type up a request sub-package's chain, nearest first: the
+    parent request's sub-package, its parent's, and so on up to the change's own package. Empty
+    when none exists: the request's base is production."""
+    pkg, out = Path(pkg), []
+    while (req := request_folder(pkg)):
+        pkg = req.parent.parent / pkg.name
+        if pkg.is_dir():
+            out.append(pkg)
+    return out
+
+
+def request_scope(pkg):
+    """Where the requests filed against a package sit: inside its own request folder for a request's
+    sub-package, else in its change's folder."""
+    return request_folder(pkg) or Path(pkg).parent
+
+
+def request_subpackages(authoring, state):
+    """(request ID, authoring path) for each `state` ("changes" open, "promoted") request sub-package
+    of this artifact's type under its scope, at any depth, in path order."""
+    pkg = Path(authoring).resolve().parent
+    out = []
+    for cand in sorted(request_scope(pkg).rglob(f"{pkg.name}/{Path(authoring).name}")):
+        req = request_folder(cand.parent)
+        if req and req.parent.name == state and cand.resolve() != Path(authoring).resolve():
+            out.append((req.name, cand))
+    return out
 
 
 def input_base(authoring, text):
@@ -2106,7 +2164,7 @@ def check_base_decisions(authoring, text, drafts=None, bases=()):
     archived request's are history, already applied. A decided base gap leaves no footnote marking
     it: the request drafts every base file that does, without it."""
     authoring = Path(authoring).resolve()
-    if authoring.parent.parent.name == "promoted-change-requests":
+    if (req := request_folder(authoring.parent)) and req.parent.name == "promoted":
         return []
     linkdefs = {m.group("name"): m.group("target") for m in map(LINKDEF_RE.match, text.splitlines()) if m}
     base = base_authoring(authoring, text)
@@ -2168,32 +2226,30 @@ def pending_base_decisions(authoring):
     """{D: [(request number, decision, request page href)]} for this package's items that an open
     change request has decided: checked off here when that request promotes, open until then."""
     authoring, out = Path(authoring).resolve(), {}
-    for request in sorted((authoring.parent / "change-requests").glob(f"*/{authoring.name}")):
+    for rid, request in request_subpackages(authoring, "changes"):
         text = request.read_text(encoding="utf-8")
+        if base_authoring(request, text) != authoring:
+            continue
         _, entries, _ = parse_decision_log(text)
         said = {raw: words for raw, _, words, _ in entries}
         page = os.path.relpath(request.with_name(authoring.name.replace("-authoring.md", "-review.html")), RESOLVER.get("out_dir") or authoring.parent).replace(os.sep, "/")
         linkdefs = {m.group("name"): m.group("target") for m in map(LINKDEF_RE.match, text.splitlines()) if m}
         for (path, did), (state, _, raw) in other_decisions(request, text, linkdefs).items():
             if state == "decided" and path == authoring:
-                out.setdefault(did, []).append((request.parent.name, said[raw], page, request))
+                out.setdefault(did, []).append((rid, said[raw], page, request))
     return out
 
 
 def promoted_open(authoring):
-    """[(request path label, page href, [open item])] for this package's promoted change requests,
-    and theirs in turn, in filing order: open items and gaps stay where they were raised."""
+    """[(request ID, page href, [open item], request authoring)] for every promoted request
+    sub-package of this artifact's type in its scope (request_scope), at any depth, in path order:
+    open items and gaps stay where they were raised."""
     authoring, out = Path(authoring).resolve(), []
-
-    def walk(folder, label):
-        for request in sorted((folder / "promoted-change-requests").glob(f"*/{authoring.name}")):
-            path = label + [request.parent.name]
-            items = [it for _, its in parse_discussion(request.read_text(encoding="utf-8")) for it in its if not it["done"]]
-            if items:
-                page = os.path.relpath(request.with_name(authoring.name.replace("-authoring.md", "-review.html")), RESOLVER.get("out_dir") or authoring.parent).replace(os.sep, "/")
-                out.append((" | ".join(path), page, items, request))
-            walk(request.parent, path)
-    walk(authoring.parent, [])
+    for rid, request in request_subpackages(authoring, "promoted"):
+        items = [it for _, its in parse_discussion(request.read_text(encoding="utf-8")) for it in its if not it["done"]]
+        if items:
+            page = os.path.relpath(request.with_name(authoring.name.replace("-authoring.md", "-review.html")), RESOLVER.get("out_dir") or authoring.parent).replace(os.sep, "/")
+            out.append((rid, page, items, request))
     return out
 
 
@@ -2469,26 +2525,19 @@ def prepare(catalog, bases, drafts, out):
 
 
 def infer_bases(drafts):
-    """A request's bases, root first, read from its folder: drafts under
-    `<base>/change-requests/<nnn>/` or `<base>/promoted-change-requests/<nnn>/` layer on the base's
-    drafts of the same name, and the base's own bases before those."""
-    drafts, bases = Path(drafts).resolve(), []
-    while drafts.parent.parent.name in ("change-requests", "promoted-change-requests"):
-        drafts = drafts.parent.parent.parent / drafts.name
-        bases.insert(0, drafts)
-    return bases
+    """A request sub-package's bases, root first, read from its folders: its drafts layer on those of
+    every existing package of its type up the chain (chain_bases), the change's own first."""
+    drafts = Path(drafts).resolve()
+    return [b / drafts.name for b in reversed(chain_bases(drafts.parent))]
 
 
 def package_id(drafts):
-    """The change id, then each request number down the chain, joined by ` | `: the folder above
-    product-specs/, design-specs/ or the legacy requirements/ (else the drafts' parent), and the
-    `<nnn>` of every change-requests/ or promoted-change-requests/ level under it."""
-    parent, numbers = drafts.resolve().parent, []
-    while parent.parent.name in ("change-requests", "promoted-change-requests"):
-        numbers.insert(0, parent.name)
-        parent = parent.parent.parent
+    """The change id, then each request ID down the chain, joined by ` | `: the folder above
+    product-specs/, design-specs/ or the legacy requirements/ (else the drafts' parent), then
+    `CR-01`, `CR-01-01`, ..."""
+    parent, ids = locate(Path(drafts).resolve().parent)
     root = parent.parent.name if parent.name in ("product-specs", "design-specs", "requirements") else parent.name
-    return " | ".join([root] + numbers)
+    return " | ".join([root] + ids)
 
 
 def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):

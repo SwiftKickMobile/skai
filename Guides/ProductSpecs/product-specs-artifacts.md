@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-artifacts
 Managed-Source: Guides/ProductSpecs/product-specs-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-10
+Managed-Updated-At: 2026-11-11
 
 # Product Specs Artifact Formats
 
@@ -18,15 +18,13 @@ Typed formats for product spec workflows. Content rules:
 
 In the catalog's repository, `skai/changes/<change-id>/product-specs/`; after promotion into production,
 `skai/promoted/<change-id>/product-specs/`, closed; new work needs a new change ID. Sibling packages of other types
-are independent. For the **base** and requests, read
-[`change-requests.md`](../Core/change-requests.md). Supervisor input during authoring is a decision, never a request.
+are independent. For the **base** and requests, whose `product-specs/` sub-packages use this layout, read
+[`change-requests.md`](../Core/change-requests.md).
 
 ```
 product-specs-authoring.md        authoring's artifact; ## Requirement Changes
 proposed-product-specs/**         drafts mirroring the catalog: touched files only, each whole
 product-specs-review.html         the rendered review page
-change-requests/<nnn>/            open requests, each with this layout
-promoted-change-requests/<nnn>/   promoted requests
 product-specs-promotion.md        promotion's artifact; may be absent
 evidence/                         persisted check output; may be absent
 working-docs/                     working documents; the tool ignores it
@@ -66,7 +64,7 @@ target identity. Entries omit spec text; the page shows each difference under it
   without opening anything, then its source. `Design` names the screen or state by product
   name, never a design-tool link; `Resolved decision: D#` cites a Discussion item,
   another package's by `change-requests.md`'s link; `Agent inference` draws first scrutiny; promotion ends a folded entry's Justification
-  with `; Change request: <nnn> R<n>`.
+  with `; Change request: CR-<id> R<n>`.
 
 `check-changes` confirms the list matches the projection: entries name every changed requirement
 and glossary entry; entries or `Touches` lines name every changed index line, intro or added file;

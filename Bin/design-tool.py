@@ -154,17 +154,11 @@ def page_shell(title, counts, body, gloss, out, subtitle="", tips=""):
 
 def short_title(folder):
     """The top bar's name, '<title>: <path>': the path is the change id, then each change
-    request number (open or promoted) down from the package's design/ folder, joined by ' | ' — 'Offers', 'Offers | 001',
-    'Offers | 001 | 002'."""
-    parts = list(folder.resolve().parts)
-    path = []
-    while len(parts) >= 2 and parts[-2] in ("change-requests", "promoted-change-requests"):  # an archived request keeps its path
-        path.insert(0, parts[-1])
-        parts = parts[:-2]
-    if parts and parts[-1] == "design":
-        parts = parts[:-1]
-    path.insert(0, parts[-1].replace("-", " ").title() if parts else folder.name)
-    return "Design Change: " + " | ".join(path)
+    request ID (open or promoted) down from the change, joined by ' | ' — 'Offers', 'Offers | CR-01',
+    'Offers | CR-01 | CR-01-01'."""
+    pkg, ids = st.locate(folder.resolve())  # open or promoted, a request keeps its path
+    name = pkg.parent.name if pkg.name == "design" else pkg.name
+    return "Design Change: " + " | ".join([name.replace("-", " ").title()] + ids)
 
 
 def render(authoring, specs, out):

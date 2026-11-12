@@ -311,3 +311,7 @@ Design specs adopt [`product-specs-system-design.md`](product-specs-system-desig
 5. **Moves** (skai#117): only items and glossary entries move, and only to another file (the tool keys glossary entries by term, so a new section in the same glossary is no change); a glossary entry moves with its item (§ Decisions 5); a section change within one file, glossary or spec, takes no entry. Root creation is one `add spec file` entry, the rest in Touches. `check-changes` rejects a change type the artifacts guide does not list.
 
 Cap (supervisor, 2026-11-10, after cold round 4): the set **47,700** (was 47,650; 47,459 before this pass), for two wording repairs the round found with 6 bytes of headroom. Compression round skipped: each change replaces a clause in place.
+
+## Amendment — 2026-11-11: Requests As Folders Of Sub-Packages; Confirming The Route (skai#108, skai#129)
+
+Adopts [`change-requests-design.md`](change-requests-design.md) § Amendment — 2026-11-11: this standard's guides say the items that amendment lists for their kind of guide (artifacts, authoring, promotion, Figma), and every request path, ID and provenance tag in them takes the new form. Caps for this change: `change-requests-design.md` § Amendment — 2026-11-11 (supervisor, 2026-11-11).
