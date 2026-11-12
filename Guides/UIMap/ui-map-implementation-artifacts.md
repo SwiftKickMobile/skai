@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation-artifacts
 Managed-Source: Guides/UIMap/ui-map-implementation-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-11-11
 
 # UI Map Implementation Artifact Formats
 
@@ -10,12 +10,11 @@ Print `📖 SKAI guide: ui-map-implementation-artifacts` now, as a line of its o
 
 Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing.
 
-The typed formats the implementation skill produces. Read an artifact with [`ui-map-implementation.md`](ui-map-implementation.md) for Mode and control flow, the platform guide named in its `## Inputs`, and [`ui-map-guide.md`](ui-map-guide.md) for the YAML map. The architecture-side formats it *consumes* (map change items) and *raises* (change requests) live in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md).
+The typed formats the implementation skill produces. Read an artifact with [`ui-map-implementation.md`](ui-map-implementation.md) for Mode and control flow, the platform guide named in its `## Inputs`, and [`ui-map-guide.md`](ui-map-guide.md) for the YAML map. The architecture-side format it *consumes* (map change items) lives in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md).
 
-The implementation artifact (`ui-map-implementation.md`) sits in the change package at `skai/changes/<change-id>/ui-map/` in the official map's repo, beside the architecture artifact. After promotion it lives at `skai/promoted/<change-id>/ui-map/`, pending Plan work and `working-docs/` included.
+The implementation artifact (`ui-map-implementation.md`) sits in the change package, `skai/changes/<change-id>/ui-map/` (or a production-based request's `ui-map/` sub-package), in the production map's repo, beside the architecture artifact. After promotion it moves with the package (`skai/promoted/<change-id>/ui-map/` for a change's own), pending Plan work and `working-docs/` included.
 A conformance run without a proposal instead uses
-`skai/working-docs/<session-name>/ui-map-implementation.md` in the map repository,
-with its requests beside it. `## Code Changes` lists **code change items**; `## Evidence` holds **verification evidence**; `## Decision Log` ends it (`- <ID> decided|gap|reopened — <one line>`, append-only).
+`skai/working-docs/<session-name>/ui-map-implementation.md` in the map repository. `## Code Changes` lists **code change items**; `## Evidence` holds **verification evidence**; `## Decision Log` ends it (`- <ID> decided|gap|reopened — <one line>`, append-only).
 
 ## Code change items
 
@@ -45,11 +44,11 @@ There is no `Type` field: the identity and Description convey the kind at a glan
 
 ## Promotion state
 
-The terminal promote `T#` covers official YAML write, official render, then archival/link repair and
+The terminal promote `T#` covers production YAML write, production render, then archival/link repair and
 promoted-preview regeneration. It is checked only after all succeed. Existing Evidence records the
-actual write outcome with package source/official destination before the render, whose command/result
+actual write outcome with package source/production destination before the render, whose command/result
 is recorded separately. A recorded write with incomplete render resumes rendering only if current
-official YAML still matches that source; intervening changes block reconciliation rather than being
+production YAML still matches that source; intervening changes block reconciliation rather than being
 overwritten. Verified write/render with an unchecked terminal item resumes archival only.
 
 A checked terminal item closes the proposal; pending `planned`/`handoff` work remains in the promoted
@@ -57,11 +56,11 @@ artifact. Older checked items retain their meaning; migration fabricates no new 
 
 ## Verification evidence
 
-`## Evidence` records the verification trail: build checks at chunk boundaries and completion, plus the official render performed by a terminal promote item. One line per check, a sentence saying what it established, then the bracket:
+`## Evidence` records the verification trail: build checks at chunk boundaries and completion, plus the production render performed by a terminal promote item. One line per check, a sentence saying what it established, then the bracket:
 
 ```
 The Tickets domain builds after the move. [evidence: <command>; exit <code>; output: <scratch path, if captured>]
-The official map renders with the three new scenes. [evidence: <render command>; exit 0]
+The production map renders with the three new scenes. [evidence: <render command>; exit 0]
 ```
 
 Captured output stays in the scratch root ([`working-doc-conventions.md`](../Core/working-doc-conventions.md)), never the repository. Say only what that run established: a passing compile is not a tested click-through.

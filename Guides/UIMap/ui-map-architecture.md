@@ -2,19 +2,19 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture
 Managed-Source: Guides/UIMap/ui-map-architecture.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-11
 
 # UI Map Architecture
 
 Print `📖 SKAI guide: ui-map-architecture` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
-The architecture method for the UI Map system. Use [`ui-map-guide.md`](ui-map-guide.md) for the YAML map format and [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md) for the change-package artifact formats (map change items, change requests).
+The architecture method for the UI Map system. Use [`ui-map-guide.md`](ui-map-guide.md) for the YAML map format and [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md) for the change-package artifact formats (map change items) and [`change-requests.md`](../Core/change-requests.md) for change requests.
 
 ## Purpose
 
-The **official map** (`skai/ui-map/ui-map.yaml`) is the frozen architecture authority a change is proposed against, and this guide does not change it. Code should conform to it; any approved deviation is tracked by the implementation artifact's unchecked Code Changes items. This guide produces a **change package** at `skai/changes/<change-id>/ui-map/`: the **proposed map** (`proposed-ui-map.yaml`), its render (`proposed-ui-map.html`), and the change artifact (decisions + change list).
+The **production map** (`skai/ui-map/ui-map.yaml`) is the frozen architecture authority a change is proposed against, and this guide does not change it. Code should conform to it; any approved deviation is tracked by the implementation artifact's unchecked Code Changes items. This guide produces a **change package** at `skai/changes/<change-id>/ui-map/` (a change request's is its `ui-map/` sub-package, per [`change-requests.md`](../Core/change-requests.md)): the **proposed map** (`proposed-ui-map.yaml`), its render (`proposed-ui-map.html`), and the change artifact (decisions + change list).
 
-Two things are the source of truth for the change. The **proposed map** is the architecture the change moves toward. The **change list** (`## Map Changes`) describes exactly the differences between the official map and the proposed map — downstream implementation scopes its work and its audit from it, so a missing, stale, or wrong map change item is a failure, not polish.
+Two things are the source of truth for the change. The **proposed map** is the architecture the change moves toward. The **change list** (`## Map Changes`) describes exactly the differences between the package's base (the production map, or a request's base package's proposed map) and the proposed map — downstream implementation scopes its work and its audit from it, so a missing, stale, or wrong map change item is a failure, not polish.
 
 This guide produces map artifacts only — no app-code tasks, file moves, build steps, or sequencing. The rendered proposed map is the review surface; until Map Changes is complete, the proposed map, its render, and the change list are provisional.
 
@@ -27,13 +27,13 @@ Everything you write for a person follows [`writing-style.md`](../Core/writing-s
 
 ## The architecture change artifact
 
-One document. Create it at `skai/changes/<change-id>/ui-map/ui-map-architecture.md`.
+One document, `ui-map-architecture.md`, in the package: `skai/changes/<change-id>/ui-map/`, or a request's `ui-map/` sub-package. A request lists its base first under `## Inputs`.
 
 If the change ID is clear from the user's input, use it. If not, do not create the artifact yet. Ask inline for the change ID, propose a short kebab-case default when possible, and wait. When deriving a proposal from the current branch, use only the final path component, not the full branch path; for example, `work/billing-ui` proposes `billing-ui`. Once the change ID is resolved, create the artifact at its final path.
 
 The `ui-map/` type folder owns its architecture and implementation artifacts, proposed map,
-render, requests and evidence. A related `product-specs/` sibling shares the change ID but promotes
-independently. After map promotion this folder lives at `skai/promoted/<change-id>/ui-map/`.
+render and evidence. A related `product-specs/` sibling shares the change ID but promotes
+independently. After map promotion the folder moves to its promoted destination (`change-requests.md` rule 4; `skai/promoted/<change-id>/ui-map/` for a change's own).
 
 Skeleton:
 
@@ -57,7 +57,7 @@ Skeleton:
 
 **Scoped map change.** Update an existing approved map for a story, feature slice, design change, or other map-scoped request. State the active scope and avoid revisiting unrelated map areas unless the requested change cannot be represented without doing so.
 
-A **change request** from downstream implementation is not a separate mode. It arrives as new input on a package that already has a kind; handle it on reopen within that kind (see Initiation). The package keeps its Baseline map or Scoped map change kind, and the request's status lives on the change-request artifact.
+A **change request** is not a separate mode either: it is a UI Map package against another ([`change-requests.md`](../Core/change-requests.md)), a scoped map change whose base is the nearest UI Map package up its chain, else the production map.
 
 If no map change is needed, do not create architecture collateral just to say the map is unchanged.
 
@@ -95,7 +95,7 @@ At a planned gate: summarize what you did, include the current map-preview statu
 **Blocked gates** — emitted when the agent cannot advance. Common reasons:
 
 - Discussion in progress: one or more non-gap `- [ ]` items remain unresolved.
-- Which repo holds the official map is unknown or ambiguous.
+- Which repo holds the production map is unknown or ambiguous.
 - Inputs are too contradictory or incomplete to draft a stage.
 - A Discussion decision proves unworkable when realized in Map Changes; for example, the proposed map cannot be made valid without revisiting a decision.
 - Required tooling is unavailable; for example, the SKAI renderer, its runtime, or a project-specific render override cannot produce a valid render.
@@ -140,22 +140,21 @@ Map Changes. The finished architecture package remains active until implementati
 
 ## Initiation
 
-The workflow starts on an explicit signal — "write the UI Map architecture document", "create the baseline map", "update the UI Map", or equivalent. Whatever came before (designs, requirements, a discussion, a story, a change request, or a bug request) is context the agent digests; there is no declared mode.
+The workflow starts on an explicit signal — "write the UI Map architecture document", "create the baseline map", "update the UI Map", or equivalent. Whatever came before (designs, requirements, a discussion, a story, a map change implementation asked for, or a bug request) is context the agent digests; there is no declared mode.
 
-On the signal: digest all available inputs, infer the mode — **baseline map** or **scoped map change** — and draft Discussion. When the map does not exist yet, follow [`artifact-hosting.md`](../Core/artifact-hosting.md) to settle where it will live and link it from the README.
+On the signal, digest all available inputs and settle the package (below); only then infer the mode — **baseline map** or **scoped map change** — and draft Discussion. When the map does not exist yet, follow [`artifact-hosting.md`](../Core/artifact-hosting.md) to settle where it will live and link it from the README.
 
-The package is the one named or already in context: an existing `ui-map-architecture.md`, or an
-implementation artifact and change requests seeding a proposal that architecture has not drafted
-yet. Such a seed uses the same package and ID, not a second folder; reuse it rather than creating a
+Per `change-requests.md`, settle whether the work is a request; for one, reopen or create its
+`ui-map/` sub-package. Otherwise the package is the one named or already in context: an existing
+`ui-map-architecture.md`, or an implementation artifact seeding a proposal that architecture has
+not drafted yet. Such a seed uses the same package and ID, not a second folder; reuse it rather than creating a
 second. Check `skai/promoted/<change-id>/ui-map/` before creation too: a promoted ID/type pair
-cannot be reused. A checked terminal promote item or recorded official YAML write closes the proposal to authoring;
+cannot be reused. A checked terminal promote item or recorded production YAML write closes the proposal to authoring;
 an incomplete render/archive follows implementation's restart procedure rather than reopening these drafts; new map changes need a new ID. Related
-product spec packages do not count as map-package candidates. Re-read the current official map on
+product spec packages do not count as map-package candidates. Re-read the base on
 reopen and refresh the comparison while preserving resolved decisions, IDs and prior evidence.
 
-If new map-relevant input arrives after the architecture package is ready but before the official YAML write — including a **change request** raised by downstream implementation — reopen the same architecture artifact in Discussion. Treat the new input as additional context and continue the normal Discussion loop, keeping the package's existing kind. Do not create a separate response artifact or replace the existing architecture artifact with a narrow response artifact. Proceed to Map Changes only after the discussion-complete gate advances.
-
-When the new input is a change request artifact in the input set, the supervisor reads it and says what to do with it; the agent applies that — for an incorporation the proposed map, with `Incorporated` once Map Changes carries it; otherwise the status and the supervisor's reason in `Reviewer Response` (lifecycle in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md) § Change requests) — and re-renders. Until told, leave a `Proposed` request alone, summarizing open requests when asked; never reject or supersede one on its own, and raise no Discussion item to drive the ruling.
+If new map-relevant input arrives after the architecture package is ready but before the production YAML write — including a map change implementation asked for, when the supervisor picked reopening this package — reopen the same architecture artifact in Discussion; a request instead follows the request route above. Treat the new input as additional context and continue the normal Discussion loop, keeping the package's existing kind. Do not create a separate response artifact or replace the existing architecture artifact with a narrow response artifact. Proceed to Map Changes only after the discussion-complete gate advances.
 
 ## Discussion
 
@@ -190,7 +189,7 @@ Use `###` subsections only for actual Discussion topics: one or more `D#` items,
 
 - *Baseline map* — summarize the Goal and Inputs, then encode the map the inputs describe, seeding Discussion only for the choices that meet the bar above. If the input directly names the app structure, feature areas, screens, and route relationships, encode that structure without asking the supervisor to approve the straightforward translation; the rendered preview is the review surface for feedback.
 - *Scoped map change* — summarize the active scope and current map context, then seed Discussion only for decisions needed to express that map change.
-- *Reopen* — summarize the new input and its evidence in Goal/Inputs. Input that is coherent and fully specified — a change request the supervisor has said to incorporate included — updates the provisional preview and drafts no *new* discussion items; seed one only when map representation requires a real decision. Retain the artifact's existing resolved items that still explain the current map or that a map change item cites (`D#`).
+- *Reopen* — summarize the new input and its evidence in Goal/Inputs. Input that is coherent and fully specified — a map change the supervisor approved in implementation included — updates the provisional preview and drafts no *new* discussion items; seed one only when map representation requires a real decision. Retain the artifact's existing resolved items that still explain the current map or that a map change item cites (`D#`).
 - If the inputs fully specify the map, draft no new items. Use the empty Discussion state only when the section has no retained resolved items.
 - If the request drifts into app-code tasks, file moves, build steps, or implementation sequencing, record only the map fact that matters; leave execution details out of this artifact.
 
@@ -203,11 +202,11 @@ Use `###` subsections only for actual Discussion topics: one or more `D#` items,
 During Discussion, once there is enough concrete structure to propose a map, maintain the proposed map and its render in the change package:
 
 ```text
-skai/changes/<change-id>/ui-map/proposed-ui-map.yaml
-skai/changes/<change-id>/ui-map/proposed-ui-map.html
+<package>/proposed-ui-map.yaml
+<package>/proposed-ui-map.html
 ```
 
-When no proposed map exists yet, seed it from the current official map; for a baseline, where no official map exists yet, start from empty. On reopen the existing proposed map is the starting point, the official map re-read only for comparison. Edit the proposed map here — the official map stays frozen.
+When no proposed map exists yet, seed it from the base: the current production map, or a request's base package's proposed map; for a baseline, where no production map exists yet, start from empty. On reopen the existing proposed map is the starting point, the base re-read only for comparison. Edit the proposed map here — the base stays frozen.
 
 Add or update `## Provisional preview` in `ui-map-architecture.md` with paths to the proposed map and render and a status line saying they are provisional until Discussion resolves and Map Changes completes.
 
@@ -215,7 +214,7 @@ The proposed map reflects the agent's current proposals and any resolved decisio
 
 The proposed map is YAML-first. Do not investigate render tooling before the artifact exists. If there is not enough concrete structure to produce a useful render, say so in `## Provisional preview`. Before a gate, check the proposed map for map-validity choices the renderer cannot infer: reused scenes with more than one inbound route need a visual home, and every modal destination needs an agreed `modal_style` from the declared vocabulary. Resolve such choices by the bar above: default when the map is obvious, raise a discussion item only when the choice is unforced and material. Once `proposed-ui-map.yaml` exists and has enough structure to review, attempt to render it before the next gate: use any project-specific override first; otherwise use the default SKAI renderer from [`ui-map-guide.md`](ui-map-guide.md). If the render is not produced, the artifact and gate response must state the concrete reason — missing SKAI root, missing runtime dependency, renderer failure, invalid YAML, not useful yet, or another specific blocker. Do not leave render status as merely pending, and do not invent a non-SKAI render command.
 
-**Structural self-check before gating.** The renderer validates schema and semantics but not the authoring conventions — a non-collapsed single-root domain or a flattened scene renders fine. Before each gate, check the provisional against *Authoring a UI Map* in [`ui-map-guide.md`](ui-map-guide.md): single-root domains collapsed, non-root scenes nested under the route that reaches them, reused scenes with one home and a `primary_parent`, `common:` only for domain-agnostic scenes, and every section the supervisor reads consistent with the current proposed map — notes and assumptions describe nothing superseded, no now-resolved decision is still called `pending`, `open`, or `unresolved`, and on a reopen the inherited `## Map Changes` and `## Deferrals` — which describe the prior pass — are marked pending re-derivation rather than left reading as current. Fix the artifact before gating — the gate presents what the supervisor reviews.
+**Structural self-check before gating.** The renderer validates schema and semantics but not the authoring conventions — a non-collapsed single-root domain or a flattened scene renders fine. Before each gate, check the provisional against *Authoring a UI Map* in [`ui-map-guide.md`](ui-map-guide.md): single-root domains collapsed, non-root scenes nested under the route that reaches them, reused scenes with one home and a `primary_parent`, `common:` only for domain-agnostic scenes, and every section the supervisor reads consistent with the current proposed map — notes and assumptions describe nothing superseded, no now-resolved decision is still called `pending`, `open`, or `unresolved`, and on a reopen the inherited `## Map Changes` and `## Deferrals` — which describe the prior pass — are marked pending re-derivation (a first line `Pending re-derivation.` under each heading; the renderer then skips its entry check) rather than left reading as current. Fix the artifact before gating — the gate presents what the supervisor reviews.
 
 **Domain structure line.** In `## Provisional preview`, record and keep current a one-line domain summary: name every domain, and for each non-collapsed (`scenes:`) domain list its root scenes. Collapsed domains are named only; a bucket lists its roots:
 
@@ -228,7 +227,7 @@ Writing this forces the single-root check into the open — a bucket whose root 
 Before every gate line, include a short map-preview status:
 
 ```text
-🗺️ Updated provisional map render: skai/changes/<change-id>/ui-map/proposed-ui-map.html
+🗺️ Updated provisional map render: <package>/proposed-ui-map.html
 ```
 
 or, when unavailable:
@@ -305,35 +304,50 @@ Instead:
 
 ## Map Changes
 
-Once the advancing gate passes, produce the typed map change items by **diffing the frozen official map against the proposed map** — one item per real difference (for a baseline there is no official map, so the whole proposed map is the difference). The resolved decisions supply each item's justification, not the set of items — the diff is what makes the section complete, so an attribute-level difference (a note, a `modal_style`) is its own item even when no decision singled it out. Also write the Deferrals section for any approved map deferrals.
+Once the advancing gate passes, produce the typed map change items by **diffing the base against the proposed map**: the frozen production map, or for a request its base's proposed map — every real difference, one entry per scene or domain (for a baseline there is no production map, so the whole proposed map is the difference). The resolved decisions supply each item's justification, not the set of items — the diff is what makes the section complete, so an attribute-level difference (a note, a `modal_style`) is listed even when no decision singled it out: its own entry, or a sub-change of its scene's. Also write the Deferrals section for any approved map deferrals.
 
 Map change items are written and updated only in Map Changes, never during Discussion.
 
 **The final map is the reviewed provisional.** Write the structure the supervisor approved at the gate; do not silently re-derive or restructure it here. If realizing the map exposes a needed correction — the provisional cannot be made valid without one — make the minimal fix, record it in Map Changes / Assumptions, and re-render. A structural change beyond a validity fix is a new decision: return to Discussion and re-gate rather than changing the shape after approval.
 
-`## Map Changes` describes exactly the differences between the frozen official map and the proposed map. Since the official map does not move, that diff is recomputable at any time: when the artifact is reopened for new work and already holds map change items from earlier passes, recompute the diff and reconcile the existing items against it — never reset or regenerate the section. An item that still matches a difference keeps its `M#` id, and its justification only while it still explains why the change is needed; a new difference gets a new item; a difference that no longer holds (the proposed map moved back) loses its item. The ids and rationale are the part a raw diff cannot reconstruct.
+`## Map Changes` describes exactly the differences between the base and the proposed map. That diff is recomputable from the current base at any time: when the artifact is reopened for new work and already holds map change items from earlier passes, recompute the diff and reconcile the existing items against it — never reset or regenerate the section. An item that still matches a difference keeps its `M#` id, and its justification only while it still explains why the change is needed; a new difference gets a new item; a difference that no longer holds (the proposed map moved back) loses its item. The ids and rationale are the part a raw diff cannot reconstruct.
 
 Produce these together before completing:
 
-1. The typed map change items in `skai/changes/<change-id>/ui-map/ui-map-architecture.md`.
-2. The Deferrals section in `skai/changes/<change-id>/ui-map/ui-map-architecture.md` — one entry per approved map deferral, with TODO pointer and brief rationale. Omit the section if no deferrals were approved.
-3. The proposed map — `skai/changes/<change-id>/ui-map/proposed-ui-map.yaml`. The official map stays frozen. Consult [`ui-map-guide.md`](ui-map-guide.md) for the YAML format and its *Authoring a UI Map* conventions.
-4. The render — run the project-specific render override when one exists; otherwise use the default SKAI renderer from [`ui-map-guide.md`](ui-map-guide.md) to produce `skai/changes/<change-id>/ui-map/proposed-ui-map.html`. The render also validates schema and semantic checks: dangling refs, duplicate canonical homes, `primary_parent`, required modal styles and their vocabulary, and related map constraints. Fix until valid; never present an invalid map. The HTML page is the review surface.
+1. The typed map change items in the package's `ui-map-architecture.md`.
+2. The Deferrals section in the same artifact — one entry per approved map deferral, with TODO pointer and brief rationale. Omit the section if no deferrals were approved.
+3. The proposed map — `proposed-ui-map.yaml` in the package (a request's starts from its base's). The base stays frozen. Consult [`ui-map-guide.md`](ui-map-guide.md) for the YAML format and its *Authoring a UI Map* conventions.
+4. The render — run the project-specific render override when one exists; otherwise use the default SKAI renderer from [`ui-map-guide.md`](ui-map-guide.md) to produce the package's `proposed-ui-map.html`. The render also validates schema and semantic checks: dangling refs, duplicate canonical homes, `primary_parent`, required modal styles and their vocabulary, and related map constraints. Fix until valid; never present an invalid map. The HTML page is the review surface.
 5. The Assumptions and TODOs section — map assumptions, design notes that do not block the map, and any map TODOs added or updated.
 
 Before completion, update `## Provisional preview` so it no longer reads as an active Discussion status: the proposed map and render in the package are now the finished change package, pending review.
 
 If a project-specific render override is missing required values, is broken, or contradicts the SKAI renderer contract, STOP with a blocked gate. If no override exists, use the default SKAI renderer. STOP only when the SKAI root, renderer script, runtime dependency, or validation result prevents a valid render.
 
-If every resolved decision produces zero map changes, state that in `## Map Changes`, render the proposed map when a renderer is available, and complete.
+If the base-to-proposal diff is empty, state that in `## Map Changes`, render the proposed map as above, and complete.
 
 Once the package is in place, declare completion directly — no final planned gate. Use the completion line:
 
-`🏁 Complete. The proposed map, its render and its notes are in the package at <path>, ready for review and for implementation.`
+`🏁 Complete. The proposed map, its render and its notes are in the package at <path>, ready for review and <for implementation | to fold into <base>>.`
 
 ### Map change item format
 
-Map change items follow the format defined in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md): a stable `M#` ID, a `Type` (`<operation> <element>`), an identity, and **Description** / **Justification** (a reason, then `<Source>: ...`) / **Touches** sub-bullets. Do not use a checkbox — the map change is realized by the accompanying proposed map and render. Write items top-down in structural order (domain-level changes first, then scenes, then routes), mirroring the map and the rendered diagram; the `M#` ID identifies, it does not order.
+Map change items follow the format defined in [`ui-map-architecture-artifacts.md`](ui-map-architecture-artifacts.md): under a `### <domain>` heading per domain, in the map's order, one entry per scene or domain, with a stable `M#` ID, a `Type` (`<operation> <element>`), and **Description** / **Justification** (a reason, then `<Source>: ...`) sub-bullets, or numbered sub-changes when a scene changes in several ways. Do not use a checkbox — the map change is realized by the accompanying proposed map and render. The `M#` ID identifies; it does not order.
+
+### Folding a request into its base
+
+On the supervisor's ask, fold a completed request's `ui-map/` sub-package into its base package per
+`change-requests.md`, except that its `## Map Changes` entries are not appended: a change list is a
+diff, so it is recomputed. Write the request's proposed map over the base's proposed map; name the
+request in the base's Assumptions; mark the base's `## Map Changes` `Pending re-derivation.`; move the
+request as that guide says; then re-render the base. The fold reopens the base: its author recomputes
+the list against its own base in its Map Changes stage, as any reopen does, before implementation. A
+difference the request brought joins its scene's entry when the list already has one (a sub-change, or,
+for a scene the list adds, part of the addition), else takes a new entry at the next `M` number; either
+way its reason comes from the request's entry (its `D#` linked per that guide), ending
+`; Change request: CR-<id> M<n>`. Then the `Pending re-derivation.`
+line is removed before the final render. A request whose base is the production
+map is implemented and promoted like any package.
 
 ### Deferrals entry format
 

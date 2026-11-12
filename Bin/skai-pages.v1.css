@@ -15,7 +15,7 @@
   --domain-blue: #8AD1FA; --domain-yellow: #EFD74E; --domain-pink: #FE9CA8; --domain-green: #78DB85; --domain-purple: #D39AE7;
   --domain-orange: #FFB677; --domain-periwinkle: #87AFFF; --domain-teal: #37D8CB; --domain-magenta: #F277D5;
   /* change types */
-  --added: var(--green); --modified: var(--orange); --removed: var(--red); --unchanged: var(--faint);
+  --added: var(--green); --modified: var(--orange); --removed: var(--red); --unchanged: var(--faint); --moved: var(--cyan);
   /* effects */
   --shadow-card: 0 1px 3px #00000014, 0 4px 12px #0000000F;
   --shadow-cell: 0 1px 2px #10222A0D;
@@ -100,6 +100,7 @@ body { margin: 0; background: var(--ground); color: var(--ink); font: var(--type
 .badge.modified { background: var(--modified); }
 .badge.removed, .badge.retired, .badge.missing { background: var(--removed); }
 .badge.unchanged { background: var(--unchanged); }
+.badge.moved { background: var(--moved); }
 
 /* ---- cards, pills, references ---- */
 .card { background: var(--surface); border: 1px solid var(--neutral-line); border-radius: var(--r-10); box-shadow: var(--shadow-card); padding: var(--sp-10) var(--sp-15); }

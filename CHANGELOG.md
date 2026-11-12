@@ -9,6 +9,8 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **UI Map change requests work like every other document's.** A request is a `ui-map/` part of a change request folder, and when implementation finds the map wrong you pick how it changes; the map's change list is grouped by domain, one entry per scene.
+- **A UI Map change package's page shows what it changes.** Changed scenes are badged on the map and their changes open in the side panel; a Review tab holds the discussion and the map changes, linked both ways to the map. Every map page gets the review pages' domain filters, a hops drop-down and a search clear button.
 - **Every review page and the UI Map page share one look.** One system font, the Design System's colors in light and dark, and a one-line title naming the document type and the package; pages rendered earlier keep working as they were.
 - **The spec review page is tested case by case.** Moves, outside citations and file-level reasons now render correctly, and a page renders the same on every machine.
 - **Merging a design change carries it everywhere it applies.** Promotion now checks every frame of the base against the change list and carries each change to the frames the drafts didn't redraw, with a backup taken first; nothing is deleted until you delete it. Change lists say plainly what changed, and change pages get a scratch area for exploring.

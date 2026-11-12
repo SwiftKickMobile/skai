@@ -35,7 +35,7 @@ SUB_RE = re.compile(r"^  - \*\*(?P<num>\d{2})\*\* (?P<text>.+?)\s*$", re.M)
 HEADING_RE = re.compile(r"^### (?P<name>.+?)\s*$", re.M)
 GAP_DEF_RE = re.compile(r"^[ \t]*\[\^(?P<label>[A-Za-z0-9-]+)\]:[ \t]*\*\*Gap:\*\*[ \t]*(?P<text>.+?)[ \t]*$", re.M)
 MD_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)\s]+)\)")
-STATUS = {"add": "added", "modify": "modified", "remove": "retired"}
+STATUS = {"add": "added", "modify": "modified", "remove": "retired", "move": "moved"}  # move: a UI Map change (ui-map-render.py reuses these cards)
 
 
 def section(text, name):
@@ -67,18 +67,19 @@ class Links:
         return f'<a href="{html.escape(url)}">{html.escape(label)}</a>'
 
 
-def parse_changes(text):
-    """The '## Design Changes' entries in artifact order: {cid, op, obj, identity, description,
+def parse_changes(text, heading="Design Changes", change_re=CHANGE_RE):
+    """The '## <heading>' entries (`change_re` matching an entry's line, with groups cid, op, obj
+    and identity) in artifact order: {cid, op, obj, identity, description,
     justification, section, subs, gaps}; `section` is the `###` heading the entry sits under ("" with
     none), `subs` the numbered sub-changes [(num, text, justification)] of a frame changed in
     several ways (the justification is what follows the last ' — ' of the line), `gaps` the
     footnotes defined under the entry, each (label, owning item, the provisional answer the entry
     builds on); one footnote per gap, on the first entry whose change rests on it, the question staying with its owner."""
-    body = re.search(r"^## Design Changes\s*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
+    body = re.search(rf"^## {re.escape(heading)}\s*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
     if not body:
         return []
     src = body.group(1)
-    heads = list(CHANGE_RE.finditer(src))
+    heads = list(change_re.finditer(src))
     headings = [(m.start(), m.group("name").strip()) for m in HEADING_RE.finditer(src)]
     out = []
     for c, nxt in zip(heads, heads[1:] + [None]):
@@ -114,14 +115,14 @@ def owner_ref(owner, owners):
     return st.gap_owner_chip(m.group("scope").strip().lower(), m.group("did"), owners) if m else html.escape(owner)
 
 
-def render_change(ch, gloss, links, owners):
+def render_change(ch, gloss, links, owners, ident=None):
     """One change as a card: the badge says add, modify or remove; the summary carries the ID,
-    the object and the identity, linked into the design file; the description and the
-    justification follow."""
+    the object and the identity, linked into the design file (`ident`, already HTML, replaces it);
+    the description and the justification follow."""
     status = STATUS[ch["op"]]
     cid = ch["cid"].lower()
     st.RESOLVER["item"] = cid  # the spec renderer's inline() turns a [^n] mark into a link to #gap-<item>-<n>
-    ident = links.show(st.inline(links.hide(ch["identity"]), gloss, auto=True))
+    ident = ident if ident is not None else links.show(st.inline(links.hide(ch["identity"]), gloss, auto=True))
     summary = (f'<span class="badge">{status}</span><span class="id">{ch["cid"]}</span>'
                f'<span class="status pill">{html.escape(ch["op"])} {html.escape(ch["obj"])}</span><span class="title">{ident}</span>')
     body = f"<p>{links.show(st.inline(links.hide(ch['description']), gloss, auto=True))}</p>" if ch["description"] else ""
@@ -176,12 +177,31 @@ def render(authoring, specs, out):
     changes = parse_changes(text)
     owners = st.gap_owners(authoring, disc)
     st.RESOLVER["gap_owners"] = owners
+    body, states = summary(text, authoring, disc, sum(1 for c in changes if c["gaps"]), gloss, links)
+    if changes:
+        cards, last = [], None
+        for c in changes:
+            if c["section"] != last:
+                cards.append(f'<h3 class="section">{html.escape(c["section"])}</h3>' if c["section"] else "")
+                last = c["section"]
+            cards.append(render_change(c, gloss, links, owners))
+        body += '<section class="file"><h2>Design Changes</h2>' + "".join(cards) + "</section>"
+    counts = {"added": sum(c["op"] == "add" for c in changes), "modified": sum(c["op"] == "modify" for c in changes),
+              "removed": sum(c["op"] == "remove" for c in changes), **states}
+    out.write_text(page_shell(short_title(authoring.parent), counts, body, gloss, out), encoding="utf-8")
+    print(f"wrote {out}: {counts}")
+
+
+def summary(text, authoring, disc, footnoted, gloss, links):
+    """(the summary box, its state and the goal, then the Discussion section; the state counts
+    {open, gaps, resolved}) for an authoring artifact whose change entries carry `footnoted` gap
+    footnotes between them. The caller sets st.RESOLVER's gap owners first."""
     discussion, (p_open, p_gap) = st.render_discussion(disc, gloss, authoring)
     items = [it for _, its in disc for it in its]
     n_gap_items = sum(1 for it in items if not it["done"] and it["gap"])
     n_done = sum(1 for it in items if it["done"])
     n_open = len(items) - n_done - n_gap_items + p_open  # promoted requests' open items count too: they stay there
-    n_gap = n_gap_items + p_gap + sum(1 for c in changes if c["gaps"])  # open gap items plus footnoted entries
+    n_gap = n_gap_items + p_gap + footnoted  # open gap items plus footnoted entries
     gaps = f"{n_gap} gap{'s' if n_gap != 1 else ''}"
     if n_open:
         state = f"{n_open} open" + (f", {gaps}" if n_gap else "")
@@ -194,19 +214,7 @@ def render(authoring, specs, out):
     head = (f'<div class="item request"><div class="head"><span class="status pill">{html.escape(state)}</span></div>'
             + (f"<p>{links.show(st.inline(links.hide(goal), gloss, auto=True))}</p>" if goal else "")
             + (f'<p class="note">{links.show(st.inline(links.hide(note), gloss, auto=True))}</p>' if note else "") + "</div>")
-    body = head + discussion
-    if changes:
-        cards, last = [], None
-        for c in changes:
-            if c["section"] != last:
-                cards.append(f'<h3 class="section">{html.escape(c["section"])}</h3>' if c["section"] else "")
-                last = c["section"]
-            cards.append(render_change(c, gloss, links, owners))
-        body += '<section class="file"><h2>Design Changes</h2>' + "".join(cards) + "</section>"
-    counts = {"added": sum(c["op"] == "add" for c in changes), "modified": sum(c["op"] == "modify" for c in changes),
-              "removed": sum(c["op"] == "remove" for c in changes), "open": n_open, "gaps": n_gap, "resolved": n_done}
-    out.write_text(page_shell(short_title(authoring.parent), counts, body, gloss, out), encoding="utf-8")
-    print(f"wrote {out}: {counts}")
+    return head + discussion, {"open": n_open, "gaps": n_gap, "resolved": n_done}
 
 
 def main(argv):

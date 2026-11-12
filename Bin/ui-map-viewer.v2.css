@@ -1,5 +1,6 @@
 /* ui-map-viewer.v2.css — what only the interactive UI Map viewer needs (see ui-map-viewer.v2.js); loads after
-   skai-pages.v1.css, which holds the tokens (light and dark), the title bar, segmented controls and cards. */
+   skai-pages.v1.css, which holds the tokens (light and dark), the title bar, segmented controls and cards, and, on a
+   change package's page, after spec-review.v2.css, whose cards, Discussion and change entries its Review tab uses. */
 :root { --edge: #CFDDE1; --edge-lit: var(--cyan); --edge-opacity: .55; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --edge: #5A8291; --edge-opacity: .9; } }
 :root[data-theme="dark"] { --edge: #5A8291; --edge-opacity: .9; }
@@ -10,16 +11,34 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 /* ---- shell ---- */
 .app { display: grid; grid-template-rows: var(--bar-height) 1fr; grid-template-columns: minmax(0, 1fr); height: 100vh; width: 100vw; }
-.seg.legend { border: 0; padding: 0; background: none; }
-.seg.legend button { padding: var(--sp-5) var(--sp-10); border-radius: var(--r-5); }
-.seg.legend button[aria-pressed="true"] { font-weight: 600; }
 .dm { width: 9px; height: 9px; border-radius: var(--r-2); display: inline-block; background: var(--c); flex: none; }
-.status { display: flex; align-items: center; gap: var(--sp-10); margin-left: auto; color: var(--dim); font: var(--type-small); white-space: nowrap; }
-.status input { width: 190px; padding: var(--sp-5) var(--sp-10); border: 1px solid var(--line2); border-radius: var(--r-5); background: var(--surface); color: var(--ink); font: var(--type-body); }
-.status input:focus { outline: 2px solid var(--cyan); outline-offset: 1px; }
-.theme, .clear, .info { border: 1px solid var(--line2); border-radius: var(--r-5); padding: var(--sp-4) var(--sp-10); font: var(--type-small); color: var(--dim); }
-.theme:hover, .clear:hover, .info:hover { color: var(--ink); }
-.info { font-weight: 700; }
+/* top bar: tabs after the title on a change package's page; the tab's tools on the right */
+.tabs { align-self: stretch; display: flex; margin-left: var(--sp-10); }
+.tab { display: flex; align-items: center; padding: 0 var(--sp-10); font: var(--type-caption); color: var(--dim); border-bottom: 2px solid transparent; border-top: 2px solid transparent; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--ink); font-weight: 600; border-bottom-color: var(--cyan); }
+.tools { display: flex; align-items: center; gap: var(--sp-20); margin-left: auto; white-space: nowrap; }
+.tools .info { margin-left: calc(var(--sp-10) - var(--sp-20)); }
+/* the hops drop-down: a fixed width that fits its longest choice, so it never moves */
+.hops { position: relative; }
+.hopsbtn { display: flex; align-items: center; justify-content: space-between; width: 70px; height: 30px; padding: 0 var(--sp-5) 0 var(--sp-10);
+  border: 1px solid var(--line2); border-radius: var(--r-5); background: var(--surface); font: var(--type-small); color: var(--ink); }
+.hopsbtn .ic { color: var(--dim); }
+.hops .menu { position: absolute; top: calc(100% + var(--sp-5)); left: 0; z-index: 6; width: 100px; padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-1);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-5); box-shadow: var(--shadow-card); }
+.hops .opt { display: flex; align-items: center; gap: var(--sp-5); height: 28px; padding: 0 var(--sp-10) 0 var(--sp-5); border-radius: var(--r-4); font: var(--type-small); color: var(--ink); text-align: left; }
+.hops .opt:hover, .hops .opt[aria-selected="true"] { background: var(--raised); }
+.hops .opt .ic { color: var(--cyan); }
+.hops .opt .nochk { display: inline-block; width: 13px; }
+/* search, with a cross that clears it while it has a value */
+.find { position: relative; display: flex; align-items: center; }
+.find input { width: 190px; height: 28px; padding: 0 var(--sp-25) 0 var(--sp-10); border: 1px solid var(--line2); border-radius: var(--r-5); background: var(--surface); color: var(--ink); font: var(--type-body); }
+.find input::-webkit-search-cancel-button { display: none; }
+.find input:focus { outline: 2px solid var(--cyan); outline-offset: 1px; }
+.find .x { position: absolute; right: var(--sp-5); width: 18px; height: 18px; border-radius: var(--r-3); color: var(--dim); font-size: 15px; line-height: 18px; }
+.find .x:hover { color: var(--ink); background: var(--raised); }
+.info { width: 28px; height: 28px; border: 1px solid var(--line2); border-radius: var(--r-5); font: var(--type-small-strong); color: var(--dim); }
+.info:hover { color: var(--ink); }
 .main { position: relative; min-height: 0; min-width: 0; display: flex; }
 .canvasw { position: relative; flex: 1; min-width: 0; overflow: auto; padding: 24px 28px 40px; }   /* 4px grid: see the layout constants in the script; the side padding is symmetric, the script relies on that */
 .app.with-panel .canvasw { scroll-padding-right: 416px; padding-right: 416px; }
@@ -52,10 +71,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .box.on { border-color: var(--edge-lit); background: color-mix(in oklab, var(--cyan) 6%, transparent); }
 .box.composite.on { background: color-mix(in oklab, var(--cyan) 12%, transparent); }
 /* A cell: the title is centred in the whole cell; the swatch and icons overlay its top corners. */
-.nb { position: absolute; width: var(--bw); height: 64px; background: var(--raised); border: 1px solid var(--line2);
+/* --bc is the cell's border colour, which the change badge takes too */
+.nb { --bc: var(--line2); position: absolute; width: var(--bw); height: 64px; background: var(--raised); border: 1px solid var(--bc);
   border-radius: var(--r-5); padding: 0 var(--sp-10); display: flex; align-items: center; justify-content: center; overflow: hidden;
   text-align: center; box-shadow: var(--shadow-cell); transition: opacity .12s, border-color .12s; }
-.nb:hover { border-color: var(--cyan); }
+.nb:hover { --bc: var(--cyan); }
 .nb .nbtop { position: absolute; top: 6px; left: 7px; right: 7px; display: flex; align-items: center; justify-content: space-between; height: 13px; pointer-events: none; }
 .nb .icons { display: inline-flex; gap: var(--sp-4); align-items: center; color: var(--dim); }
 .nb .ic { display: block; }
@@ -65,13 +85,18 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .nb.ph { background: color-mix(in oklab, var(--ink) 5%, var(--surface)); box-shadow: none; }
 .nb.ph .nm { font: var(--type-body-medium); line-height: 14px; color: var(--dim); }
 .nb.ph .icons { color: var(--faint); }
-.nb.todo { border-color: color-mix(in oklab, var(--orange) 50%, var(--line2)); }
+.nb.todo { --bc: color-mix(in oklab, var(--orange) 50%, var(--line2)); }
 .dag.tight .nb .nm { font-size: 11px; }
 .dag.focus .nb { opacity: .28; }
-.dag.focus .nb.near, .dag.focus .nb.match { opacity: 1; border-color: color-mix(in oklab, var(--cyan) 55%, var(--line2)); }
-.nb.sel, .dag.focus .nb.sel { opacity: 1; border-color: var(--cyan); box-shadow: 0 0 0 2px var(--cyan), 0 0 0 4px color-mix(in oklab, var(--cyan) 25%, transparent); z-index: 2; }
+.dag.focus .nb.near { opacity: 1; --bc: color-mix(in oklab, var(--cyan) 55%, var(--line2)); }
+.dag.focus .nb.match { opacity: 1; --bc: var(--cyan); }
+.nb.sel, .dag.focus .nb.sel { opacity: 1; --bc: var(--cyan); box-shadow: 0 0 0 2px var(--cyan), 0 0 0 4px color-mix(in oklab, var(--cyan) 25%, transparent); z-index: 2; }
 .nb.flash { animation: flash .9s ease-out; }
 @keyframes flash { 0% { box-shadow: 0 0 0 6px color-mix(in oklab, var(--orange) 60%, transparent); } 100% { box-shadow: 0 0 0 2px var(--cyan); } }
+/* the change badge: set into the cell's bottom right corner, only its inner corner rounded */
+.nb .chg { position: absolute; right: 0; bottom: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+  background: var(--bc); color: #FFFFFF; border-radius: var(--r-4) 0 0 0; transition: background-color .12s; }
+.nb .chg .ic { width: 11px; height: 11px; }
 .lvl { position: absolute; left: 0; transform: translateY(-50%); font: var(--type-mono-label); color: var(--faint); }
 
 /* ---- side panel ---- */
@@ -81,16 +106,16 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .app.with-panel .panel.steady { animation: none; }
 @keyframes panel-in { from { transform: translateX(100%); opacity: .6; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .app.with-panel .panel { animation: none; } }
-.ph { padding: var(--sp-15) var(--sp-20) var(--sp-10); border-bottom: 1px solid var(--line); }
-.ph .row1 { display: flex; align-items: center; gap: var(--sp-10); }
-.ph h2 { margin: 0; font: var(--type-title); flex: 1; }
-.ph .close { color: var(--dim); font-size: 18px; line-height: 1; padding: var(--sp-2) var(--sp-5); border-radius: var(--r-4); }
-.ph .close:hover { color: var(--ink); background: var(--raised); }
-.ph .sub { margin: var(--sp-5) 0 0; font: var(--type-small); color: var(--dim); display: flex; gap: var(--sp-10); align-items: center; flex-wrap: wrap; }
-.ph .sub .mono { color: var(--cyan); }
-.ph .sub .dom { display: inline-flex; align-items: center; gap: var(--sp-5); }
+.phead { padding: var(--sp-15) var(--sp-20) var(--sp-10); border-bottom: 1px solid var(--line); }
+.phead .row1 { display: flex; align-items: center; gap: var(--sp-10); }
+.phead h2 { margin: 0; padding: 0; border: 0; font: var(--type-title); flex: 1; }
+.phead .close { color: var(--dim); font-size: 18px; line-height: 1; padding: var(--sp-2) var(--sp-5); border-radius: var(--r-4); }
+.phead .close:hover { color: var(--ink); background: var(--raised); }
+.phead .sub { margin: var(--sp-5) 0 0; font: var(--type-small); color: var(--dim); display: flex; gap: var(--sp-10); align-items: center; flex-wrap: wrap; }
+.phead .sub .mono { color: var(--cyan); }
+.phead .sub .dom { display: inline-flex; align-items: center; gap: var(--sp-5); }
 .pg .lab.withicon { display: flex; align-items: center; gap: var(--sp-5); }
-.lab.withicon .ic { color: var(--dim); }
+.lab.withicon .ic { color: inherit; }
 .pbody { flex: 1; overflow-y: auto; padding: 0 var(--sp-20) var(--sp-15); }
 .pg { padding: var(--sp-15) 0; border-bottom: 1px solid var(--line); }
 .pg:last-child { border-bottom: 0; }
@@ -102,9 +127,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .lk .k { font: var(--type-mono-label); letter-spacing: .04em; text-transform: uppercase; color: var(--dim); }
 .lk .where { font: var(--type-mono-label); color: var(--faint); }
 .empty { color: var(--faint); font: var(--type-body); }
-.note { font: var(--type-body); color: var(--ink); background: var(--raised);
+.panel .note { font: var(--type-body); color: var(--ink); background: var(--raised);
   border-left: 2px solid var(--line2); border-radius: 0 var(--r-4) var(--r-4) 0; padding: var(--sp-5) var(--sp-10); margin: var(--sp-4) 0; }
-.note .k { font: var(--type-mono-label); letter-spacing: .04em; text-transform: uppercase; color: var(--dim); margin-right: var(--sp-5); }
+.panel .note .k { font: var(--type-mono-label); letter-spacing: .04em; text-transform: uppercase; color: var(--dim); margin-right: var(--sp-5); }
 .chips { display: flex; flex-wrap: wrap; gap: var(--sp-5); }
 .chip { display: inline-flex; align-items: center; gap: var(--sp-5); font: var(--type-small); padding: var(--sp-3) var(--sp-5); border-radius: var(--r-4); border: 1px solid var(--line2); color: var(--dim); }
 
@@ -112,7 +137,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .scrim { position: fixed; inset: 0; background: var(--black-35); z-index: 10; display: flex; align-items: center; justify-content: center; padding: var(--sp-25); }
 .help { width: 640px; max-width: 100%; max-height: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-10);
   box-shadow: var(--shadow-dialog); display: flex; flex-direction: column; overflow: hidden; }
-.help .ph .sub { display: block; line-height: 1.5; }
+.help .phead .sub { display: block; line-height: 1.5; }
 .help .pbody { padding: 0 var(--sp-20) var(--sp-20); }
 .help .pg p { color: var(--ink); }
 .lrow { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: var(--sp-15); align-items: center; padding: var(--sp-5) 0; }
@@ -127,3 +152,24 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .lline.arrow { position: relative; }
 .lline.arrow::after { content: ""; position: absolute; right: -1px; top: -4px; border: 4px solid transparent; border-left: 6px solid var(--edge-lit); }
 .st.static { position: static; transform: none; pointer-events: auto; }
+
+/* ---- side panel change entries: the review pages' cards (spec-review.v2.css), set to the panel's sizes ---- */
+.pg.changes .item { margin: 0 0 var(--sp-10); padding: var(--sp-15); }
+.pg.changes .item .head { margin-bottom: var(--sp-5); }
+.pg.changes .item .id { color: var(--cyan); text-decoration: none; }
+.pg.changes .item .id:hover { text-decoration: underline; }
+.pg.changes .item p { margin: var(--sp-5) 0 0; font: var(--type-body); color: var(--ink); }
+.pg.changes .item p.reason { margin-top: var(--sp-10); font: var(--type-small); color: var(--dim); }
+.pg.changes .item li .why { font: var(--type-small); color: var(--dim); }
+.pg.changes .item ul { list-style: none; padding: 0 0 0 var(--sp-15); margin: 0; }
+.pg.changes .item li { font: var(--type-body); margin: var(--sp-5) 0 0; padding-left: 24px; text-indent: -24px; }
+.pg.changes .item li .rid { display: inline-block; width: 20px; text-indent: 0; margin-right: var(--sp-4); }
+.pg.changes .item .gapnotes { margin-bottom: 0; }
+.moved .badge { background: var(--moved); }
+
+/* ---- Review tab: the review pages' layout (spec-review.v2.css) in the map page's second row ---- */
+.review { min-height: 0; overflow-y: auto; font: var(--type-reading); }
+.review h3.section .dm { margin-right: var(--sp-5); vertical-align: 1px; }
+.review .item .title .gone { color: var(--faint); }
+.review section.file .item ul { list-style: none; padding-left: var(--sp-10); }
+.review .item.target { outline: 2px solid var(--cyan); }

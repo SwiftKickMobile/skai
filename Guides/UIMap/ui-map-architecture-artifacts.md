@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-architecture-artifacts
 Managed-Source: Guides/UIMap/ui-map-architecture-artifacts.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-11-11
 
 # UI Map Architecture Artifact Formats
 
@@ -12,28 +12,37 @@ Everything you write for a person follows [`writing-style.md`](../Core/writing-s
 
 The typed formats the architecture skill produces and consumes. This is the consumer-facing layer: a downstream reader resolves any field or value here without reading the authoring method ([`ui-map-architecture.md`](ui-map-architecture.md)). For the YAML map format itself, see [`ui-map-guide.md`](ui-map-guide.md).
 
-A change package lives at `skai/changes/<change-id>/ui-map/` in the repo that holds the official map. It holds the proposed map (`proposed-ui-map.yaml`), its render (`proposed-ui-map.html`), and the architecture artifact (`ui-map-architecture.md`) — whose `## Map Changes` section lists **map change items**. The architecture skill also consumes **change requests** raised by downstream implementation. The type folder owns all map artifacts, requests, evidence and working documents (`working-docs/`);
+A change package lives at `skai/changes/<change-id>/ui-map/` in the repo that holds the production map. It holds the proposed map (`proposed-ui-map.yaml`), its render (`proposed-ui-map.html`), and the architecture artifact (`ui-map-architecture.md`) — whose `## Map Changes` section lists **map change items**. A **change request** against it is the `ui-map/` sub-package of a request folder, `skai/changes/<change-id>/changes/CR-<id>/ui-map/`, with the same files; its base and promotion are [`change-requests.md`](../Core/change-requests.md)'s. The type folder owns all map artifacts, evidence and working documents (`working-docs/`);
 related product specs work stays in its independent sibling folder. After successful map promotion,
-this complete package lives at `skai/promoted/<change-id>/ui-map/`, including any unchecked Plan
+this complete package moves to its promoted destination (`skai/promoted/<change-id>/ui-map/` for a change's own), including any unchecked Plan
 implementation work. Historical citations and downstream plan execution use that promoted path.
 End the architecture artifact with append-only `## Decision Log`: `- <ID> decided|gap|reopened — <one line>` per Discussion state change. An open **Gap** item marks a placeholder in the proposed map, or that none exists ([`known-gaps.md`](../Core/known-gaps.md)).
 
-Implementation-side artifact formats (code change items, build evidence) live in `ui-map-implementation-artifacts.md`; the architecture skill does not need them. Implementation reads both references — it consumes map change items and raises change requests defined here, and authors its own formats defined there.
+Implementation-side artifact formats (code change items, build evidence) live in `ui-map-implementation-artifacts.md`; the architecture skill does not need them. Implementation reads both references — it consumes map change items defined here and authors its own formats defined there.
 
 ## Map change items
 
-`## Map Changes` in the architecture artifact lists exactly the differences between the frozen official map and the proposed map, one typed entry per difference. Each entry:
+`## Map Changes` in the architecture artifact lists exactly the differences between the base (the frozen production map, or a request's base package's proposed map) and the proposed map, every difference, one entry per scene or domain, grouped under a `### <domain>` heading per domain in the map's order (`common:` scenes under `### common`, last), entries in the map's scene order:
 
 ```
+### <domain>
+
 - M<n> <Type>: <identity>
-  - **Description** what changes. Single operation: 1-2 lines.
-    Multiple operations of the same kind under one identity: a sub-list,
-    one bullet per operation. Avoid prose that buries per-operation detail.
+  - **Description** what changes, 1-2 lines.
   - **Justification** <why the change is needed>; <Source>: <reference>
-  - **Touches** scenes / routes / map areas affected
 ```
 
-- **ID** — `M1`, `M2`, ... assigned sequentially in document order and never renumbered or reused, so cross-references stay stable across revisions. The ID identifies; it does not order.
+- **Identity** — the one scene the entry changes, by ID (in backticks when it holds a space), or the domain for a domain's own change; a change to several scenes is several entries. A route entry's identity is the scene it starts from, and its text names the target. A moved scene sits under its new domain, and its text names the old one; a renamed scene's identity is its new ID, and its text names the old one. A removed scene sits under its old domain, with its former ID, after that domain's other entries.
+- **One entry per scene.** Adding or removing a scene is its entry's whole change. A scene changed in several ways (moved and rerouted, or a route and an attribute) takes one entry whose numbered sub-changes replace Description and Justification, each a change and its reason, as Design Changes does; its type is `move scene` when it moved, else `modify scene`:
+
+  ```
+  - M04 modify scene: note_editor
+    - **01** The Tag Picker opens as a sheet instead of a pushed screen — tags are a side task; Resolved decision: D02
+    - **02** Its note says autosave runs on every edit — the design shows no Save button; Upstream requirement: [EDIT-03]
+  ```
+- **Gaps** — only inherited gaps get footnotes, one each, on the first entry or sub-change whose change rests on its placeholder ([`spec-file-gaps.md`](../Core/spec-file-gaps.md)); this package's own gaps are Discussion items.
+
+- **ID** — `M1`, `M2`, ...: the first list's IDs run in document order; a later entry takes the next unused ID wherever map order places it. Never renumbered or reused, so cross-references stay stable across revisions. The ID identifies; it does not order.
 - **Type** — `<operation> <element>`.
   - operations: `add` | `remove` | `move` | `modify`
   - map elements: `domain` | `scene` | `route` | `scene-attribute`
@@ -42,22 +51,7 @@ Implementation-side artifact formats (code change items, build evidence) live in
   ❌ `- **Description** add scene share_sheet under notes` / `- **Justification** Resolved decision: D01`
   ✅ `- **Description** A note gains a Share sheet, opened from its toolbar and dismissed back to the note.` / `- **Justification** Sharing is a side task, not a place in the note's flow, so it opens as a sheet; Resolved decision: D01`
 
-Entries are written top-down in structural order — domain-level changes first, then scenes, then routes — mirroring the map and the rendered diagram. Items carry no checkbox: the change is realized by the proposed map and render that accompany the section.
-
-## Change requests
-
-A change request is the artifact downstream implementation raises when code reality shows the approved map is wrong, incomplete, infeasible, or underspecified at the map-architecture level; architecture consumes it on reopen. Missing implementation guidance or an undefined map-to-code convention is not map underspecification and blocks in implementation Discussion instead. One markdown file per request:
-
-`skai/changes/<change-id>/ui-map/change-requests/ui-map-<nnn>.md`
-
-It carries two fields as inline `Label: value` lines — a `Change Request Status` (exactly one of `Proposed | Incorporated | Rejected | Superseded`) and a `Reviewer Response` — above the free-form body that states the concern and the requested change:
-
-```
-Change Request Status: Proposed
-Reviewer Response: <the supervisor's ruling, written by architecture on reopen>
-```
-
-Lifecycle: the request opens `Proposed`; only the supervisor's instruction moves the status, applied by architecture on reopen ([`ui-map-architecture.md`](ui-map-architecture.md) § Initiation): `Incorporated` once the adjustment is applied in the proposed map in Map Changes, `Rejected` or `Superseded` with the supervisor's reason in `Reviewer Response`.
+Items carry no checkbox: the change is realized by the proposed map and render that accompany the section. After a request folds into its base, the base's recomputed list cites the request on each difference it brought: `; Change request: CR-<id> M<n>`.
 
 ## Project Addendum
 

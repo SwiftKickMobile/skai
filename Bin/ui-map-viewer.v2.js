@@ -6,6 +6,8 @@
 // Each scene's route boxes sit in the row below it; reused scenes appear as placeholders.
 // Selecting a scene (or domains) filters the map to the connected neighbourhood and collapses
 // empty rows; "All" keeps the whole map and dims instead.
+// A change package's page (M.review) adds a Review tab, change badges on the scenes its Map Changes
+// name, a Changes toggle and the scene's change entries in the side panel.
 (function () {
   "use strict";
   const M = window.UI_MAP;
@@ -33,6 +35,9 @@
     implements: '<path d="M8 2.5 14 5.5 8 8.5 2 5.5z"/><path d="M2 8.5l6 3 6-3M2 11.5l6 3 6-3"/>',
     modal: '<rect x="2" y="4.5" width="12" height="9" rx="1.5"/><path d="M5 2.5h6"/>',
     reuse: '<path d="M4 12 12 4M6.5 4H12v5.5"/>',
+    change: '<path d="M8 3 13.5 12.5h-11z"/>',
+    chevron: '<path d="M4.5 6.5 8 10l3.5-3.5"/>',
+    check: '<path d="M3.5 8.5 6.5 11.5 12.5 4.5"/>',
   };
   const icon = (name, title) => svgEl(`<svg class="ic" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><title>${title}</title>${ICONS[name]}</svg>`);
   const calloutIcons = sc => [
@@ -41,17 +46,15 @@
     sc.modalStyle ? icon("modal", `modal style: ${sc.modalStyle}`) : null,
   ].filter(Boolean);
 
-  // hops: 1 | 2 | "all" — how far from the selection (or the chosen domains) the filter reaches.
-  const state = { selected: null, panel: true, domains: new Set(), query: "", hops: 1, help: false };
+  const R = M.review;   // null on the production map
+  const changed = new Set(R ? R.changed : []);
+  const htmlFrag = h => { const t = document.createElement("template"); t.innerHTML = h; return t.content; };
 
-  // ---- theme ----
-  try { const t = localStorage.getItem("um-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  function toggleTheme() {
-    const cur = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    const next = cur === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
-    try { localStorage.setItem("um-theme", next); } catch (e) {}
-  }
+  // hops: 1 | 2 | "all" — how far from the selection (or the chosen domains) the filter reaches.
+  // tab: "map" | "review"; changes: the Changes toggle; review: the Review tab's pressed filters.
+  // The page follows the system theme.
+  const state = { selected: null, panel: true, domains: new Set(), query: "", hops: 1, hopsOpen: false, help: false,
+    tab: "map", changes: false, review: new Set() };
 
   // ---- facts ----
   const depth = sid => S[sid].parent ? depth(S[sid].parent) + 1 : 0;
@@ -221,15 +224,23 @@
   // Set for the one render that follows a panel dismissal: the graph keeps the place it already
   // has on screen instead of being positioned again for the wider viewport the panel gives back.
   let holdPlace = false;
+  // The Review tab is built once and kept, so its open cards, filters and scroll position survive
+  // switching tabs; the map is redrawn on every state change.
+  const reviewPane = R ? el("div", { class: "review" }, el("div", { class: "wrap" }, htmlFrag(R.html))) : null;
+  let reviewScroll = 0;
   function render() {
     const app = $("#app");
+    if (reviewPane && reviewPane.isConnected) reviewScroll = reviewPane.scrollTop;
     const prevWrap = app.querySelector(".canvasw");
     const panelWasOpen = app.classList.contains("with-panel");   // an open panel changes content in place; only a closed one slides in
     const prevGraph = prevWrap ? leaving(prevWrap) : null;   // the outgoing graph, for the animation
     const keepScroll = prevWrap ? [prevWrap.scrollTop, prevWrap.scrollLeft] : [0, 0];   // the scroll position never changes on its own
     app.innerHTML = "";
-    app.className = "app" + (state.selected && state.panel ? " with-panel" : "");
+    const onMap = state.tab === "map";
+    app.className = "app" + (onMap && state.selected && state.panel ? " with-panel" : "");
     app.append(renderTop());
+    if (state.help) app.append(renderHelp());
+    if (!onMap) { app.append(reviewPane); reviewPane.scrollTop = reviewScroll; return; }
     const main = el("div", { class: "main" });
     // A click on empty canvas clears the selection. The edges layer and the route labels are
     // pointer-events:none, so only the canvas or the graph itself can be the target of one.
@@ -238,8 +249,7 @@
     const panel = renderPanel();
     if (panelWasOpen) panel.classList.add("steady");
     main.append(wrap, panel);
-    app.append(main);
-    if (state.help) app.append(renderHelp());
+    app.insertBefore(main, app.children[1] || null);
     const draw = prev => {
       const hold = holdPlace; holdPlace = false;
       const [keepTop, keepLeft] = prev ? keepScroll : [wrap.scrollTop, wrap.scrollLeft];
@@ -299,8 +309,9 @@
       const L = lit();
       const q = state.query.trim().toLowerCase();
       const matches = q ? new Set(M.order.filter(s => S[s].label.toLowerCase().includes(q) || s.includes(q))) : null;
+      const lightChanged = state.changes ? changed : null;   // the Changes toggle shows changed scenes as search shows its matches
       const filtered = !!visibleScenes();
-      const focus = !filtered && !!(L || state.domains.size || matches);   // a filtered view shows only connected elements, so nothing is dimmed
+      const focus = !filtered && !!(L || state.domains.size || matches || lightChanged);   // a filtered view shows only connected elements, so nothing is dimmed
       const dag = el("div", { class: "dag" + (focus ? " focus" : ""), style: `width:${w}px;height:${h}px;--bw:${IW}px` });
       const paths = [], labels = [];
       for (const b of boxes) {
@@ -308,7 +319,7 @@
         const edge = box.source ? `${box.source}.${box.kind}` : null;
         const litBox = L ? box.items.some(it => L.keys.has(itemKey(it, box)) && (L.edges.has(edge) || it.id === state.selected)) : false;
         const inDomain = state.domains.size && box.items.some(it => state.domains.has(S[it.id].domain));
-        const matched = matches && box.items.some(it => matches.has(it.id));
+        const matched = box.items.some(it => (matches && matches.has(it.id)) || (lightChanged && lightChanged.has(it.id)));
         // A route box is "on" when its connector is: it belongs to the selected scene, or holds it.
         const on = !!(L && edge && L.edges.has(edge) && (box.source === state.selected || box.items.some(it => it.id === state.selected)));
         dag.append(el("div", { class: `box ${box.bare ? "bare" : box.kind || "root"}` + (litBox || inDomain || matched ? " near" : "") + (on ? " on" : ""), "data-key": box.bare ? `bare:${box.items[0].id}` : edge || "root", style: `left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px` }));
@@ -322,13 +333,14 @@
           let cls = "nb" + (it.canonical ? "" : " ph") + (sc.todo ? " todo" : "");
           if (L) { if (it.canonical && it.id === state.selected) cls += " sel"; else if (L.keys.has(k)) cls += " near"; }
           if (state.domains.has(sc.domain)) cls += " near";
-          if (matches && matches.has(it.id)) cls += " match";
+          if ((matches && matches.has(it.id)) || (lightChanged && lightChanged.has(it.id))) cls += " match";
           dag.append(el("button", { class: cls, "data-key": k, style: `left:${p.x}px;top:${p.y}px`,
             title: it.canonical ? sc.id : `${sc.id} · reused here; canonical under ${sc.parent}`,
             onclick: () => select(it.canonical && it.id === state.selected ? null : it.id, !it.canonical) },   // clicking the selected cell again clears
             el("div", { class: "nbtop" }, el("i", { class: "dm", style: `--c:${domainColor[sc.domain]}`, title: domainLabel[sc.domain] }),
               el("span", { class: "icons" }, ...(it.canonical ? calloutIcons(sc) : [icon("reuse", "reused scene; click to go to its home")]))),
-            el("div", { class: "nmw" }, el("div", { class: "nm" }, sc.label))));
+            el("div", { class: "nmw" }, el("div", { class: "nm" }, sc.label)),
+            changed.has(it.id) ? changeBadge() : null));
         }
       }
       dag.prepend(svgEl(`<svg class="edges" width="${w}" height="${h}" aria-hidden="true">${paths.join("")}</svg>`));
@@ -346,49 +358,146 @@
     new ResizeObserver(() => { if (wrap.clientWidth !== lastW) { lastW = wrap.clientWidth; draw(null); } }).observe(wrap);   // a resize reflows without animating
   }
 
+  // The change badge: a square in the cell's border colour, set into its bottom right corner.
+  const changeBadge = () => el("span", { class: "chg", title: "changed in this package" }, icon("change", "changed"));
+
+  // Top bar: the title, the Map and Review tabs on a change package's page, then the tab's tools on the right.
+  // Opening or closing the hops menu redraws only the top bar: the map has not changed, so it must
+  // not redraw (a redraw replays its lines' fade-in).
+  function hopsMenu(open) {
+    if (state.hopsOpen === open) return;
+    state.hopsOpen = open;
+    $("#app > .top").replaceWith(renderTop());
+  }
   function renderTop() {
-    const filtering = state.selected || state.domains.size;
+    const tab = (id, text) => el("button", { class: "tab", role: "tab", "aria-selected": String(state.tab === id), onclick: () => go(id) }, text);
+    const tools = state.tab === "map" ? mapTools() : reviewTools();
     return el("div", { class: "top" },
       el("h1", { class: "title" }, "UI Map ", el("span", { class: "pkg" }, ...M.package.split(" | ").flatMap((id, i) => i ? [el("span", { class: "sep" }, "|"), id] : [id]))),
-      el("div", { class: "seg legend", role: "group", "aria-label": "Domains" }, ...M.domains.map(d => el("button", { type: "button", "data-f": d.id, "aria-pressed": String(state.domains.has(d.id)) },
-        el("i", { class: "dm", style: `--c:${d.color}` }), d.label))),
-      filtering ? el("div", { class: "seg single hops", role: "group", "aria-label": "Hops" }, ...[[1, "1 hop"], [2, "2 hops"], ["all", "All"]].map(([v, t]) =>
-        el("button", { type: "button", "data-f": String(v), "aria-pressed": String(state.hops === v) }, t))) : null,
-      el("div", { class: "status" },
-        el("input", { type: "search", placeholder: "Find a scene", value: state.query,
-          oninput: e => { state.query = e.target.value; render(); const i = $(".status input"); i.focus(); i.setSelectionRange(i.value.length, i.value.length); },
-          onkeydown: e => { if (e.key === "Enter") { const q = state.query.trim().toLowerCase(); const hit = M.order.find(s => S[s].label.toLowerCase().includes(q) || s.includes(q)); if (hit) { state.query = ""; select(hit, true); } } } }),
-        el("button", { class: "clear", onclick: () => { state.selected = null; state.domains.clear(); state.query = ""; render(); } }, "Clear"),
-        el("button", { class: "theme", onclick: toggleTheme }, "Theme"),
+      R ? el("div", { class: "tabs", role: "tablist" }, tab("map", "Map"), tab("review", "Review")) : null,
+      el("div", { class: "tools" }, ...tools,
         el("button", { class: "info", "aria-label": "How to read this map", title: "How to read this map", onclick: () => { state.help = true; render(); } }, "?")));
   }
+  // The hops drop-down appears only while the map is filtered; it sits before the domain filters, so they never move.
+  function mapTools() {
+    const filtering = state.selected || state.domains.size;
+    const count = d => M.order.filter(s => S[s].domain === d).length;
+    const HOPS = [[1, "1 hop"], [2, "2 hops"], ["all", "All"]];
+    return [
+      filtering ? el("div", { class: "hops" },
+        el("button", { class: "hopsbtn", "aria-haspopup": "listbox", "aria-expanded": String(state.hopsOpen), "aria-label": "Hops",
+          onclick: () => hopsMenu(!state.hopsOpen) }, HOPS.find(([v]) => v === state.hops)[1], icon("chevron", "")),
+        state.hopsOpen ? el("div", { class: "menu", role: "listbox", "aria-label": "Hops" }, ...HOPS.map(([v, t]) =>
+          el("button", { class: "opt", role: "option", "aria-selected": String(state.hops === v), onclick: () => { state.hops = v; state.hopsOpen = false; render(); } },
+            state.hops === v ? icon("check", "") : el("i", { class: "nochk" }), t))) : null) : null,
+      el("div", { class: "seg legend", role: "group", "aria-label": "Domains" }, ...M.domains.map(d => el("button", { type: "button", "data-f": d.id, "aria-pressed": String(state.domains.has(d.id)) },
+        el("span", { class: "badge", style: `background:${d.color}` }), el("b", {}, count(d.id)), d.label))),
+      R ? el("div", { class: "seg changes", role: "group", "aria-label": "Changes" },
+        el("button", { type: "button", "data-f": "changes", "aria-pressed": String(state.changes) }, el("b", {}, changed.size), "Changes")) : null,
+      el("div", { class: "find" },
+        el("input", { type: "search", placeholder: "Find a scene", "aria-label": "Find a scene", value: state.query,
+          oninput: e => { state.query = e.target.value; render(); const i = $(".find input"); i.focus(); i.setSelectionRange(i.value.length, i.value.length); },
+          onkeydown: e => { if (e.key === "Enter") { const q = state.query.trim().toLowerCase(); const hit = M.order.find(s => S[s].label.toLowerCase().includes(q) || s.includes(q)); if (hit) { state.query = ""; select(hit, true); } } } }),
+        state.query ? el("button", { class: "x", "aria-label": "Clear the search", title: "Clear the search", onclick: () => { state.query = ""; render(); $(".find input").focus(); } }, "×") : null),
+    ];
+  }
+  // The Review tab's filters, as on the review pages: change types, then the discussion states it has.
+  function reviewTools() {
+    const c = R.counts, pressed = f => String(state.review.has(f));
+    const TYPES = [["added", "added", "added"], ["modified", "modified", "modified"], ["removed", "retired", "removed"], ["moved", "moved", "moved"]];
+    const states = ["open", "gaps", "resolved"].filter(k => c[k]);
+    return [
+      el("div", { class: "seg change", role: "group", "aria-label": "Change" }, ...TYPES.map(([f, b, t]) =>
+        el("button", { type: "button", "data-f": f, "aria-pressed": pressed(f) }, el("span", { class: `badge ${b}` }), el("b", {}, c[f]), t))),
+      states.length ? el("div", { class: "seg state", role: "group", "aria-label": "State" }, ...states.map(k =>
+        el("button", { type: "button", "data-f": k, "aria-pressed": pressed(k) }, el("b", {}, c[k]), k))) : null,
+    ];
+  }
+
+  // ---- Review tab ----
+  // Filters: with none pressed everything shows; with any pressed, the union of the pressed kinds (change
+  // cards by type, Discussion items by state, gap items with the cards carrying a gap footnote); headings
+  // and sections left empty are hidden — the review pages' rule (spec-review.v2.js).
+  function applyReview() {
+    if (!reviewPane) return;
+    const sel = state.review, any = sel.size > 0;
+    const hide = (n, h) => n.classList.toggle("hid", any && h);
+    const typeOf = n => ["added", "modified", "moved"].find(t => n.classList.contains(t)) || "removed";
+    for (const sec of reviewPane.querySelectorAll("section.file")) {
+      let head = null, shown = 0, total = 0;
+      const close = () => { if (head) hide(head, !shown); total += shown; };
+      for (const k of sec.children) {
+        if (k.tagName === "H3") { close(); head = k; shown = 0; }
+        else if (k.classList.contains("item")) { const show = sel.has(typeOf(k)) || (sel.has("gaps") && k.classList.contains("has-gap")); hide(k, !show); if (show) shown++; }
+      }
+      close();
+      hide(sec, !total);
+    }
+    for (const d of reviewPane.querySelectorAll("section.discussion details.discussion")) {
+      const g = d.classList.contains("gap"), r = d.classList.contains("resolved");
+      hide(d, !((sel.has("open") && !r && !g) || (sel.has("gaps") && g) || (sel.has("resolved") && r)));
+    }
+    for (const h of reviewPane.querySelectorAll("section.discussion h3.section")) {
+      let n = h.nextElementSibling, vis = 0;
+      while (n && n.tagName === "DETAILS") { if (!n.classList.contains("hid")) vis++; n = n.nextElementSibling; }
+      hide(h, !vis);
+    }
+    const disc = reviewPane.querySelector("section.discussion");
+    if (disc) hide(disc, !disc.querySelector("details.discussion:not(.hid)"));
+  }
+
+  // In-page links: "map" and "review" switch tabs; "scene=<id>" selects that scene on the map (a
+  // Review tab entry's scene); any other target is an element of the Review tab (an entry's ID in
+  // the side panel, a Discussion item), which opens and scrolls into view, outlined, filters cleared
+  // when they hide it.
+  function go(target, record = true) {
+    if (record) history.replaceState(null, "", "#" + target);
+    if (target === "map" || target === "review") { state.tab = R || target === "map" ? target : "map"; state.hopsOpen = false; render(); return; }
+    if (target.startsWith("scene=")) { const sid = target.slice(6); if (S[sid]) { state.tab = "map"; select(sid, true); } return; }
+    const t = reviewPane && reviewPane.querySelector(`[id="${CSS.escape(target)}"]`);
+    if (!t) return;
+    if (t.closest(".hid")) { state.review.clear(); applyReview(); }
+    state.tab = "review"; state.hopsOpen = false; render();
+    for (let d = t.closest("details"); d; d = d.parentElement && d.parentElement.closest("details")) d.open = true;
+    for (const n of reviewPane.querySelectorAll(".target")) n.classList.remove("target");
+    (t.closest(".item") || t).classList.add("target");
+    t.scrollIntoView({ block: "start" });
+  }
+  document.addEventListener("click", e => {
+    const a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (a && $("#app").contains(a)) { e.preventDefault(); go(decodeURIComponent(a.getAttribute("href").slice(1))); }
+    if (state.hopsOpen && !(e.target.closest && e.target.closest(".hops"))) hopsMenu(false);
+  });
+  addEventListener("hashchange", () => { if (location.hash) go(decodeURIComponent(location.hash.slice(1)), false); });
 
   function renderPanel() {
     const panel = el("div", { class: "panel" });
     const s = state.selected && S[state.selected]; if (!s) return panel;
     const apps = appearances(s.id);
-    panel.append(el("div", { class: "ph" },
+    panel.append(el("div", { class: "phead" },
       el("div", { class: "row1" }, el("h2", {}, s.label), el("button", { class: "close", onclick: () => { holdPlace = true; state.panel = false; render(); }, "aria-label": "Close" }, "×")),
       el("p", { class: "sub" }, el("span", { class: "dom" }, el("i", { class: "dm", style: `--c:${domainColor[s.domain]}` }), `${domainLabel[s.domain]} domain`), s.todo ? ["·", "TODO"] : null)));
     const body = el("div", { class: "pbody" });
     const link = (id, kind, where) => el("button", { class: "lk", onclick: () => select(id, true) },
       el("span", { class: "k" }, kind ? KIND[kind] : ""), el("i", { class: "dm", style: `--c:${domainColor[S[id].domain]}` }), el("span", {}, S[id].label), el("span", { class: "where" }, where || ""));
+    // Callout sections carry the same icons as the scene cell, in their heading's colour.
+    const labIcon = (name, text) => el("span", { class: "lab withicon" }, icon(name, text), text);
+    // Changes first: the scene's Map Changes entries as cards, each ID linking to the entry in the Review tab.
+    const mine = R && R.changes[s.id];
+    if (mine) body.append(el("div", { class: "pg changes" }, labIcon("change", "Changes"), ...mine.map(htmlFrag)));
     // Reached from: one row per route into this scene; "home" marks the route under which its canonical cell is drawn.
-    body.append(el("div", { class: "pg" }, el("span", { class: "lab" }, `Reached from · ${apps.length}`),
+    body.append(el("div", { class: "pg" }, el("span", { class: "lab" }, "Reached from"),
       el("div", { class: "links" }, ...(apps.length ? apps.map(a => link(a.source, a.kind, apps.length > 1 ? (a.canonical ? "home" : "reused") : null)) : [el("span", { class: "empty" }, "root")]))));
     const opens = s.routes.flatMap(r => [
       ...r.targets.map(t => link(t, r.kind, isCanonical(t, s.id, r.kind) ? null : "reused")),
       ...noteAt(s, r.kind).map(n => el("div", { class: "note" }, el("span", { class: "k" }, KIND[r.kind]), n.text))]);
-    body.append(el("div", { class: "pg" }, el("span", { class: "lab" }, `Opens · ${s.routes.reduce((a, r) => a + r.targets.length, 0)}`),
+    body.append(el("div", { class: "pg" }, el("span", { class: "lab" }, "Opens"),
       el("div", { class: "links" }, ...(opens.length ? opens : [el("span", { class: "empty" }, "nothing")]))));
-    // Callout sections carry the same icons as the scene cell.
-    const labIcon = (name, text) => el("span", { class: "lab withicon" }, icon(name, text), text);
     if (s.notes.length) body.append(el("div", { class: "pg" }, labIcon("note", s.notes.length === 1 ? "Note" : "Notes"),
       ...s.notes.map(n => el("div", { class: "note" }, n.at ? el("span", { class: "k" }, KIND[n.at]) : null, n.text))));
     if (s.implements.length) body.append(el("div", { class: "pg" }, labIcon("implements", "Implements"),
       el("div", { class: "chips" }, ...s.implements.map(i => el("span", { class: "chip" }, humanize(i))))));
     if (s.modalStyle) body.append(el("div", { class: "pg" }, labIcon("modal", "Modal style"), el("div", { class: "chips" }, el("span", { class: "chip" }, humanize(s.modalStyle)))));
-    body.append(el("div", { class: "pg" }, el("span", { class: "lab" }, "Specs"), el("span", { class: "empty" }, "No sidecar yet.")));
     panel.append(body);
     return panel;
   }
@@ -396,20 +505,21 @@
   // ---- help: a legend of the map's vocabulary and the viewer's controls ----
   function renderHelp() {
     const closeHelp = () => { state.help = false; render(); };
-    const cell = (label, cls, icons = [], color = "var(--cyan)") => el("span", { class: "nb sample " + cls },
-      el("div", { class: "nbtop" }, el("i", { class: "dm", style: `--c:${color}` }), el("span", { class: "icons" }, ...icons)),
-      el("div", { class: "nmw" }, el("div", { class: "nm" }, label)));
+    const cell = (label, cls, icons = [], badge = null) => el("span", { class: "nb sample " + cls },
+      el("div", { class: "nbtop" }, el("i", { class: "dm", style: "--c:var(--cyan)" }), el("span", { class: "icons" }, ...icons)),
+      el("div", { class: "nmw" }, el("div", { class: "nm" }, label)), badge);
     const row = (sample, text) => el("div", { class: "lrow" }, el("div", { class: "lsample" }, sample), el("p", {}, text));
     const route = kind => el("span", { class: "lroute" }, el("i", { class: "lline" }), el("span", { class: "st static" }, KIND[kind]), el("i", { class: "lline arrow" }));
     return el("div", { class: "scrim", onclick: e => { if (e.target === e.currentTarget) closeHelp(); } },
       el("div", { class: "help", role: "dialog", "aria-label": "How to read this map" },
-        el("div", { class: "ph" }, el("div", { class: "row1" }, el("h2", {}, "How to read this map"), el("button", { class: "close", onclick: closeHelp, "aria-label": "Close" }, "×")),
+        el("div", { class: "phead" }, el("div", { class: "row1" }, el("h2", {}, "How to read this map"), el("button", { class: "close", onclick: closeHelp, "aria-label": "Close" }, "×")),
           el("p", { class: "sub" }, "The UI Map defines every scene in the app and the routes between them. A scene is a view with its own identity; a route is a navigational relationship from one scene to another.")),
         el("div", { class: "pbody" },
           el("div", { class: "pg" }, el("span", { class: "lab" }, "Scenes"),
             row(cell("Scene"), "A scene, drawn in full once, under the scene that is its home. The colour square is its domain; the legend in the top bar lists the domains."),
             row(cell("Scene", "ph", [icon("reuse", "")]), "A reused scene: it is reached from here too, but drawn in full elsewhere. Click it to go to the scene."),
             row(cell("Scene", "todo"), "A TODO scene: part of the map, not yet built."),
+            R ? row(cell("Scene", "", [], changeBadge()), "The scene is changed in this change package: the scene itself or one of its outgoing connections. Select it to read its changes in the side panel.") : null,
             row(el("span", { class: "licons" }, icon("note", "")), "The scene has a note. Select it to read the note in the side panel."),
             row(el("span", { class: "licons" }, icon("implements", "")), "The scene implements several variants, for example a reusable Web scene that displays the Privacy Policy and the Terms of Service; the panel lists them."),
             row(el("span", { class: "licons" }, icon("modal", "")), "The scene opens as a modal and declares its modal style; the panel names it.")),
@@ -424,21 +534,36 @@
             row(route("composite"), "The parent embeds the child as a subview without any routing."),
             row(el("span", { class: "st static" }, "Nav", icon("note", "")), "A note is attached to this route; the parent's panel shows it.")),
           el("div", { class: "pg" }, el("span", { class: "lab" }, "Using the viewer"),
-            el("p", {}, "Click a scene to see only the scenes connected to it; the clicked scene stays where it is and the rest of the map collapses around it. 1 hop shows direct connections, 2 hops one step further, All keeps the whole map and dims what is unconnected. Click the scene again, click an empty part of the map, press Escape, or use Clear to restore the map. Closing the side panel leaves the scene selected."),
-            el("p", {}, "Click domains in the top bar to filter to those domains and their connections. Type in the search box to highlight scenes; Enter selects the first match.")))));
+            el("p", {}, "Click a scene to see only the scenes connected to it; the clicked scene stays where it is and the rest of the map collapses around it. The hops menu in the top bar sets how far: 1 hop shows direct connections, 2 hops one step further, All keeps the whole map and dims what is unconnected. Click the scene again, click an empty part of the map, or press Escape to restore the map. Closing the side panel leaves the scene selected."),
+            el("p", {}, "Click domains in the top bar to filter to those domains and their connections; click a domain again to drop it. Type in the search box to highlight scenes; Enter selects the first match, and the cross clears the search."),
+            R ? el("p", {}, "Turn on Changes to highlight the scenes this change package changes and dim the rest. The Review tab holds the package's discussion and its list of map changes: a change's scene links to it on the map, and a change's ID in the side panel links to it in the Review tab.") : null))));
   }
 
-  // The domain legend and the hops control are shared segmented controls: SkaiPages toggles the
-  // pressed buttons, the viewer reads them back into its state and redraws.
+  // The domain filters, the Changes toggle and the Review tab's filters are shared segmented controls:
+  // SkaiPages toggles the pressed buttons, the viewer reads them back into its state and redraws (the
+  // Review tab's filters only re-filter its kept content).
   document.addEventListener("seg-change", e => {
     const group = e.detail.group;
     if (!group) return;
     const pressed = Object.keys(SkaiPages.selection(group));
-    if (group.classList.contains("legend")) { state.selected = null; state.domains = new Set(pressed); }
-    else if (group.classList.contains("hops")) state.hops = pressed[0] === "all" ? "all" : Number(pressed[0]);
+    if (group.classList.contains("legend")) { state.selected = null; state.domains = new Set(pressed); state.hopsOpen = false; }
+    else if (group.classList.contains("changes")) state.changes = pressed.length > 0;
+    else if (group.classList.contains("change") || group.classList.contains("state")) { state.review = new Set(Object.keys(SkaiPages.selection($(".top .tools")))); applyReview(); return; }
     else return;
     render();
   });
-  document.addEventListener("keydown", e => { if (e.key === "Escape") { if (state.help) { state.help = false; render(); } else select(null); } });
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    if (state.hopsOpen) hopsMenu(false);
+    else if (state.help) { state.help = false; render(); }
+    else if (state.tab === "map") select(null);
+  });
+  // Review tab popovers: a cited item's or gap owner's template, kept with the tab's content.
+  if (R) {
+    const pop = el("div", { class: "popover" });
+    document.body.append(pop);
+    SkaiPages.popover(pop, (a, p) => { const t = reviewPane.querySelector(`template[id="${CSS.escape(a.dataset.tip)}"]`); if (!t) return false; p.append(t.content.cloneNode(true)); });
+  }
   render();
+  if (location.hash) go(decodeURIComponent(location.hash.slice(1)), false);
 })();

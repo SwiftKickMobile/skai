@@ -275,3 +275,30 @@ additions; the guides' extensive refinement history counts as compression, so th
 ## Adopts — 2026-10-21 (working docs placement)
 
 Working documents serving a package live in its `working-docs/` folder and archive with it at promotion (`ui-map-architecture-artifacts.md`, `ui-map-implementation-artifacts.md`, `ui-map-implementation.md` § Archive the package; caps held; skai#92, `Guides/Core/working-doc-conventions.md`); build and test output goes to the scratch root, never the package. The layout above is superseded on two lines: build and render output is no longer persisted under `evidence/` (the Evidence bracket names the scratch path), and a no-proposal conformance run lives at `skai/working-docs/<session>/ui-map-implementation.md`, with no branch segment.
+
+## Amendment — 2026-11-11: Change Requests As Packages Against A Base; Map Changes By Domain (skai#101)
+
+Rulings: skai#101 (body updated 2026-11-11: requests only against architecture; the page marks changes rather than comparing maps), the `ui-map-chg-mgmt` design package's decisions and code TODOs (merged from `work/ui-map-changes`), and the shared model in `change-requests-design.md` § Amendment — 2026-11-11 (skai#108, skai#129) and § Amendment — 2026-11-07 (skai#118). Supersedes P8's request file, status and reviewer response, the 2026-10-19 change request triage, and the Artifacts entry `change-requests/ui-map-<nnn>.md`. The UI Map guides keep no size budget (§ Open; supervisor: no aggressive compression), so the compression round is skipped; edits replace text in place. Inventory per skai#90, before prose.
+
+**ui-map-architecture-artifacts.md must say:**
+
+1. **A UI Map change request is the `ui-map/` sub-package of a request folder** per `change-requests.md`: `skai/changes/<change-id>/changes/CR-<id>/ui-map/`, holding the architecture artifact, its proposed map and render; its base is the nearest UI Map package up the chain, else the production map. The package paragraph no longer says the type folder owns requests.
+2. **`## Change requests` (the request file, `Change Request Status`, `Reviewer Response`, lifecycle) goes**; a pointer to `change-requests.md` replaces it.
+3. **Map Changes grouped by domain** (designs): a `### <domain>` heading per domain in the map's order, entries in the map's scene order; each entry `- M<n> <Type>: <identity>` naming one scene by ID, or one domain for a domain change (a change to several scenes is several entries); a route entry names the scene it starts from; a moved scene sits under its new domain, a removed one under its old domain. **Touches** goes. Several changes in one entry are numbered sub-changes, as Design Changes; an entry resting on an open gap carries a gap footnote, as Design Changes.
+4. After a fold, each difference the request brought ends `; Change request: CR-<id> M<n>` in the base's recomputed list; the `Change request` Source stays for that.
+5. **"Production map"** replaces "official map" throughout the UI Map guides.
+
+**ui-map-architecture.md must say:**
+
+6. **Initiation:** per `change-requests.md`, settle whether the work is a request; for one, reopen or create its `ui-map/` sub-package. The reopen-on-change-request paragraphs (the supervisor reads the request and says what to do; status moves) go.
+7. **Base and diff:** a request's proposed map starts from its base's proposed map (or the production map); `## Map Changes` is the diff against the base.
+8. **Folding a request into its base** (proposal; the supervisor confirms, since #121 moves UI Map promotion out of implementation later): architecture, on the supervisor's ask, writes the request's proposed map into the base's, marks the base's `## Map Changes` `Pending re-derivation.`, moves the request per `change-requests.md` and re-renders the base. Unlike other types, the request's entries are not appended (Tim, 2026-11-11: a change list is a diff, so it is recomputed): the base's author recomputes the list on reopen, as any reopen does, a difference the request brought joining its scene's existing entry (a sub-change, or part of an added scene's addition), else a new entry at the next `M` number, citing `; Change request: CR-<id> M<n>` either way. This replaces the appended-entry overlap rules (duplicate entries, merging under the lower ID) that cold rounds r6–r17 kept finding faults in.
+
+**ui-map-implementation.md and its artifacts must say:**
+
+9. **A map that must change** is an input this run's decisions change: per `change-requests.md` rule 8 the supervisor picks, reopen architecture on the package or file a request against it; the request file, its numbering and the "change request is open" gate go, replaced by the outcome-pending block. `## Change Requests` in the implementation artifact links the requests filed, if any.
+10. **Terminal promote into production** follows `change-requests.md` rule 6: no other open `ui-map/` request part in the change.
+
+**Tools (ui-map-render.py and the viewer, a new viewer version):** the `ui-map-chg-mgmt` code TODOs: the change package page's Map and Review tabs; change badges on scenes with any change to them or their outgoing connections; the Changes toggle with its count; a scene's entries first in the side panel, linked to the Review tab; the Review tab built from the package's Discussion and `## Map Changes` in the new format; domain filters in the review pages' style with scene counts; the hops drop-down; the search field's cross; no Theme or Clear buttons, the page following the system theme; section heading icons in their heading's color, no counts on Reached from and Opens; render fails when an entry names a scene not on the proposed map, except a removed scene; a request's proposed map layered over every UI Map package up its chain. The backfill's owed items stay out unless the designs carry them.
+
+**Migration:** active packages' `## Map Changes` move to the grouped format (domain headings in map order, Touches removed, sub-changes numbered); the release notes say how. No UI Map request files exist in known hosts; any found in an active package are listed for the supervisor.
