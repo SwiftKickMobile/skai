@@ -9,6 +9,7 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **Product specs can list a renamed file title.** A new `modify file` change type covers a spec file whose title or intro changed with nothing else in it, and the check now asks for title changes to be listed.
 - **UI Map change requests work like every other document's.** A request is a `ui-map/` part of a change request folder, and when implementation finds the map wrong you pick how it changes; the map's change list is grouped by domain, one entry per scene. Updating re-renders your production map and every active change package's map, after you review each package's rewritten change list.
 - **A UI Map change package's page shows what it changes.** Changed scenes are badged on the map and their changes open in the side panel; a Review tab holds the discussion and the map changes, linked both ways to the map. Every map page gets the review pages' domain filters, a hops drop-down and a search clear button.
 - **Every review page and the UI Map page share one look.** One system font, the Design System's colors in light and dark, and a one-line title naming the document type and the package; pages rendered earlier keep working as they were.

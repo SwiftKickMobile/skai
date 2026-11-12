@@ -57,80 +57,80 @@ Update the UI Map designs for change packages, for the change management style i
 
 ### UI Map
 
-- V01 add state: [ui map — changes](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=69-1740)
+- V01 add state: [ui map — changes](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=152-7540)
   - **01** The map on a change package's page marks each changed scene with a badge set into its bottom right corner, in the same color as the scene's border. A scene counts as changed when anything about it or its outgoing connections changes, so a scene that loses its link to a removed scene carries the badge too.
     - **Justification** A reviewer needs to see on the map where the package changes it, and no comparison view could show every kind of change. Source: Resolved decision: D01.
   - **02** The top bar's title becomes UI Map followed by the package's ID, and the bar gains Map and Review tabs.
     - **Justification** The title says which artifact and package this is, and the discussion and list of changes are the Review tab on this page. Source: Resolved decision: D02 and D04.
-- V22 add state: [ui map — changes on](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=107-2856)
+- V22 add state: [ui map — changes on](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=152-7579)
   - **Description** A single-item Changes toggle sits to the right of the domain filters, showing how many scenes changed. Turning it on displays changed scenes the way search displays its matches: changed scenes are highlighted, and everything else is dimmed. It follows search's rules with other controls: it doesn't show the hops drop-down, and while a selected scene or domain filter narrows the map, nothing is dimmed.
   - **Justification** A reviewer can pick out every changed scene at a glance on a large map. Source: Supervisor input.
-- V02 add state: [ui map — changed scene selected](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=69-1782)
+- V02 add state: [ui map — changed scene selected](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=152-7618)
   - **Description** Selecting a changed scene opens the side panel with a Changes section first, headed by the change icon, listing that scene's entries from the change list. Each entry's ID links to that change in the Review tab. An entry with several changes numbers them, as in the design review. Section heading icons, including the Note heading's, match their heading's color, and the Reached from and Opens headings lose their counts.
   - **Justification** The panel answers what changed here at the moment the reviewer asks, and the link leads to the other changes and the discussion behind them. Source: Resolved decision: D01 and D03.
-- V03 add state: [ui map — changes help](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=69-1821)
+- V03 add state: [ui map — changes help](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=152-7665)
   - **Description** How to read this map gains a row explaining the change badge, after the three scene styles and before the icons, shown on a change package's page. Its instructions no longer mention a Clear button, on the production map as well, and explain the Changes toggle on a change package's page.
   - **Justification** The help explains everything else drawn on a scene, and a new mark needs the same explanation. Source: Resolved decision: D01.
-- V14 add state: [ui map — production top bar](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=96-2795)
+- V14 add state: [ui map — production top bar](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=152-7535)
   - **Description** The production map's top bar, titled UI Map Production, with domain filters in the review pages' style: a bordered group of filters, each with its domain's color, its number of scenes and its name. It replaces the plain row of names, moves to the right of the bar as the review pages' filters are, and applies to every state of the production map.
   - **Justification** The filters on the UI Map and the review pages should look and work alike. Source: Supervisor input.
-- V18 add state: [ui map — hops menu](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=103-2811)
+- V18 add state: [ui map — hops menu](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=152-7537)
   - **Description** The hops control is a drop-down showing the current choice. Opening it lists 1 hop, 2 hops and All, with the current one marked. This applies to the production map as well.
   - **Justification** A drop-down takes less room in the top bar than a segmented control now that the domain filters are grouped beside it. Source: Supervisor input.
 
 ### Review
 
-- V04 add screen: [review](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=69-1967)
+- V04 add screen: [ui map — review](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=152-7812)
   - **Description** The whole Review tab, as tall as its content: the summary box, the discussion, then Map Changes grouped by domain, with each domain's color square on its heading, and otherwise laid out like the design review's Design Changes. Each entry's header shows its marker, ID, type and the scene it belongs to, as a link to that scene on the map. A connection change names the scene it starts from, a domain's own change names the domain with no link, a moved scene sits under its new domain, and a removed scene sits under its old domain with its name greyed and no link. An entry with several changes numbers them, and an entry resting on an open gap carries a numbered footnote with the gap's placeholder. The summary box shows the state and goal. The top bar's filters cover added, modified, removed and moved changes, and the discussion states the package has, among open, gap and resolved.
   - **Justification** A reviewer can read the changes in the same order as the map, and go from any scene to the map. The layout follows the design review page, which a reviewer already knows, with the real review pages' typography, spacing and cards. Source: Resolved decision: D02, D03 and D05.
 
 ### Review Pages
 
-- V12 modify state: [product specs review — title and summary](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=91-2634)
+- V12 modify state: [product specs review](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=40-4)
   - **Description** The title becomes one line: Product Specs, then the package's ID in cyan. It replaces Change Package and an ID, which didn't say which document type the page reviews. The design specs review follows the same format with Design Specs. On both specs review pages, the summary box loses its title line, which the top bar now covers, leaving the state and goal like the other review pages' boxes.
   - **Justification** Every review page should identify its artifact and package the same way, and open with the same summary box. Source: Resolved decision: D04 and supervisor input.
-- V13 modify state: [design review — title](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=91-2734)
+- V13 modify state: [design review](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=44-2)
   - **Description** The title becomes one line: Design, then the package's ID in cyan. It replaces Design Change and a name, followed by the same name again on a second line.
   - **Justification** Every review page should identify its artifact and package the same way. Source: Resolved decision: D04.
 
 ### Components
 
-- V07 add component: [Change Badge](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=69-2809)
+- V07 add component: [Change Badge](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=151-6267)
   - **Description** A small square with a triangle that marks a changed scene. It takes the scene's border color, with only its inner corner rounded, so it reads as part of the scene's edge.
   - **Justification** It has to read differently from the coloured domain square and the callout icons already on a scene. Source: Resolved decision: D01.
-- V23 add component: [Change Icon](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=111-3069)
+- V23 add component: [Change Icon](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=151-6133)
   - **Description** The change badge's triangle on its own.
   - **Justification** The side panel's Changes heading leads with the mark, as its Note heading leads with an icon. Source: Supervisor input.
-- V06 modify component: [Change Marker](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=69-2113)
+- V06 modify component: [Change Marker](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=151-6352)
   - **Description** Change Marker gains a cyan Moved status, and every status grows from 10 to 12 to match the real review pages. The size change is already on the production component.
   - **Justification** Moving is a kind of map change that a design or spec review doesn't have. Source: *Map change items* in `ui-map-architecture-artifacts.md`.
-- V05 modify component: [Scene Cell](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=69-2024)
+- V05 modify component: [Scene Cell](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=151-6166)
   - **01** Scene Cell gains a Changed option that shows the change badge flush in the bottom right corner, colored to match the border in each state. It's off by default.
     - **Justification** Every kind and state of scene can be changed. Source: Resolved decision: D01.
   - **02** A reused scene now has a grey wash as its fill and a medium-weight title in a new Body Medium text style. The production design gave it a normal scene's fill and a semibold title.
     - **Justification** The production design didn't match the real page, where the wash and lighter title make a reused scene look secondary. Source: Supervisor input.
-- V08 add component: [Tab](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=69-2853)
+- V08 add component: [Tab](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=151-6161)
   - **Description** One tab in the top bar, selected or not.
   - **Justification** The change package's page has two tabs. Source: Resolved decision: D02.
-- V17 modify component: [Search Field](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=102-2821)
+- V17 modify component: [Search Field](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=151-6136)
   - **Description** The search field shows a cross inside it whenever it has a value, which clears the text.
   - **Justification** A cross inside the field is the usual way to clear a search, and it replaces the Clear button's text-clearing job. Source: Supervisor input.
-- V19 modify component: [Hops](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=103-2789)
+- V19 modify component: [Hops](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=151-6145)
   - **Description** The segmented control becomes a drop-down button with the current choice and a chevron. It's a fixed width that fits its longest choice, so it doesn't move when the choice changes.
   - **Justification** The hops control is now a drop-down. Source: Supervisor input.
-- V20 add component: [Hops Menu](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=103-2793)
+- V20 add component: [Hops Menu](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=151-6149)
   - **Description** The list the hops drop-down opens, with the current choice marked.
   - **Justification** The drop-down needs its choices drawn. Source: Supervisor input.
-- V09 add component: [Panel Change](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=88-2652)
+- V09 add component: [Panel Change](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=151-6325)
   - **Description** One change list entry in the side panel, as a card like the Review tab's so it stands apart from the map's own details: its marker, linked ID and kind, then what changes and why, or numbered changes with their reasons. An entry resting on an open gap adds a footnote and the gap's placeholder.
   - **Justification** The panel's Changes section is made of these. Source: Resolved decision: D01.
-- V11 modify component: [Review Top Bar](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=91-2619)
+- V11 modify component: [Review Top Bar](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=151-6358)
   - **Description** The title and subtitle become one line, with the document type in black and the package's ID in cyan.
   - **Justification** The specs and design review pages share this bar. Source: Resolved decision: D04.
-- V15 modify component: [Top Bar](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=96-2748)
+- V15 modify component: [Top Bar](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=151-6270)
   - **Description** The title becomes UI Map Production in the common format. The domain legend becomes a bordered group of filters built from Filter Choice, showing each domain's color, number of scenes and name. It moves to the right of the bar, next to the tools. The hops control sits just before it and appears only while the map is filtered, so the filters don't move when it appears. The Theme and Clear buttons go.
   - **Justification** The production map's domain filters should match the review pages' filters. Source: Supervisor input.
-- V10 add component: [Change Top Bar](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=69-2924)
+- V10 add component: [Change Top Bar](https://www.figma.com/design/YiKIvXCvCu8XyS149IT3hS/SKAI?node-id=151-6285)
   - **Description** The top bar on a change package's page, for each tab. The Map tab shows domain filters in the same bordered group and style as the review filters, each with its scene count, on the right of the bar, then the Changes toggle and search. The hops control sits before the domain filters and appears only while the map is filtered, so the filters don't move when it appears; the Review tab shows the review filters. Both keep help. There's no Theme or Clear button.
   - **Justification** The production map has no tabs and keeps its own top bar. Source: Resolved decision: D02.
 - V16 remove component: Domain Filter

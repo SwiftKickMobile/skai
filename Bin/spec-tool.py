@@ -2819,7 +2819,7 @@ def render_markdown(text, gloss):
 
 # ---------------------------------------------------------------- list-matches-diff
 
-PRODUCT_CHANGE_TYPES = ("add folder", "add file", "add requirement", "modify requirement", "retire requirement",
+PRODUCT_CHANGE_TYPES = ("add folder", "add file", "modify file", "add requirement", "modify requirement", "retire requirement",
                         "add glossary entry", "modify glossary entry", "retire glossary entry")
 DESIGN_CHANGE_TYPES = tuple(f"{op} {what}" for op in ("add", "modify", "retire")
                             for what in ("spec file", "item", "rule", "index line", "glossary entry", "known-difference note")
@@ -2845,7 +2845,7 @@ def kind_matches(change_type, what):
 def check_changes(catalog, drafts, authoring, bases=()):
     """Every added, modified, retired or missing item, glossary entry or index line in the
     projection has a change-list entry naming it; every added file has one naming it or its path
-    in Touches (its contents ride on it); intro, section and index lines may also ride in Touches;
+    in Touches (its contents ride on it); intro, section and index lines, and a product file's title, may also ride in Touches;
     no entry names something unchanged or absent."""
     catalog, drafts, authoring, bases = Path(catalog), Path(drafts), Path(authoring), [Path(b) for b in bases] or infer_bases(drafts)
     LAYERS[:] = [p.resolve() for p in [catalog, *bases, drafts]]
@@ -2912,14 +2912,12 @@ def check_changes(catalog, drafts, authoring, bases=()):
             continue
         if e.what == "rule" and not design:
             continue  # product specs list at requirement grain: a changed rule rides on its item's entry
-        if e.what == "title" and not design:
-            continue  # the product artifacts guide has no entry type for a file's title: shown on the page, not required here
         if e.what == "rule" and design and ((e.file, rule_parent(e.name)) in retired_here or anchor(rule_parent(e.name)) in moved_ids):
             continue  # the item is retired here, and its entry covers its rules; or it moved, and the move check below judges them
         if e.what == "item" and design and not e.own and all(
                 any(c.keys & r.keys and kind_matches(c.type, "rule") for c in changes) for r in entries if r.what == "rule" and r.status != "unchanged" and rule_parent(r.name) == e.name):
             continue  # only its rules changed, and each has its own entry
-        riders = [c for c in changes if c.touched & {e.file, Path(e.file).name}] if e.what in ("file", "intro", "section line", "index line") else []
+        riders = [c for c in changes if c.touched & {e.file, Path(e.file).name}] if e.what in ("file", "intro", "section line", "index line") or (e.what == "title" and not design) else []  # product specs: a title may ride in Touches, as an intro does
         if e.what in ("intro", "section line") and design:
             riders += [c for c in changes if re.search(r"file", c.type) and c.keys & {e.file}]  # a spec file entry covers its own file's orientation prose
         if e.what == "index line" and design:

@@ -53,7 +53,7 @@ target identity. Entries omit spec text; the page shows each difference under it
 ```
 
 - **ID** `R01`, `R02`, …: never renumbered or reused. Entries run in catalog order, no checkbox.
-- **Type** `add folder` | `add file` | `add requirement` | `modify requirement` |
+- **Type** `add folder` | `add file` | `modify file` | `add requirement` | `modify requirement` |
   `retire requirement` | `add glossary entry` | `modify glossary entry` | `retire glossary entry`.
   *Modify vs. retire* in the catalog guide decides between the two; a note-only change is
   `modify requirement`; a retired glossary entry is removed.
@@ -67,7 +67,7 @@ target identity. Entries omit spec text; the page shows each difference under it
   with `; Change request: CR-<id> R<n>`.
 
 `check-changes` confirms the list matches the projection: entries name every changed requirement
-and glossary entry; entries or `Touches` lines name every changed index line, intro or added file;
+and glossary entry; entries or `Touches` lines name every changed index line, title, intro or added file;
 nothing names unchanged content.
 
 **Implementation words in a reason are a signal.** ❌ `The list is rebuilt whenever either stream

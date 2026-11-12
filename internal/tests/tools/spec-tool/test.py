@@ -138,7 +138,7 @@ class CheckChanges(unittest.TestCase):
         self.assertEqual(sum(any(m in i for m in pairing) for i in found), 2)
         for message in ["R2 names item STAGE-04, which is unchanged", "R3 names STAGE-99, which is not in the drafts",
                         "R4 names rule STAGE-09-07, which is not in the drafts", "R5 declares add", "R6 declares retire",
-                        'R7 has type "move requirement"', "R8 declares add but file", 'R9 has type "modify file"']:
+                        'R7 has type "move requirement"', "R8 declares add but file", "R9 declares modify but file"]:
             self.assertIn(message, text)
         self.assertTrue(any("but no change-list entry names it" in i for i in found))
         self.assertEqual([i for i in found if "D9" in i and "R1 cites D9" not in i], [],
@@ -1690,27 +1690,23 @@ def _(self, m):
 def _(self, m):
     m.sub("{f}/alpha.md", "The alpha board shows a title.", "The alpha board shows a short title.")
     tag = m.item_entry("modify", "{P}ALPHA-02")
-    if m.design:
-        tag2 = m.entry("modify spec file", m.ident_file("{f}/alpha.md"), ["{f}/alpha.md"])
-        m.sub("{f}/alpha.md", "The alpha board in brief.", "The alpha board in brief, top to bottom.")
+    tag2 = m.entry("modify spec file" if m.design else "modify file", m.ident_file("{f}/alpha.md"), ["{f}/alpha.md"])
+    m.sub("{f}/alpha.md", "The alpha board in brief.", "The alpha board in brief, top to bottom.")
     html = m.render(); self.valid(m)
     frag = section_of(html, m.t("{f}/alpha.md"))
     self.assertRegex(frag or "", r'^<section class="file" data-kind="modified">')
     head = re.search(r'<p class="file-why">.*?</p>', frag)
-    if m.design:  # the file's own entry
-        self.reason(head.group(0) if head else None, m, tag2)
-    else:
-        self.assertIsNone(head, "product specs have no file-level entry for a file the base has")
+    self.reason(head.group(0) if head else None, m, tag2)  # the file's own entry
 
 
 matrix_skip("file-heading", "removed", "a draft cannot remove a file: files never retire, and drafts hold only the files they touch")
 matrix_skip("file-heading", "moved", "the guides allow no move for a file")
-@matrix_cell("file-heading", "retitled", flavors=("design",))
+@matrix_cell("file-heading", "retitled")
 def _(self, m):
-    """A changed '#' title is a difference: shown at its file, and a design change list names it
-    with modify spec file."""
+    """A changed '#' title is a difference: shown at its file, and the change list names it with a
+    file entry (modify spec file in design specs, modify file in product specs)."""
     m.sub("{f}/alpha.md", "# Alpha\n", "# Alpha Board\n")
-    tag = m.entry("modify spec file", m.ident_file("{f}/alpha.md"), ["{f}/alpha.md"])
+    tag = m.entry("modify spec file" if m.design else "modify file", m.ident_file("{f}/alpha.md"), ["{f}/alpha.md"])
     html = m.render(); self.valid(m)
     frag = section_of(html, m.t("{f}/alpha.md"))
     self.assertRegex(frag or "", r'^<section class="file" data-kind="modified">', "the retitled file shows as modified")
@@ -1719,8 +1715,6 @@ def _(self, m):
     m.entries.pop(); m.render()
     self.assertTrue(any("title Alpha Board is modified but no change-list entry names it" in i for i in m.check_issues), m.check_issues)
 
-
-matrix_skip("file-heading", "retitled", "the product artifacts guide has no entry type for a file's title (no file-level modify, and Touches carry only index lines, intros and added files); a ruling", flavors=("product",))
 
 
 if __name__ == "__main__":
