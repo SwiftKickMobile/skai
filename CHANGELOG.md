@@ -10,6 +10,7 @@ is also its GitHub release notes.
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
 - **Review pages.** A design or spec review page no longer fails to render when a gap's owning item links another package's item.
+- **Process refinement.** Every review round now works the same way and also tightens the writing, so there is no separate compression review. A size cap is optional and set after the first round. Dropping valid content is the supervisor's call. When a fix becomes the next round's finding, its step is rewritten whole. Tool claims are checked against the tool's code or documentation, not by testing the tool.
 
 ## Release 17 — 2026-11-12
 

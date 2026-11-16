@@ -8,198 +8,163 @@ Managed-Updated-At: 2026-10-31
 
 Print `📖 SKAI guide: process-refinement-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
-A process for refining a **refinement target** — the guide document(s) that tell an agent how to carry out some process — based on a cold review. Applies to any such document under development, whether or not it backs a skill.
+How to change or repair a **refinement target** — the guide(s) that tell an agent how to carry out a process, whether or not they back a skill — through rounds of fresh review. You are the **refiner**: you draft changes, commission rounds, triage findings and apply fixes. The **reviewer** is fresh each round: it reads cold, finds defects, shapes fixes and edits nothing. The **supervisor** brings the problem and rules on escalations.
 
-A fresh session running this should read: this guide, the target's design spec, the guide(s) under refinement, and the cold-review findings.
+A fresh refiner reads this guide, the target's design spec and guides, and the latest report, if any.
 
 ## When to use this
 
-Use it when a cold review finds real problems in a target's guide(s). Trivial copy edits (a typo, a broken link) don't need it — just fix them. Anything touching workflow, control-flow semantics, document structure, or fidelity to the target's design spec does.
+For a guide change the supervisor routes through refinement — a new guide, new content, a change to existing rules — and when a review finds real problems in a guide. Whether a change goes through it is the supervisor's call.
 
-## The cold review
-
-The input is a **cold review**: a fresh, independent session that reads the target's guide(s) and its design spec with no prior context and critically assesses fidelity, completeness, clarity, internal consistency, and conciseness. It produces findings — each with a suggested fix — and a verdict. The review is meant to be aggressive; it is not blunted to spare feelings.
-
-The findings need not come only from reading. A **scoped / empirical review** supplies observed behavioral failures of the target executing as documented — and, optionally, draft edits to assess — through the template's optional slots; the reviewer still reads the full guide set cold, and everything downstream (triage, the codification bar, repair, closure) applies to its findings unchanged.
-
-To launch one, fill in the slots in [`cold-review-prompt-template.md`](cold-review-prompt-template.md) and hand the filled prompt to a fresh session. That reviewer must **not** read this guide or the template (both are refiner-facing and would bias the review); give it only the filled prompt and the files it names.
-
-**When the findings are wrong, suspect the prompt.** The fidelity check below guards against a prompt that is *biased*; the complementary failure is a prompt that is *under-specified*. If rounds stop converging, the defect is in the prompt, and the symptom tells you which slot: findings demanding content you deliberately placed in another document mean a missing `{{SCOPE}}`; the same disposition returning round after round means a missing `{{SETTLED_DISPOSITIONS}}`. Revise the prompt and rerun; do not patch the guide to satisfy a mis-scoped critic.
-
-**Prompt-fidelity check before handoff.** Use the template's "Copy/paste prompt" block *verbatim* — fill `{{SLOT}}` markers and delete entire inapplicable slot sections only. Do not rephrase the surrounding prose, add a preamble, or assert facts about the review target in the prompt. Diff your filled prompt against the template; the only differences should be slot replacements and slot-section deletions. Prose drift in the prompt taints the review: the cold reviewer inherits the maintainer's unverified framing as premises, and findings come back biased toward what the maintainer already believed.
+**A pass.** For a change: add to the design spec what the change must say; draft it as a proposal, rewriting the affected text rather than adding beside it and deleting what the change makes obsolete; check the draft against the design spec yourself. A new guide is proposed in full. Round 1 assesses the proposal; you triage its verdict on the proposal (endorse, amend or reject) along with the findings, and apply the shape you settle on; later rounds review the applied text until the stop rule (*Rounds and stopping*). So a pass that applies a change has at least two rounds. A pass with no proposed change — a review of a guide as it stands, such as one driven by observed failures — starts with a round over the current text.
 
 ## The design spec is the standard
 
-Every refinement target should have a **design spec** — a plan, requirements doc, or equivalent source-of-truth describing what the target is supposed to do. That doc is the standard each finding is judged against. A guide that contradicts the spec is a defect; a finding that asks for something the spec deliberately decided against is weighed against the spec, not accepted automatically. It lives at `skai/refinement-reviews/<target-name>-design.md`, beside the target's findings log, so a later pass finds both by name. If a target has no design spec, refining it reliably is hard — close that gap first.
+Every target has a **design spec** — a plan, requirements doc, or equivalent source of truth for what the target must do — at `skai/refinement-reviews/<target-name>-design.md`, beside its findings log, so a later pass finds both by name. Every finding and change is judged against it: a guide that contradicts it is a defect; a finding that asks for something it deliberately decided against is weighed against it, not accepted automatically. Size caps, when set, are recorded there. A target without a design spec can't be refined reliably — write one first.
 
-## The refinement working document
+## Records
 
-A refinement pass records its work in a **refinement working document**: the finding matrix, the triage decisions, the repair clusters, and the closure table — plus, at the structured tier (see *Scaling the ceremony*), the invariants, the canonical-ownership table, and each finding's rule impact map. It is a working document — create it following `Guides/Core/working-doc-conventions.md`, placed under `skai/working-docs/<session-name>/`, named `<target-name>-refinement.md`. This is the same working-doc convention used by the dev specs and UI Map workflows: process artifacts are kept out of the target's own committed files.
+**Refinement working document.** Each pass records its finding matrix, triage decisions, repair clusters, score table and closure table — plus, at the structured tier, invariants, the ownership table and impact maps — in `<target-name>-refinement.md`, placed per `Guides/Core/working-doc-conventions.md`. A trivial pass (a couple of clarity fixes) may keep its matrix in the conversation.
 
-A trivial pass — a couple of clarity fixes — may skip the persisted document and keep the matrix inline in the conversation. Anything beyond that gets the working document.
-
-## The findings log
-
-Across refinement passes on the same target, a **findings log** records every finding and its disposition. It lives at `skai/refinement-reviews/<target-name>-findings.md` — one per target, committed, with no branch or session in the path, because a pass months later has to find it. Each pass's closure entries append to it. It is not a working document: a working document belongs to one effort's session folder, and this record spans every pass on the target.
-
-The log itself is never shown to the cold reviewer — it is refiner-facing and would stop the review being cold. What *is* shown is the short list of settled decisions extracted from it, via the prompt's `{{SETTLED_DISPOSITIONS}}` slot. Keeping those two distinct is what lets the review stay fresh while still not relitigating.
-
-Format — a single appended table:
+**Findings log.** One per target at `skai/refinement-reviews/<target-name>-findings.md`, committed, with no branch or session in the path, because a pass months later has to find it. It is not a working document: it spans every pass. One appended table:
 
 | Pass date | Finding | Disposition | Evidence |
 |---|---|---|---|
 
-The log is consulted at *triage* (not by the cold reviewer — a cold review must remain fresh):
+Start it at round 1 and append each round's dispositions before commissioning the next, or "already settled" is unknowable when you score. It is never shown to the reviewer — that would stop the review being cold; the settled decisions you extract from it go into the prompt's `{{SETTLED_DISPOSITIONS}}` slot. At triage, point re-raises to their prior disposition: skip a non-fix only if it still stands after considering recurrence; revisit a `closed` finding if its problem still reproduces. It is also the cross-pass memory the recurrence threshold (*Across passes*) depends on.
 
-- When a new finding matches one already in the log, do not relitigate. If it restates a `rejected` one, refer back to the prior disposition and skip. If it restates a `closed` one with the same surface, the prior fix did not hold and the closure must be revisited.
-- The log provides the cross-pass memory the recurrence threshold (see Across passes) depends on — without it, every pass treats every finding as a first sighting.
+## Commissioning a round
+
+Each round is a **cold review**: a fresh, independent session, on the supervisor's chosen model at its highest effort, reads the target's guide(s) and design spec with no prior context and critically assesses fidelity, completeness, clarity, internal consistency and conciseness. It is meant to be aggressive, not blunted to spare feelings. It returns findings, each with a fix shaped toward the best overall solution — refactoring existing text where that serves better than adding — and suggested wording, plus a verdict. Round 1 shapes the proposal the same way. The report covers the change, or the whole target if none; out-of-charter findings go in an appendix and are triaged like any other. A **scoped / empirical review** adds observed behavioral failures of the target through the template's optional slots; the reviewer still reads the whole guide set cold, and everything downstream applies unchanged.
+
+Build each round's prompt from [`cold-review-prompt-template.md`](cold-review-prompt-template.md) and give a fresh session the prompt; it reads every named file and everything they or the proposed edits reference directly, except excluded files, the findings log always among them. The reviewer must **not** read this guide or the template — both are refiner-facing and would bias it — except that a review of either one has both as its target. Each round, refill the slots that move: what changed since the last round, the settled dispositions so far, the proposed edits (round 1 only) and the report charter.
+
+**Prompt fidelity.** Use the template's "Copy/paste prompt" block *verbatim*: fill `{{SLOT}}` markers and delete whole inapplicable slot sections only — no rephrasing, preamble or target claims outside the slots. Diff the prompt against the template before handoff; the only differences should be slot fills and deletions. Prose drift hands the reviewer your unverified framing as premises, and findings come back biased toward what you already believed.
+
+**When the findings are wrong, suspect the prompt.** Fidelity guards against a *biased* prompt; the other failure is an *under-specified* one, and its symptom names the slot: findings demanding content you deliberately placed elsewhere mean a missing `{{SCOPE}}`; a settled decision returning round after round calls for checking `{{SETTLED_DISPOSITIONS}}`. Fix missing or unclear slots and rerun; do not patch the guide to satisfy a mis-scoped critic.
 
 ## Triage before editing
 
-A cold review is intentionally aggressive — do not blunt it, but do not act on it raw. The refining agent owns a critical second pass. **Default to "no rule"** — most findings either fail to meet the codification bar or are already covered by existing rules. Account for every finding, and classify each defect row once, before any edit:
-
-When a finding comes from an observed agent run, interview the original agent before classifying it when that session is available. Resume it read-only and ask what reasoning and cues produced the behavior, whether the controlling rule was ambiguous or overlooked, and what smallest existing-rule or point-of-use change would have prevented the mistake. Treat the explanation as diagnostic evidence, not authority: judge the finding against the design spec, guide, transcript, and artifacts. If the original session is unavailable, record that limitation instead of substituting a fresh agent's guess.
+Don't act on the review raw: you own a critical second pass. Start from the reviewer's suggested fix and wording; you decide the final wording, and record why when you depart from it. **Default to "no rule"** — most findings fail the codification bar or are already covered. Account for every finding, and classify each defect row once, before any edit:
 
 - **accept** — a real defect that warrants a fix to the guide.
-- **log only** — valid observation that does not meet the codification bar (see below). Record it in the findings log; do not change the guide.
-- **reject** — fails to establish a live defect: guesswork, ignores ownership already clear in the docs, or treats a hypothetical misuse as a normal-use failure. Reasoning from the documents rather than from running something is *not* grounds to reject — that is the reviewer's `speculative` evidence mark, and it is most of what a review of a process guide can offer.
-- **supervisor decision** — a live defect, but the likely fix adds *process weight*: a new gate, a mirror/duplicate field, a checklist, a proof burden, extra validation, a wrapper, repeated re-approval. Not the refining agent's call.
+- **log only** — a valid observation that warrants no guide change. Record it in the findings log; don't change the guide.
+- **reject** — fails to establish a live defect: guesswork, ignores ownership already clear in the docs, or posits a misuse the text doesn't support. Reasoning from the documents rather than from running something is *not* grounds to reject — that is the reviewer's `speculative` mark, and most of what a review of a process guide can offer.
+- **supervisor decision** — a live defect whose likely fix adds *process weight* (a new gate, a mirror field, a checklist, a proof burden, extra validation, a wrapper, repeated re-approval) or drops valid content or examples, or cannot fit a cap. Not your call.
 
-**Codification check** — before classifying a finding as `accept`, work through this in order:
+When a finding comes from an observed agent run whose session is still available, interview it read-only before classifying: what reasoning and cues produced the behavior, whether the controlling rule was ambiguous or overlooked, and what smallest change at an existing rule or the point of use would have prevented it. Its answer is evidence, not authority: judge it against the design spec, guide, transcript and artifacts. If the session is gone, record that; never substitute a fresh agent's guess.
 
-1. *Does an existing rule already cover this case?* If yes, the fix is sharpening that rule or adding a ❌/✅ example to it — not a new rule.
-2. *Single observation, or recurring across cases?* If single (and not already in the findings log from a prior pass), classify as `log only` — record it; codify only on recurrence. This bar gates **codification** — minting or strengthening rules from incidental observations. It does not gate repairing a deterministic document defect (a contradiction, a dangling reference), nor sharpening an existing rule to fix the empirically observed failure a scoped review was chartered on — there the observed failure itself is the evidence. Likewise `log only`, regardless of the finding's severity: a gap that merely strands the operator into the workflow's designed escalation route ("if the guide doesn't answer it, stop and escalate"), until the strand actually occurs — repair-at-any-likelihood is reserved for text that teaches a wrong action (a misroute stated as mandatory, a false tool claim, a contradiction both of whose readings violate the spec).
-3. *Can one principle cover the class, or is the fix per-instance?* If you find yourself adding a third sibling rule, you missed the generalization — look for the principle.
+**Codification check** — before accepting a new rule a review proposes on its own (a change the supervisor asked for needs no proof that its problem recurs), in order:
 
-Only when all three pass does adding a new rule fit. The failure mode this prevents: codifying from a single observation, adding sibling rules instead of generalizing, and writing new rules when the real issue is a rule the agent failed to apply.
+1. *Does an existing rule already cover this case?* Then sharpen it or add a ❌/✅ example to it — not a new rule.
+2. *Single observation, or recurring?* A first sighting not already in the findings log is `log only`, a second in another case is considered, a third can be codified. This bar gates **codification** — minting rules from incidental observations. It never gates repairing a deterministic defect (a contradiction, a dangling reference, a design-spec requirement the text misses), or sharpening an existing rule against the observed failure a scoped review was chartered on — there the failure is the evidence. 
+3. *Can one principle cover the class?* A third sibling rule means you missed the generalization.
 
-## The `supervisor decision` rule
+This prevents premature rules, sibling rules, and new rules where the agent failed to apply an existing one.
 
-For every `supervisor decision` finding, STOP before editing and present the tradeoff plainly:
+**Stranded is not broken.** A gap on a rare path that violates no design-spec requirement and merely strands the operator, where the workflow already says to stop and escalate when the guide doesn't answer, is `log only`, whatever its severity, until the strand actually occurs. Repair at any likelihood is for text that teaches a wrong action: a misroute stated as mandatory, a false tool claim, a contradiction both of whose readings violate the spec.
 
-- the real failure the reviewer is worried about
-- what existing rule or artifact already covers it, if anything
-- the smallest documentation-only fix
-- the heavier, control-oriented fix
-- a recommendation
+**Supervisor decisions.** STOP before editing and present the tradeoff plainly: the real failure the reviewer is worried about; what already covers it, if anything; the smallest documentation-only fix and the heavier, control-oriented fix. For dropping valid content, also show why it adds no value and what tightening was tried; for a fix that cannot fit, also show its measured size, cap and options. Give a recommendation. Implement the heavy fix or drop the content only if the supervisor chooses it; record the ruling and don't reopen it in the pass.
 
-Do not implement the heavy fix unless the supervisor explicitly chooses it. Record the decision; don't re-litigate it in the same pass.
+**Design contradictions.** A finding that exposes a contradiction in the design itself, not just unclear wording, is not repaired directly. Frame it as a decision — the exact contradiction, the smallest decision that resolves it, the documents it ripples to — get the ruling, update the design spec, then repair the guide, before any cluster is patched. Content and clarity findings are fixed directly once triaged.
 
 ## Finding matrix
 
-Before editing, organize the round into one table in the refinement working document — **one row per defect, not one per reported finding**:
+Before editing, organize the round into one table in the working document — **one row per defect, not per reported finding**:
 
 | Defect | Triage | Touches (spec § + target doc §) | Minimal fix | Must remain unchanged |
 |---|---|---|---|---|
 
-The last column is the churn guard — name the adjacent semantics the fix must not disturb.
+The last column is the churn guard: the adjacent semantics the fix must not disturb.
 
-**Collapse before you count.** Several reported findings that are one defect become one row — the reviewer's own root-cause section usually names these clusters. **The row copies the whole label set of its heaviest constituent finding** — the one with the largest consequence × reachability × verification — breaking a tie by report order. Never take the strongest value on each axis separately: that builds a row no reviewer reported, and two findings worth 5 each can collapse into one worth 20. Do this first: how finely a reviewer chose to chop its report is not a property of the document, and a score taken before collapsing measures the reviewer instead.
+**Collapse before you count.** On applied text, first correct labels that plainly fail their tests in [`cold-review-prompt-template.md`](cold-review-prompt-template.md) § *Output* (`verified` with no command run or implementation read; `normal` where an unopposed rule makes `past-a-rule` first), noting each in the arithmetic line; otherwise the reviewer's labels stand. Then reported findings that are one defect become one row — the reviewer's root-cause section usually names these clusters. **The row copies the whole label set of its heaviest finding** — largest consequence × reachability × verification, ties broken by report order — never the strongest value on each axis separately: that builds a row no reviewer reported, and two findings worth 5 can collapse into one worth 20. Do this first: how finely a reviewer chopped its report is not a property of the document, and a score taken before collapsing measures the reviewer instead.
 
-A finding that restates a defect already in the findings log is that defect. If its logged disposition still stands, the row is noise. If the log says `closed` and this review shows it reproducing, the closure did not hold — it is live again and scores, and "settled" does not cover it. Every reported finding keeps its mapping to a row, so the log still receives all of them at closure.
+A finding that restates a logged defect is that defect: noise if a non-fix disposition still stands after considering recurrence; live and scored if an accepted fix has not resolved it, a failed closure included. Every reported finding keeps its mapping to a row, so the log receives all of them at closure.
 
-**Score the round here** — once every row is settled and before the first repair, using the reviewer's consequence, reachability and verification facts together with your own triage from this table. See *Round score* under *Iterated review*.
+**Score the round here** if it reviewed applied text — once every row is settled and before the first repair, from the reviewer's facts and your triage (see *Round score*). A proposal round is not scored.
 
-**Prefer examples over rules.** When the minimal fix is to teach a distinction, add a ❌/✅ worked example to an existing rule rather than write a new rule. Examples teach without inflating rule count.
+**Before repairing:**
 
-## Architecture vs. content
+- **Consolidation trigger.** If your fix in one round becomes the finding in the next, stop patching: you are closing findings locally while the document drifts. Rewrite the affected step or sentence whole against the design spec; restructure only when the repeated findings span more than one step, grouping them by root cause — then review again. **If it happens twice**, the problem is your editing method, not the document: move to the structured tier.
+- **Watch who the findings are about.** A round whose findings are mostly *your own last repairs* is measuring you, not the document. Count them each round: it is the clearest convergence signal you have, and when they are the majority, move the pass to the structured tier.
 
-If a finding exposes a genuine *design* contradiction — not just unclear guide wording — do not repair it directly. Frame it as a decision topic:
-
-- the exact contradiction
-- the minimum decision that resolves it
-- what downstream docs the decision would ripple to
-
-Discuss it, get a decision, update the target's design spec, then repair the guide. Pure content/clarity findings are lighter — fix them directly once triaged.
+**Prefer, in this order:** remove wrong or duplicated text, or move a misplaced rule to where it is used · sharpen existing wording · add a ❌/✅ example to an existing rule, which teaches a distinction without inflating rule count · restate a rule at its point of use · last, a new rule, gate or required field.
 
 ## Repairing
 
-- Group accepted findings into small clusters of related fixes.
-- **Patch exactly one cluster, then STOP and run the self-check below in writing before touching the next cluster.** Do not batch several clusters into a single edit pass — patching every finding at once is the failure mode this prevents: it produces shallow fixes that break adjacent behavior. (Architecture findings are resolved and the spec updated *before* any cluster is patched — see above.)
-- Do not fold opportunistic cleanup into a repair — if it isn't needed to close a finding, leave it.
-- After each cluster, self-check (record the result before proceeding): Did I contradict adjacent text in the same file or a sibling guide? Did I leave a stale sentence teaching the old behavior? Did I move a rule away from the point where the agent needs it? Did I weaken an enforced rule into a suggestion?
+- Group the settled proposal, if any, and accepted fixes into small clusters: an endorsed proposal is work even without findings.
+- **Patch exactly one cluster, then STOP and write the self-check before the next.** Patching every finding at once produces shallow fixes that break adjacent behavior. Self-check: Did I contradict adjacent text in this file or a sibling guide? Leave a stale sentence teaching the old behavior? Move a rule away from where the agent needs it? Weaken an enforced rule into a suggestion?
+- No opportunistic cleanup — leave what no finding needs, except tightening to meet a cap.
+- A fix copied into a sibling guide outside the target joins the same round: the sibling's changed passage becomes part of the binding target, and the round stays in its score series. Name that passage in later prompts; the reviewer reads the whole sibling, but only the passage and what it references are binding.
 
-**Size budgets.** When a target's design spec declares a size budget for its guide(s) — a cap on the guide set's total size (none declared: skip this paragraph) — it binds every repair: state each accepted fix's net size cost in the finding matrix, and when headroom is short, pair an addition with a compensating trim in the same cluster — a trim is a repair like any other and rides the same self-check and verification. A real defect whose fix cannot fit is a `supervisor decision`, never a silent overrun. Weigh a ❌/✅ example by size as well as rule count — under a budget an example is often the most expensive fix available. At closure, record the guide set's net size change alongside the dispositions.
+**Size caps.** A cap is optional. When the design spec sets one, it binds every repair: state each fix's net size in the finding matrix and fill the template's size-cap slot as directed there. Meet it mainly by tighter writing — of the new and nearby text, or anywhere else in the document that can be improved. Removing wrong, duplicated or obsolete text is an ordinary fix; dropping valid content or examples is a last resort and a `supervisor decision`, argued on the grounds that it adds no value. A real fix that can't fit is a `supervisor decision`, never a silent overrun. Record the net size change at closure. When a change sets or revises a cap, propose it after triaging round 1 and before applying: measure the settled shape on a temporary copy, and give a table of before size, settled size, change, old cap and proposed cap: for a new guide, a little under the settled size; for an existing guide, the old cap (or, if it had none, its size before the change) plus the settled addition, trimmed a little. Once the supervisor approves, record it in the design spec; then, before applying, tighten the settled shape to fit, or escalate if it can't.
 
 ## Verify your repairs before the next review
 
-**A review round must never be spent on something a check could have caught.** It is minutes of expensive reasoning; a script is a second and never forgets a case. Before handing the guide back for another round:
+**Never spend a review round on something a check could have caught.** After the clusters, measure each guide with `wc -c`, capped or not and whatever the reviewer measured, and run every applicable mechanical check before the next round, until the stop rule:
 
-- **Run everything the guide tells an operator to run.** Not just "does it parse" — does it exit the way the prose claims, and does a guard actually stop when its input is missing? A guard that prints a warning and returns success reads as safe and is not.
-- **Re-read the implementation behind every claim you changed.** If the guide says a tool enforces something, confirm it still does.
-- **After changing a tool, search the guide for every mention of it.** Prose that describes tooling goes stale silently — the guide keeps promising what the tool stopped doing. Search; do not rely on remembering where you wrote it.
+- **Check every command and tool claim against the tool's current code or documentation** — not just "does it parse": do its options exist, and does it do, output and exit the way the prose claims, a guard stopping when its input is missing? A guard that warns and returns success reads as safe and is not. Don't test the tool itself; its maintainers do.
+- **After changing a tool, search the guide for every mention of it.** Prose about tooling goes stale silently; search rather than remember.
 
-**A defect class that appears twice gets a script, not more care.** This is the automation counterpart of the codification threshold: the first occurrence is a fix, the second is evidence that hand-checking does not hold, and resolving to be more careful has a poor track record against it. Write the check, run it before every handoff, and extend it whenever it misses one.
+**A defect class that appears twice gets a script, not more care.** This is the automation counterpart of the codification threshold: the first occurrence is a fix, the second is evidence that hand-checking does not hold. Run the check before every handoff and extend it whenever it misses one. The signal you skipped this: a round whose findings are mostly mechanical defects in your own last repair — a review doing a linter's job.
 
-The signal you skipped this: a round whose findings are mostly mechanical defects in your own last repair. That is a review doing a linter's job, and it crowds out the judgment work only a fresh reader can do.
+## Rounds and stopping
 
-## Closing the pass
-
-In the refinement working document, mark every finding `closed` / `downgraded` / `still open` / `rejected` / `deferred` / `logged`, each with one line of evidence. For `rejected` and `logged` entries, that evidence must be the **rationale** — *why* the finding was declined or didn't meet the bar — not merely the disposition: these are exactly what a later cold review will re-raise, and the recorded rationale is what lets the next pass refer back and skip instead of relitigating. `logged` means the finding was classified `log only` at triage and recorded in the findings log without a guide change. A finding is not `closed` if the underlying problem still reproduces under different wording. And a finding about a command, script, or tool behavior cannot be closed on the strength of a description of the fix — run it, including its failure branch, and record what you observed. Closing on intent is how a bug survives its own repair: three closures in one refinement effort were recorded against fixes that did not work, and each one then suppressed the finding when a later round raised it again.
-
-Append every entry to the target's findings log at this step, so future passes have the cross-pass record.
-
-## Iterated review
-
-Sometimes one refinement effort runs several review → repair rounds back-to-back on the same document, rather than passes separated in time. Four rules keep that from becoming an endless loop:
-
-- **Start the findings log at round 1**, not when you notice you are re-litigating, and append each round's dispositions before commissioning the next review — otherwise "already settled" is unknowable when you score. It is what lets you answer a repeated finding with "logged — see the prior disposition" instead of relitigating it.
-- **Stop rule.** Convergence is only ever declared by a fresh round over the current text — a round you repaired after can never be the terminal round. Terminal means either: **(a)** the round produced no new live findings in the binding review target (re-raises are answered by the findings log; findings outside the target route to their owning document), or **(b)** findings remain that the refiner argues should not be implemented — presented per *The `supervisor decision` rule* as the complete unimplemented ledger, and the supervisor approves; record the ruling in the findings log, so convergence-by-ruling is distinguishable from convergence-by-clean-round. A round of *misfired* findings is neither — that is a prompt defect (see "When the findings are wrong, suspect the prompt" in *The cold review*); fix the prompt and rerun. The old convergence shape — all in scope, all sharpen-level, no bloat flags — is an approach signal, never the stop.
-- **Consolidation trigger.** If your fix in one round becomes the finding in the next, stop patching. That is the observable symptom of editing with a keyhole view: you are closing findings locally while the document drifts. Group the outstanding findings by root cause and restructure — then review again. **If it happens twice, consolidating is not enough** — the problem is your editing method, not the document's structure. Move to the structured tier in *Scaling the ceremony*.
-- **Watch who the findings are about.** A round whose findings are mostly *your own previous repairs* is not measuring the document any more; it is measuring you. Count them each round — it is the clearest convergence signal you have, and it points at a fix no additional review round can deliver.
+- **Stop rule.** Only a fresh round over the current text can end a pass — never a round you repaired after. It ends when **(a)** the round's triaged findings leave nothing to apply in the binding review target (re-raises are answered by the findings log; findings outside the target route to their owning document), or **(b)** you present the remaining findings you argue should not be implemented as one ledger, per *Supervisor decisions*, and the supervisor approves — record that ruling in the findings log so ending by ruling is distinguishable from a clean round. A round of *misfired* findings is neither: fix the prompt and rerun.
 
 ### Round score
 
-Score every round, starting with the first commissioned: an evidence-weighted estimate of what the round's live defects could still do to someone following the document. Lower is better within one series. 0 means nothing scored — not a clean document.
+Score every round that reviewed applied text: an evidence-weighted estimate of what its live defects could still do to someone following the document. Lower is better within a series; 0 means nothing scored, not a clean guide. The reviewer never grades — it states three facts per finding, and the score is arithmetic on them:
 
-The reviewer never grades; it states three facts the template requires of every finding, and the score is arithmetic on them.
-
-**score = Σ over the matrix's live, not-already-settled rows of consequence × reachability × verification**
+**score = Σ over the matrix's live rows of consequence × reachability × verification**
 
 | Consequence | Reachability | Verification |
 |---|---|---|
 | irreversible **20** · divergent **5** · cosmetic **2** | normal **×1.0** · off-normal **×0.75** · past-a-rule **×0.25** | verified **×1.0** · speculative **×0.5** |
 
-[`cold-review-prompt-template.md`](cold-review-prompt-template.md) § *Output* defines these labels and their test order — open it while you score rather than restating it here. The reviewer's labels stand unless one plainly fails its test (`verified` with no implementation read; `normal` where an unopposed rule makes `past-a-rule` first). Correct those in the arithmetic line, before collapsing, since a correction can change which constituent is heaviest. Leave the rest: they are a best estimate, and one step apart either way is fine.
+**What counts.** A row scores when your triage says it is a live defect in the binding review target — any of its guides, or a sibling passage a copied fix joined, with what they reference — with no earlier non-fix disposition still holding, wherever the report printed it. Every other row is **noise**: counted beside the score and never added, so rejecting freely can't buy a clean round; three rejected findings that were one defect are one noise entry. A row belonging outside the target routes to its owner, and an open question is reported on its own; neither is counted.
 
-**What counts.** Score a row when your triage says it names a live defect in the binding review target — any of its guides — not settled before this round was commissioned, wherever the report printed it. Every other row is **noise**: counted beside the score, never added to it, so rejecting freely cannot buy a clean round. Count rows there too — three rejected findings that were one defect are one noise entry. Two things are neither: a row belonging outside the binding target, which routes to its owner, and an open question, which is reported on its own.
-
-**Record it in the refinement working document,** appended each round — or beside the inline matrix on a trivial pass that skipped the persisted document:
+Append to the working document each round (or beside an inline matrix):
 
 | Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
 |---|---|---|---|---|---|---|
 
-`Total defects` is the sum of the three consequence columns; noise is counted separately. Beneath the table put the round's arithmetic on one line, naming each row by the findings it came from:
+`Total defects` sums the three consequence columns. Beneath it, the round's arithmetic on one line, naming each row by its findings:
 
 > F01+F03+F06 one defect, heaviest F03, so the row is divergent · normal · verified = 5 · F02 round-2 closure did not hold, live again, irreversible · off-normal · speculative = 7.5 · F04 rejected, noise · F05 outside the binding target, routed to the schema doc · F07 open question, neither
 >
 > `| r3 | 12.5 | 2 | 1 | 1 | 0 | 1 |`
 
-- **It is a monitor, never the stop criterion.** A low score is not convergence; the stop rule above decides that.
-- **Scores compare only within one series.** A series is fixed by whatever decides which findings can be raised and what they weigh: the scoring model (label tests and factor table), the files under review, the design spec and declared scope, the report charter, and any evidence the commission supplies as part of the standard. Change one, or start a different effort, and the rows after it are a separate series — label them, and don't compare across. Repairing the reviewed text stays in-series; that is what is being measured — unless what you repaired *is* one of those inputs, as when this guide's own scoring model is the target, and then it starts a new series. Routine refreshes the workflow requires — a newly settled disposition, a note on what you just repaired — do not.
+- **It is a monitor, never the stop criterion.**
+- **Scores compare only within one series.** A series is fixed by what decides which findings can be raised and what they weigh: the scoring model, the files under review, the design spec and scope, the report charter, and any evidence the commission supplies. Change one, or start a different effort, and later rows are a separate series — label them, and don't compare across. Repairs stay in series, including a copied fix that adds a sibling guide; if a repair changes another series input, such as the scoring model, later rounds start a new series. Routine refreshes — a newly settled disposition, a note on what you just repaired — do not start a series.
+
+## Closing the pass
+
+In the working document, mark every finding `closed` / `downgraded` / `still open` / `rejected` / `deferred` / `logged` (`log only` at triage), each with one line of evidence. For `rejected` and `logged`, the evidence is the **rationale** — why it was declined — so later passes can assess re-raises and recurrence. A finding is not `closed` while its problem reproduces under other wording. A finding about a command, script or tool closes only when the guide's claim matches the tool's current code or documentation, failure handling included, never on a description of the fix.
+
+Append every entry to the findings log, then hand the finished change to the supervisor for review.
+
 ## Scaling the ceremony
 
-Three tiers. Match the tier to the evidence, and do not default to a heavier one than the evidence supports.
+Three tiers; match the tier to the evidence, never heavier than it supports. Every tier triages, self-checks, checks mechanically, measures size and reviews until the stop rule is met; higher tiers add the safeguards below.
 
-**Lightweight (default).** Everything above: triage, finding matrix, cluster-at-a-time repair with the self-check, closure list, findings log. A handful of clarity fixes needs nothing more.
+**Lightweight (default).** Everything above. A handful of clarity fixes needs nothing more.
 
-**Structured.** Add these three when the consolidation trigger has fired twice, or when a round's findings are mostly your own previous repairs. They exist to fix *how you edit*, which more review rounds cannot:
+**Structured.** When the consolidation trigger has fired twice, or a round's findings are mostly your own last repairs, add three things that fix *how you edit*, which more rounds cannot:
 
-- **Invariants.** Name the properties a repair must not break — give them stable IDs (`P1`, `P2`, …) in the refinement working document. Then **restate every accepted finding as an invariant violation before editing**. That is the move that turns a one-off fix into a class fix. A finding that violates no invariant is either a clarity edit or a candidate for a new invariant (which must clear the codification bar).
-- **Canonical ownership.** Rule text gets exactly one home; every other surface points rather than restates. Write the owner down — a small table of *content → canonical owner → derivative surfaces* — because drift between a guide, its template, and a materialized copy is one of the highest-yield finding streams there is, and it is invisible from inside any one of them. Where a derivative copy is generated once and never refreshed, add a mechanical sync check; an ownership rule nobody can verify will silently rot.
-- **Rule impact map.** Before editing, for each accepted finding write: the invariant violated, the canonical owner of the rule you are changing, **every dependent that consumes or restates it — found by grep, not by memory** — and what must not change. Edit the owner first, then re-check every dependent. The fix is not finished when the flagged instance is repaired; it is finished when the search that found it returns a consistent document.
+- **Invariants.** Name the properties a repair must not break, with stable IDs (`P1`, `P2`, …) in the working document, and **restate every accepted finding as an invariant violation before editing** — the move that turns a one-off fix into a class fix. If none fits, add one grounded in the design spec.
+- **Canonical ownership.** Each rule has one home, and other surfaces point to it. Where a surface needs the rule restated — the reviewer's prompt, which can't read this guide — keep the restatement consistent with its home. Write a small table of *content → canonical owner → derivative surfaces*: drift between a guide, its template and a materialized copy is one of the highest-yield finding streams, and invisible from inside any one of them. A derivative copy generated once and never refreshed gets a mechanical sync check; an ownership rule nobody can verify silently rots.
+- **Rule impact map.** Before editing, per accepted finding: the invariant violated, the owner of the rule you are changing, **every dependent that consumes or restates it — found by grep, not memory** — and what must not change. Edit the owner first, then re-check every dependent; the fix is finished when the search that found it returns a consistent document. **Sweep the class, not the instance**, and wider than the obvious form: a search over fenced code blocks misses the same defect in inline code spans.
 
-  Corollary — **sweep the class, not the instance.** When a finding names an instance of a class, enumerate the class and fix it entire. Take the sweep wider than the obvious form: a search over fenced code blocks misses the same defect in inline code spans.
-
-**Full apparatus.** A dated worklog per pass, a numbered audit catalog with stable IDs, required stale-text sweeps, cold-reader simulations, and explicit stop conditions — weight calibrated for a large, in-use, multi-doc workflow. Reach for it when a structural repair spans several guides and a later reviewer must be able to reconstruct exactly which checks ran.
+**Full apparatus.** A dated worklog per pass, a numbered audit catalog with stable IDs, required stale-text sweeps, cold-reader simulations and explicit stop conditions consistent with the stop rule — for a structural repair spanning several guides, where a later reviewer must reconstruct exactly which checks ran.
 
 ## Across passes
 
-The disciplines below apply when a target receives more than one refinement pass over time. A single-pass user can ignore this section.
+For a target refined more than once over time:
 
-**Recurrence threshold.** Do not codify from a single observation. First sighting = `log only` (recorded in the findings log). Second sighting in a different case = consider codification. Third = codify. The findings log provides the cross-pass memory this rule depends on. As in the codification check above, this thresholds *codification* — it never blocks fixing a deterministic document defect on first sight, or sharpening an existing rule against the chartered empirical failure of a scoped review.
+**Recurrence threshold.** The codification check's count runs across passes, carried by the findings log; like the check, it never blocks fixing a deterministic defect, sharpening a rule against a scoped review's chartered failure, or a change the supervisor asked for.
 
-**Periodic restructure.** Every several passes, refactor the guide for accumulated cruft — consolidate overlapping rules, remove dead text, reorganize sections by what is actually load-bearing. Bloat is fought retrospectively as well as at the entry point. This is a deliberate pass of its own; do not fold it into a normal refinement pass.
+**Periodic restructure.** Every several passes, refactor the guide for accumulated cruft — consolidate overlapping rules, remove dead text, reorganize by what is load-bearing. Bloat is fought retrospectively as well as at the entry point. It is a deliberate pass of its own, not folded into a normal one.
 
 ## Project Addendum
 
