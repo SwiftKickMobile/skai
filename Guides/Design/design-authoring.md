@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-authoring
 Managed-Source: Guides/Design/design-authoring.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-17
+Managed-Updated-At: 2026-11-18
 
 # Design Authoring
 
@@ -207,7 +207,7 @@ decisions and feedback currently stand, in the package's Section on its page, or
 request section. Draw each in as few frames as show it, normally one, cropped where the tool
 guide's crop rule applies; its Description says where else it applies, and promotion carries it
 there. Not every affected frame needs a drawing. Which states earn a frame, and
-what is also drawn at each target size, are the tool guide's rules.
+what is also drawn at each form factor, are the tool guide's rules.
 
 A case an app-wide design already covers is not drawn again and needs no Discussion item: the
 entry that relies on it, or `## Out of scope`, cites that design by name, and the case counts as

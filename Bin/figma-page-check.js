@@ -1,5 +1,5 @@
 // figma-page-check.js — check a page's structure against the Figma designer guide's canvas rules.
-// It is for `Production` and its target-size pages, change pages, `Components` and `Design System`.
+// It is for `Production` and its form factor pages, change pages, `Components` and `Design System`.
 // An asset page is not a target: its frames are laid out for export, and the script would read
 // them as screens.
 //
@@ -31,8 +31,10 @@
 //   type-size  a local text style whose font size binds no variable (checked when the target is a page;
 //              a `Backup/…` style, and a `Draft/…` style outside this page's own folder, are skipped)
 //   purpose    a screen frame on a change page with no annotation in the `Purpose` category
-//              (none is asked on `Production` and its target-size pages, on `Components` or
-//              `Design System`, or in a `Components` or `Design System` Section)
+//              (none is asked on `Production` and its form factor pages, on `Components` or
+//              `Design System`, or in a `Components` or `Design System` Section; nor of an instance
+//              placed as a screen: one that repeats a screen at a further form factor needs none,
+//              and whether any other does is for you to look at)
 //
 // Signals:
 //   loose-layers       text and frame layers in a screen that are in no instance, counted per screen
@@ -43,7 +45,7 @@
 //   kit-lookalike      a frame named like a library component the target uses at any depth, that is
 //                      not an instance
 //
-// A page is `Production`, a target-size page (`Production (<size name>)`), `Components` or
+// A page is `Production`, a form factor page (`Production (<form factor name>)`), `Components` or
 // `Design System` only by its exact name; one of those names followed by ` — Pre <change-id>` is
 // that page's backup; any other page is a change page. A Section target is read on its own: the
 // script does not look at what the Section sits inside.
@@ -68,7 +70,7 @@ const LOOK = ["fills", "strokes", "cornerRadius", ...RADII];
 const PREFIX = /^[a-z] · |^[A-Z] — /;
 const BACKUP = /^Base — Pre /, SCRATCH = /^Scratch — /;
 const KEPT = /^Backup\//;  // a backup copy of a style is a record of what was, and is not checked
-const PRODUCTION = /^Production( \(.+\))?$/;  // `Production` and its target-size pages hold no nested Sections
+const PRODUCTION = /^Production( \(.+\))?$/;  // `Production` and its form factor pages hold no nested Sections
 const SCREEN_TYPES = new Set(["FRAME", "COMPONENT", "INSTANCE", "COMPONENT_SET"]);
 
 function hex(c) { return "#" + [c.r, c.g, c.b].map(v => Math.round(v * 255).toString(16).padStart(2, "0")).join("").toUpperCase(); }
@@ -131,7 +133,7 @@ function values(n, field, single) {
 function checkContent(sections, unnoted, library, ctx, add, signal) {
   const mains = ctx.mains || new Map(), shared = new Map(), kit = new Set(), frames = [];
   for (const { node: screen, note, isScreen } of screensOf(sections, unnoted, library)) {
-    if (note && !(screen.annotations || []).some(a => a.categoryId === ctx.purposeId && ctx.purposeId)) add(screen, "purpose", `no annotation in the ${PURPOSE} category`);
+    if (note && screen.type !== "INSTANCE" && !(screen.annotations || []).some(a => a.categoryId === ctx.purposeId && ctx.purposeId)) add(screen, "purpose", `no annotation in the ${PURPOSE} category`);
     let loose = 0;
     for (const { n, fields, owner } of layers(screen)) {
       const bound = n.boundVariables || {};

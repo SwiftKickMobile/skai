@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.designer-guide
 Managed-Source: Guides/Design/figma-designer-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-17
+Managed-Updated-At: 2026-11-18
 
 # Figma Designer Guide
 
@@ -27,17 +27,17 @@ An agent editing through the Figma tool reads
      [design conventions](#design-conventions).
 
    A change page, named for its change package, holds its drafts until they reach `Production`:
-   one concept per page, its letter in the page name, its per-screen Sections, `Components` and
-   `Design System` inside one Section named for the package. A request uses one `<request ID> — <name>`
+   one concept per page, its letter in the name, per-screen Sections and any `Components` and
+   `Design System` Sections inside a Section named for the package (for several form factors: [Multiple form factors](figma-designer-guide-form-factors.md)). A request uses a `<request ID> — <name>`
    Section (`CR-01`, or `CR-01-01` against `CR-01`), never inside another Section, on its base's draft page (a change page when the base is production), holding per-screen Sections for its added or changed
    screens, a changed screen as a copy, and `Components` and `Design System` Sections when it needs them. Promotion backs up the base, then copies them into its
    Sections: the base's package or request Section copied as `Base — Pre CR-01`, gap annotations
    stripped, 100px under the request Section, left-aligned; into production, each page the fold
-   changes (`Production`, `Components`, a size page) as `<page> — Pre <change-id>`. A top-level
+   changes (`Production`, `Components`, a form factor page) as `<page> — Pre <change-id>`. A top-level
    `Scratch — <topic>` Section holds exploration.
 
 2. **Production is canonical.** `Production` holds the approved design of every screen (plus a page
-   per further target size; see [Multiple target sizes](figma-designer-guide-multiple-sizes.md)).
+   per further form factor; see [Multiple form factors](figma-designer-guide-form-factors.md)).
    There is no other place to look for the current design.
 
 3. **Components and Design System are edited deliberately**, never as a side effect of screen work.
@@ -51,13 +51,11 @@ An agent editing through the Figma tool reads
 
 **Read `Conventions` before reading or editing anything else in the file.** It is a frame on
 `Design System` that records the choices that differ between apps. The designer makes them; the
-guide does not. What it records wins over this guide's examples and defaults: a size name in an
-example does not replace a project's own. It holds only decisions; build notes and exceptions to
+guide does not. Its decisions override this guide's examples and defaults, including form factor names. It holds only decisions; build notes and exceptions to
 this guide's rules stay out.
 
-- **Target sizes** — the sizes the app is designed at, each with a name and a default frame size.
-  Orientation is part of a target size. This can be fewer than the app supports, when some are
-  deferred.
+- **Form factors** — what the app is designed at, each with a name, a definition and a default
+  frame size. Its definition says what the name stands for. Some the app supports may be deferred.
 - **Platforms** — the platforms the design serves, and the one whose look the screens are drawn in.
 - **Dark mode** — whether the app supports it, and so whether colors have a `Dark` mode.
 - **Button label case** — Title Case or sentence case.
@@ -78,7 +76,7 @@ this guide's rules stay out.
 
 | Page | Sections are | Inside a Section |
 | --- | --- | --- |
-| `Production` (and its target-size pages) | Feature areas | Screens |
+| `Production` (and its form factor pages) | Feature areas | Screens |
 | Change pages | The package's Section; request, backup and scratch Sections | Package, request and backup Sections: one Section per screen, named for it plainly, `Components` and `Design System` |
 | `Components` | Component families (`Controls`, `Icons`, `Images`) | Component sets, components, and reference frames |
 | `Design System` | Foundation topics (`Conventions`, `Colors`, `Text Styles`, `Dimensions`) | Documentation frames |
@@ -86,7 +84,7 @@ this guide's rules stay out.
 
 ### Screen pages
 
-`Production` and its target-size pages, and change pages.
+`Production` and its form factor pages, and change pages.
 
 1. **Screens go right, states go down.** Within a Section each distinct screen is its own column, in
    the order a user meets them (notebooks → notes → note editor). A screen's states, and crops of
@@ -155,11 +153,11 @@ this guide's rules stay out.
 
 ## Frames
 
-1. **Target size by default.** A screen frame is its target size from `Conventions`. Other target
-   sizes follow [Multiple target sizes](figma-designer-guide-multiple-sizes.md).
+1. **Form factor size by default.** A screen frame is its form factor's frame size from
+   `Conventions`. Further form factors follow [Multiple form factors](figma-designer-guide-form-factors.md).
 
-2. **A smaller layout is a state.** When a screen's layout changes below a target size, name the
-   state for its width.
+2. **A smaller layout is a state.** When a screen's layout changes below its form factor's default frame width, name
+   the state for its width.
 
 3. **Taller to show scrolling content.** When the whole screen scrolls, make the frame tall enough
    to show representative content. A region that scrolls inside a fixed layout does not change the
@@ -169,10 +167,11 @@ this guide's rules stay out.
    enough of the screen to show that element in context.
 
 5. **Unique names.** Screen frames are named `screen — state` in lowercase with a spaced em dash:
-   `notes — empty`, `note editor — date picker`. No suffix means the default state. No two frames
-   on a page share a name, copies in a request, backup or scratch Section aside; any other copy is renamed.
+   `notes — empty`, `note editor — date picker`. No suffix means the default state. Frame names are
+   unique per page, except copies in a request, backup or scratch Section and frames in a further
+   form factor's Section; any other copy is renamed.
 
-6. **Frames are never rotated.** A landscape design is a landscape target size, not a rotated frame.
+6. **Frames are never rotated.** A design that would need one is a form factor of its own.
 
 ## Styles
 
@@ -202,8 +201,8 @@ this guide's rules stay out.
    designer to upload it (license permitting) or choose a Figma-hosted equivalent the app can adopt.
    It does not work around a missing font.
 
-5. **Names are written for readers.** Color variables, text and effect styles, components and
-   their properties have readable Title Case names. The file records no code names: the code's
+5. **Names are written for readers.** Color variables, text and effect styles, components other
+   than screens, and all component properties have readable Title Case names. The file records no code names: the code's
    names map one to one from these names, in the project's own naming convention. An agent that has to
    convert a name and does not know that convention stops and asks. In a backfill, a thing keeps
    the app's own name, in Title Case.
@@ -216,15 +215,15 @@ this guide's rules stay out.
 2. **Dimensions are variables.** A `Dimensions` collection holds `spacing/<n>`, `radius/<n>`
    (`radius/full` for pills), and `type/<n>` for font sizes, named for their value. Every padding,
    gap, corner radius, and font size binds one, defined only when something uses it. These names
-   stay as they are; the code mirrors them in its own convention. A file with several target sizes adds modes and adaptive
-   variables: see [Multiple target sizes](figma-designer-guide-multiple-sizes.md).
+   stay as they are; the code mirrors them in its own convention. A file with several form factors adds modes and may use adaptive
+   variables: see [Multiple form factors](figma-designer-guide-form-factors.md).
 
 ## Components
 
 1. **Main components live on `Components`.** Drafts of new or visibly changed components and supporting
    copies stay in the package's `Components` Section until promotion. Screen components in a file
-   with several target sizes are another exception (see
-   [Multiple target sizes](figma-designer-guide-multiple-sizes.md)).
+   with several form factors are another exception (see
+   [Multiple form factors](figma-designer-guide-form-factors.md)).
 
 2. **Component sets use auto layout.** A component set is a grid auto layout that arranges its
    variant properties along the axes (`State` across, `Style` down; a single property runs across).
@@ -251,7 +250,10 @@ this guide's rules stay out.
 
 7. **Auto layout arranges contents.** Components and screens are built with auto layout, so their
    contents reposition themselves when content changes (a longer label, an added row). Items are
-   not placed by hand at fixed positions where auto layout can arrange them.
+   not placed by hand at fixed positions where auto layout can arrange them. A screen stretches:
+   its content fills the space its fixed parts leave, and a part pinned to an edge or laid over the
+   content is positioned absolutely with constraints. A narrower state, a taller frame, longer content or
+   a further form factor can reuse the screen.
 
 8. **A scaled component is drawn once, at scale 1.** Scale each instance; the component keeps its
    linked text styles.
@@ -282,7 +284,8 @@ remove when the owning item closes; never in `Production`, a backup or scratch.
 
 Every screen frame in a package's or request's Sections carries one Dev Mode annotation on the
 frame itself, in the file's violet `Purpose` category (`figma.annotations`; create it if missing),
-keeping the node's other annotations.
+keeping the node's other annotations (an instance repeating a base screen at a further form factor carries none:
+[Multiple form factors](figma-designer-guide-form-factors.md)).
 The frame of a screen's main state says what the screen is, where a user meets it and what it is
 for. Every other frame of the screen, a crop included, says what it shows that the main state does
 not, whether or not the package draws the main state. A sentence or two, in product words, with no IDs. Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing. It stays

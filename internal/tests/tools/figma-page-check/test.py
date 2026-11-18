@@ -214,7 +214,7 @@ class Check(unittest.TestCase):
             page = {"type": "PAGE", "name": name, "id": name, "children": [section("Readiness", 200, 200, [section("Notes", 50, 50, [frame("notes", 50, 50, noted=False)])])]}
             self.assertEqual([(f["node"], f["rule"]) for f in run_check(page)["findings"]], [("notes", "purpose")], name)  # nesting allowed, note asked
 
-    def test_a_size_pages_backup_keeps_production_rules_whatever_the_size_is_called(self):
+    def test_a_form_factor_pages_backup_keeps_production_rules_whatever_the_form_factor_is_called(self):
         backup = {"type": "PAGE", "name": "Production (Release — Pre QA) — Pre pinned-notes", "id": "odd", "children": [
             section("Nested", 200, 200, [section("Inner Area", 50, 50, [frame("notes", 50, 50, noted=False)])])]}
         self.assertEqual([(f["node"], f["rule"]) for f in run_check(backup)["findings"]], [("Nested", "nesting")])
@@ -235,6 +235,16 @@ class Check(unittest.TestCase):
 
     def test_a_badly_padded_section_is_a_breach(self):
         self.assertEqual([(f["node"], f["rule"]) for f in run_check(PADDED)["findings"]], [("Notes", "padding")])
+
+    def test_a_screen_repeated_at_a_further_form_factor_needs_no_purpose_note(self):
+        # the package's Section, and beside it its Section for a further form factor: an instance of the
+        # screen repeats it and carries no note; a screen with its own layout there is a component and needs one
+        page = {"type": "PAGE", "name": "Pinned Notes A", "id": "pinned", "children": [
+            section("Pinned Notes", 200, 200, [section("Notes", 50, 50, [frame("notes", 50, 50, type_="COMPONENT")])]),
+            section("Pinned Notes (Wide)", 200 + 593 + 100, 200, [section("Notes", 50, 50, [
+                instance("notes (repeat)", "notes", x=50, y=50, width=1024, height=768),
+                frame("notes — split", 50 + 1024 + 50, 50, w=1024, h=768, type_="COMPONENT", noted=False)])])]}
+        self.assertEqual([(f["node"], f["rule"]) for f in run_check(page)["findings"]], [("notes — split", "purpose")])
 
     def test_a_file_with_no_purpose_category_breaches_every_change_page_screen(self):
         report = run_check(CONTENT, categories=())

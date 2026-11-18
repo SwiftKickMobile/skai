@@ -185,3 +185,37 @@ for both guides against the 19,000 cap; 16,674 after merging the shorter Project
 | 2026-11-17 F2 r8 | F1 loose-layers signal raised for components and specimens | closed | raised for screens only; test added |
 | 2026-11-17 F2 r8 | F2 different mixed fills grouped as one repeated override | closed | a text layer's fills compared range by range; test added |
 | 2026-11-17 F2 | Pass closed | closed | Supervisor ended the pass after r8 (stop rule b): no point in a further round over two small tested script fixes. Rounds r2–r8: 25.0 · 16.25 · 13.125 · 7.5 · 7.5 · 10.0 · 8.75. Sizes 18,499 / 18,500; 4,380 / 4,400; 2,598 / 2,600 |
+| 2026-11-18 F4 r1 | F1 a request's Sections per form factor against singular backup and fold wording | accept, smaller than proposed | Form factors rule 11 names the request's Sections and says the main guide's Section rules hold for each form factor's |
+| 2026-11-18 F4 r1 | F2 repeated screens share a name on one page, against Frames rule 5 | accept | The rule's exception gains a further form factor's Section |
+| 2026-11-18 F4 r1 | F3 chrome content "set again to the screen component's values" misreads as defaults | accept | Reworded: set on the screen instance on each further form factor's page |
+| 2026-11-18 F4 r1 | F3b chrome content in a screen with its own layout | logged | Nothing switches while the screen is edited in its own mode; content already goes in through properties |
+| 2026-11-18 F4 r1 | F4 chrome rule contradicts itself on a kit that looks the same | accept | The kit case named in the rule and in standard item 30 |
+| 2026-11-18 F4 r1 | F5 script header calls every screen-level instance a repeat | accept | Header reworded; behavior and test unchanged |
+| 2026-11-18 F4 r1 | F6 no route to a repeated screen's purpose note | accept | Rule 12 says where the note is |
+| 2026-11-18 F4 r1 | F7 one visibility name per form factor cannot cover two of three | accept as a sharpening | Named for where it shows, true where it shows; a joined-name format not adopted |
+| 2026-11-18 F4 r1 | F8 stretch rule promised reuse where a layout differs | accept | "can then reuse the screen" |
+| 2026-11-18 F4 r1 | F9 rule 4 read as extracting every screen's content | accept | Condition leads the sentence |
+| 2026-11-18 F4 r2 | F1 rule 3's instance of each screen against rule 4; "the mode changes their spacing and type" | accept | Rule 3 names the own-layout case and says modes resolve adaptive values |
+| 2026-11-18 F4 r2 | F2 shared content built "on `Components`" against the package draft rule | accept | Location is the main guide's Components rules |
+| 2026-11-18 F4 r2 | F3 visibility name template reads as one form factor (r1 F7's repair returning) | accept | Name given as an example, `visible/Wide` |
+| 2026-11-18 F4 r2 | Open question: `Conventions` does not name the base form factor | logged | No strand seen; a required field would be new |
+| 2026-11-18 F4 r3 | F1 main guide's "a request uses one" Section against one per form factor (r1 F1's repair left it) | accept | "uses a" |
+| 2026-11-18 F4 r3 | F2 rule 4 "the shared screens" mandatory and "on its own page" against a change-page Section | accept | "any shared screens"; "on its form factor's page or change-page Section" |
+| 2026-11-18 F4 r3 | F3 full set against "the other orientation" when both are form factors | accept as a sharpening | "An orientation that is not a form factor"; main guide Frames rule 6 says "drawn at landscape size" |
+| 2026-11-18 F4 r3 | Sweep, P1: rule 5 set content "on the screen instance" only | closed | "on each further form factor's screen" |
+| 2026-11-18 F4 r4 | F1 "a repeated screen carries no purpose note" also reads on a screen with its own layout | accept | Rule 12 and the main guide's parenthetical say "instance" |
+| 2026-11-18 F4 r4 | F2 "every frame the package draws" takes in component and design system material | accept | "every screen frame the package draws in the base Section" |
+| 2026-11-18 F4 r5 | F1 main guide: several form factors "adds modes and adaptive variables" | accept | "and may use adaptive variables" |
+| 2026-11-18 F4 r5 | Open question: "a kit component cannot bind the project's values" unproven | closed | No kit in the test file; the reason clause is out of the guide and the standard says why |
+| 2026-11-18 F4 r6 | F1 "keeps one variant's size at every form factor" claims more than the two tests show | accept | "can keep one variant's size when it switches" |
+| 2026-11-18 F4 r7 | F1 main guide's "one Section … (one per form factor…)" reads as `Components` and `Design System` in every form factor's Section | accept | "inside a Section named for the package (for several form factors: …)" |
+| 2026-11-18 F4 r7 | F2 "below its form factor's width" names no one width | accept | "below its form factor's default frame width" |
+| 2026-11-18 F4 r8 | F1 change page sentence and rule 11 read as if every package has `Components` and `Design System` Sections | accept | "any `Components` and `Design System` Sections" in both |
+| 2026-11-18 F4 r9 | F1 frame-name exception covers only "copies" in a further form factor's Section | accept | "and frames in a further form factor's Section" |
+| 2026-11-18 F4 r9 | F2 lowercase screen names against Title Case component names, where screens are components | accept | Title Case is for components other than screens and for all properties; standard item 38 |
+| 2026-11-18 F4 r9 | Sweep, outside the target: the design system changes Figma guide's "a changed component" does not set a screen component aside | logged | For that guide's next pass; the main guide's Pages rule 1 drafts a changed screen as a copy in its screen Section |
+| 2026-11-18 F4 r10 | No findings | closed | A fresh round over the current text left nothing to apply |
+| 2026-11-18 F4 | Pass closed | closed | Stop rule (a) at round 10. Rounds r2–r10: 6.25 · 5.625 · 3.75 · 2.5 · 1.875 · 4.375 · 1.0 · 4.375 · 0. Fifteen findings fixed, none irreversible |
+| 2026-11-18 F4 | Reopened by the supervisor: the guides are to hold no concept of orientation | accept | Rule 6's orientation sentence deleted; `Conventions` entry and Frames rule 6 reworded; standard item 39. Round 3's F3 repair is superseded by this |
+| 2026-11-18 F4 r11 | No findings, over the text with orientation removed | closed | A fresh round left nothing to apply. The change was applied before it was reviewed, not proposed first; the supervisor accepted that ("OK good enough") |
+| 2026-11-18 F4 | Pass closed, after the reopening | closed | Stop rule (a) at round 11. Rounds r2–r11: 6.25 · 5.625 · 3.75 · 2.5 · 1.875 · 4.375 · 1.0 · 4.375 · 0 · 0 |

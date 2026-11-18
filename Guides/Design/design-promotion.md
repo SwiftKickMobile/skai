@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-promotion
 Managed-Source: Guides/Design/design-promotion.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-17
+Managed-Updated-At: 2026-11-18
 
 # Design Promotion
 
@@ -134,8 +134,8 @@ Write `- [ ] C<n> <identity>` items in execution order.
      proposed, at Base review. Where condition 7 found changes that can both stand,
      apply this package's to the base as it stands, keep the other's, and mark the place in
      the form the tool guide gives. The supervisor's recorded choice replaces any entry it
-     overrules, in every step. Where the design file keeps screens at several target sizes,
-     keep every size's set complete, as the tool guide says. Purpose notes travel with their frames and are never
+     overrules, in every step. Where the design file keeps screens at several form factors,
+     keep each one's set complete, as the tool guide says. Purpose notes travel with their frames and are never
      stripped; rewrite one that no longer fits, such as a draft's note on the one change it showed
      that now sits on the approved design of a whole state.
   4. Screenshot every touched frame; check what copying breaks: a pairing (a tab's unread dot needs
