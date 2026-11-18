@@ -357,7 +357,7 @@ Take a design change from an idea to a completed change package, authored agains
 - Guide [`Guides/Design/design-authoring.md`](Guides/Design/design-authoring.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
-- Tool guide, loaded by the process guide: [`Guides/Design/figma-designer-guide.md`](Guides/Design/figma-designer-guide.md) for Figma (and [`figma-designer-guide-multiple-sizes.md`](Guides/Design/figma-designer-guide-multiple-sizes.md) for several target sizes)
+- Tool guide, loaded by the process guide: [`Guides/Design/figma-designer-guide.md`](Guides/Design/figma-designer-guide.md) for Figma, with three linked guides read only when needed: [`figma-designer-guide-multiple-sizes.md`](Guides/Design/figma-designer-guide-multiple-sizes.md) for several target sizes, [`figma-designer-guide-design-system-changes.md`](Guides/Design/figma-designer-guide-design-system-changes.md) for a package that changes a style, variable or component, and [`figma-designer-guide-agent-tooling.md`](Guides/Design/figma-designer-guide-agent-tooling.md) for an agent editing the file
 
 **Prerequisites:** The project README links the Figma file. Something to design from.
 
@@ -580,7 +580,7 @@ Update `skai` to the latest release (or a target you name), review what changed,
 
 ### Figma designs
 
-- A project's Figma design file follows [`Guides/Design/figma-designer-guide.md`](Guides/Design/figma-designer-guide.md): page roles, conventions, canvas layout, frames, color and dimension variables, components, copy, gaps on change pages, and backfilling; a file with several target sizes also follows [`figma-designer-guide-multiple-sizes.md`](Guides/Design/figma-designer-guide-multiple-sizes.md).
+- A project's Figma design file follows [`Guides/Design/figma-designer-guide.md`](Guides/Design/figma-designer-guide.md): page roles, conventions, canvas layout, frames, color and dimension variables, components, copy, gaps and purpose notes on change pages, and backfilling; a file with several target sizes also follows [`figma-designer-guide-multiple-sizes.md`](Guides/Design/figma-designer-guide-multiple-sizes.md), a package that changes the design system [`figma-designer-guide-design-system-changes.md`](Guides/Design/figma-designer-guide-design-system-changes.md), and an agent editing the file [`figma-designer-guide-agent-tooling.md`](Guides/Design/figma-designer-guide-agent-tooling.md).
 - The project README links each main page of the file (`Production`, `Components`, `Design System`).
 - Changing the designs follows [Design authoring](#design-authoring-skill-skai-design-authoring) and [Design promotion](#design-promotion-skill-skai-design-promotion).
 

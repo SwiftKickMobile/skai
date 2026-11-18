@@ -572,6 +572,18 @@
       "tags": ["core"]
     },
     {
+      "id": "guide.figma-designer-guide-design-system-changes",
+      "type": "guide",
+      "sourcePath": "Guides/Design/figma-designer-guide-design-system-changes.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.figma-designer-guide-agent-tooling",
+      "type": "guide",
+      "sourcePath": "Guides/Design/figma-designer-guide-agent-tooling.md",
+      "tags": ["core"]
+    },
+    {
       "id": "guide.design-authoring",
       "type": "guide",
       "sourcePath": "Guides/Design/design-authoring.md",

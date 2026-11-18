@@ -132,3 +132,56 @@ for both guides against the 19,000 cap; 16,674 after merging the shorter Project
 | 2026-11-11 #118 r4 | F3/F4 applied on the supervisor's go | closed | § Gaps restructured ("Each gap's mirror is one Dev Mode annotation per change page and per request Section drawing it (a page's request Sections aside), …"); "never inside another Section" |
 | 2026-11-11 | Pass closed | closed | Supervisor ended the pass after r4 (stop rule b). Rounds r1–r4: 8.25 · 9.125 · 7.875 · 7. Pair 18,100 / 18,100 |
 | 2026-11-11 #111 | Container, backup and scratch Sections; production backups per changed page | closed | Refined with the design process guides (#111 pass, closed by clean round r8); pair 18,817 / 18,820 |
+| 2026-11-17 F2 r1 | F1 the structure check skipped overrides on layers inside an instance | closed | `layers` reads into instances; only what the instance overrides is checked; test case added |
+| 2026-11-17 F2 r1 | F2 a dimension bound outside `Dimensions` passes; the wrap gap was unchecked | closed (gap), logged (collection) | `counterAxisSpacing` checked. The collection is not: rare, and the header says so |
+| 2026-11-17 F2 r1 | F3 unbound gradient stops passed the color check | closed | gradient stops checked; test case added |
+| 2026-11-17 F2 r1 | F4 components and specimens treated as screens | closed | no purpose note asked on `Components` or `Design System` pages; no screen columns in a `Design System` Section. A full model of Section roles was not built: nothing in the standard asks for it |
+| 2026-11-17 F2 r1 | F5 repeated-override signal grouped by field name, not value | closed | one field and one value per component |
+| 2026-11-17 F2 r1 | F6 a page check failed on another package's draft text style | closed | `Draft/…` styles outside the page's own folder skipped |
+| 2026-11-17 F2 r1 | F7 no failing test for `padding` | closed | case added |
+| 2026-11-17 F2 r1 | F8 request Section wording excluded its `Components` and `Design System` Sections | closed | Pages rule 1 sentence rewritten |
+| 2026-11-17 F2 r1 | F9 "only through drafts" implied a rename or removal needs a draft | closed | "how one looks"; "A rename or a removal needs no draft" |
+| 2026-11-17 F2 r1 | F10 a component backup's place for a base package missing | closed | Design system drafts rule 4 names both places |
+| 2026-11-17 F2 r1 | F11 reset overrides could erase what must be restored | closed | rule 6: note what the screen needs before the swap |
+| 2026-11-17 F2 r1 | F12 a purpose note write could drop a gap annotation | closed | "keeping the node's other annotations" |
+| 2026-11-17 F2 r1 | F13 a host project's addendum says reading `Conventions` is no prerequisite | routed | the host's addendum is the host's; an addendum may override a guide |
+| 2026-11-17 F2 r1 | F14 promotion's order in the conventions guide | closed in part | new rules worded as what each thing is; Pages rule 1's existing "backs up, then copies" left: outside the change |
+| 2026-11-17 F2 r1 | F15 "nothing is redrawn" forbade adding what the kit lacks | closed | "A component the kit supplies is not redrawn" |
+| 2026-11-17 F2 r2 | F1 main guide routed only appearance changes to the design system changes guide | closed | Pages rule 3 names every case and promotion |
+| 2026-11-17 F2 r2 | F2 Components rule 1 and the kit rule put draft work on `Components` | closed | rule 1 covers drafts and supporting copies; rule 6 points at rule 1 |
+| 2026-11-17 F2 r2 | F3 unclear nesting clause in what a package leaves; two tooling bullets repeated rules 4 and 6 | closed | folders and Sections said separately; bullets removed |
+| 2026-11-17 F2 r2 | F4 signals missed a kit inside its wrapper and nested overrides | closed | every instance at any depth; tests added |
+| 2026-11-17 F2 r2 | F5 a request's draft text style on the same page is checked, against the header | closed (header) | header reworded: a page check covers every Section on the page, requests included |
+| 2026-11-17 F2 r2 | F6+F7 pages classified by name prefix; backup pages content-checked | closed | exact page names; a `— Pre` page is laid out as its page and its content skipped; tests added |
+| 2026-11-17 F2 r2 | F8 "one to one" and "product words, with no IDs" lost | closed | both restored |
+| 2026-11-17 F2 r2 | F9 half-built-results check and restore comparison dropped | closed | both restored |
+| 2026-11-17 F2 r2 | Open question: the script does not read hidden children of instances | logged | Figma skips them by default; a hidden layer's raw value shows nowhere. Revisit if a hidden override is found to matter |
+| 2026-11-17 F2 r3 | F1 "every fill and stroke binds a color variable" left no room for image fills | closed | "every solid fill or stroke and every gradient stop" |
+| 2026-11-17 F2 r3 | F2 Components rule 8 read as if scaled text stays linked | closed | "Scale each instance; the component keeps its linked text styles" |
+| 2026-11-17 F2 r3 | F3 a change that alters nothing visible was neither drafted nor exempt | closed, other fix | the reviewer's "each change to one" rejected: the 2026-10-26 ruling sends such a fix straight into the base. One sentence says it is not drafted |
+| 2026-11-17 F2 r3 | F4 Sections on the `Design System` page laid out as screen columns; an asset page read as a change page | closed in part, rest logged | no screen columns on `Design System`; the header says an asset page is not a target. No marker for asset pages added: no ruling asks for one |
+| 2026-11-17 F2 r3 | F5 a backup page still ran the text-style check | closed | the style loop takes the content condition; test added |
+| 2026-11-17 F2 r4 | F1 the script applies screen columns to component Sections | logged | older than this change; a single stacked column, which the guide asks for, passes; no failure seen |
+| 2026-11-17 F2 r4 | F2 a text layer with differing ranges reported as unstyled; its fills unread | closed | read range by range; proven in Figma; tests added |
+| 2026-11-17 F2 r4 | F3 the Section fill check reads only the first paint | logged | older than this change; a hidden first paint on a Section has not been seen |
+| 2026-11-17 F2 r4 | F4 Styles rule 1 read literally covers the canvas Section fill and paints inside a kit | logged | Canvas rule 2 and Components rule 6 each settle their case at the point of use; the breadth predates this change |
+| 2026-11-17 F2 r4 | F5 Components rule 1 "new or changed" against the linked guide's visible changes | closed | "new or visibly changed" |
+| 2026-11-17 F2 r4 | F6 draft-name examples used a page name with no concept letter | closed | `Draft/Pinned Notes A/…` |
+| 2026-11-17 F2 r4 | F7 "earlier look … is its own backup" promised a frozen look | closed | "the earlier definition of each changed one is in its own backup" |
+| 2026-11-17 F2 r4 | F8 the positive state example was an empty state, which `Global` draws | closed | example is now a mode, `notes — selecting` |
+| 2026-11-17 F2 r5 | F1 the linked guide's intro said some packages that need it never do | closed | "a package with no such change does not need it" |
+| 2026-11-17 F2 r5 | F2 "not changed in place before promotion" unconditional beside the nothing-visible exception | closed | "production definitions keep their look until promotion" |
+| 2026-11-17 F2 r5 | F3 rule 6 kept only what "the screen needs" | closed | "that use needs" |
+| 2026-11-17 F2 r5 | F4 rule 7 restored only an edited definition | closed | rule 7 reverses each step: new removed, renames reversed, moved returned, uses restored |
+| 2026-11-17 F2 r6 | F1 any page named `… — Pre …` read as a backup page | closed | only a main page's name followed by ` — Pre <change-id>` is a backup page; test added. No naming rule added to the guide |
+| 2026-11-17 F2 r6 | F2 a Section target loses what it sits inside | logged (re-raise of 2026-11-11 #118 r2 F5) | still past a rule: the process guides send the check to a page or a package's or request's Section; the header now says so |
+| 2026-11-17 F2 r6 | F3 repeated-override signal missed a plain layer inside instances | closed | matched by layer name across instances of the component; test added |
+| 2026-11-17 F2 r7 | F1 rule 6 re-pointed every use of a draft, the package's own mockups included | closed | "a draft in the base" |
+| 2026-11-17 F2 r7 | F2 "a later run's backups replace earlier ones" did not say whose | closed | "A run after a return to authoring replaces that package's backups" |
+| 2026-11-17 F2 r7 | F3 Frames rule 2 made any check below a target size a state | closed | a state only when the layout changes there |
+| 2026-11-17 F2 r7 | F4 tooling guide's "each axis it changes" against the standard's "both axes" | rejected | the Figma test shows only the axes the resize changes lose hugging; the standard was corrected to match |
+| 2026-11-17 F2 r7 | F5 a size name containing " — Pre " cut a backup page's name in the wrong place | closed | the matched page name is kept; test added |
+| 2026-11-17 F2 r7 | F6 a uniform radius override missed beside corner values | rejected | checked in Figma: such an override is listed as `cornerRadius` and all four corners, which the check reads. Found beside it and fixed: the repeated-override signal counted that one override five times |
+| 2026-11-17 F2 r8 | F1 loose-layers signal raised for components and specimens | closed | raised for screens only; test added |
+| 2026-11-17 F2 r8 | F2 different mixed fills grouped as one repeated override | closed | a text layer's fills compared range by range; test added |
+| 2026-11-17 F2 | Pass closed | closed | Supervisor ended the pass after r8 (stop rule b): no point in a further round over two small tested script fixes. Rounds r2–r8: 25.0 · 16.25 · 13.125 · 7.5 · 7.5 · 10.0 · 8.75. Sizes 18,499 / 18,500; 4,380 / 4,400; 2,598 / 2,600 |

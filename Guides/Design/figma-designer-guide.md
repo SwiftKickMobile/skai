@@ -2,18 +2,21 @@ Managed-By: skai
 Managed-Id: guide.designer-guide
 Managed-Source: Guides/Design/figma-designer-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-11
+Managed-Updated-At: 2026-11-17
 
 # Figma Designer Guide
 
 Print `📖 SKAI guide: figma-designer-guide` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
 Conventions for a project's Figma design file, the design source of truth for the app, for anyone
-editing it, designer or agent. They hold for any platform the app runs on. Examples use
-**LumenNotes**, skai's shared fictional theme.
+editing it, designer or agent. They hold across platforms. Examples use **LumenNotes**,
+skai's fictional theme.
 
-Designs are upstream of the UI Map, so the file's Sections and frame names need not match its
-domains or scenes.
+Designs are upstream of the UI Map, so Sections and frame names need not match its domains or
+scenes.
+
+An agent editing through the Figma tool reads
+[Agent tooling](figma-designer-guide-agent-tooling.md).
 
 ## Pages
 
@@ -24,29 +27,33 @@ domains or scenes.
      [design conventions](#design-conventions).
 
    A change page, named for its change package, holds its drafts until they reach `Production`:
-   one concept per page, its letter in the page name, its per-screen Sections inside one Section
-   named for the package. A request uses one `<request ID> — <name>`
-   Section (`CR-01`, or `CR-01-01` against `CR-01`), never inside another Section, on its base's draft page (a change page when the base is production), per-screen Sections inside holding only added or changed
-   frames, a changed screen as a copy. Promotion backs up the base, then copies them into its
+   one concept per page, its letter in the page name, its per-screen Sections, `Components` and
+   `Design System` inside one Section named for the package. A request uses one `<request ID> — <name>`
+   Section (`CR-01`, or `CR-01-01` against `CR-01`), never inside another Section, on its base's draft page (a change page when the base is production), holding per-screen Sections for its added or changed
+   screens, a changed screen as a copy, and `Components` and `Design System` Sections when it needs them. Promotion backs up the base, then copies them into its
    Sections: the base's package or request Section copied as `Base — Pre CR-01`, gap annotations
    stripped, 100px under the request Section, left-aligned; into production, each page the fold
    changes (`Production`, `Components`, a size page) as `<page> — Pre <change-id>`. A top-level
-   `Scratch — <topic>` Section holds exploration. The supervisor deletes request, scratch
-   and backup Sections and pages.
+   `Scratch — <topic>` Section holds exploration.
 
 2. **Production is canonical.** `Production` holds the approved design of every screen (plus a page
    per further target size; see [Multiple target sizes](figma-designer-guide-multiple-sizes.md)).
    There is no other place to look for the current design.
 
 3. **Components and Design System are edited deliberately**, never as a side effect of screen work.
+   For a package that adds, changes, renames or removes a style, variable or component, and for
+   its promotion, read [Design system changes](figma-designer-guide-design-system-changes.md).
 
 4. **Older pages are read-only.** Pages from before `Production` existed are a historical record and
    are never edited.
 
 ## Design conventions
 
-`Design System` records the choices that differ between apps, in a frame named `Conventions`. The
-designer makes them; the guide does not.
+**Read `Conventions` before reading or editing anything else in the file.** It is a frame on
+`Design System` that records the choices that differ between apps. The designer makes them; the
+guide does not. What it records wins over this guide's examples and defaults: a size name in an
+example does not replace a project's own. It holds only decisions; build notes and exceptions to
+this guide's rules stay out.
 
 - **Target sizes** — the sizes the app is designed at, each with a name and a default frame size.
   Orientation is part of a target size. This can be fewer than the app supports, when some are
@@ -72,7 +79,7 @@ designer makes them; the guide does not.
 | Page | Sections are | Inside a Section |
 | --- | --- | --- |
 | `Production` (and its target-size pages) | Feature areas | Screens |
-| Change pages | The package's Section; request, backup and scratch Sections | Package, request and backup Sections: one Section per screen, named for it plainly, and `Components` |
+| Change pages | The package's Section; request, backup and scratch Sections | Package, request and backup Sections: one Section per screen, named for it plainly, `Components` and `Design System` |
 | `Components` | Component families (`Controls`, `Icons`, `Images`) | Component sets, components, and reference frames |
 | `Design System` | Foundation topics (`Conventions`, `Colors`, `Text Styles`, `Dimensions`) | Documentation frames |
 | Asset pages (an app icon page) | Asset groups | Frames set up for export |
@@ -87,19 +94,23 @@ designer makes them; the guide does not.
    apart; states are 100px apart. Canvas order runs down a column, then across columns. Names
    carry no concept prefix.
 
-2. **Choose states for the screen, not screens for states.** A state is drawn when the screen is
-   naturally in that situation: its main use, a mode, a lifecycle point, empty, error, loading. A
-   control's own states (pressed, selected, disabled) live in its component set, and changes inside
-   a component (a slider's value bubble) live in its reference frame; neither gets a screen of its
-   own. Pick sample data that shows several things at once (a pinned, a shared, and an untitled
-   note).
+2. **A screen's states are the situations it is naturally in:** its main use, a mode, a lifecycle
+   point. A screen gets another frame only when its layout changes. Text that varies (a label's value, a status word) and a
+   button that is absent do not need frames of their own. ❌ `note editor — shared`, the same
+   editor with a "Shared" label. ✅ `notes — selecting`, the list with checkboxes and a toolbar. A state the
+   `Global` Section already draws (rule 4) is drawn on a screen only where the screen departs from
+   it. Draw each edge case once, on its frame; leave it off frames showing the main case. A control's own states (pressed, selected, disabled) live in its component
+   set, and changes inside a component (a slider's value bubble) live in its reference frame;
+   neither gets a screen of its own. Pick sample data that shows several things at once (a pinned,
+   a shared, and an untitled note), as long as they could occur together.
 
 3. **States are in rough order of importance.** The main case comes first; edge cases and empty
    states come last.
 
 4. **App-wide behaviors are drawn once.** A `Global` Section holds one example of each behavior the
    whole app shares — error banner, toasts, empty state, error state, loading — each over a
-   representative host screen.
+   representative host screen. Read it before drawing. How these apply to a screen is written in
+   the project's specs; no notes are added to the drawings for it.
 
 5. **Platform differences are drawn once.** Screens are drawn in the look of the platform
    `Conventions` names. A `Platforms` Section shows, once, how shared chrome (navigation, tab bar,
@@ -110,7 +121,8 @@ designer makes them; the guide does not.
    kit's (rule 6 under Components).
 
 7. **Only screens or crops inside a screen Section** (frames, components, or instances); a
-   package, request or backup Section holds screen Sections, a `Components` Section components;
+   package, request or backup Section holds screen Sections, a `Components` Section components, a
+   `Design System` Section swatches and specimens;
    a scratch Section holds anything and is not checked.
 
 ### Components page
@@ -132,9 +144,9 @@ designer makes them; the guide does not.
 1. **One Section per foundation topic.** `Conventions`, `Colors`, `Text Styles`, and `Dimensions`
    at least.
 
-2. **Documentation is built from the foundations it documents.** Swatches bind the color variables
-   they show and type specimens use the text styles they name, so the page updates when a
-   foundation changes.
+2. **Every variable and style is documented, from itself.** Each has a swatch or specimen
+   binding it: a swatch binds its color variable, a type specimen uses its text style. The page updates
+   with its foundations.
 
 ### Asset pages
 
@@ -146,7 +158,8 @@ designer makes them; the guide does not.
 1. **Target size by default.** A screen frame is its target size from `Conventions`. Other target
    sizes follow [Multiple target sizes](figma-designer-guide-multiple-sizes.md).
 
-2. **Smaller sizes are states.** A check below a target size is its own state, named for its width.
+2. **A smaller layout is a state.** When a screen's layout changes below a target size, name the
+   state for its width.
 
 3. **Taller to show scrolling content.** When the whole screen scrolls, make the frame tall enough
    to show representative content. A region that scrolls inside a fixed layout does not change the
@@ -163,21 +176,21 @@ designer makes them; the guide does not.
 
 ## Styles
 
-1. **Colors are variables.** Every fill and stroke binds a color variable; no hard-coded hex/RGB and
-   no color styles. The collection has a `Light` mode, and a `Dark` mode only if the app supports
+1. **Colors are variables.** Every solid fill or stroke and every gradient stop binds a color
+   variable; no hard-coded hex/RGB and no color styles. The collection has a `Light` mode, and a `Dark` mode only if the app supports
    dark mode (`Conventions` says which).
-   - Names describe the light-mode look (`brandBlue`, `mutedBlueLight`).
-   - White and black are variables too: `brandWhite` and `brandBlack`.
+   - Names describe the light-mode look (`Brand Blue`, `Muted Blue Light`).
+   - White and black are variables too: `Brand White` and `Brand Black`.
 
    When the app supports dark mode:
    - A single use that must not follow its color's dark value gets its own deviant color. A deviant
-     that is the same color in both modes is named `always<Variable>` (`alwaysBrandWhite`). Use
+     that is the same color in both modes is named `Always <Variable>` (`Always Brand White`). Use
      deviants, not mode pins: a pin is invisible where developers inspect the fill.
    - A whole element that keeps its light look in dark mode is its own frame, pinned to `Light`.
    - Check new work in both modes by switching the page's `Color` mode.
 
 2. **Opacity goes on the layer, never the paint.** A translucent color is a variable that carries
-   its transparency (`secondaryText`) or a full-strength variable on a layer with reduced opacity. A
+   its transparency (`Secondary Text`) or a full-strength variable on a layer with reduced opacity. A
    layer needing different fill and stroke opacities is split in two.
 
 3. **Text uses the text styles** on `Design System` (Body, H1–H4, …). No ad-hoc font settings.
@@ -189,6 +202,12 @@ designer makes them; the guide does not.
    designer to upload it (license permitting) or choose a Figma-hosted equivalent the app can adopt.
    It does not work around a missing font.
 
+5. **Names are written for readers.** Color variables, text and effect styles, components and
+   their properties have readable Title Case names. The file records no code names: the code's
+   names map one to one from these names, in the project's own naming convention. An agent that has to
+   convert a name and does not know that convention stops and asks. In a backfill, a thing keeps
+   the app's own name, in Title Case.
+
 ## Dimensions
 
 1. **Spacing and radii follow one scale.** Padding, gaps, and corner radii are 1–4, then steps of 5;
@@ -196,15 +215,16 @@ designer makes them; the guide does not.
 
 2. **Dimensions are variables.** A `Dimensions` collection holds `spacing/<n>`, `radius/<n>`
    (`radius/full` for pills), and `type/<n>` for font sizes, named for their value. Every padding,
-   gap, corner radius, and font size binds one, defined only when something uses it. The code
-   mirrors the names (`spacing20`). A file with several target sizes adds modes and adaptive
+   gap, corner radius, and font size binds one, defined only when something uses it. These names
+   stay as they are; the code mirrors them in its own convention. A file with several target sizes adds modes and adaptive
    variables: see [Multiple target sizes](figma-designer-guide-multiple-sizes.md).
 
 ## Components
 
-1. **Main components live on `Components`.** Two exceptions: a draft's new components stay in its
-   own package's `Components` Section until promotion; and screen components in a file with several target
-   sizes (see [Multiple target sizes](figma-designer-guide-multiple-sizes.md)).
+1. **Main components live on `Components`.** Drafts of new or visibly changed components and supporting
+   copies stay in the package's `Components` Section until promotion. Screen components in a file
+   with several target sizes are another exception (see
+   [Multiple target sizes](figma-designer-guide-multiple-sizes.md)).
 
 2. **Component sets use auto layout.** A component set is a grid auto layout that arranges its
    variant properties along the axes (`State` across, `Style` down; a single property runs across).
@@ -221,18 +241,32 @@ designer makes them; the guide does not.
    navigation and bars) and replace only the content; when none has it, build the shell (rule 6).
 
 6. **Kit components are used linked.** Anything a kit named in `Conventions` supplies (system bars,
-   keyboards, standard controls) is an instance of that kit, never detached or redrawn. To customize
-   one, wrap the instance in a local component on `Components` (`Navigation Bar` wraps the kit's
-   navigation bar). Kit colors are overridden with the app's color variables so they follow dark
-   mode.
+   keyboards, standard controls) is an instance of that kit. To customize one, or to add what it
+   lacks, wrap the instance in a local component (rule 1; `Navigation Bar` wraps the kit's
+   navigation bar). Where the kit still cannot do what the app needs, detach a copy, make it a
+   local component per rule 1, and change it there. A component the kit supplies is not redrawn.
+   A kit look keeps its paint structure, blend mode, opacity, effects and variant properties when
+   colors are overridden. Measurements come from the kit's own examples. Kit properties are set to match the app, leftover placeholder text is removed, and
+   kit colors are overridden with the app's color variables so they follow dark mode.
+
+7. **Auto layout arranges contents.** Components and screens are built with auto layout, so their
+   contents reposition themselves when content changes (a longer label, an added row). Items are
+   not placed by hand at fixed positions where auto layout can arrange them.
+
+8. **A scaled component is drawn once, at scale 1.** Scale each instance; the component keeps its
+   linked text styles.
 
 ## Copy and sample data
 
 1. **Button labels use the app's case** from `Conventions`; proper nouns keep their capitals.
 
-2. **Placeholder people are obvious fakes**, never real people's names.
+2. **Content is plausible and representative of the product;** placeholder copy is not used.
+   Placeholder people are obvious fakes, never real people's names.
 
-3. **Text is shown as the design handles it**: wrapped, truncated with an ellipsis, or scrolled.
+3. **Sample data is coherent.** What a frame shows could occur together and follows the
+   requirements, and the same sample people and records agree across related frames.
+
+4. **Text is shown as the design handles it**: wrapped, truncated with an ellipsis, or scrolled.
    Never cut off by a container that is simply too small.
 
 ## Gaps
@@ -243,6 +277,16 @@ there drawing it, in canvas order; move it when another frame becomes first. Thr
 `Owner: <owning artifact path relative to skai/changes/>`. Use node `annotations`, keeping others, in the
 file's yellow `Gap` category (`figma.annotations`; create it if missing). Update on placeholder or owner-path changes;
 remove when the owning item closes; never in `Production`, a backup or scratch.
+
+## Purpose notes
+
+Every screen frame in a package's or request's Sections carries one Dev Mode annotation on the
+frame itself, in the file's violet `Purpose` category (`figma.annotations`; create it if missing),
+keeping the node's other annotations.
+The frame of a screen's main state says what the screen is, where a user meets it and what it is
+for. Every other frame of the screen, a crop included, says what it shows that the main state does
+not, whether or not the package draws the main state. A sentence or two, in product words, with no IDs. Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing. It stays
+on the frame in `Production` and in a backup.
 
 ## Working a backfill
 
@@ -259,32 +303,10 @@ When the designs are drawn from an existing app rather than ahead of it:
    step. That and any other departure from the app is a design change, recorded where the project
    records them.
 
-## Agent tooling
+## Structure check
 
-Practices for an agent editing the file through the Figma MCP. Reusable tools live in SKAI's `Bin/`;
-project-specific ones stay in the project.
-
-1. **Keep a state file.** Scripts share nothing between calls: record page, Section, component,
-   variable, and image IDs in a JSON file in the working-doc folder after every write.
-
-2. **Import library components by key in every call** (`importComponentByKeyAsync` /
-   `importComponentSetByKeyAsync`); their node IDs do not persist between calls.
-
-3. **Upload files with `upload_assets`.** SVGs become vectors and PNGs image frames. Clip paths in
-   an SVG import as masks: for a single-color glyph, intersect each mask with what it clips and
-   flatten, keeping the original fill rule.
-
-4. **Lay out component sets as grids explicitly.** Appending variants does not place them: set the
-   column and row counts, place each with `setGridChildPosition(row, column)`, and size tracks to hug.
-
-5. **Masks drawn by Figma's servers do not clip frames or instances.** A shape can mask plain shapes
-   but not a component instance.
-
-6. **Scaling unlinks text styles.** `rescale()` (the Scale tool) detaches scaled text from its
-   style; the component keeps the linked style at its base size.
-
-7. **Structure check:** skai's `Bin/figma-page-check.js`, run via the tool on a page or Section,
-   reports breaches its header lists; process guides say when.
+skai's `Bin/figma-page-check.js`, run through the Figma tool on a page or Section, reports breaches
+to fix and signals to look at and judge, as its header lists; the process guides say when.
 
 ## Project Addendum
 

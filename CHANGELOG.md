@@ -10,6 +10,7 @@ is also its GitHub release notes.
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
 - **Review pages.** A design or spec review page no longer fails to render when a gap's owning item links another package's item.
+- **Figma designs.** The Figma designer guide now says how to draw well, not only where things go: read the file's `Conventions` frame first, draw another frame only when the layout changes, give styles and variables names people can read, keep sample data believable, and put a short note on every frame saying what it is for. Two parts moved into linked guides read only when needed: design system changes (how a change drafts a style, variable or component and how promotion applies it without touching production early) and agent tooling. The structure check also reports colors, text and spacing that use no variable or style and frames with no purpose note, and lists things worth a look separately from what must be fixed.
 - **Process refinement.** Every review round now works the same way and also tightens the writing, so there is no separate compression review. A size cap is optional and set after the first round. Dropping valid content is the supervisor's call. When a fix becomes the next round's finding, its step is rewritten whole. Tool claims are checked against the tool's code or documentation, not by testing the tool.
 
 ## Release 17 — 2026-11-12

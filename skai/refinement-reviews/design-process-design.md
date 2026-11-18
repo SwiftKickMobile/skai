@@ -439,3 +439,97 @@ Rulings: skai#111 (body updated 2026-11-11, with the CR-001 fold's prototyped pr
 **Tools:** `figma-page-check.js` per the tool guide's amendment of the same date.
 
 **Caps (supervisor, 2026-11-11, after the proposal review and compression; a little under the compressed sizes):** `design-promotion.md` **13,350** (compressed 13,390); `design-authoring.md` **16,650** (16,681). The writing style guide is unchanged (supervisor, 2026-11-11).
+
+## Amendment — 2026-11-17: How Designs Are Drawn (skai#74, skai#104, skai#107, skai#110, skai#112, skai#113, skai#126, skai#141)
+
+One amendment for a whole stream of changes, written before any guide text so each guide is rewritten once: the Figma guides first, then these two, each in its own refinement pass. The tool guide's half is [`figma-designer-guide-design.md`](figma-designer-guide-design.md) § Amendment — 2026-11-17. Sources: the tickets above; the practices and failures recorded from a full design backfill (the comments on skai#110, skai#126 and skai#72); supervisor rulings of 2026-10-22, 2026-10-26, 2026-10-31, 2026-11-16 and 2026-11-17, cited where they apply. Planning record (ephemeral): the host checkout's `skai-plan/stream-f-plan.md`.
+
+The guides today say where things go and how a change is recorded. This amendment adds how to draw well, in the order a design session meets it.
+
+**Supersedes:**
+
+- Requirement 1's "assume only that a design file has named pages and a production area". The process guides also assume a component library and a design system of named styles and values, and name them in those words. What each is in a tool stays the tool guide's.
+- § Settled decisions, "Two phases that alternate and never overlap", for a package whose mockups already exist (item 11).
+- § Amendment — 2026-11-11 (A Fold Carries Every Change): item 1's "drawn once or twice" (item 2); item 3's "until the supervisor deletes them" (item 20); and item 7's restore, which now reaches the design system (item 18). Item 3's "copy, never move" stands for the package's drafts.
+- § Amendment — 2026-10-23 (change list mirrors the page), item 1: the list also holds design system entries, which are not frames (item 8).
+
+**design-authoring.md must say:**
+
+*Know the file (skai#74, skai#107, skai#110)*
+
+1. After reading the tool guide and before the first Discussion item or drawing, read from the design file its recorded conventions, its app-wide designs, and what its component library and design system already hold; and read any specs among the inputs, or linked by the project, that say how the app-wide designs apply. The tool guide says where each of these is in the file. Design authoring never requires such specs (supervisor, 2026-11-16).
+
+*Decide what to draw (skai#141, skai#107)*
+
+2. A package draws each distinct change. It does not have to draw every frame that change lands on. Each distinct change is drawn in as few frames as show it, normally one, cropped where the tool guide's crop rule applies, and its Description says where else it applies; promotion carries it there, as `design-promotion.md` already says. A package that does this is complete. Where the design file keeps screens at several target sizes, the tool guide says what the package also draws at each size.
+3. A case an app-wide design already covers is not drawn again and raises no Discussion item. The change entry that relies on it, or `## Out of scope`, cites the app-wide design by name, and the case then counts as covered. A screen that departs from an app-wide design is an ordinary change to that screen: drawn and listed (supervisor, 2026-11-16). Where it is unclear whether an app-wide design covers a case, that is a Discussion item.
+4. Which states earn a frame is the tool guide's rule; this guide points to it and does not restate it.
+
+*Draw with what exists (skai#110; supervisor, 2026-10-31)*
+
+5. A `## Design Practices` section: a short list, each practice with a stable ID `DP-<nn>` (never reused; a retired practice keeps its line, marked retired), a bold name, and a statement in words that fit any design tool. Each is self-contained, so a review or a change list can cite it by ID and the list can later move into a catalog unchanged. The starting list:
+   - **DP-01 Look before drawing.** Check the component library, the styles and the values for something that fits before drawing anything. Where something nearly fits, add a variant or a property to it; never draw a lookalike.
+   - **DP-02 What recurs is defined once.** An element that recurs across screens (a card, a row, a header) is a component and each use an instance; a look that recurs (a separator, a field shape) lives in one component or value that screens inherit. Ordinary content that happens to repeat is not meant. The definition exists by the time the package is reviewed. A fix is made to the definition, so every use gets it.
+   - **DP-03 A change to something shared is checked everywhere it is used.** Before changing a shared component, style or value, see where it is used; after, look for the old look surviving anywhere, the component library's own examples and other features' screens included.
+   - **DP-04 Content goes in through component properties.** A component has a property for what varies from one use to the next (a label, an icon, an optional part); screens set properties and never detach or restructure an instance. An optional part's default matches how the component is normally used, and adding one to a component does not move the layout of uses that leave it off.
+   - **DP-05 States live in the component; screens choose them.** A control's states and a recurring overlay's forms are variants in the library; a screen picks one of them and does not draw its own.
+   - **DP-06 After a fix, look for the same mistake elsewhere.**
+   - **DP-07 A frame made from a copy is checked for what it inherited:** overrides and content carried over from the source that the new frame should not show.
+6. The practices apply to everything drawn, a scratch Section included, because what the supervisor keeps becomes production. Scratch stays outside the change list and the structure check (supervisor, 2026-11-11, unchanged).
+
+*Change the design system in the package (skai#126; supervisor, 2026-10-26 and 2026-11-17)*
+
+7. Authoring never changes in place how a production style, value or component looks. A package that needs a new or changed one drafts it in the form the tool guide gives, and its mockups use the draft; production's own stays as it is until promotion. Only what changes is drafted, plus **supporting copies**: the few components copied only to show a changed one inside them. Nothing else that depends on a changed item is drafted.
+8. Every design system change is a `## Design Changes` entry. Entries gain a kind, `style`, beside `component`: any named style or value of the design system (a color, a text style, an effect, a dimension). One entry per item, under a heading named for the place the design file shows the package's design system drafts, in canvas order like any other. Identity is the item's name: for `add` and `modify`, linked to where the draft is shown and, after promotion, to where the base shows the item; for `remove`, unlinked. The Description says what changed in a reader's words, as for a screen. A `remove` entry drafts nothing and says what each use of the item becomes. A rename is a `modify` entry that drafts nothing: its identity is the item's current name, unlinked, and its Description gives the new name. A supporting copy is not a change and has no entry.
+9. A structure-only fix is not a change (supervisor, 2026-10-26). Replacing a hand-drawn element with a component, or a raw value with a named one, so that nothing looks different, is made directly in the base, production included, with no package, request, draft or entry. The agent shows that each affected screen looks the same before and after.
+
+*Keep the canvas readable and current (skai#112, skai#104)*
+
+10. Every screen frame the package draws carries a purpose note in the design file, in the form the tool guide gives (it also says which frames carry one where a screen is kept at several target sizes): written when the frame is drawn, and rewritten when what the frame is for changes. It is separate from the change list: a Description says what changed, a note says what the frame is for, and the two never disagree.
+11. Once a package has mockups (a reopen, a request, or any time after its first drawing round), resolving a Discussion item updates the affected frames, the change list and the gap mirrors along with the Decision line, before anything else is done (for an agent, in the same turn), and the page is re-rendered. The Mockups phase still draws what has never been drawn. A first pass with nothing drawn is unchanged.
+
+*Check before review (skai#107, skai#110, skai#113, skai#141)*
+
+12. The tool guide's structure check reports two kinds of result. Breaches are fixed. Signals are looked at and judged; a signal is never fixed by rote.
+13. One check with three parts then replaces the trace pass:
+    - **Coverage.** Every drawn state traces to an input. Everything the inputs ask of this change is drawn (once, per item 2), covered by a cited app-wide design (item 3), or under `## Out of scope`.
+    - **Reuse.** The practices hold across the package's frames, and every design system change is drafted and listed (items 7 and 8).
+    - **Sample data.** Within a frame, what is shown could occur together (states, dates, counts, statuses, indicators). Across related frames, the same sample people and records agree. Against the inputs, what is shown follows them (ordering, grouping, what a state requires) and every indicator has what it indicates on screen. An edge case is drawn once, on the frame that is about it; frames showing the main case do not also show it. Each frame shows what its purpose note says it is for.
+
+    A finding is fixed, or becomes a Discussion item where the inputs and the drawing disagree and the call is the supervisor's.
+14. Items 2 and 3 state what makes a package complete, so anyone reviewing a package from the guides reaches the same answer: a repeated change drawn once and a case covered by a cited app-wide design are not missing drawings.
+
+*A large rollout*
+
+15. A large mechanical rollout, such as a second target size's whole suite, is reviewed after its first Sections, before the rest are built: it is more than one drawing round.
+
+**design-promotion.md must say:**
+
+16. Purpose notes travel with their frames into the base, production included, and are never stripped. The fold rewrites a note that no longer fits, such as a draft's "the one change this frame shows" on what is now the approved design of a whole state (supervisor, 2026-11-17).
+17. `C2` inventories design system drafts as it does screen drafts, both ways. A supporting copy has no entry; a `remove` or rename entry has no draft and names an item the base has. This inventory is the check skai#126 asks for: a design system change listed with no draft was never drafted, or was made in place, and fails `C2` by name. A change made in place and never listed is beyond any check.
+18. `C3`, the design system (supervisor, 2026-11-17). A **shared definition** is a style, a value or a component. A **use** of one is anything that refers to it: a frame's or a component's binding or instance, and another definition's reference (a text style's size, a value that points at another value). Three rules hold throughout:
+    - **Nothing is lost before the base is approved.** The fold deletes no definition and leaves the package's drafts as they are.
+    - **Identity is kept.** A definition the base already has is changed and restored in place. It is not swapped for another object, because its uses follow its identity. The fold applies the change the entry lists to it; it does not replace the definition with the draft.
+    - **Afterward nothing in the base uses the promoted package's drafts,** in any frame or definition, on any page the fold changes. This extends `C3`'s existing check for an instance still linked to a draft's component.
+
+    Into production, for each entry:
+    - **Changed:** back up production's definition, then apply the change to it in place.
+    - **New:** copy the draft into place under its final name. It needs no backup.
+    - **Renamed:** rename production's definition in place.
+    - **Removed:** point each use at what the entry says it becomes, then move production's definition aside into the backup.
+
+    Into a base package, production is never touched: the base package's draft of an item stands where production's definition does above. Where the base package has no draft of an item the request changes, one is made for it from the current definition with the request's change applied, and the base package's uses of the item are pointed at it. A removal or rename of an item only production defines carries its entry to the base's list and changes the base package's uses; production's definition waits for that package's own promotion. An undrawn entry is carried as `C3` already carries one.
+
+    Then every use of a draft in what was copied into the base is pointed at the base's definition, a supporting copy's uses included, with the care after each swap that the tool guide gives. Where the design file keeps screens at several target sizes, the fold keeps every size's set complete, as the tool guide says.
+
+    The design file's own documentation of its design system is brought up to date. How each step is done in the tool, the names, and where backups go are the tool guide's. `C3`'s evidence names each definition and what was done to it. A fold run again after a return to authoring replaces the earlier run's backups.
+
+    At the Base review gate, a requested design change also puts the design system back, before the pages: each changed definition is set back in place from its backup and checked against it, each copied-in new one is deleted, each rename is reversed, each one moved aside moves back, and each use the fold re-pointed in the base is pointed back.
+19. The sample-data part of authoring's check runs again on the merged base, with `C3`'s look at every touched frame: a fold puts frames beside frames they were not drawn with.
+20. **Cleanup** (supervisor, 2026-11-17). On the supervisor's request for a named package, any time after its promotion completes and usually in a later session, the agent removes everything the package left in the design file: its change pages or request Section; its backups; its drafts of styles, values and components; and the definitions the fold moved aside. It finds them by the tool guide's names alone and needs nothing from the session that promoted. Cleaning up a change's own package takes with it whatever that change's promoted requests left. It first confirms that nothing outside what it is deleting still uses any of it; anything still in use blocks the cleanup and is named. The request is the approval to delete, for that package only. It reports what it removed and records that as evidence in the archived promotion artifact. Deleting by hand stays possible. This replaces "the supervisor deletes drafts and backup" in the Purpose and Completion, and Initiation gains the signal. The `skai-design-promotion` skill's description gains the trigger.
+
+21. **Another package changed the same thing first** (supervisor, 2026-11-17). The readiness screen gains a condition, for screens and the design system alike: nothing this package's `## Design Changes` lists was also changed by a package promoted into the same base since this package was drafted. The check compares this package's change list with the change lists of those packages; every entry names what it changed, so it needs no other record. Where both list the same item, readiness fails by name and the package returns to authoring, to be reconciled against the base as it now stands. It is a single condition; the guide does not describe how to merge two packages.
+
+**Out of this amendment:** whether the project's files are up to date with source control before a promotion, which item 21's check assumes and which the planned single promotion skill owns for every promotion guide (skai#91; supervisor, 2026-11-17); how a backfill is carried out, which the guides leave light on purpose and which is documented separately if at all (supervisor, 2026-11-17); known differences and defects (skai#109) and stopping on a conflict (skai#120), which a later stream owns; a catalog for the practices, built when the list grows; one platform's design choices and a designer's own method, which the guides never prescribe; any change to `Bin/design-tool.py`, whose change-list parser already takes any kind word (`CHANGE_RE`, checked 2026-11-17).
+
+**Caps:** each pass proposes its caps after its first round, per the refinement guide. Until then 16,650 (`design-authoring.md`) and 13,350 (`design-promotion.md`) stand.
