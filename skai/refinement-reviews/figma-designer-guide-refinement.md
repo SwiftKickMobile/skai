@@ -314,3 +314,7 @@ Ended by the supervisor's ruling, 2026-11-17, after round 8: another round over 
 Every accepted finding is closed, with one line of evidence each in the findings log. Logged and left as they are: the collection a dimension variable comes from is not checked; hidden children of instances are not read; a Section target is read on its own; screen columns are checked in component Sections; the Section fill check reads the first paint; Styles rule 1 is stated for every paint; asset pages are not a target of the script.
 
 Net size: `figma-designer-guide.md` 16,119 to 18,499 (cap 18,500); new `figma-designer-guide-design-system-changes.md` 4,380 (cap 4,400); new `figma-designer-guide-agent-tooling.md` 2,598 (cap 2,600).
+
+### Maintenance Retro, Run Again (2026-11-18)
+
+This change set's retro was run again together with the design process guides'; the migration assessment, every check's result and the change package verification are recorded in `design-process-refinement.md` under the same heading. The release entry's "change nothing" note for existing design files is replaced by the migration under **Design process guides** in `Releases/unreleased.md`.

@@ -357,14 +357,15 @@ Take a design change from an idea to a completed change package, authored agains
 - Guide [`Guides/Design/design-authoring.md`](Guides/Design/design-authoring.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
+- Linked, read only when needed: [`Guides/Design/design-system-changes.md`](Guides/Design/design-system-changes.md) — for a package that adds, changes, renames or removes a style, value or component, and for a fix that changes nothing visible
 - Tool guide, loaded by the process guide: [`Guides/Design/figma-designer-guide.md`](Guides/Design/figma-designer-guide.md) for Figma, with three linked guides read only when needed: [`figma-designer-guide-multiple-sizes.md`](Guides/Design/figma-designer-guide-multiple-sizes.md) for several target sizes, [`figma-designer-guide-design-system-changes.md`](Guides/Design/figma-designer-guide-design-system-changes.md) for a package that changes a style, variable or component, and [`figma-designer-guide-agent-tooling.md`](Guides/Design/figma-designer-guide-agent-tooling.md) for an agent editing the file
 
 **Prerequisites:** The project README links the Figma file. Something to design from.
 
-**Phases** (alternating; never both at once):
+**Phases** (alternating; once mockups exist, a decision is drawn as it is made):
 
-1. **Discussion.** Agent seeds topic-organized `- [ ]` items for the decisions it needs -- a proposed departure from the base, something that looks like a defect, an open product question -- each with a written recommendation. Nothing is drawn. Gate: supervisor resolves each item. If the supervisor rules at the tool-access blocked gate that no mockups can be drawn, the typed Design Changes list, written from the decisions, stands in for the drawings from here on.
-2. **Mockups.** Agent draws the whole change on the change page or request section and keeps the Design Changes list current with the drawings (a heading per screen in canvas order, one `V<n>` entry per frame with add / modify / remove, a description and a justification, several changes to one frame as numbered sub-changes); before the review gate it traces every drawn state to an input and every input requirement to a drawing. Supervisor reviews the drawings and the rendered list. Feedback goes into the designs; anything needing a decision is parked and opens the next Discussion phase. Gate: "next" is the supervisor's approval.
+1. **Discussion.** Agent seeds topic-organized `- [ ]` items for the decisions it needs -- a proposed departure from the base, something that looks like a defect, an open product question -- each with a written recommendation. Nothing new is drawn. Gate: supervisor resolves each item. If the supervisor rules at the tool-access blocked gate that no mockups can be drawn, the typed Design Changes list, written from the decisions, stands in for the drawings from here on.
+2. **Mockups.** Agent draws each distinct change, in as few frames as show it, on the change page or request section and keeps the Design Changes list current with the drawings (a heading per screen in canvas order, one `V<n>` entry per frame with add / modify / remove, a description and a justification, several changes to one frame as numbered sub-changes); before the review gate it runs the tool guide's structure check and a three-part check of coverage, reuse and sample data. Supervisor reviews the drawings and the rendered list. Feedback goes into the designs; anything needing a decision is parked and opens the next Discussion phase. Gate: "next" is the supervisor's approval.
 3. **Completion.** Agent reconciles the drawings against every input but the base and, routes each input the decisions changed as the supervisor picked, an edit in that input's own process or a change request, with drafts; names what the package owes downstream. Ends with `🏁 Complete.`
 
 ### Design promotion (skill `skai-design-promotion`)
@@ -374,13 +375,14 @@ Fold a completed package into its base, carrying every change to every base fram
 - Guide [`Guides/Design/design-promotion.md`](Guides/Design/design-promotion.md)
 - Writing [`Guides/Core/writing-style.md`](Guides/Core/writing-style.md) — read before writing anything a person reads: how every sentence is written
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when readiness finds an open gap; the package returns to authoring to resolve it
+- Linked, read only when needed: [`Guides/Design/design-system-changes.md`](Guides/Design/design-system-changes.md) — for a package that changes a style, value or component; [`Guides/Design/design-cleanup.md`](Guides/Design/design-cleanup.md) — to remove what a promoted package left in the design file, on the supervisor's request
 
 **Prerequisites:** A completed change package: its non-gap items resolved (gaps too, into production), its Design Changes current, and the outcome applied for every non-base input its decisions changed, by the route the supervisor picked.
 
 **Phases:**
 
 1. **Promotion checks.** Agent renders the page and screens the package for readiness, then writes an unchecked checklist: drafts meet the conventions, inventory matches the drawings, the base absorbs the package, links repoint, package archived. Gate: supervisor reviews what will land and into which base.
-2. **Execute.** Agent verifies and applies, then stops for the supervisor to review the base in the design file. Gate: supervisor confirms and the package archives; the drafts and backup stay until the supervisor deletes them.
+2. **Execute.** Agent verifies and applies, then stops for the supervisor to review the base in the design file. Gate: supervisor confirms and the package archives; the drafts and backups stay until the supervisor asks for cleanup or deletes them.
 
 ### Design specs authoring (skill `skai-design-specs-authoring`)
 

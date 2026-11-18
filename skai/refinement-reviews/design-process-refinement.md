@@ -2273,3 +2273,323 @@ Checks: stale annotation phrases (`Gap: <the question>`, `each frame's placehold
 stands`) across Guides, Templates and README: 0 occurrences (grep); README's one "canvas order" line
 still true; manifest unchanged (no asset added); the host's Figma addendum carries no annotation rule;
 no gate or skeleton changed. No misses.
+
+## Pass — 2026-11-17: How Designs Are Drawn (F3)
+
+Standard: `design-process-design.md` § Amendment — 2026-11-17, items 1–22 and its two closing paragraphs; `figma-designer-guide-design.md` item 24 for the Figma section. Target: `design-authoring.md`, `design-promotion.md`, new `design-system-changes.md` and `design-cleanup.md`, and a new `## Merge marks` section of `figma-designer-guide.md`. Reviewer: Codex, `gpt-6.1-terra`, xhigh. Prompts and reports: the host checkout's `skai-plan/reviews-f/f3-r<n>-*`.
+
+### Round 1 (proposal; not scored)
+
+Verdict: the split, the practices, distinct-change coverage, purpose notes, drawing a decision as it is made, the package check and the shorter gate sections are endorsed; nine findings to amend before applying. The reviewer's sandbox was read-only, so it measured nothing beyond the existing files and proposed no trims.
+
+| Defect | Triage | Touches (spec § + target doc §) | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 A rename is an unlinked `modify`, which readiness 3 kept out of production and the fold treated as undrawn; the linked guide's `C2` failed an undrafted change the no-mockups ruling allows | accept | items 8, 17 · promotion readiness 3; `design-system-changes.md` `C2` | Readiness 3 says "undrawn" and that a rename has no draft, links nothing and is not undrawn; `C2` fails only a change that should have a draft (+163, +109) | An undrawn add or visible change never enters production |
+| F2 Conditions 6 and 7 were checked at readiness only, so the base could change before the write | accept | items 21, 22 · promotion Initiation, `C3` | The existing recheck before the write covers 1 and 4–7 (−4) | The two gates and their advance behavior |
+| F3 `C3` kept the other package's change even for a pair the supervisor had chosen between | accept | item 21 · promotion `C3` step 3 | Keep the other's where both can stand; apply the supervisor's choice where they cannot (+50) | Compatible changes merge with no return to authoring |
+| F4 The process text promised target-size rules the tool guide does not hold yet, and "every screen frame" against the mirror exemption | accept the purpose-note wording; route the rest | item 10 · authoring Mockups | "where the tool guide calls for one" (+6). The package and fold rules at several sizes, and the check's handling of mirrors, belong to the multiple-sizes pass (F4), which lands before release | Purpose notes stay in production |
+| F4b "Stop if the rules are unavailable" | reject | — | None: a guide does not tell the agent what to do about text another guide has not received yet; the stream releases together | — |
+| F5 A cleanup session reading the main tool guide never reaches the list of what a package leaves | accept | item 20 · `design-cleanup.md` step 1 | Step 1 names both Figma guides (+224) | The request approves deletion for that package only |
+| F5b Add cleanup to the Figma linked guide's opening sentence | log only | — | The cleanup guide routes there itself | — |
+| F6 "Nothing in the base uses this package's drafts … on any page the fold changes" took in the request's own retained Section on the same page | accept | item 18 · `design-system-changes.md` `C3` | "nothing that belongs to the base"; the package's own drafts and backups are left (net 0) | Indirect uses in base definitions are still found |
+| F7 The Base review note did not tell the agent to name the merged places | accept | item 21 · promotion Gates | "Name every place `C3` marked as merged and the package whose change it merged" (+3) | The gate line |
+| F8 "Discussion, before anything is drawn" is wrong once mockups exist | accept | item 11 · authoring Gates | "before each Mockups round" (0) | The first round draws nothing before Discussion advances |
+| F9 DP-01's "add a variant or a property to it" could be read as editing production in place | accept | items 5, 7 · authoring Design Practices; the standard's DP-01 | "as a drafted change" (+19) | The practice stays self-contained |
+| Open: a chain of renames across packages makes the change-list comparison lose identity | log only | item 21 | None; no occurrence, and an unresolvable identity is a blocked gate | — |
+
+Settled sizes by `wc -c` on the proposal copies with the fixes in: `design-authoring.md` 18,943 (16,646 before); `design-promotion.md` 13,300 (13,343); `design-system-changes.md` 5,717 (new); `design-cleanup.md` 1,817 (new); `figma-designer-guide.md` 19,015 with the new section (18,499).
+
+### Compression (Codex `gpt-6.1-terra`, xhigh, 2026-11-17)
+
+Commissioned on the settled proposal before any cap was proposed, scoped to the new and changed text, with the amendment as the inventory of what must survive (`reviews-f/f3-compress-prompt.md`, `f3-compress-out.md`). The reviewer found the additions already tight: five trims (−140 bytes in all) and five restorations.
+
+| Item | Outcome |
+|---|---|
+| Authoring: "Not every affected frame needs a drawing"; "If coverage is unclear, raise a Discussion item" (−38) | Applied |
+| Promotion: the reason clause after "Run authoring's sample-data check on the merged base" goes (−66) | Applied; authoring's check already says what to look for across frames |
+| `design-system-changes.md`: two sentence trims (−36) | Applied |
+| Restore to readiness 7 that a moved base never sends a package back, and "unresolved conflict" so the supervisor's choice clears it | Applied in shorter words |
+| Restore to `C4` that links go to where the base shows the item, and that a rename stays unlinked | Applied in part: "to where the base shows them". "Existing links" already leaves a rename alone |
+| Restore to the fold into a package that entries go under their screen or design system heading | Applied |
+| Restore to the linked guide's `C2` that a rename or undrawn entry has no draft | Applied by rewriting the paragraph, which contradicted itself |
+| Restore "with no screen of its own" to the Figma section | Declined; the phrase said nothing a style or variable does not already imply, and the standard's item 24 drops it |
+
+| Guide | Before | Compressed | Delta | Old cap | Proposed cap |
+|---|---|---|---|---|---|
+| `design-authoring.md` | 16,646 | 18,905 | +2,259 | 16,650 | 18,900 |
+| `design-promotion.md` | 13,343 | 13,345 | +2 | 13,350 | 13,350 |
+| `design-system-changes.md` | new | 5,716 | new | none | 5,700 |
+| `design-cleanup.md` | new | 1,817 | new | none | 1,800 |
+| `figma-designer-guide.md` | 18,499 | 19,015 | +516 | 18,500 | 19,000 |
+
+The authoring guide's change is additions of 4,413 less 2,154 from trimming its gate and advance sections. Caps await the supervisor.
+
+### Applied (2026-11-17)
+
+Caps approved by the supervisor: 18,900 / 13,350 / 5,700 / 1,800, and 19,000 for `figma-designer-guide.md`. Fitted with four small wording trims (−8, −21, −18, −15), then applied. Sizes by `wc -c`: `design-authoring.md` 18,897; `design-promotion.md` 13,345; `design-system-changes.md` 5,695; `design-cleanup.md` 1,799; `figma-designer-guide.md` 19,000. Also changed: `assets.manifest.json` (two guide entries; parses), the README's design authoring and promotion entries, the `skai-design-promotion` skill's description (cleanup trigger), `CHANGELOG.md`, `Releases/unreleased.md`.
+
+Sanity scan, per guide (authoring · promotion · design-system-changes · cleanup): header date 2026-11-17 on all four; `## Gates` and `## Advance intent` present in the two gated guides, and the two linked guides have no gates of their own; `human` 1 · 1 · 0 · 0, each the supervisor definition; `checkpoint` 0; `process-flow` 0; writing-style pointer 1 · 1 · 0 · 0 (the linked guides extend the two that carry it); `🟡` 0; `known-gaps.md` pointer 1 · 1; relative links all resolve; no standalone progress-tracking section. Obsolescence sweep: `trace pass`, `whole change`, `deletes drafts and backup` return nothing in `Guides/`, `Templates/` or the README. `python3 internal/tests/tools/design-tool/test.py`: OK.
+
+Flow simulation on the shorter gate sections. Authoring: normal (items resolved → planned Discussion line → `next` → drawing round and package check → Review line → `next` → Completion); blocked (two open items → the blocked line with the count on every response; a font the tool cannot load → the standard blocked line and a stop); `auto` (bypasses the Discussion planned line, stops at Review; `auto to discussion complete` stops before the Discussion line). Promotion: normal (readiness → Promotion Checks line → `next` → `C1`–`C4` → Base review line → `next` → `C5`); blocked (`C2` fails → the return-to-authoring line; another promotion waiting → the standard blocked line); `auto` (bypasses Promotion Checks, stops at Base review). No issues found in simulation.
+
+### Round 2 (applied text)
+
+| Defect | Triage | Touches (spec § + target doc §) | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 The Reuse check wanted every design system change drafted, against renames and removals, which have no draft | accept | item 13 · authoring Mockups | "listed, and drafted where it needs a draft"; the standard's item 13 the same (+24) | The linked guide's draft rules |
+| F2 `C2` wanted a removed or renamed definition to be one "the base has", against a request into a base package naming one only production defines | accept | items 17, 18 · `design-system-changes.md` `C2` | "has or uses from production"; the duplicate "is not a change" goes from the supporting-copy bullet (+5) | A rename or removal has no draft |
+| F3 A conflict choice was not recorded and the fold's other instructions were unconditional. Round 1's F3 repair returned as a finding, so the path is rewritten whole | accept, smallest form | item 21 · promotion readiness 7, `C3` step 3 | Readiness 7 records the choice in `## Evidence`, where blockers already go; `C3` says the recorded choice replaces any entry it overrules, in every step (+15 after trims) | Compatible changes still merge and are marked |
+| F3b Later comparisons read "effective changes"; appended Descriptions "reflect what was carried" | log only | — | None; a second-order case of a rare case, with no occurrence | — |
+| F4 "Once the package has mockups (… a request …)" took in a new request with nothing drawn | accept | item 11 · authoring Resolution | "mockups of its own"; the parenthesis goes (−54) | A first pass draws nothing before the gate |
+| F5 `[name](<link>)` in examples could be copied with the angle brackets, which the renderer does not take | log only | — | None; `<link>` is the guide's placeholder notation from before this pass, and the template rules such notation out of scope | — |
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r2 | 8.75 | 4 | 0 | 4 | 0 | 1 |
+
+> F1 divergent · normal · speculative = 2.5 · F2 divergent · normal · speculative = 2.5 · F3 divergent · off-normal · speculative = 1.875 · F4 divergent · off-normal · speculative = 1.875 · F5 logged, noise
+
+Three of the four are in text this pass added; one (F3) is a round-1 repair returning, rewritten whole. Sizes after repair: 18,867 / 13,345 / 5,700 / 1,799 / 19,000, all within cap.
+
+### Round 3 (applied text)
+
+| Defect | Triage | Touches (spec § + target doc §) | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 Initiation sent every signal to package creation, against the fix that changes nothing visible, which needs no package | accept | item 9 · authoring The change package, Initiation | The pointer moves from The change package to Initiation: such a fix "needs no package: follow `design-system-changes.md`" | Visible changes still take the package workflow |
+| F2 "None is required" after a list of five things to read could be taken to make all of them optional. It was the refiner's own trim to fit the cap | accept | item 1 · authoring Initiation step 1 | Restored: "No such spec is required" (+10) | Specs that exist are still read |
+| F3 `C1` says "run and pass" the structure check without saying signals are judged | log only | item 12 | None; the check's header and the tool guide say it, and authoring's own check does at the point of use | — |
+| Open: DP-03's look for the old look surviving, while production keeps its look until promotion | log only | item 5 | None; the practice asks for a look, and no misuse is seen | — |
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r2 | 8.75 | 4 | 0 | 4 | 0 | 1 |
+| r3 | 4.375 | 2 | 0 | 2 | 0 | 1 |
+
+> F1 divergent · off-normal · speculative = 1.875 · F2 divergent · normal · speculative = 2.5 · F3 logged, noise
+
+The reviewer's cap trim to the gate persistence paragraph was declined: it dropped "Never paraphrase, shorten or silently change it", which the standard lists among what must survive.
+
+### Not Closed After Round 3
+
+The refiner first recorded the pass as closed here on its own reading of a standing rule. That was wrong and is withdrawn (supervisor's question, 2026-11-17): round 3 still drew two real findings in the guide text, and its repairs were checked by reading, with no test behind them, so neither the stop rule nor the supervisor's F2 ruling applies. The pass continues with round 4 over the repaired text.
+
+### Round 4 (applied text)
+
+| Defect | Triage | Touches (spec § + target doc §) | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 After the package check raises a Discussion item, "end at the gate *Gates* prescribes" left the operator to work out which gate | accept | item 13 · authoring Mockups | Said at the point of use: "If a non-gap item is open, return to Discussion; otherwise end at Review"; the feedback paragraph routes "as above" (+13; one reviewer trim to fit, −14) | The gate lines; the Discussion gate before each Mockups round |
+| F2 "Never change one in place" also forbade the structure-only fix the same guide sends into the base | accept | items 7, 9 · `design-system-changes.md` Authoring 1 | "Never change their look in place" (+6) | A visible change is still drafted |
+| F3 The example's Description carried the reason its Justification already gives | accept | item 8 · `design-system-changes.md` example | "The brand blue is deeper." (−38) | The Justification |
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r2 | 8.75 | 4 | 0 | 4 | 0 | 1 |
+| r3 | 4.375 | 2 | 0 | 2 | 0 | 1 |
+| r4 | 4.75 | 3 | 0 | 2 | 1 | 0 |
+
+> F1 divergent · off-normal · speculative = 1.875 · F2 divergent · off-normal · speculative = 1.875 · F3 cosmetic · normal · speculative = 1.0
+
+None of the three is one of the refiner's own repairs: F1 is routing wording from before this pass that the new check leans on, and F2 and F3 are in the new linked guide. Sizes after repair: 18,894 / 13,345 / 5,668 / 1,799 / 19,000.
+
+### Round 5 (applied text)
+
+| Defect | Triage | Touches (spec § + target doc §) | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 The linked guide's fold into a base package applied a request's change to a new base draft without excepting an undrawn entry; the standard's item 18 says an undrawn entry is carried as `C3` carries one | accept | item 18 · `design-system-changes.md` Promotion | The reviewer's wording at the point of use: "For a drawn change the base package has not drafted, make it …" (−11). A fuller sentence was tried first and did not fit the cap | Renames and removals still apply during the fold |
+| F1b Promotion's `C3` step 1 lists rules from every entry, undrawn ones included, before its later sentence sends undrawn entries back to Mockups | log only | — | None: the wording predates this pass, the later sentence is explicit, and the path needs a no-mockups ruling on a request folded into a package; its fix would cost four trims of reviewed sentences | — |
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r2 | 8.75 | 4 | 0 | 4 | 0 | 1 |
+| r3 | 4.375 | 2 | 0 | 2 | 0 | 1 |
+| r4 | 4.75 | 3 | 0 | 2 | 1 | 0 |
+| r5 | 1.875 | 1 | 0 | 1 | 0 | 1 |
+
+> F1 divergent · off-normal · speculative = 1.875 · F1b logged, noise
+
+Sizes after repair: 18,894 / 13,345 / 5,657 / 1,799 / 19,000.
+
+### Round 6 (applied text)
+
+| Defect | Triage | Touches (spec § + target doc §) | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 After feedback the guide reran only the package check before Review, where item 12 wants the structure check too. The omission predates the pass (the trace pass had it) | accept | item 12 · authoring Mockups | "then run both checks again and route as above" (+1) | The feedback order: apply, park, check, route |
+| F2 "Nothing new is drawn" in Discussion read against a decision being drawn as it is made | accept, as a sharpening | item 11 · authoring Phases | "No new frame is drawn" (+1). The reviewer's added sentence in Resolution was not needed: with that wording a new frame waits for Mockups | Same-turn updates to existing frames |
+| F3 Round 5's repair, "a drawn change the base package has not drafted", also matched a new definition, which has no current definition to copy. A repair returning as a finding for the second time in this pass | accept; the sentence rewritten whole from item 18 | item 18 · `design-system-changes.md` Promotion | "Where the base package has no draft of a definition that a drawn entry changes, make one from the current definition with that change applied" | New definitions still come from the draft; undrawn entries are applied nowhere |
+| F4 "The design file's own documentation" during a fold into a package could send the operator to production's documentation | accept | item 18 · `design-system-changes.md` Promotion; the standard's sentence | "the base's own documentation of its design system"; the standard says which for each base | Production is untouched in a package fold |
+| Open: promotion's `C3` describes Figma-shaped placement (Sections, columns, feature areas) in a tool-neutral guide | log only | — | None; the text predates the pass and moving it needs the tool guide checked for the same behavior | — |
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r2 | 8.75 | 4 | 0 | 4 | 0 | 1 |
+| r3 | 4.375 | 2 | 0 | 2 | 0 | 1 |
+| r4 | 4.75 | 3 | 0 | 2 | 1 | 0 |
+| r5 | 1.875 | 1 | 0 | 1 | 0 | 1 |
+| r6 | 7.5 | 4 | 0 | 4 | 0 | 0 |
+
+> F1, F2, F3, F4 each divergent · off-normal · speculative = 1.875
+
+### Structured Tier (from round 6)
+
+A repair has now come back as the next round's finding twice (round 1's F3 in round 2; round 5's F1 in round 6), so the pass moves to the structured tier. Six of the pass's findings are one class: a sentence in the new linked guide, or one that leans on it, that is true for the common case and false for another kind of entry or the other kind of base.
+
+Invariants:
+
+- **P1 Every kind of entry.** A sentence about entries or changes holds for each of: a drawn add, a drawn visible modify, a rename, a removal, an entry the no-mockups ruling leaves undrawn, and a supporting copy (which has no entry). Violated by r1 F1, r2 F1, r2 F2, r5 F1, r6 F3.
+- **P2 Either base.** A fold sentence holds whether the base is production or a base package, and a package fold never touches production. Violated by r2 F2, r6 F4.
+- **P3 Phase timing.** Before the first drawing round nothing is drawn in Discussion; after it a decision updates existing frames in the same turn and no new frame is drawn outside Mockups; every return to Review reruns both checks. Violated by r1 F8, r2 F4, r4 F1, r6 F1, r6 F2.
+- **P4 The conflict path is one path.** Compatible changes merge, are marked and are named at Base review; an incompatible pair blocks, the choice is recorded, and every later step follows it. Violated by r1 F3, r1 F7, r2 F3.
+- **P5 The process guides name no tool mechanics** beyond what they named before the pass.
+
+Ownership: the kinds of entry and what each has (draft, link) are owned by `design-system-changes.md` § Authoring rule 3 and `design-authoring.md` § Design Changes; readiness 3, `C2`, `C3` and `C4` in `design-promotion.md` and the linked guide's § Promotion restate them. The two bases are owned by `change-requests.md`; the linked guide's "Into production" and "Into a base package" paragraphs restate them. Phase timing is owned by `design-authoring.md` § Phases; § Gates, § Resolution and § Mockups restate it. The conflict path is owned by readiness 7; the Base review note, `C3` step 3 and `C5` restate it.
+
+Sweep after round 6's repairs: every sentence of `design-system-changes.md` re-read against P1 and P2, and the restating passages of the other two guides against P3 and P4. Nothing further found beyond the four repairs above.
+
+### Round 7 (applied text)
+
+| Defect | Triage | Touches (invariant · spec § · target doc §) | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 Round 6's "run both checks again" after feedback dropped the "with drawings" that qualifies the structure check, so a package with no mockups was told to run a check it has no drawings for. A repair returning for the third time | accept | P1 (undrawn) · item 12 · authoring Mockups | "then run the checks above again", which carries the conditions of the paragraph it points at; the wording round 6's reviewer first suggested | Packages with drawings rerun both |
+| F2 Promotion's `C3` could apply an undrawn entry's change during a fold into a base package. Logged in round 5 as F1b; a second reviewer raised it with a fix that sharpens the existing sentence | accept, on the second sighting | P1 (undrawn) · item 18 · promotion `C3` | "Undrawn entries stay unlinked, go only to the base's list, and return it to Mockups to draw them" (+21; the cleanup sentence in Initiation shortened to fit, −21) | Renames and drawn entries fold as before |
+| Open: with no mockups the package check is worded in terms of frames | log only | — | None; the list "stands in for the drawings" by the Phases rule, as it did for the trace pass before this change | — |
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r2 | 8.75 | 4 | 0 | 4 | 0 | 1 |
+| r3 | 4.375 | 2 | 0 | 2 | 0 | 1 |
+| r4 | 4.75 | 3 | 0 | 2 | 1 | 0 |
+| r5 | 1.875 | 1 | 0 | 1 | 0 | 1 |
+| r6 | 7.5 | 4 | 0 | 4 | 0 | 0 |
+| r7 | 3.75 | 2 | 0 | 2 | 0 | 0 |
+
+> F1 divergent · off-normal · speculative = 1.875 · F2 divergent · off-normal · speculative = 1.875
+
+Both are the no-mockups path, the undrawn kind of P1. Sweep after repair: every sentence this pass added or changed in the three guides re-read for a package with no mockups; the Phases rule that the list stands in for the drawings covers the rest. Sizes: 18,900 / 13,349 / 5,669 / 1,799 / 19,000.
+
+### Round 8 (applied text)
+
+| Defect | Triage | Touches (invariant · spec § · target doc §) | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 "Point each use" of a removed definition took in uses in the package's own retained drafts and backups and in other open packages, against "leaves the package's drafts as they are". The standard's item 18 had the same clash | accept; the narrower reading follows from two rulings already made (nothing is lost before the base is approved; a cleanup blocks on anything still in use) | P2 · item 18 · `design-system-changes.md` Promotion; the standard | "point each use in the base" (+12); the standard says uses outside the base are left alone | The moved-aside definition is kept until cleanup |
+| F1b An open package that only uses, and does not change, a definition another package removed is not caught by readiness 7, which compares changed items | log only | item 21 | None in this pass; raised to the supervisor as a known gap | — |
+| F2 "becomes a Discussion item or an input-changing Decision" read as a way to settle the supervisor's call without asking. The clause predates the pass and item 13 does not have it | accept | P3 · item 13 · authoring Mockups | "raise a Discussion item"; Resolution already says a Decision that changes an input goes to Completion (−47) | Findings that need no decision are fixed directly |
+| F3 An interrupted `C3` resumed "at its pending check" could back up the half-changed base over the run's backup. "Never restarts" had been trimmed from this sentence in round 2 to fit the cap | accept | item 18 · promotion Advance intent | "resumes at its pending check or gate, within `C3` where it stopped, keeping its backups" (+50; Purpose loses a sentence authoring already carries and one word goes from Initiation, −55) | A new run after a return to authoring still replaces the earlier run's backups |
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r2 | 8.75 | 4 | 0 | 4 | 0 | 1 |
+| r3 | 4.375 | 2 | 0 | 2 | 0 | 1 |
+| r4 | 4.75 | 3 | 0 | 2 | 1 | 0 |
+| r5 | 1.875 | 1 | 0 | 1 | 0 | 1 |
+| r6 | 7.5 | 4 | 0 | 4 | 0 | 0 |
+| r7 | 3.75 | 2 | 0 | 2 | 0 | 0 |
+| r8 | 6.25 | 3 | 0 | 3 | 0 | 1 |
+
+> F1 divergent · off-normal · speculative = 1.875 · F1b logged, noise · F2 divergent · normal · speculative = 2.5 · F3 divergent · off-normal · speculative = 1.875
+
+Two of the three are in sentences from before this pass. Sizes: 18,848 / 13,349 / 5,681 / 1,799 / 19,000.
+
+### Round 9 (applied text)
+
+| Defect | Triage | Touches (invariant · spec § · target doc §) | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 In a fold into a base package, a rename of a definition only production has was told to "change the base package's uses", which a rename cannot do: it has no draft, production is untouched, and uses follow identity. The standard's item 18 said the same | accept; it follows from two settled rules (identity is kept; a package fold never touches production), so the standard is corrected with it | P1 × P2 · item 18 · `design-system-changes.md` Promotion; the standard | "For a removal, re-point the base's uses; for a rename, leave them bound until the base's promotion" (+11) | A removal still re-points the base's uses |
+| F2 An interrupted `C3` may not record where among its steps it stopped | log only, as the reviewer triaged | item 18 | None; the fold audit and evidence are updated as changes are applied, and an operator who cannot tell where to resume has the blocked gate | — |
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r2 | 8.75 | 4 | 0 | 4 | 0 | 1 |
+| r3 | 4.375 | 2 | 0 | 2 | 0 | 1 |
+| r4 | 4.75 | 3 | 0 | 2 | 1 | 0 |
+| r5 | 1.875 | 1 | 0 | 1 | 0 | 1 |
+| r6 | 7.5 | 4 | 0 | 4 | 0 | 0 |
+| r7 | 3.75 | 2 | 0 | 2 | 0 | 0 |
+| r8 | 6.25 | 3 | 0 | 3 | 0 | 1 |
+| r9 | 1.875 | 1 | 0 | 1 | 0 | 1 |
+
+> F1 divergent · off-normal · speculative = 1.875 · F2 logged, noise
+
+Sweep after repair: the fold-into-a-package paragraph checked for every kind of entry (drawn add; drawn modify with and without a base draft; rename and removal, of a definition the base drafted and of one only production has; undrawn; supporting copy). Each now has one instruction. Sizes: 18,848 / 13,349 / 5,692 / 1,799 / 19,000.
+
+### Round 10 (applied text)
+
+No findings and no proposed wording or trims. The reviewer walked the authoring, design system, promotion, gate and cleanup paths and confirmed the two tool claims against the code. It added that it had not read two indirect references to the end (the product specs standard that earlier sections of the design standard cite, and the whole of `spec-tool.py`, which the unchanged renderer imports) and had no legacy artifact to test, and for that reason would not call its review a certification. Neither is part of the change or of the five guides under review.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| r2 | 8.75 | 4 | 0 | 4 | 0 | 1 |
+| r3 | 4.375 | 2 | 0 | 2 | 0 | 1 |
+| r4 | 4.75 | 3 | 0 | 2 | 1 | 0 |
+| r5 | 1.875 | 1 | 0 | 1 | 0 | 1 |
+| r6 | 7.5 | 4 | 0 | 4 | 0 | 0 |
+| r7 | 3.75 | 2 | 0 | 2 | 0 | 0 |
+| r8 | 6.25 | 3 | 0 | 3 | 0 | 1 |
+| r9 | 1.875 | 1 | 0 | 1 | 0 | 1 |
+| r10 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+### Closure
+
+The pass ends on round 10 by the stop rule's first condition: a fresh round over the current text, with nothing repaired after it, left nothing to apply in the five guides. Nineteen findings were fixed across rounds 2 to 9, three of them the refiner's own repairs returning (r2 F3, r6 F3, r7 F1). Every finding and its disposition is in the findings log.
+
+Final sizes by `wc -c`: `design-authoring.md` 18,848 / 18,900; `design-promotion.md` 13,349 / 13,350; `design-system-changes.md` 5,692 / 5,700; `design-cleanup.md` 1,799 / 1,800; `figma-designer-guide.md` 19,000 / 19,000.
+
+Logged and left, for a later pass or until they occur: the link placeholder written with angle brackets; `C1`'s "run and pass"; DP-03 against production keeping its look; how later packages read a recorded conflict choice; identity across a chain of renames; promotion `C3`'s Figma-shaped placement words; the package check's wording for a package with no mockups; where an interrupted `C3` stopped; an open package that only uses a definition another package removed. For the multiple-sizes pass: what a package and a fold do at several target sizes, and the structure check's treatment of frames that only mirror the base size.
+
+
+### Maintenance Retro, Run Again (2026-11-18)
+
+Scope: the Figma guide change set (commit `6690ad4`) and the uncommitted design process change set. The first retro (2026-11-17) recorded no results and wrote "nothing is transformed" and "change nothing" into the release entries, which is no migration. This run replaces it.
+
+**Migration assessment** (`internal/maintain-skai.md`, Required bookkeeping). What the two change sets ask of work that already exists:
+
+| Existing Thing | What The Change Asks Of It | Migration |
+| --- | --- | --- |
+| Names of color variables, styles, components and their properties | Readable Title Case | Renamed in place from an approved map; citations in active packages and project documents rewritten |
+| Raw fills, strokes, gradient stops, text, spacing, radii and type sizes on production pages | The structure check now reports them, and a draft copied from production inherits them | Bound to an exact match, as a fix that changes nothing visible; no match is listed for the supervisor |
+| Variables and styles with no swatch or specimen | Each is documented from itself | Swatch or specimen added |
+| Screen frames of open packages | A purpose note, or promotion's first check fails | Note proposed, approved, written |
+| Design system changes of open packages | A draft and an entry, or promotion's second check fails | A new style or variable only the package uses is renamed into its draft folder and listed; a change already made to a definition the base uses blocks for the supervisor |
+| An unfinished promotion | Its checks keep their identities | Continues from its pending check |
+| `Conventions` content that is not a designer's choice; project addenda | Project-owned | Reported, not edited |
+| What promoted packages left in the file | Cleanup is now on request | Reported with what a cleanup would remove |
+| Production drawings against the rules on states, sample data, kit use and auto layout | No check or gate reads them | Left alone and said so: bringing one into line changes or rebuilds an approved drawing, which is a package's work |
+| The package artifact's format | `style` joins the entry kinds; nothing else changes | None; `design-tool.py` reads the kind as any lowercase word (`CHANGE_RE`) |
+| App code | Names map from the file's by the project's convention | None |
+
+Written as one migration under **Design process guides** in `Releases/unreleased.md`, eight steps (discover, propose and stop, rename, bind, document, convert each open package, left alone, verify), each safe to repeat; both entries point at it. `CHANGELOG.md`'s Design process line says an upgrade proposes the conversion and waits for approval. Precedent read: release 16 rewrites open design packages' gap annotations; release 17 renames Figma Sections after the supervisor approves a map.
+
+**Checks, each with its result:**
+
+- Release documents: both entries and their `CHANGELOG.md` lines exist and agree (`Releases/unreleased.md` lines 12, 16, 17; `CHANGELOG.md` lines 16, 17). `grep "nothing is transformed\|change nothing\."` on `Releases/unreleased.md`: 0 occurrences.
+- Update guide and adapter runbooks: not changed by either set (`git show --stat 6690ad4`, `git status --short`).
+- Manifest: the seven guides' `Managed-Id`s each match one manifest entry (`grep -c '"id": "<id>"'` → 1 each; the main Figma guide's id is `guide.designer-guide`). `skill.skai-design-promotion` has a `sourcePath` and three `adapter:` tags.
+- `Managed-Updated-At`: all seven guides read 2026-11-17, the date of their last edit; none was edited today.
+- README: links to the four new guides present (`grep -c "(Guides/Design/<name>.md)"` → 2, 1, 2, 2); the design authoring and promotion entries name the linked guides, the phases, and that drafts and backups stay until cleanup (read lines 353–385).
+- Integration templates and installer runbooks: not changed.
+- Stale wording across `Guides`, `README.md`, `Templates`, `Install`, `internal`: `grep -i "trace pass|supervisor deletes (the )?drafts|deletes drafts and backup|#agent-tooling|never detached|before the drafts go"` → 1 occurrence, to fix: the `skai-design-promotion` skill's description said the supervisor reviews the base "before the drafts go". Fixed to "before the package is archived".
+- Links in the seven guides: every relative `.md` target exists (loop over `](…md)` targets, 0 broken).
+- Managed header, entry cue and addendum footer: each of the seven guides has one cue and one footer with its own name; no footer name repeats under `Guides` or `internal`.
+- Gates: `design-authoring.md` and `design-promotion.md` each have `## Gates`, `## Advance intent`, the supervisor definition, the writing-style pointer and the gap pointer (1 each). The five linked guides emit no `⏳ GATE:` line and have neither section. `design-cleanup.md` step 2 says "name it and stop": classified as not a gate, because the cleanup ends there and starts again only on a new request.
+- Terms: `grep -i "Next Command|checkpoint|human|🟡|GitHub"` on the seven guides → 2 occurrences, both the supervisor definition sentence, intentional.
+- Working documents: the fold audit sits in the package's `working-docs/`; the comparison for a fix that changes nothing visible is a working document serving no package, per `working-doc-conventions.md`. No path directly under `skai/working-docs/`.
+- Skill wrapper: `skai-design-promotion` is five lines pointing at the guide.
+- Guide addenda contract: cue first, footer path and name correct and unique, wrappers thin; the migration reports project addenda and edits none.
+- Tool tests: `internal/tests/tools/figma-page-check/test.py` → OK. `design-tool.py` unchanged by either set.
+- Flow simulation: no guide text changed in this run; the simulations recorded when the text was applied stand.
+
+**Change package verification** (`internal/maintenance/change-packages.md`), for design authoring and promotion:
+
+- Paths: `skai/changes/<change-id>/design/` and `skai/promoted/<change-id>/design/` only; no discovery glob (grep of `skai/(changes|promoted)` → 2 occurrences).
+- Coexistence: `C5` moves the `design/` folder alone, "leaving siblings".
+- Reopen: authoring's Initiation step 2 reopens a named or contextual package, only without a promotion artifact or when returned; a promoted package needs a new one.
+- Promotion order: `C3` writes and is reviewed at Base review, `C4` repoints links and re-renders, `C5` archives, verifies the move and is checked last, in the archived artifact.
+- Collision and recovery: readiness condition 4 requires the destination absent before the write; Completion resumes only archival after a failure.
+- UI Map Plan: does not apply to design packages.
+- Working documents archive with the package (`C5` moves the folder "intact with `working-docs/`").
+- Migration coverage: no path changes, so nothing moves; per-package conversion, links (citations rewritten, pages re-rendered) and repeat runs are covered by the migration above.
+
+**Process suggestions** (for the supervisor):
+
+1. `internal/maintain-skai.md`, "Before you change anything" step 3: the migration assessment is easy to skip when the change runs through the refinement process, which never mentions it. `Guides/Process/process-refinement-guide.md` could name it where the change is added to the design spec, for a target that hosts install.
+2. `internal/maintain-retro.md` §2: say outright that "none" or "nothing is transformed" is a claim to prove, by listing what existing artifacts the change asks something of, and that design files count as existing artifacts.
+3. The three suggestions of the first retro stand: caps only after the reviewer's tightening; what must survive a gate trim; a fold sentence checked for every kind of entry and both bases.

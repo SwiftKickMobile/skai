@@ -288,6 +288,15 @@ for. Every other frame of the screen, a crop included, says what it shows that t
 not, whether or not the package draws the main state. A sentence or two, in product words, with no IDs. Everything you write for a person follows [`writing-style.md`](../Core/writing-style.md); read it before writing. It stays
 on the frame in `Production` and in a backup.
 
+## Merge marks
+
+Where promotion merged a package's change with another's to the same item, the
+place carries one Dev Mode annotation in the file's orange `Merged` category
+(`figma.annotations`; create it if missing), keeping the node's other annotations: on the merged
+frame, or for a style, variable or component, on its swatch, specimen or main component. A
+sentence says what was merged with which package's change. Remove it when the supervisor confirms
+the base; it never stays in `Production`.
+
 ## Working a backfill
 
 When the designs are drawn from an existing app rather than ahead of it:

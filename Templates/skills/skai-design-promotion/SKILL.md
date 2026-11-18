@@ -1,6 +1,6 @@
 ---
 name: skai-design-promotion
-description: Promotes a completed design package into its base, production or the parent package of a change request (readiness, checks with evidence, supervisor review of the base before the drafts go). Use to promote designs or a change request.
+description: Promotes a completed design package into its base, production or the parent package of a change request (readiness, checks with evidence, supervisor review of the base before the package is archived). Use to promote designs or a change request, or to clean up the design file after a promoted design package.
 ---
 
 # SKAI: Design promotion

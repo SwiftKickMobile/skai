@@ -596,6 +596,18 @@
       "tags": ["core"]
     },
     {
+      "id": "guide.design-system-changes",
+      "type": "guide",
+      "sourcePath": "Guides/Design/design-system-changes.md",
+      "tags": ["core"]
+    },
+    {
+      "id": "guide.design-cleanup",
+      "type": "guide",
+      "sourcePath": "Guides/Design/design-cleanup.md",
+      "tags": ["core"]
+    },
+    {
       "id": "skill.skai-ui-map-architecture",
       "label": "UI Map architecture",
       "category": "UI Map",

@@ -324,3 +324,46 @@ round. Size 11,264 → 11,812 bytes against the 12,000 cap.
 | 2026-11-11 #111 D2 r7 | With the audit moved before the fold (r6), it recorded the plan, not what was applied | closed | "a working document names every base frame, its rules and its change or none, updated as applied"; "A removal or redraw beyond the package's changes is only proposed, at Base review." |
 | 2026-11-11 #111 D2 r8 | No finding; open question: the page check accepts a backup under any Section, the guide says under the request (manual inspection covers it) | logged | — |
 | 2026-11-11 | #111/#106/#100 pass closed | closed | Clean round r8 (stop rule a). Rounds r1–r8: 3.875 · 3.875 · 2.5 · 6.875 · 1.875 · 6.25 · 2.5 · 0 |
+| 2026-11-17 F3 r1 | F1 a rename could not pass readiness 3 or the fold; `C2` failed an undrafted change under the no-mockups ruling | accept (applied to the proposal) | Readiness 3 "undrawn", a rename is not undrawn; `C2` fails only a change that should have a draft |
+| 2026-11-17 F3 r1 | F2 conditions 6 and 7 not rechecked before the base write | accept (applied to the proposal) | "`C3` re-checking 1 and 4–7"; "with conditions 1 and 4–7 met" |
+| 2026-11-17 F3 r1 | F3 `C3` kept the other package's change for a pair the supervisor chose between | accept (applied to the proposal) | "where the supervisor chose between two that cannot, apply the choice" |
+| 2026-11-17 F3 r1 | F4 process text promised target-size rules the tool guide lacks; every frame noted against the mirror exemption | accept the wording; rest routed | "where the tool guide calls for one"; package, fold and check rules at several sizes go to the multiple-sizes pass |
+| 2026-11-17 F3 r1 | F4b stop when the tool guide's rules are unavailable | rejected | A guide does not instruct around text a sibling guide has not received yet; the stream releases together |
+| 2026-11-17 F3 r1 | F5 cleanup never reaches the list of what a package leaves | accept (applied to the proposal) | Step 1 names both Figma guides |
+| 2026-11-17 F3 r1 | F5b add cleanup to the Figma linked guide's opening sentence | logged | The cleanup guide routes there itself |
+| 2026-11-17 F3 r1 | F6 the no-draft-uses rule took in the request's retained Section | accept (applied to the proposal) | "nothing that belongs to the base" |
+| 2026-11-17 F3 r1 | F7 Base review did not name the merged places | accept (applied to the proposal) | "Name every place `C3` marked as merged and the package whose change it merged" |
+| 2026-11-17 F3 r1 | F8 Discussion gate "before anything is drawn" once mockups exist | accept (applied to the proposal) | "before each Mockups round" |
+| 2026-11-17 F3 r1 | F9 DP-01 readable as editing production in place | accept (applied to the proposal) | "as a drafted change"; the standard's DP-01 matches |
+| 2026-11-17 F3 r1 | Open: identity across a chain of renames in the change-list comparison | logged | No occurrence; an unresolvable identity is a blocked gate |
+| 2026-11-17 F3 r2 | F1 Reuse check wanted every design system change drafted | closed | "listed, and drafted where it needs a draft" |
+| 2026-11-17 F3 r2 | F2 `C2` "a definition the base has" against a production-only definition in a request | closed | "has or uses from production" |
+| 2026-11-17 F3 r2 | F3 conflict choice unrecorded; fold instructions unconditional | closed | Readiness 7 records the choice in `## Evidence`; `C3`: "The supervisor's recorded choice replaces any entry it overrules, in every step" |
+| 2026-11-17 F3 r2 | F3b later comparisons should read effective changes; appended Descriptions should reflect what was carried | logged | Second-order case with no occurrence |
+| 2026-11-17 F3 r2 | F4 "has mockups (… a request …)" took in a new request | closed | "mockups of its own" |
+| 2026-11-17 F3 r2 | F5 `[name](<link>)` examples copied with angle brackets break the rendered link | logged | Placeholder notation from before this pass; no occurrence |
+| 2026-11-17 F3 r3 | F1 Initiation routed a fix that changes nothing visible through package creation | closed | Initiation: "needs no package: follow `design-system-changes.md`" |
+| 2026-11-17 F3 r3 | F2 "None is required" read as making the whole reading list optional | closed | "No such spec is required" |
+| 2026-11-17 F3 r3 | F3 `C1` "run and pass" leaves signals implicit | logged | The check's header and the tool guide say signals are judged |
+| 2026-11-17 F3 r3 | Open: DP-03's look for the old look against production keeping its look until promotion | logged | No misuse seen |
+| 2026-11-17 F3 r4 | F1 after the package check raises an item, which gate comes next was left to *Gates* | closed | "If a non-gap item is open, return to Discussion; otherwise end at Review" |
+| 2026-11-17 F3 r4 | F2 "Never change one in place" also forbade the structure-only fix | closed | "Never change their look in place" |
+| 2026-11-17 F3 r4 | F3 the design system example's Description carried a reason | closed | "The brand blue is deeper." |
+| 2026-11-17 F3 r5 | F1 the linked guide's fold into a base package did not except an undrawn entry | closed | "For a drawn change the base package has not drafted, make it …"; promotion's `C3` already sends undrawn entries to the base's Mockups |
+| 2026-11-17 F3 r5 | F1b promotion `C3` step 1 lists rules from undrawn entries before the sentence that sends them to Mockups | logged | Predates the pass; the later sentence is explicit; rare path; the fix needs trims of reviewed text |
+| 2026-11-17 F3 r6 | F1 feedback reran only the package check before Review | closed | "then run both checks again and route as above" |
+| 2026-11-17 F3 r6 | F2 "Nothing new is drawn" in Discussion against a decision drawn as it is made | closed | "No new frame is drawn" |
+| 2026-11-17 F3 r6 | F3 round 5's "a drawn change the base package has not drafted" also matched a new definition | closed | "Where the base package has no draft of a definition that a drawn entry changes, make one from the current definition with that change applied" |
+| 2026-11-17 F3 r6 | F4 "the design file's own documentation" in a fold into a package | closed | "the base's own documentation of its design system" |
+| 2026-11-17 F3 r6 | Open: promotion `C3` describes Figma-shaped placement in a tool-neutral guide | logged | Predates the pass; moving it needs the tool guide checked first |
+| 2026-11-17 F3 r7 | F1 "run both checks again" after feedback sent a no-mockups package to the structure check | closed | "then run the checks above again and route as above" |
+| 2026-11-17 F3 r7 | F2 `C3` could apply an undrawn entry's change in a fold into a base package (r5 F1b again) | closed | "Undrawn entries stay unlinked, go only to the base's list, and return it to Mockups to draw them" |
+| 2026-11-17 F3 r7 | Open: with no mockups the package check is worded in terms of frames | logged | The list stands in for the drawings by the Phases rule |
+| 2026-11-17 F3 r8 | F1 removal's "each use" took in retained drafts, backups and other open packages | closed | "point each use in the base"; the standard's item 18 leaves uses outside the base alone |
+| 2026-11-17 F3 r8 | F1b an open package that only uses a definition another package removed is not caught by readiness 7 | logged | Second-order case; raised to the supervisor as a known gap; filed as skai#150 |
+| 2026-11-17 F3 r8 | F2 "or an input-changing Decision" read as settling the supervisor's call without asking | closed | "raise a Discussion item" |
+| 2026-11-17 F3 r8 | F3 an interrupted `C3` could re-back-up the half-changed base | closed | "within `C3` where it stopped, keeping its backups" |
+| 2026-11-17 F3 r9 | F1 a production-only rename in a fold into a base package was told to change the base's uses | closed | "for a rename, leave them bound until the base's promotion"; the standard's item 18 corrected |
+| 2026-11-17 F3 r9 | F2 an interrupted `C3` may not record where it stopped | logged | The fold audit and evidence are updated as applied; the blocked gate covers a strand |
+| 2026-11-17 F3 r10 | No findings | — | The reviewer did not finish two indirect references outside the change (`spec-tool.py`; the product specs standard) |
+| 2026-11-17 F3 | Pass closed | closed | Stop rule (a): round 10, a fresh round over the current text, left nothing to apply. Rounds r2–r10: 8.75 · 4.375 · 4.75 · 1.875 · 7.5 · 3.75 · 6.25 · 1.875 · 0; r1 reviewed the proposal. Authoring 18,848 / 18,900; promotion 13,349 / 13,350; design-system-changes 5,692 / 5,700; cleanup 1,799 / 1,800; Figma guide 19,000 / 19,000 |
