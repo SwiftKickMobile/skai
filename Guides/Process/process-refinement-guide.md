@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.process-refinement
 Managed-Source: Guides/Process/process-refinement-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-15
 
 # Process Refinement Guide
 

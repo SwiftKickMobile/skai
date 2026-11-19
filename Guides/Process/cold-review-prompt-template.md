@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.cold-review-prompt-template
 Managed-Source: Guides/Process/cold-review-prompt-template.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-11-15
 
 # Cold-Review Prompt Template
 
