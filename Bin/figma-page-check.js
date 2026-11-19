@@ -114,9 +114,15 @@ function screensOf(sections, unnoted, library, noted = true, plain = true, out =
 function layers(node, out = [], over = null, owner = null) {
   if (node.type === "INSTANCE") { owner = node; if (!over) over = new Map((node.overrides || []).map(o => [o.id, o.overriddenFields])); }
   out.push({ n: node, fields: over ? over.get(node.id) || [] : null, owner });
-  for (const k of node.children || []) layers(k, out, over, owner);
+  for (const k of has(node, "children") ? node.children : []) layers(k, out, over, owner);
   return out;
 }
+
+// Figma throws when a node is asked for a property its type lacks (a group has no text ranges),
+// and a value that differs across a node's parts is the symbol `figma.mixed`, which no number
+// comparison accepts: test before reading, and compare only numbers.
+function has(n, key) { return key in n; }
+function above0(v) { return typeof v === "number" && v > 0; }
 
 function unbound(paints) {
   const raw = x => !(x.boundVariables && x.boundVariables.color);
@@ -126,8 +132,9 @@ function unbound(paints) {
 // The values a field takes on a layer: one value, or one per range where a text layer's ranges
 // differ (Figma then gives the layer no single value).
 function values(n, field, single) {
+  if (!has(n, field)) return [];
   if (single(n[field])) return [n[field]];
-  return typeof n.getStyledTextSegments === "function" ? n.getStyledTextSegments([field]).map(s => s[field]) : [];
+  return has(n, "getStyledTextSegments") ? n.getStyledTextSegments([field]).map(s => s[field]) : [];
 }
 
 function checkContent(sections, unnoted, library, ctx, add, signal) {
@@ -136,14 +143,14 @@ function checkContent(sections, unnoted, library, ctx, add, signal) {
     if (note && screen.type !== "INSTANCE" && !(screen.annotations || []).some(a => a.categoryId === ctx.purposeId && ctx.purposeId)) add(screen, "purpose", `no annotation in the ${PURPOSE} category`);
     let loose = 0;
     for (const { n, fields, owner } of layers(screen)) {
-      const bound = n.boundVariables || {};
+      const bound = (has(n, "boundVariables") && n.boundVariables) || {};
       const mine = k => !fields || fields.includes(k);
       if (mine("fills") && values(n, "fills", Array.isArray).some(unbound)) add(n, "color", "a fill with no color variable");
-      if (mine("strokes") && unbound(n.strokes)) add(n, "color", "a stroke with no color variable");
+      if (mine("strokes") && has(n, "strokes") && unbound(n.strokes)) add(n, "color", "a stroke with no color variable");
       if (n.type === "TEXT" && mine("textStyleId") && values(n, "textStyleId", v => typeof v === "string").some(id => !id)) add(n, "text-style", "text with no text style");
-      if (n.layoutMode && n.layoutMode !== "NONE") for (const k of SPACING) if (mine(k) && n[k] > 0 && !bound[k]) add(n, "dimension", `${k} ${n[k]} with no variable`);
-      const corners = RADII.some(k => typeof n[k] === "number") ? RADII : ["cornerRadius"];
-      for (const k of corners) if (mine(k) && n[k] > 0 && !bound[k]) { add(n, "dimension", `${k} ${n[k]} with no variable`); break; }
+      if (has(n, "layoutMode") && n.layoutMode !== "NONE") for (const k of SPACING) if (mine(k) && above0(n[k]) && !bound[k]) add(n, "dimension", `${k} ${n[k]} with no variable`);
+      const corners = RADII.some(k => has(n, k) && typeof n[k] === "number") ? RADII : ["cornerRadius"];
+      for (const k of corners) if (has(n, k) && mine(k) && above0(n[k]) && !bound[k]) { add(n, "dimension", `${k} ${n[k]} with no variable`); break; }
       if (!fields && n !== screen && (n.type === "TEXT" || n.type === "FRAME")) loose++;
       if (!fields && n.type === "FRAME") frames.push(n);
       if (n.type === "INSTANCE" && mains.get(n.id) && mains.get(n.id).remote) kit.add(mains.get(n.id).name);  // at any depth: a kit is used inside its wrapper

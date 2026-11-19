@@ -131,7 +131,18 @@ STYLES = [{"name": "Body", "id": "Body", "boundVariables": {"fontSize": {"id": "
           {"name": "Draft/Pinned Notes B/Caption", "id": "Draft/Pinned Notes B/Caption", "boundVariables": {}}]  # this page's own draft is
 
 HARNESS = """
-(function hydrate(n) { if (n.ranges) n.getStyledTextSegments = fields => n.ranges; (n.children || []).forEach(hydrate); })(PAGE);  // a text layer's ranges
+const MIXED = Symbol("mixed");  // figma.mixed: a value that differs across a node's parts
+// A text layer's ranges; "__mixed__" stands for figma.mixed; a node marked `strict` throws, as Figma
+// does, when asked for a property it does not have.
+function hydrate(n) {
+  if (n.ranges) n.getStyledTextSegments = fields => n.ranges;
+  for (const k of Object.keys(n)) if (n[k] === "__mixed__") n[k] = MIXED;
+  if (n.children) n.children = n.children.map(hydrate);
+  if (!n.strict) return n;
+  delete n.strict;
+  return new Proxy(n, { get(t, k) { if (typeof k === "string" && !(k in t) && k !== "then" && k !== "toJSON") throw new TypeError(`no such property '${k}' on ${t.type} node`); return t[k]; } });
+}
+PAGE.children = PAGE.children.map(hydrate);
 const figma = { currentPage: PAGE, getNodeByIdAsync: async id => null, setCurrentPageAsync: async p => {},
   annotations: { getAnnotationCategoriesAsync: async () => CATEGORIES }, getLocalTextStylesAsync: async () => STYLES };
 const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
@@ -245,6 +256,15 @@ class Check(unittest.TestCase):
                 instance("notes (repeat)", "notes", x=50, y=50, width=1024, height=768),
                 frame("notes — split", 50 + 1024 + 50, 50, w=1024, h=768, type_="COMPONENT", noted=False)])])]}
         self.assertEqual([(f["node"], f["rule"]) for f in run_check(page)["findings"]], [("notes — split", "purpose")])
+
+    def test_a_group_and_a_mixed_value_do_not_stop_the_check(self):
+        # Figma throws when a group is asked for text ranges or a radius, and a corner radius or a
+        # spacing that differs across parts is figma.mixed, which no number comparison accepts
+        group = {"type": "GROUP", "name": "badge group", "id": "badge group", "x": 0, "y": 0, "width": 10, "height": 10, "children": [], "strict": True, "fills": "__mixed__"}
+        card = layer("FRAME", "mixed card", layoutMode="VERTICAL", itemSpacing="__mixed__", cornerRadius="__mixed__", topLeftRadius=8, topRightRadius="__mixed__")
+        screen = frame("notes", 50, 50, children=[group, card])
+        page = {"type": "PAGE", "name": "Pinned Notes A", "id": "pinned", "children": [section("Pinned Notes", 200, 200, [section("Notes", 50, 50, [screen])])]}
+        self.assertEqual([(f["node"], f["rule"]) for f in run_check(page)["findings"]], [("mixed card", "dimension")])  # the one numeric corner, unbound
 
     def test_a_file_with_no_purpose_category_breaches_every_change_page_screen(self):
         report = run_check(CONTENT, categories=())

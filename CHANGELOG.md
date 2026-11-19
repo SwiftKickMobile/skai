@@ -9,6 +9,8 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
+- **Figma designs.** The structure check no longer stops on a design file with grouped layers or values that differ across a layer's parts.
+
 ## Release 18 — 2026-11-18
 
 Technical document: [`Releases/release-18.md`](Releases/release-18.md).
