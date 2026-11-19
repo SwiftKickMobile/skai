@@ -50,3 +50,17 @@ Pass 2 (2026-10-14): spec decisions 7 (link entry: name, link, description; desc
 | 2026-10-14 p2 r11 | F1 The hosting guide's example description leaned on host context ("the app") and described organization, failing the guide's own description test | closed | Example replaced with a LumenNotes-scoped description naming the questions answered |
 
 Pass 2 converged by a clean round: round 12 (series E) raised no finding. Rounds: r11 E 1.875 · r12 E 0. Hosting guide 28 → 48 lines.
+| 2026-11-18 r1 (proposal) | F1 Tools could not place a change packages folder outside the host, or one not named `skai` | accepted (tool) | `locations_for` also checks above the working directory; the folder must be named `skai` |
+| 2026-11-18 r1 (proposal) | F2 Default catalog lookup exited before the first catalog existed | accepted (tool) | `catalog_for` returns the would-be folder; drafts diff against an empty catalog |
+| 2026-11-18 r2 | F1 Tools fall back to the package's own `skai` folder when no config places it | logged | Agents run tools from the host root, where the working-directory lookup finds the config; an outside change packages folder is off-normal, and competing host configs are unsupported |
+| 2026-11-18 r2 | Appendix: `check-changes` described more broadly than it enforces (file-level coverage) | logged | Outside this change; the table row predates it |
+| 2026-11-18 r3 | F6 Spec tool table still offered `--catalog` | closed | Removed from both rows; the tool keeps the override in its docstring |
+| 2026-11-18 r3 | F1 Run from the host root not said at the commands (re-raise of r2 F1) | logged | Stands as logged in r2 |
+| 2026-11-18 r5 | F2 Change-check row promised a separate entry for every change (logged r2 as outside the change) | closed | A change may ride on another entry or its Touches; every listed check kept |
+| 2026-11-18 r6 | F2 Change-check row generalized riding; tool docstring wrong on product titles | closed | Row summarizes and points to the docstring; docstring corrected |
+| 2026-11-18 r6 | F3 design-tool docstring said to pass spec roots | closed | Docstring corrected |
+| 2026-11-18 r7 | F2 Production map command linked the creation-only hosting guide | closed | Link removed |
+| 2026-11-18 r7 | F3 UI Map guide described draft selection beyond best effort | closed | "the spec catalogs … and available spec drafts" |
+| 2026-11-18 r9 | A declined change-packages move leaves tools on the package's own `skai` folder | rejected | Re-raise of the settled decline: the supervisor's choice at the gate; the guide reports the mismatch |
+
+Pass 2026-11-18 (skai#144) converged by a clean round: r9 scored 0. Series: r2 11.25 · r3 10.625 · r4 13.125 · r5 8.75 · r6 11.25 · r7 11.25 · r8 2.875 · r9 0. Caps approved after round 4, recorded in each guide's design spec.

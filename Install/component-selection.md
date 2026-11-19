@@ -17,7 +17,9 @@ The active host project's `skai/config.json` is project-owned desired state:
 
 `components` is an explicit list of optional skill/policy asset IDs from `assets.manifest.json`.
 An empty list selects none. Unlisted optional components, including future additions, are disabled.
-**Only an absent file selects everything**, preserving the previous adapter/stack eligibility rules.
+**An absent file, or one without `components`, selects everything**, under adapter/stack eligibility rules.
+The file may also hold the project's two locations, `productionArtifactsRoot` and `changePackagesFolder`
+([Configure SKAI](../Guides/Core/configure-skai.md)); they do not decide the selection.
 Known retired IDs listed in the manifest are ignored, not offered in the checklist; drop them when
 next saving that config scope. All other unknown IDs block. Invalid JSON, unsupported schema,
 unknown/duplicate IDs or an unreadable configuration block;
@@ -38,8 +40,8 @@ never treat them as absence or fall back to installing everything.
 ```
 
 Only explicit overrides are stored. Missing key means **Use project setting**, `true` means **Turn on**,
-`false` means **Turn off**. Never generate inherited keys or write null/default entries. The app has
-Project and User tabs; Save commits only layers whose settings changed, preserving
+`false` means **Turn off**. Never generate inherited keys or write null/default entries. Save commits
+only layers whose settings changed, preserving
 unrelated JSON keys. Local-only edits never rewrite/create project config. Empty overrides restore
 project choices; a missing project config still supplies all applicable defaults.
 
@@ -89,10 +91,11 @@ adapter-tagged skill or every policy.
 A component is **new** to a host when it is in the manifest, eligible for the adapter and stack,
 not listed in `skai/config.json`, and absent from the adapter's component history (never installed,
 disabled or declined; see [`component-history.md`](component-history.md)). Both resolvers return
-them as `newComponents`. With no project config nothing is new in this sense: defaults select
-everything eligible, so an update installs additions and the installer reports them at completion.
+them as `newComponents`. With no project config, or one without `components`, nothing is new in this
+sense: defaults select everything eligible, so an update installs additions and the installer
+reports them at completion.
 
-With a project config, the installer never enables a new component silently. Under `auto` it
+With a `components` list, the installer never enables a new component silently. Under `auto` it
 enables every new component and reports them at completion; otherwise it stops at the update
 guide's new-components gate, where the supervisor opens the configure app or answers inline. Either
 way the choice is written through the configuration tool, not by editing JSON:

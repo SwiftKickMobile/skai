@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.artifact-hosting
 Managed-Source: Guides/Core/artifact-hosting.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-18
+Managed-Updated-At: 2026-11-18
 
 # Artifact Hosting
 
@@ -12,14 +12,15 @@ Read this when the artifact does not exist yet. That is the one time the README 
 so its absence is expected, not a blocked gate; a reopened package already settled this when it was
 created.
 
-The supervisor says which repository the artifact goes in; never infer it. Its fixed
-root under `skai/` is named by its content guide. When the package is created, add the README link
-pointing at that final location; it resolves when promotion writes the artifact.
+The artifact goes in the project's production artifacts root, in the folder its content guide
+names. The root is `productionArtifactsRoot` in the host's `skai/config.json`, a path from the host
+root; blank or absent means the host's `skai/` folder. When the package is created, add
+the README link pointing at that final location; it resolves when promotion writes the artifact.
 
 ## The Link Entry
 
 An entry is the artifact's name, its link and a description. Use the README's own format for linked
-resources when it has one. When it has none, a table:
+resources when it has one. Otherwise, a table for the default root:
 
 | Resource | Description | Path |
 | --- | --- | --- |

@@ -81,3 +81,18 @@ checked by the supervisor; computer-use automation is not authorized. Release ch
 reconciliation in isolated fixtures for all3 adapters (fresh/default, explicit empty/partial config,
 local on/off, disable/re-enable, drift, retirement and preservation). No commit/tag/push until asked.
 No guide size budget is declared. House-style/addendum/ownership conventions remain applicable.
+
+## Amendment — 2026-11-18: Locations
+
+Ruling: supervisor, 2026-11-18 (skai#144).
+
+1. **Tabs: Components and Locations.** The User tab is hidden for now (its code stays; an existing `config.local.json` is still read). The ⋯ menu's Select all and Clear optional sit on Components.
+2. **Locations** sets two project settings, Production artifacts (`productionArtifactsRoot`) and Change packages (`changePackagesFolder`), each a folder shown as its path from the project root, or `skai` when not set. **Choose…** opens a folder picker and stores the chosen folder's path from the project root (`../` steps for one outside it); a clear button unsets it. Locations have no user override.
+3. **A config may hold locations without `components`.** No `components` key selects every eligible component, as no config does; setting a location never turns the default selection into an explicit list.
+4. **Save reports changed locations** (`locationChanges`: key, folder before, folder after). After a Save that changes one, the agent proposes the edits to references to the old location that it already knows of, and moving what the setting covers (the production artifacts' folders, or `changes/` and `promoted/`) from the old folder to the new one when it is not there yet, leaving everything else in place, then stops at a Next gate; nothing changes until it advances. It does not search for references, and the guide does not name where they live. Save and Apply's approval covers component reconciliation only.
+
+5. **The change packages folder is a folder named `skai`.** The app's picker accepts no other name, and the config reader rejects one: the tools recognize packages by it. A location set to `skai` explicitly is the default folder, not a change.
+6. **The guide does not describe the app's screen** (supervisor, 2026-11-18): the supervisor uses it, the agent does not. The guide keeps what the agent needs: launch, events, gates, what the config holds, reconciliation and location changes.
+7. **An apply without the saved event** (a standalone Save applied later on request) takes the old locations from the last committed `skai/config.json` in source control (supervisor, 2026-11-18, round 1 F5). If they cannot be determined that way, the agent blocks (supervisor, 2026-11-18).
+
+**Caps (supervisor, 2026-11-18, skai#144 pass, after round 4; their first caps, replacing "no guide size budget"):** `Guides/Core/configure-skai.md` **10,600** (10,939 before, 10,607 settled); `Install/component-selection.md` **11,850** (11,647 before, 11,863 settled).

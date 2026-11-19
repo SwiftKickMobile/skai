@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-implementation
 Managed-Source: Guides/UIMap/ui-map-implementation.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-11
+Managed-Updated-At: 2026-11-12
 
 # UI Map Implementation
 
@@ -437,8 +437,8 @@ After recording successful production-map write/render evidence in the terminal 
    packages. Check relative links inside the moved files and preserve their intended targets. Keep
    decisions, item IDs, YAML and recorded commands/results intact; annotate historical paths with
    their current locations. An inaccessible required reference blocks completion.
-3. Re-render the proposed YAML at its promoted location using the project override or default SKAI
-   renderer, producing `proposed-ui-map.html` there. Moving a page can invalidate its relative links
+3. Re-render the proposed YAML at its promoted location using the project override or the default SKAI
+   renderer's change package command in [`ui-map-guide.md`](ui-map-guide.md), producing `proposed-ui-map.html` there. Moving a page can invalidate its relative links
    to the viewer. Require exit 0 and a nonempty page whose viewer links resolve; record this command
    and result separately from the production render evidence.
 4. Verify the archived artifacts and links, that the active type path and the moved request parts

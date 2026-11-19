@@ -2,15 +2,16 @@ Managed-By: skai
 Managed-Id: guide.configure-skai
 Managed-Source: Guides/Core/configure-skai.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-14
+Managed-Updated-At: 2026-11-18
 
 # Configure SKAI
 
 Print `📖 SKAI guide: configure-skai` now, as a line of its own. Read this guide fully, then follow [Project Addendum](#project-addendum).
 
-Launch the bundled Mac app to choose optional skills and policies for the active host project.
-The app saves project-owned `skai/config.json` and sparse gitignored `skai/config.local.json`
-overrides; the installer applies the effective selection and checks retained component migration history.
+Launch the bundled Mac app to choose optional skills and policies for the active host project, and
+where its artifacts live. The app saves the project-owned `skai/config.json`; an existing gitignored
+`skai/config.local.json` still overrides its component selection for one working copy. The installer applies the effective
+selection and checks retained component migration history.
 The configure skill and app remain available even when every optional component is disabled.
 If the request explicitly asks to apply an already saved configuration, skip Launch and the UI gates;
 use the explicit-request case under Reconcile after Save. Otherwise open the picker.
@@ -22,25 +23,29 @@ the executing agent never approves its own selection. Every response while waiti
 ends with the same applicable `⏳ GATE:` line, verbatim, until the state changes. Do not invent gates.
 
 The planned gate is a **hard UI choice gate**:
-`⏳ GATE: Next: Choose components in the Mac app, then Save and Apply or Cancel.`
+`⏳ GATE: Next: Choose components and locations in the Mac app, then Save and Apply or Cancel.`
 
-Here Next describes the supervisor's UI action, not a chat command. Project/User drafts are the
+Here Next describes the supervisor's UI action, not a chat command. The app's drafts are the
 review artifact: agent-mode `ready` means pending choice, final `saved` means config committed
 and app closed, and `cancelled` means abandoned before Save. These states replace process TODO
-markers; checkboxes represent desired components. Save and Apply commits the selection and
+markers. Save and Apply commits the selection and
 authorizes component reconciliation; no additional confirmation or acknowledgement is required.
+
+When a Save changes a location, the **location gate** comes before reconciliation (*Location changes*):
+`⏳ GATE: Next: Approve the location changes above, decline them, or say what to change.`
+Here Next is the supervisor's approval in chat; it does not cover anything the proposal does not name.
 
 Blocked conditions use `⏳ GATE: Blocked: <reason>. Resolve and say "next" to continue.`
 Stop until resolved; preserve separate installer gates for unmanaged conflicts and unrelated cleanup.
-Completion uses `🏁 Complete. Let me know if anything needs adjustment.` after reconciliation succeeds,
-or after an explicit Cancel (state clearly that configuration and installation are unchanged).
+Completion uses `🏁 Complete. Let me know if anything needs adjustment.` after reconciliation succeeds
+and the location gate, if any, is resolved, or after an explicit Cancel (state clearly that configuration and installation are unchanged).
 
 ## Advance intent
 
 Chat `next`, `continue`, `go ahead`, `auto` or `auto to` cannot select components or bypass the hard
 UI choice gate. `auto` may continue authorized installer work after Save; blockers still require
 resolution. While the app is open, keep the command session alive and wait for its final JSON event
-using bounded tool waits. Stay in the active agent turn so Save and Apply automatically resumes installation;
+using bounded tool waits. Stay in the active agent turn so Save and Apply automatically resumes installation (after the location gate, when a location changed);
 show the UI gate line in waiting updates. If the harness interrupts or ends the turn, report that
 resumption is needed rather than claiming automatic completion.
 
@@ -57,7 +62,7 @@ request authorizes that minimal ignore setup. If a local file is already tracked
 untracking decision; never remove it from Git silently. The app refuses local Save in a Git repo if
 these local paths are not ignored. Read local settings normally; do not put them in agent-ignore files.
 
-This prototype requires an Apple Silicon Mac running macOS 13 or later and the bundled app.
+This prototype requires macOS 13+ on Apple Silicon and the bundled app.
 An unavailable app/platform or
 invalid/unreadable configuration blocks; never reset config or silently install everything.
 
@@ -66,9 +71,6 @@ Launch the executable directly through the harness's local command tool, with re
 ```sh
 "<skai-root>/Bin/SKAIConfigure.app/Contents/MacOS/SKAIConfigure" --project-root "<host-project-root>" --skai-root "<skai-root>" --agent-session
 ```
-
-The app has **Project** and **User** tabs, with the explicit override count in the User
-label. Bulk actions are in the compact **⋯** menu beside the tabs. No layout flag is needed.
 
 The explicit `--agent-session` flag declares the agent launch contract; do not infer it from
 parent process names. Verify the `ready` event has `launchMode: agent`. Without that flag the app
@@ -80,39 +82,18 @@ via `open`, detach the process, or infer completion from the window disappearing
 opens the native window, prints a `ready` JSON event, and remains running while the supervisor chooses.
 No browser, web server, custom URL scheme, Playwright, or runtime Xcode installation is needed.
 
-No project config checks all optional entries; an existing project config checks only its selection.
-The **Project** tab uses ordinary checkboxes; a category checkbox selects or clears its members and
-shows a dash when only some are selected. The **User** tab sets each component from a menu in the
-checkbox's place: Project, On or Off. Project omits the key; On and Off are explicit booleans in local config.
-Categories have no control on User. An overridden component's name is blue on both tabs; on
-Project it also carries a blue **User: On/Off** label showing the user's value. On User, inherited
-component names are subtly dimmed, as are categories with no overridden components. On both tabs a category
-name is blue when any of its components is overridden, so overrides can be found without expanding. Rows show the component name, description and, on
-Project, any override badge. Categories start collapsed; the chevron
-beside each shows its components, and on Project the category checkbox works either way. Components the host
-has never seen (new in this checkout; see *New components* in `component-selection.md`) are listed
-first, checked, under **New 🔥 — configure to use** until Save, which moves the checked ones into
-the config and records the rest as declined; Save stays available while any are listed. On the
-next launch they sit in their categories like any other. Required Configure SKAI cannot be changed in either tab.
-In the **⋯** menu, Select all/Clear optional affect project choices when Project is selected;
-Turn all on/Turn all off affect User overrides when User is selected. Use project settings clears
-User overrides. Drafts persist when switching tabs.
-
-The agent-mode button is **Save and Apply**; standalone mode uses **Save**. Either is disabled until
-its drafts differ from the opening/saved baseline and disables again when all edits are reverted.
-Save writes only changed layers, preserving unrelated keys; local-only edits do not create/rewrite
-project config. Saving checks both files and the catalog for outside changes and writes atomically
-with rollback on a failed second-layer write. Errors keep the app open.
+The app saves the component selection and the project's two locations in `skai/config.json`, each
+location a path from the host root, blank or absent meaning the host's `skai/` folder: `productionArtifactsRoot`,
+the folder holding the production artifacts, and `changePackagesFolder`, the folder named `skai` that
+holds `changes/` and `promoted/`. The agent-mode button is **Save and Apply**; standalone mode uses **Save**.
 
 In agent mode, Save and Apply closes immediately and returns final `saved` with `launchMode: agent`
 and `reconcile: true`. Cancel, window close and Quit before Save discard drafts without config/install
-changes. No confirmation dialog intervenes between a successful Save and the agent handoff.
+changes. No confirmation follows a successful agent-mode Save.
 
-In standalone mode, Save commits config, reloads it as the new editing baseline and shows a dialog:
-“Apply the saved SKAI configuration for this project.” The user must ask an agent to apply it. OK
-returns to the checklist, with Save disabled until further edits. Standalone saved events have
-`launchMode: standalone` and `reconcile: false`; they are not an automatic installation handoff.
-Close/Quit preserve earlier successful saves and discard only later unsaved edits.
+In standalone mode, Save writes the config and tells the user to ask an agent to apply it.
+Standalone saved events have `launchMode: standalone` and `reconcile: false`; they are not an
+automatic installation handoff.
 
 ## Reconcile after Save
 
@@ -124,7 +105,8 @@ disappearance as an agent-mode Save. On `cancelled`, stop without running the in
 interruption with no final event is unresolved; obtain supervisor resolution before applying.
 
 After a standalone Save, wait for an explicit request to apply it. When the supervisor asks to apply an already saved configuration,
-resolve/read the current host config and active history, then execute the same reconciliation below.
+resolve the host and checkout as in Launch, read the current config and history, handle *Location changes* (below), then
+execute the same reconciliation.
 That explicit request approves the component changes; don't reopen the picker or invoke the
 version-update skill merely to apply the saved choices.
 
@@ -142,9 +124,28 @@ installed collateral. If installation fails, retain saved desired state, report 
 and rerun reconciliation after resolution. Do not record successful state for a failed adapter.
 
 Report the saved path, adapters reconciled and any remaining conflicts. Complete only after actual
-inventory and required component migrations match effective config. User overrides can enable
+inventory and required component migrations match effective config, and the location gate (below),
+if any, is resolved. If the supervisor declined a proposed change, the report says that the saved
+location and the files now differ. User overrides can enable
 migrations of shared collateral under the ordinary ownership/collision rules; no extra approval
 is needed solely because the selection came from a local override. No commit, push or release is implied.
+
+### Location changes
+
+A Save that changes a location reports it in `locationChanges`: each changed location's folder
+before and after, as paths from the host root. When the supervisor asks to apply an already saved
+configuration, compare the last committed `skai/config.json` in source control with the current one
+instead, reading blank or absent as `skai`; if the before folders cannot be determined that way,
+stop at a blocked gate.
+
+When a location changed, before reconciling propose what it needs: moving what the setting covers (the production
+artifacts' folders `product-specs/`, `design-specs/` and `ui-map/`, or `changes/` and `promoted/`)
+from the old folder to the new one, and editing the references to the old location that you already
+know of. Do not search for others. Name each move, edit and page to re-render, and any move that
+cannot be made as stated (a folder missing at the old location, or already at the new one), then
+show the location gate. On a request to change the proposal, revise it and show the gate again. On
+approval, make exactly the approved changes. Then reconcile, also
+when the supervisor declined. Save and Apply approves component reconciliation, never these changes.
 
 ## Project Addendum
 

@@ -106,6 +106,46 @@ import Foundation
         let same = try loaded.save()
         precondition(same["changed"] as? Bool == false && same["reconcile"] as? Bool == true)
         print("PASS unchanged Save still requests reconciliation")
+        let placed = temporary.appendingPathComponent("locations project")
+        let placedConfig = placed.appendingPathComponent("skai/config.json")
+        try FileManager.default.createDirectory(at: placed, withIntermediateDirectories: true)
+        let placedFresh = try Configuration(project: placed, skaiRoot: skaiRoot)
+        precondition(placedFresh.locations.values.allSatisfy(\.isEmpty) && !placedFresh.hasChanges)
+        placedFresh.locations["productionArtifactsRoot"] = " Specs "
+        precondition(placedFresh.hasChanges)
+        _ = try placedFresh.save()
+        var placedObject = try JSONSerialization.jsonObject(with: Data(contentsOf: placedConfig)) as! [String: Any]
+        precondition(placedObject["productionArtifactsRoot"] as? String == "Specs" && placedObject["components"] == nil && placedObject["changePackagesFolder"] == nil)
+        let reopened = try Configuration(project: placed, skaiRoot: skaiRoot)
+        precondition(reopened.defaultAll && reopened.selected == reopened.optionalIDs && reopened.locations["productionArtifactsRoot"] == "Specs")
+        let reopenedResolved = try reopened.resolve(adapter: "codex", stack: "generic")
+        precondition(reopenedResolved["defaultAll"] as? Bool == true)
+        reopened.locations["productionArtifactsRoot"] = ""
+        reopened.locations["changePackagesFolder"] = "Context/skai"
+        let movedResult = try reopened.save()
+        precondition((movedResult["locationChanges"] as? [[String: String]]) == [
+            ["key": "productionArtifactsRoot", "from": "Specs", "to": "skai"],
+            ["key": "changePackagesFolder", "from": "skai", "to": "Context/skai"]])
+        print("PASS Save reports each changed location, before and after")
+        let sameFolder = try Configuration(project: placed, skaiRoot: skaiRoot)
+        sameFolder.locations["changePackagesFolder"] = ""
+        precondition(sameFolder.locationChanges == [["key": "changePackagesFolder", "from": "Context/skai", "to": "skai"]])
+        sameFolder.locations["changePackagesFolder"] = "Context/skai"
+        sameFolder.locations["productionArtifactsRoot"] = "skai"
+        precondition(sameFolder.locationChanges.isEmpty, "skai set explicitly is still the default folder")
+        print("PASS a location set to its default folder is not a change to move")
+        placedObject = try JSONSerialization.jsonObject(with: Data(contentsOf: placedConfig)) as! [String: Any]
+        precondition(placedObject["productionArtifactsRoot"] == nil && placedObject["changePackagesFolder"] as? String == "Context/skai" && placedObject["components"] == nil)
+        print("PASS a location saves without turning the default selection into a list; blank removes the key")
+        precondition(reopened.relativeLocation(placed.appendingPathComponent("Context/skai")) == "Context/skai")
+        precondition(reopened.relativeLocation(placed) == ".")
+        precondition(reopened.relativeLocation(placed.deletingLastPathComponent().appendingPathComponent("Specs")) == "../Specs")
+        precondition(reopened.locationURL("productionArtifactsRoot").lastPathComponent == "skai")
+        print("PASS a chosen folder is stored as its path from the project root")
+        try JSONSerialization.data(withJSONObject: ["schemaVersion": 1, "changePackagesFolder": 3]).write(to: placedConfig)
+        try reject("a location that is not a path string") { _ = try Configuration(project: placed, skaiRoot: skaiRoot) }
+        try JSONSerialization.data(withJSONObject: ["schemaVersion": 1, "changePackagesFolder": "Context/work"]).write(to: placedConfig)
+        try reject("a change packages folder not named skai") { _ = try Configuration(project: placed, skaiRoot: skaiRoot) }
         let localPath = temporary.appendingPathComponent("skai/config.local.json")
         let projectBytes = try Data(contentsOf: configPath)
         let localEdit = try Configuration(project: temporary, skaiRoot: skaiRoot)
@@ -282,7 +322,7 @@ import Foundation
         model.editingLocal = true
         model.useProjectSettings(); precondition(model.overrideCount == 0)
         model.editingLocal = false
-        model.clearOptional(); precondition(model.configuration.selected.isEmpty && model.summary == "0 of \(model.configuration.optionalIDs.count) effective · 0 overrides")
+        model.clearOptional(); precondition(model.configuration.selected.isEmpty && model.summary == "0 of \(model.configuration.optionalIDs.count) effective" + (ConfigureModel.showsUserTab ? " · 0 overrides" : ""))
         model.selectAll(); precondition(model.configuration.selected == model.configuration.optionalIDs)
         model.toggleExpanded(debugging); precondition(model.expanded == ["Debugging"])
         model.toggleExpanded(debugging); precondition(model.expanded.isEmpty)

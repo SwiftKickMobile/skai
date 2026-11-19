@@ -123,7 +123,7 @@ class Render(unittest.TestCase):
         self.assertIn('id="rcr-02-d05"', page)
         self.assertRegex(page, r'<div class="gapbody"><a class="ref" href="\.\./promoted/CR-02/package/design-review\.html#d05" data-tip="tip-gap-linked-\d+-d05">D05</a> the empty group')
 
-    def test_owner_item_linking_a_further_artifact_gets_its_tooltip_too(self):
+    def test_owner_item_linking_a_further_artifact_renders(self):
         third = self.copy / "third/package"
         third.mkdir(parents=True)
         (third / "design-authoring.md").write_text(
@@ -143,7 +143,26 @@ class Render(unittest.TestCase):
         self.assertEqual(code, 0, out)
         page = (artifact.parent / "design-review.html").read_text()
         self.assertRegex(page, r'<template id="tip-gap-linked-\d+-d05">', "the gap owner's item has its tooltip")
-        self.assertRegex(page, r'<template id="tip-gap-linked-\d+-d07">', "an artifact first reached from inside a tooltip gets tooltips of its own")
+        self.assertNotRegex(page, r'<template id="tip-gap-linked-\d+-d07">', "an item named only inside a tooltip has none of its own: a popover never opens from inside another")
+
+    def test_popovers_come_from_the_configured_catalogs_and_the_change_drafts(self):
+        host = self.tmp / "host"
+        (host / "skai").mkdir(parents=True)
+        (host / "skai/config.json").write_text('{"schemaVersion": 1, "productionArtifactsRoot": "Context"}')
+        (host / "Context/product-specs").mkdir(parents=True)
+        (host / "Context/product-specs/glossary.md").write_text("# Glossary\n\nTerms.\n\n### Unread dot\n\nThe catalog's wording.\n")
+        drafts = host / "skai/changes/pinned/product-specs/proposed-product-specs"
+        drafts.mkdir(parents=True)
+        (drafts.parent / "product-specs-authoring.md").write_text("# Pinned\n\n## Goal\n\nPins.\n\n## Inputs\n\n- The catalog.\n\n## Decision Log\n")
+        (drafts / "glossary.md").write_text("# Glossary\n\nTerms.\n\n### Pinned group\n\nWhere pinned notes sit.\n")
+        artifact = host / "skai/changes/pinned/design/design-authoring.md"
+        artifact.parent.mkdir(parents=True)
+        artifact.write_text((self.copy / "package/design-authoring.md").read_text().replace("A `Pinned` group with its own header", "A pinned group with its own header", 1))
+        code, out = self.render(artifact)
+        self.assertEqual(code, 0, out)
+        page = (artifact.parent / "design-review.html").read_text()
+        self.assertIn('data-tip="tip-g-unread-dot"', page, "a term from the catalog in the configured production artifacts root")
+        self.assertIn('data-tip="tip-g-pinned-group"', page, "a term from the change's own product specs drafts")
 
 if __name__ == "__main__":
     unittest.main()

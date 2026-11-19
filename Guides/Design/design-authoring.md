@@ -284,10 +284,10 @@ work owed (design specs, say). End with
 
 Once created, update `design-authoring.md` before speaking. Apply changes, never merely
 describe them. On every material change and before every gate, render `design-review.html`
-beside it.
+beside it, from the host project root.
 
 ```
-python3 <skai>/Bin/design-tool.py render --authoring <package>/design-authoring.md [--specs ROOT ...]
+python3 <skai>/Bin/design-tool.py render --authoring <package>/design-authoring.md
 ```
 
 ## Project Addendum

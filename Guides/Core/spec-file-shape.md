@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.spec-file-shape
 Managed-Source: Guides/Core/spec-file-shape.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-25
+Managed-Updated-At: 2026-11-18
 
 # Spec File Shape
 
@@ -107,7 +107,7 @@ File lines carry prefixes in backticks; folder lines none. An app's index also l
 
 ## The Spec Tool
 
-`Bin/spec-tool.py` in the skai checkout, run with `python3`:
+`Bin/spec-tool.py` in the skai checkout, run with `python3` from the host project root:
 
 | Command | What it does |
 | --- | --- |
@@ -115,8 +115,8 @@ File lines carry prefixes in backticks; folder lines none. An app's index also l
 | `references ID-OR-TERM ROOT...` | Every file and line citing an ID or one of its rules (bold-number pointers too), or linking a glossary term. Run before modifying or retiring either; decide per citation whether it still holds. |
 | `link-terms ROOT...` | Links every glossary term occurrence in files under the last root, reading terms from every root: `link-terms <catalog> <drafts>` writes only the drafts. Run while drafting. |
 | `convert ROOT...` | Rewrites old-shape files (`## ID` items, dotted rule citations, `**Term** — text` glossary entries) into this shape in place, then links terms; idempotent. |
-| `render --catalog DIR [--base DIR]... --drafts DIR [--authoring FILE] [--out FILE]` | The change package's review page (a request's drafts layer on its base's, found from its folder; `--base` overrides), with the card, discussion and justifications of the package's authoring artifact; `--authoring` only points elsewhere; `--no-authoring` gives a bare comparison, never the committed page. `--base` layers another open package's drafts over the catalog. Gap footnotes: [spec-file-gaps.md](spec-file-gaps.md). |
-| `check-changes --catalog DIR [--base DIR]... --drafts DIR --authoring FILE` | Every change in the projection has a change-list entry with the right operation; no entry names an unchanged or absent target; the log matches Discussion; gap footnotes pair with gap items. |
+| `render [--base DIR]... --drafts DIR [--authoring FILE] [--out FILE]` | The change package's review page against the catalog of the drafts' type in the production artifacts root, empty before its first promotion (a request's drafts layer on its base's, found from its folder; `--base` overrides), with the card, discussion and justifications of the package's authoring artifact; `--authoring` only points elsewhere; `--no-authoring` gives a bare comparison, never the committed page. `--base` layers another open package's drafts over the catalog. Gap footnotes: [spec-file-gaps.md](spec-file-gaps.md). |
+| `check-changes [--base DIR]... --drafts DIR --authoring FILE` | The catalog is found as for `render`. Checks change-list coverage and operations against the projection, the log against Discussion, and gap footnotes against gap items; coverage rules are in the tool docstring. |
 
 Whenever a package materially changes, validate, then render, before anything else; the gate and promotion renders are the last of many.
 

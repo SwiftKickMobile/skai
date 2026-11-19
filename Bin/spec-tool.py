@@ -68,7 +68,10 @@ Usage:
         changes nothing. Prints what it changed per file, then validates the result as
         `validate ROOT...` would; exit status 1 when that has blocking issues.
 
-    python3 spec-tool.py render --catalog DIR --drafts DIR [--authoring FILE | --no-authoring] [--out FILE.html]
+    python3 spec-tool.py render [--catalog DIR] --drafts DIR [--authoring FILE | --no-authoring] [--out FILE.html]
+        Without --catalog, the catalog of the drafts' type (product-specs/, or the legacy
+        requirements/, or design-specs/) in the project's production artifacts root
+        (production_root); check-changes finds it the same way.
         --base DIR (repeatable) layers another open package's drafts over the catalog, each later
         --base winning, so a package drafted on top of an unpromoted package diffs against that
         package's drafts; check-changes takes the same flag.
@@ -95,14 +98,14 @@ Usage:
         change, or its own request folder), at any depth, under its Discussion and counts them, and
         shows on an open item the decision an open request logged on it.
 
-    python3 spec-tool.py check-changes --catalog DIR --drafts DIR --authoring FILE
+    python3 spec-tool.py check-changes [--catalog DIR] --drafts DIR --authoring FILE
         The list-matches-diff check, reading the same comparison the page is rendered from
         (compare_tree): every added, modified, retired or missing item, glossary entry or index line in the projection has a change-list entry, every added file has one
         (an entry naming it, or naming it in Touches), a changed intro (an index file's reminder
         line too), section line or index line may instead ride in an entry's Touches naming its
         file (in design specs a spec-file entry also covers its own file's intro and section lines,
-        and a changed "#" title takes the file's spec-file entry; the product guide has no entry
-        type for a title, so a product title change is shown on the page and not required), and no entry names something unchanged or
+        and a changed "#" title takes the file's spec-file entry; a product title change rides
+        in an entry's Touches naming its file, as an intro does), and no entry names something unchanged or
         absent, including a rule (ID-NN, ID-NN-NN) the drafts do not define. An entry's type must
         be one its artifacts guide allows: a product change to a rule goes under "modify
         requirement" on its parent, and a design file never retires. The declared
@@ -277,7 +280,14 @@ import re
 from urllib.parse import quote
 import sys
 from dataclasses import dataclass, field
+import importlib.util
 from pathlib import Path
+
+# The project's locations (skai-configuration.py): the production artifacts root, where the spec
+# catalogs and the production UI Map are, and the change packages folder.
+_cfg_spec = importlib.util.spec_from_file_location("skai_configuration", Path(__file__).with_name("skai-configuration.py"))
+cfg = importlib.util.module_from_spec(_cfg_spec)
+_cfg_spec.loader.exec_module(cfg)
 
 # ---------------------------------------------------------------- shapes
 
@@ -1175,8 +1185,9 @@ def collect_texts(spec):
     doc = Path(spec.path).resolve()
     external = bool(LAYERS) and not any(root == doc or root in doc.parents for root in LAYERS)
     for it in spec.items:
-        if external:  # a document outside the projection: its items keep their own tooltips, apart from same-ID items on the page
+        if external or not LAYERS:  # a document outside the projection, or any document on a page with none (design, UI Map): a citation of it gets this file's item, whichever root defines the ID last
             RESOLVER.setdefault("ext_items", {})[(doc, it.id)] = (it, spec.linkdefs)
+        if external:
             continue
         RESOLVER.setdefault("items", {})[it.id] = it
         RESOLVER.setdefault("item_src", {})[it.id] = (spec.linkdefs, spec.path)
@@ -1235,10 +1246,23 @@ def external_doc(name):
     return (RESOLVER["base"] / path_part).resolve()
 
 
+def item_tip(ext, iid, rule):
+    """A cited item's tooltip attributes, or "" when the page has no text for it. A citation into
+    another document (`ext`) takes that document's own item, read from that file: outside the
+    projection, or by a spec root on a design or UI Map page, which has no projection."""
+    rule = rule.lstrip("-")
+    if ext is None:
+        return f' data-tip="tip-{anchor(iid)}" data-rule="{rule}"' if iid in RESOLVER.get("items", {}) else ""
+    if (ext, iid) in RESOLVER.get("ext_items", {}):
+        return f' data-tip="{ext_tip_id(ext, iid)}" data-rule="{rule}"'
+    return ""
+
+
 def ext_tip_id(doc, iid):
     """An outside document's item's tooltip ID, keyed by the document's path from the first layer
     (the catalog), so a committed page reads the same on every machine."""
-    key = os.path.relpath(Path(doc).resolve(), LAYERS[0]) if LAYERS else Path(doc).name
+    base = LAYERS[0] if LAYERS else RESOLVER.get("out_dir")  # with no projection, the page's folder: same-named files in different roots stay apart
+    key = os.path.relpath(Path(doc).resolve(), base) if base else Path(doc).name
     return f"tip-{anchor(iid)}-at-{anchor(Path(key).as_posix())}"
 
 
@@ -1302,11 +1326,7 @@ def inline(s, gloss=None, auto=False):
         m2 = re.match(rf"({ID_RE})((?:-\d{{2}})*)$", name)
         tip = ""
         if m2:
-            ext = external_doc(name)
-            if ext is not None and (ext, m2.group(1)) in RESOLVER.get("ext_items", {}):
-                tip = f' data-tip="{ext_tip_id(ext, m2.group(1))}" data-rule="{m2.group(2).lstrip("-")}"'
-            elif ext is None and m2.group(1) in RESOLVER.get("items", {}):
-                tip = f' data-tip="tip-{anchor(m2.group(1))}" data-rule="{m2.group(2).lstrip("-")}"'
+            tip = item_tip(external_doc(name), m2.group(1), m2.group(2))
         return chip("ref", label, href, tip)
     s = LINK_USE_RE.sub(link, s)
     return autolink(s, gloss) if auto else s
@@ -1339,12 +1359,8 @@ def autolink(h, gloss):
             runs = nxt
         def make_id(m):
             base, rule = m.group(1), m.group(2)
-            ext = external_doc(base + rule) or external_doc(base)
-            if ext is not None and (ext, base) in RESOLVER.get("ext_items", {}):
-                tip = f' data-tip="{ext_tip_id(ext, base)}" data-rule="{rule.lstrip("-")}"'  # the bare ID's definition points at another document: that document's item
-            elif ext is None and base in RESOLVER.get("items", {}):
-                tip = f' data-tip="tip-{anchor(base)}" data-rule="{rule.lstrip("-")}"'
-            else:
+            tip = item_tip(external_doc(base + rule) or external_doc(base), base, rule)  # a definition pointing at another document: that document's item
+            if not tip:
                 return None
             href = href_for(base + rule)
             return chip("ref", m.group(0), href, tip)
@@ -1424,7 +1440,9 @@ def collapse(s):
 
 
 def tok(s):
-    return re.findall(r"\[[^\]]*\](?:\[[^\]]*\])?|\S+", s)
+    """Words for a word diff: a link or footnote marker is one piece with any text it touches, so
+    `[term][g-term],` stays one word and rejoining words with spaces adds none inside it."""
+    return re.findall(r"(?:\[[^\]]*\](?:\[[^\]]*\])?|[^\s\[]|\[)+", s)
 
 
 def word_diff(old, new, gloss=None):
@@ -1567,14 +1585,19 @@ def render_rules(old_rules, new_rules, parent, gloss, tag=True, mark=True):
     return "".join(out), changed
 
 
-def gap_notes(notes, aid, gloss):
+def gap_notes(notes, aid, gloss, removed=()):
     """A card's gap notes in one box, one line each: the label, the owning item's chip (already
     HTML: link and tooltip), then the placeholder as this place shows it. `notes` is an iterable
-    of (label, owner_html, placeholder)."""
-    body = "".join(
-        f'<div class="gapnote" id="gap-{aid}-{html.escape(label)}"><sup class="fn">{html.escape(label)}</sup><div class="gapbody">'
-        f'{owner_html} {inline(placeholder, gloss, auto=True) if placeholder else "<i>No placeholder.</i>"}</div></div>'
-        for label, owner_html, placeholder in notes)
+    of (label, owner_html, placeholder); `removed`, (label, owner_html, placeholder_html) for
+    footnotes the change took out, already rendered in the old file's context and shown struck
+    through after the rest, so a struck-through marker in the text has its note."""
+    def line(label, owner_html, placeholder, gone):
+        if not gone:
+            placeholder = inline(placeholder, gloss, auto=True) if placeholder else ""
+        text = f'{owner_html} {placeholder or "<i>No placeholder.</i>"}'
+        return (f'<div class="gapnote" id="gap-{aid}-{"removed-" if gone else ""}{html.escape(label)}"><sup class="fn">{html.escape(label)}</sup>'
+                f'<div class="gapbody">{f"<del>{text}</del>" if gone else text}</div></div>')
+    body = "".join(line(*n, False) for n in notes) + "".join(line(*n, True) for n in removed)
     return f'<div class="gapnotes">{body}</div>' if body else ""
 
 
@@ -1778,11 +1801,19 @@ def gap_owner_chip(scope, did, owners):
     return chip("ref", did, html.escape(href), tip)
 
 
-def render_gaps(it, aid, gloss):
-    """An item's gap notes, each owner resolved through the artifacts the page knows."""
+def render_gaps(it, aid, gloss, old=None):
+    """An item's gap notes, each owner resolved through the artifacts the page knows; with `old`,
+    the old version's footnotes the item no longer has follow, struck through, resolved in the old
+    file's context."""
     owners = RESOLVER.get("gap_owners", {})
-    return gap_notes(((g.label, link_owner_chip(g.did, g.target(RESOLVER["linkdefs"])) if g.link else gap_owner_chip(g.scope, g.did, owners), g.placeholder)
-                      for g in it.gaps), aid, gloss)
+    note = lambda g: (g.label, link_owner_chip(g.did, g.target(RESOLVER["linkdefs"])) if g.link else gap_owner_chip(g.scope, g.did, owners), g.placeholder)
+    key = lambda g: (g.did, g.placeholder)  # the same gap whether its owner is written bare (`D37`) or linked (`[D37][base D37]`)
+    kept = {key(g) for g in it.gaps} if it else set()
+    old_owner = lambda g: (link_owner_chip(g.did, g.target(RESOLVER["linkdefs"])) if g.link  # the old file's own scope is its package: a request's base when there is one
+                           else gap_owner_chip("base" if not g.scope and "base" in owners else g.scope, g.did, owners))
+    gone = under_old(lambda: [(g.label, old_owner(g), inline(g.placeholder, gloss, auto=True) if g.placeholder else "")
+                              for g in old.gaps if key(g) not in kept]) if old else []
+    return gap_notes((note(g) for g in it.gaps) if it else (), aid, gloss, gone)
 
 
 def render_item(old: Item, new: Item, gloss, why, moved_from=""):
@@ -1841,8 +1872,8 @@ def render_item(old: Item, new: Item, gloss, why, moved_from=""):
             status = "modified" if changed else "unchanged"
     iid = new.id if new else old.id
     aid = anchor(iid) + ("-retired" if (new and new.retired) else "")
-    if new and new.gaps:
-        parts.append(render_gaps(new, anchor(iid), gloss))
+    if (new and new.gaps) or (old and old.gaps):
+        parts.append(render_gaps(new, anchor(iid), gloss, old))
     if moved_from:
         parts.append(f"<p><i>Moved from {html.escape(moved_from)}.</i></p>")
     return status, card("added" if moved_from else status, aid, iid, "".join(parts), why, gloss, " has-gap" if (new and new.gaps) else "")
@@ -1901,7 +1932,30 @@ def owner_tips(owners, gloss):
     return "".join(out)
 
 
-def render_popovers(gloss):
+TEMPLATE_RE = re.compile(r'<template id="([^"]+)">.*?</template>', re.S)
+TIP_USE_RE = re.compile(r'data-tip="([^"]+)"')
+
+
+def reachable_tips(templates, *content):
+    """The popover templates the page can open: those a `data-tip` in `content` names. The
+    renderers load every glossary entry and item in their roots, and a popover opens only from the
+    page, never from inside another popover (skai-pages.js ignores hovers within it), so a template
+    the page does not name can never show and is left out."""
+    keep = set(TIP_USE_RE.findall("".join(content)))
+    found = {}
+    for m in TEMPLATE_RE.finditer(templates):
+        if m.group(1) in keep:
+            found.setdefault(m.group(1), m.group(0))
+    return "".join(found.values())
+
+
+def render_popovers(gloss, *content):
+    """Every loaded popover template, or with `content`, only those it can reach (reachable_tips)."""
+    tips = render_all_popovers(gloss)
+    return reachable_tips(tips, *content) if content else tips
+
+
+def render_all_popovers(gloss):
     out = [owner_tips(RESOLVER.get("gap_owners", {}), gloss)]
     for ref, (term, text) in sorted(gloss.items()):
         src = RESOLVER.get("gloss_src", {}).get(ref, ({}, None))
@@ -2625,7 +2679,7 @@ def page_shell(title, summary_totals, head, sections, gloss, out):
 <div class="top">{h1}<div class="seg change" role="group" aria-label="Change"><button type="button" data-f="added" aria-pressed="false"><span class="badge added"></span><b>{summary_totals['added']}</b> added</button><button type="button" data-f="modified" aria-pressed="false"><span class="badge modified"></span><b>{summary_totals['modified']}</b> modified</button><button type="button" data-f="removed" aria-pressed="false"><span class="badge retired"></span><b>{summary_totals['retired']}</b> removed</button><button type="button" data-f="unchanged" aria-pressed="false"><span class="badge unchanged"></span><b>{summary_totals['unchanged']}</b> unchanged</button><button type="button" data-f="files" aria-pressed="false"><span class="badge added"></span><b>{summary_totals['added files']}</b> added files</button></div>{state_tiles(summary_totals)}</div><div class="wrap">
 
 {head}{''.join(sections)}
-{render_popovers(gloss)}
+{render_popovers(gloss, head, *sections)}
 <div id="pop" class="popover"></div></div>
 {js}
 </body></html>"""
@@ -2670,6 +2724,76 @@ def infer_bases(drafts):
     return [b / drafts.name for b in reversed(chain_bases(drafts.parent))]
 
 
+# ---------------------------------------------------------------- locations
+
+SPEC_TYPES = (("product-specs", "proposed-product-specs", "product-specs-authoring.md"),
+              ("design-specs", "proposed-design-specs", "design-specs-authoring.md"))
+
+
+def skai_folder(folder):
+    """The `skai` folder whose `changes/` or `promoted/` holds `folder`; None outside a change package."""
+    folder = Path(folder).resolve()
+    for p in [folder, *folder.parents]:
+        if p.name in ("changes", "promoted") and p.parent.name == "skai":
+            return p.parent
+    return None
+
+
+def production_root(folder):
+    """The production artifacts root for a change package folder: the project config's (the
+    nearest config whose change packages folder holds it), else the `skai` folder holding the
+    package, where both locations default to. None outside a change package with no config."""
+    found = cfg.locations_for(Path(folder))
+    return found["productionArtifactsRoot"] if found else skai_folder(folder)
+
+
+def catalog_dir(root, kind):
+    """A spec type's catalog in a production artifacts root: `product-specs/` (else the legacy
+    `requirements/`) or `design-specs/`; None when it does not exist."""
+    names = ("product-specs", "requirements") if kind == "product-specs" else (kind,)
+    return next((root / n for n in names if root is not None and (root / n).is_dir()), None)
+
+
+def catalog_for(drafts):
+    """The catalog a drafts folder diffs against when no --catalog is given: its type's catalog in
+    the production artifacts root. Before the first promotion the folder does not exist yet, and
+    the drafts diff against an empty catalog."""
+    drafts = Path(drafts).resolve()
+    kind = "design-specs" if drafts.name == "proposed-design-specs" else "product-specs"
+    root = production_root(drafts.parent)
+    if root is None:
+        sys.exit(f"{drafts} is not in a change package and no project config places it; pass --catalog DIR")
+    return catalog_dir(root, kind) or root / kind
+
+
+def spec_catalogs(folder):
+    """The spec catalogs a review page reads first for its popovers: the product specs and design
+    specs catalogs in the production artifacts root of the package at `folder`, those that exist."""
+    root = production_root(folder)
+    return [c for c in (catalog_dir(root, kind) for kind, _, _ in SPEC_TYPES) if c is not None]
+
+
+def spec_drafts(folder):
+    """The spec drafts behind a design or UI Map package's review page, layered over the catalogs:
+    for each spec type, the package of that type beside the package at `folder` (in its change or
+    request), else the nearest up its request chain, then every package it builds on as
+    base_authoring finds them (the request chain, then each package's first input), farthest base
+    first. The chain stops at a promoted package, which the catalog already holds; a package found
+    nowhere is skipped."""
+    folder = Path(folder)
+    out = []
+    for kind, drafts, artifact in SPEC_TYPES:
+        beside = folder.parent / kind
+        pkg = beside if beside.is_dir() else next(iter(chain_bases(beside)), None)
+        chain = []
+        while pkg is not None and (pkg / artifact).is_file() and pkg.resolve() not in chain and "promoted" not in pkg.resolve().parts:  # a promoted package is in the catalog already
+            chain.append(pkg.resolve())
+            base = base_authoring(pkg / artifact, (pkg / artifact).read_text(encoding="utf-8"))
+            pkg = base.parent if base else None
+        out += [p / drafts for p in reversed(chain) if (p / drafts).is_dir()]
+    return out
+
+
 def package_id(drafts):
     """The change id, then each request ID down the chain, joined by ` | `: the folder above
     product-specs/, design-specs/ or the legacy requirements/ (else the drafts' parent), then
@@ -2683,7 +2807,8 @@ def render(catalog, drafts, authoring, out, no_authoring=False, bases=()):
     """bases: further base roots layered over the catalog in order, each overlaying the last, so a
     package can be drafted on another open package's drafts (the drafts diff against the top layer
     that holds each file)."""
-    catalog, drafts, bases = Path(catalog), Path(drafts), [Path(b) for b in bases] or infer_bases(drafts)
+    catalog, drafts = Path(catalog) if catalog else catalog_for(drafts), Path(drafts)
+    bases = [Path(b) for b in bases] or infer_bases(drafts)
     LAYERS[:] = [p.resolve() for p in [catalog, *bases, drafts]]
     design = drafts.name == "proposed-design-specs"
     out = Path(out) if out else drafts.parent / ("design-specs-review.html" if design else "product-specs-review.html")
@@ -3022,10 +3147,10 @@ def main(argv):
     r = sub.add_parser("references"); r.add_argument("id"); r.add_argument("roots", nargs="+")
     lt = sub.add_parser("link-terms"); lt.add_argument("roots", nargs="+")
     cv = sub.add_parser("convert"); cv.add_argument("roots", nargs="+")
-    d = sub.add_parser("render"); d.add_argument("--catalog", required=True); d.add_argument("--drafts", required=True)
+    d = sub.add_parser("render"); d.add_argument("--catalog", help="the catalog to diff against (default: the drafts' type's catalog in the production artifacts root)"); d.add_argument("--drafts", required=True)
     d.add_argument("--base", action="append", default=[], help="a base root layered over the catalog (repeatable, later wins); a request's bases are read from its folder when omitted")
     d.add_argument("--authoring"); d.add_argument("--no-authoring", action="store_true"); d.add_argument("--out")
-    c = sub.add_parser("check-changes"); c.add_argument("--catalog", required=True); c.add_argument("--drafts", required=True)
+    c = sub.add_parser("check-changes"); c.add_argument("--catalog", help="the catalog to diff against (default: the drafts' type's catalog in the production artifacts root)"); c.add_argument("--drafts", required=True)
     c.add_argument("--authoring", required=True); c.add_argument("--base", action="append", default=[], help="a base root layered over the catalog (repeatable, later wins); a request's bases are read from its folder when omitted")
     a = ap.parse_args(argv)
     if a.cmd == "validate":
@@ -3037,7 +3162,7 @@ def main(argv):
         print(f"{len(specs)} files, {len(blocking)} issues" + (f", {len(issues) - len(blocking)} notes outside the projection" if len(blocking) < len(issues) else ""))
         return 1 if blocking else 0
     if a.cmd == "check-changes":
-        issues = check_changes(a.catalog, a.drafts, a.authoring, a.base)
+        issues = check_changes(a.catalog or catalog_for(a.drafts), a.drafts, a.authoring, a.base)
         for i in sorted(issues, key=lambda x: (str(x.path), x.line)):
             print(i)
         print(f"{len(issues)} issues")

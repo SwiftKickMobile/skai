@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.product-specs-catalog
 Managed-Source: Guides/ProductSpecs/product-specs-catalog.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-18
 
 # Product Specs Catalog
 
@@ -52,7 +52,7 @@ project, module, framework, team or codebase.
 ## Layout
 
 ```
-skai/product-specs/                the fixed root, in the repository the README links
+product-specs/                     in the production artifacts root
   _product-specs.md                root index
   glossary.md                     second index
   platform/   _platform.md  <topic>.md

@@ -283,7 +283,7 @@ Create or change the app's UI Map as an architecture artifact. Produces a change
 - Example [`Guides/UIMap/ui-map-demo.md`](Guides/UIMap/ui-map-demo.md) -- a complete UI Map in YAML with its rendered diagram
 - Form factors [`Guides/UIMap/ui-map-form-factors.md`](Guides/UIMap/ui-map-form-factors.md) — read when the map declares `form_factors`, or the work adds a screen or route that differs by form factor
 
-**Prerequisites:** Product/design/story inputs for a baseline map or scoped map change. Existing maps live at `skai/ui-map/ui-map.yaml`; architecture change artifacts live under `skai/changes/<change-id>/ui-map/`.
+**Prerequisites:** Product/design/story inputs for a baseline map or scoped map change. The production map is `ui-map/ui-map.yaml` in the production artifacts root; architecture change artifacts live under `skai/changes/<change-id>/ui-map/` in the change packages folder (see [Configure SKAI](#configure-skai-skill-skai-configure) for both locations).
 
 **Phases:**
 
@@ -299,7 +299,7 @@ Execute or specify the structural code work needed to conform to the target UI M
 - Gaps [`Guides/Core/known-gaps.md`](Guides/Core/known-gaps.md) — read when an input carries a gap, or an item cannot be resolved because something outside the work is not yet known
 - Form factors [`Guides/UIMap/ui-map-form-factors.md`](Guides/UIMap/ui-map-form-factors.md) — read when the map declares `form_factors`, or the work adds a screen or route that differs by form factor
 
-**Prerequisites:** The app codebase and an identifiable target map: either a ready change package at `skai/changes/<change-id>/ui-map/` (proposed map + render + architecture artifact) or the production `skai/ui-map/ui-map.yaml` for conformance work. Run mode (Plan vs Build) is inferred from context.
+**Prerequisites:** The app codebase and an identifiable target map: either a ready change package at `skai/changes/<change-id>/ui-map/` (proposed map + render + architecture artifact) or the production map (`ui-map/ui-map.yaml` in the production artifacts root) for conformance work. Run mode (Plan vs Build) is inferred from context.
 
 **Stages:**
 
@@ -499,8 +499,8 @@ The suggestion box for skai itself. A developer has an idea, request, or complai
 ### Configure SKAI (skill `skai-configure`)
 
 Say **“configure SKAI”** in your project chat. The agent launches the bundled Mac app with a
-categorized checklist with descriptions for both parent categories and individual skills/policies. Project settings define the
-shared selection in **Project**; the **User** tab overrides components just for your working copy.
+categorized checklist with descriptions for both parent categories and individual skills/policies on its **Components**
+tab, and where the project keeps its artifacts on its **Locations** tab.
 
 Agent launches use **Save and Apply**: saving closes the app immediately and the waiting agent
 updates the installation. When opened independently, the app uses **Save**, remains open and shows
@@ -516,17 +516,30 @@ including under nested folders such as `Submodules/skai`. Otherwise, it asks you
 **Prerequisites:** An Apple Silicon Mac running macOS 13 or later and a harness that can launch
 a local command and wait for its completion. The bundled app needs no browser automation, server or runtime Xcode installation.
 The compiled app ships inside the SKAI checkout; users do not build it or install it separately. It
-uses **Project** and **User** tabs. Bulk actions such as Select all, Clear and Use project
-settings are in the compact **⋯** menu beside the tabs.
+uses **Components** and **Locations** tabs. Select all and Clear optional are in the compact **⋯**
+menu beside the tabs.
 
 **Phases:**
 
-1. **Choose components.** Agent opens the app for the active host project. Edit Project or User; Configure SKAI is always available and cannot be deselected.
+1. **Choose components and locations.** Agent opens the app for the active host project. Configure SKAI is always available and cannot be deselected.
 2. **Save and Apply.** In agent mode the app writes changed config layers, closes without confirmation and returns the saved result. The agent runs each installed adapter's runbook against the current checkout. Standalone Save keeps the app open and gives the manual apply prompt instead.
-3. **Verify.** Installer checks actual managed collateral against current config before recording success, even when selections or SKAI SHA are unchanged. Unmanaged conflicts and unrelated migrations retain their own approval requirements.
+3. **Location changes.** If a location changed, the agent proposes moving what it covers and editing the references it knows of, and changes nothing until you approve at a Next gate.
+4. **Verify.** Installer checks actual managed collateral against current config before recording success, even when selections or SKAI SHA are unchanged. Unmanaged conflicts and unrelated migrations retain their own approval requirements.
 
-Project selections live in `skai/config.json`. Private overrides live in gitignored
-`skai/config.local.json`, containing only explicit overrides:
+Project selections and locations live in `skai/config.json`. The **Locations** tab sets two folders,
+each picked with **Choose…** and saved as a path from the host root; a folder not set is the host's
+`skai/`:
+
+- **Production artifacts** (`productionArtifactsRoot`): where the product specs, design specs and
+  production UI Map live, each in its own folder (`product-specs/`, `design-specs/`, `ui-map/`).
+- **Change packages** (`changePackagesFolder`): the folder named `skai` that holds `changes/` and
+  `promoted/`.
+
+The review page tools and the UI Map renderer read these, so their commands take no spec or catalog
+paths. Your README keeps linking the resources for people and agents.
+
+The **User** tab, which sets private overrides, is hidden for now; an existing gitignored
+`skai/config.local.json` still applies. It contains only explicit overrides:
 
 ```json
 {
@@ -538,19 +551,14 @@ Project selections live in `skai/config.json`. Private overrides live in gitigno
 }
 ```
 
-In the User tab, each component has a menu in the checkbox's place: **Project** omits the key,
-**On** writes `true` and **Off** writes `false`. Categories have no control on User.
-The User tab shows the override count. An overridden component's name is blue on both tabs, as is
-the name of any category containing one; on Project the row also shows a blue **User: On/Off**
-label with the user's value. On User, inherited component names and categories without overrides
-are subtly dimmed.
+A component an override covers shows a blue **User: On/Off** label on Components.
 Local settings take precedence; local-only edits leave project config untouched. The installer
 also ignores `skai/install-state.local.json`, where local effective installation history is recorded.
 Turning on a component locally can require migration of shared collateral under normal installation
 rules; the user owns that choice.
 
-Without either config file, every applicable component is installed. Once saved, the config is an explicit
-selection: unchecked components and newly introduced optional components remain disabled until
+Without either config file, or with a project config that has no `components` list, every applicable
+component is installed. Once components are saved, the config is an explicit selection: unchecked components and newly introduced optional components remain disabled until
 selected. An empty selection retains configuration support. Guides and the app remain in the SKAI
 checkout; the installer controls host-installed skills/policies and preserves project-owned content,
 Integration values and addenda. If installation is interrupted, the saved desired config remains

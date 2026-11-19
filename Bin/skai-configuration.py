@@ -3,13 +3,20 @@
 # Managed-Id: tool.component-selection
 # Managed-Source: Bin/skai-configuration.py
 # Managed-Adapter: repo-source
-# Managed-Updated-At: 2026-10-12
-"""Selection resolver, component-history planner, and new-component recorder.
+# Managed-Updated-At: 2026-11-18
+"""Selection resolver, component-history planner, new-component recorder, and project locations.
 
-`--resolve` and `--plan-history` read only. `--enable` appends new components to the project
+`--resolve`, `--plan-history` and `--locations` read only. `--enable` appends new components to the project
 config and `--decline` records declined ones in the component history; these are the installer's
 only writes through this helper, and it opens no server. Only use a proposed history after
 migrations and actual inventory verification succeed.
+
+The project config may also set two locations, each a path from the project root; blank or absent
+means `skai`: `productionArtifactsRoot`, the folder holding the production artifacts (the product
+specs and design specs catalogs, the production UI Map, each in the folder its guide names), and
+`changePackagesFolder`, the `skai` folder holding `changes/` and `promoted/`. A config with no
+`components` key selects every eligible component, as no config does. `--locations` prints both
+locations as absolute paths; tools find them with `locations_for`.
 """
 from __future__ import annotations
 
@@ -24,6 +31,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parent.parent
 ADAPTERS = {"codex", "cursor", "claude-code"}
+LOCATION_KEYS = ("productionArtifactsRoot", "changePackagesFolder")
 
 
 class ConfigurationError(ValueError):
@@ -74,12 +82,20 @@ def validate_schema(data: dict) -> None:
         raise ConfigurationError("SKAI configuration must have schemaVersion: 1.")
 
 
+def default_selection(data: dict | None) -> bool:
+    """Whether the project selects every eligible component: no config, or one without `components`."""
+    return data is None or "components" not in data
+
+
 def read_config(project: Path, manifest: dict) -> tuple[dict | None, set[str]]:
     data = read_json(config_path(project))
     optional = {a["id"] for a in components(manifest) if a.get("installRole") != "required"}
     if data is None:
         return None, optional
     validate_schema(data)
+    read_locations(project, data)
+    if default_selection(data):
+        return data, optional
     selected = data.get("components")
     if not isinstance(selected, list) or any(not isinstance(v, str) for v in selected):
         raise ConfigurationError("components must be an explicit list of optional component IDs.")
@@ -89,6 +105,43 @@ def read_config(project: Path, manifest: dict) -> tuple[dict | None, set[str]]:
     if unknown:
         raise ConfigurationError("Unknown or non-selectable component IDs: " + ", ".join(sorted(unknown)))
     return data, set(selected) & optional
+
+
+def read_locations(project: Path, data: dict | None) -> dict[str, Path]:
+    """The two locations from a project config, absolute; blank or absent means `<project>/skai`.
+    The change packages folder is a folder named `skai`, as the tools find packages by that name."""
+    result = {}
+    for key in LOCATION_KEYS:
+        value = (data or {}).get(key, "")
+        if not isinstance(value, str):
+            raise ConfigurationError(f"{key} must be a path from the project root; leave it blank for skai.")
+        result[key] = (project.resolve() / (value.strip() or "skai")).resolve()
+    if result["changePackagesFolder"].name != "skai":
+        raise ConfigurationError("changePackagesFolder must name a folder called skai.")
+    return result
+
+
+def locations(project: Path) -> dict[str, Path]:
+    """The project's production artifacts root and change packages folder, absolute."""
+    data = read_json(config_path(project))
+    if data is not None:
+        validate_schema(data)
+    return read_locations(project, data)
+
+
+def locations_for(package: Path) -> dict[str, Path] | None:
+    """The locations of the project whose change packages folder holds `package`: the nearest
+    project config above it, else above the working directory (a change packages folder outside the
+    host, run from the host), whose folder contains it. None when none does, so a tool falls back to
+    the layout around the package (a SKAI checkout's own packages inside a host are not the host's)."""
+    package = package.resolve()
+    cwd = Path.cwd().resolve()
+    for folder in [*package.parents, cwd, *cwd.parents]:
+        if (folder / "skai" / "config.json").is_file():
+            found = locations(folder)
+            if package.is_relative_to(found["changePackagesFolder"]):
+                return found
+    return None
 
 
 def read_local(project: Path, manifest: dict) -> tuple[dict | None, dict[str, bool]]:
@@ -152,7 +205,8 @@ def resolve(project: Path, adapter: str, stack: str, manifest: dict) -> dict:
         raise ConfigurationError("The active project directory does not exist.")
     data, selected = read_config(project, manifest)
     local, overrides = read_local(project, manifest)
-    base = "all" if data is None else ",".join(sorted(selected))
+    default = default_selection(data)
+    base = "all" if default else ",".join(sorted(selected))
     representation = "project=" + base + "\noverrides=" + ",".join(k + ":" + ("on" if v else "off") for k, v in sorted(overrides.items())) + "\n"
     effective = set(selected)
     for key, enabled in overrides.items():
@@ -170,13 +224,13 @@ def resolve(project: Path, adapter: str, stack: str, manifest: dict) -> dict:
     # New to this host: eligible, optional, not chosen in the project config, never seen by this adapter's history.
     # A default host chooses everything, so nothing is new in this sense.
     new = []
-    if data is not None:
+    if not default:
         seen = seen_components(history_state(project, scope)[0], adapter)
         new = [a for a in components(manifest) if a.get("installRole") != "required" and a["id"] not in selected
                and a["id"] not in seen and eligible(a, adapter, stack)]
     return {"configPath": str(config_path(project)), "localConfigPath": str(config_path(project, "config.local.json")),
-            "defaultAll": data is None, "configurationFingerprint": hashlib.sha256(representation.encode()).hexdigest(),
-            "trackComponents": data is not None or bool(overrides), "historyScope": scope,
+            "defaultAll": default, "configurationFingerprint": hashlib.sha256(representation.encode()).hexdigest(),
+            "trackComponents": not default or bool(overrides), "historyScope": scope,
             "historyStatePath": str(config_path(project, "install-state.local.json" if scope == "local" else "install-state.json")),
             "skills": skills, "policies": policies, "newComponents": new}
 
@@ -189,8 +243,8 @@ def write_json(path: Path, data: dict) -> None:
 def enable_components(project: Path, ids: list[str], manifest: dict) -> dict:
     """Append new components to the project config; never create one (a default host already selects everything)."""
     data, selected = read_config(project, manifest)
-    if data is None:
-        raise ConfigurationError("No project config: defaults already select every eligible component.")
+    if default_selection(data):
+        raise ConfigurationError("No project selection: defaults already select every eligible component.")
     optional = {a["id"] for a in components(manifest) if a.get("installRole") != "required"}
     unknown = set(ids) - optional
     if unknown:
@@ -339,6 +393,7 @@ def main(argv=None) -> int:
     mode = parser.add_mutually_exclusive_group(required=False)
     mode.add_argument("--resolve", action="store_true")
     mode.add_argument("--plan-history", action="store_true")
+    mode.add_argument("--locations", action="store_true")
     parser.add_argument("--enable", help="comma-separated new component IDs to append to the project config")
     parser.add_argument("--decline", help="comma-separated new component IDs to record as declined")
     parser.add_argument("--adapter", choices=sorted(ADAPTERS), default="codex")
@@ -347,9 +402,14 @@ def main(argv=None) -> int:
     parser.add_argument("--target-sha")
     parser.add_argument("--date")
     args = parser.parse_args(argv)
-    if not (args.resolve or args.plan_history or args.enable or args.decline):
-        parser.error("one of --resolve, --plan-history, --enable or --decline is required")
+    if not (args.resolve or args.plan_history or args.locations or args.enable or args.decline):
+        parser.error("one of --resolve, --plan-history, --locations, --enable or --decline is required")
     try:
+        if args.locations:
+            if args.enable or args.decline:
+                raise ConfigurationError("--enable/--decline cannot be combined with --locations.")
+            print(json.dumps({k: str(v) for k, v in locations(args.project_root).items()}), flush=True)
+            return 0
         manifest = read_manifest()
         result = resolve(args.project_root, args.adapter, args.stack, manifest)
         if args.enable or args.decline:

@@ -628,3 +628,5 @@ Caps hold: `process-flow.md` 21,550 (21,479), `product-specs-artifacts.md` 5,450
 ## Amendment — 2026-11-11: Requests As Folders Of Sub-Packages; Confirming The Route (skai#108, skai#129)
 
 Adopts [`change-requests-design.md`](change-requests-design.md) § Amendment — 2026-11-11: this standard's guides say the items that amendment lists for their kind of guide (artifacts, authoring, promotion, Figma), and every request path, ID and provenance tag in them takes the new form. Caps for this change: `change-requests-design.md` § Amendment — 2026-11-11 (supervisor, 2026-11-11).
+
+**Cap (supervisor, 2026-11-18, skai#144 pass):** `product-specs-catalog.md` **10,500** holds (10,459 settled).

@@ -60,7 +60,7 @@ final class ConfigureApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 750, height: 770),
                           styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
         window.title = "Configure SKAI"
-        window.minSize = NSSize(width: 650, height: 520)
+        window.contentMinSize = NSSize(width: 480, height: 520)
         window.delegate = self
         window.isReleasedWhenClosed = false
         hosting = NSHostingView(rootView: view(for: model))
@@ -92,7 +92,7 @@ final class ConfigureApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
             do {
                 let reloaded = ConfigureModel(configuration: try Configuration(project: model.configuration.project, skaiRoot: skaiRoot),
                                               agentSession: agentSession)
-                reloaded.editingLocal = model.editingLocal
+                reloaded.tab = model.tab
                 reloaded.expanded = model.expanded
                 self.model = reloaded
                 hosting.rootView = view(for: reloaded)
@@ -152,6 +152,12 @@ struct ConfigureView: View {
         VStack(alignment: .leading, spacing: 0) {
             header
             ScrollView {
+                if model.tab == .locations {
+                    LocationsSection(model: model)
+                        .padding(.horizontal, contentLeading)
+                        .padding(.vertical, 12)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
                 VStack(alignment: .leading, spacing: 16) {
                     if !model.newSections.isEmpty {
                         Text("New 🔥 — configure to use")
@@ -166,10 +172,11 @@ struct ConfigureView: View {
                 .padding(.trailing, contentLeading)
                 .padding(.vertical, 12)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
             footer
         }
-        .frame(minWidth: 650, minHeight: 520)
+        .frame(minHeight: 520)
     }
 
     private var header: some View {
@@ -179,17 +186,19 @@ struct ConfigureView: View {
                 .font(.system(size: 12)).foregroundColor(.secondary)
                 .textSelection(.enabled)
                 .padding(.top, 5)
-            Text("Set project components or override them just for you.")
+            Text("Choose the project's components and where its artifacts live.")
                 .font(.system(size: 13))
                 .padding(.top, 14)
             HStack(spacing: 8) {
-                Picker("Scope", selection: $model.editingLocal) {
-                    Text("Project").tag(false)
-                    Text("User (\(model.overrideCount))").tag(true)
+                Picker("Scope", selection: $model.tab) {
+                    Text("Components").tag(ConfigureTab.project)
+                    if ConfigureModel.showsUserTab { Text("User (\(model.overrideCount))").tag(ConfigureTab.user) }
+                    Text("Locations").tag(ConfigureTab.locations)
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
                 .fixedSize()
+                if model.tab != .locations {
                 Menu {
                     Button(model.editingLocal ? "Turn all on" : "Select all") { model.selectAll() }
                     Button(model.editingLocal ? "Turn all off" : "Clear optional") { model.clearOptional() }
@@ -204,6 +213,7 @@ struct ConfigureView: View {
                 .menuIndicator(.hidden)
                 .fixedSize()
                 .help("More actions")
+                }
             }
             .padding(.top, 12)
         }
@@ -226,6 +236,83 @@ struct ConfigureView: View {
         .padding(.horizontal, contentLeading)
         .padding(.top, 15)
         .padding(.bottom, 18)
+    }
+}
+
+/// The Locations tab: the project's two locations, each a path from the project root; blank means
+/// `skai`. Project settings, with no user override.
+struct LocationsSection: View {
+    @ObservedObject var model: ConfigureModel
+
+    private let rows = [
+        ("productionArtifactsRoot", "Production artifacts", "The current product specs, design specs and UI Map"),
+        ("changePackagesFolder", "Change packages", "The skai folder that holds open and promoted changes"),
+    ]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Locations").font(.system(size: 15, weight: .bold))
+            Text("Where SKAI finds the project's files.")
+                .font(.system(size: 12)).foregroundColor(.secondary)
+                .padding(.top, 3)
+            // A grid, so every row's path starts at the same place: the path column is as wide as
+            // its longest path, and the labels wrap in whatever is left.
+            Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 12, verticalSpacing: 10) {
+                ForEach(rows, id: \.0) { key, title, description in
+                    let value = model.location(key)
+                    GridRow {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(title).font(.system(size: 13))
+                            Text(description).font(.system(size: 12)).foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        Text(value.isEmpty ? "skai" : value)
+                            .font(.system(size: 13))
+                            .foregroundColor(value.isEmpty ? .secondary : .primary)
+                            .lineLimit(1).truncationMode(.middle)
+                            .layoutPriority(1)
+                            .textSelection(.enabled)
+                            .help(key)
+                        // Always laid out, so a row with nothing to clear keeps the same columns.
+                        Button { model.setLocation(key, to: "") } label: { Image(systemName: "xmark.circle.fill") }
+                            .buttonStyle(.borderless)
+                            .foregroundColor(.secondary)
+                            .help("Use the default, skai")
+                            .opacity(value.isEmpty ? 0 : 1)
+                            .disabled(value.isEmpty)
+                        Button("Choose…") { choose(key, title: title) }
+                    }
+                }
+            }
+            .padding(.top, 10)
+        }
+    }
+}
+
+extension LocationsSection {
+    /// A folder picker opening at the location's current folder (else the project root); the
+    /// chosen folder is stored as its path from the project root.
+    func choose(_ key: String, title: String) {
+        let panel = NSOpenPanel()
+        panel.title = "Choose the \(title.lowercased()) folder"
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        panel.allowsMultipleSelection = false
+        panel.canCreateDirectories = true
+        let current = model.configuration.locationURL(key)
+        panel.directoryURL = FileManager.default.fileExists(atPath: current.path) ? current : model.configuration.project
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        if key == "changePackagesFolder", url.lastPathComponent != "skai" {
+            let alert = NSAlert()
+            alert.messageText = "Choose a folder named skai"
+            alert.informativeText = "Change packages live in a skai folder, which holds changes and promoted."
+            alert.alertStyle = .warning
+            alert.addButton(withTitle: "OK")
+            alert.runModal()
+            return
+        }
+        model.setLocation(key, to: model.configuration.relativeLocation(url))
     }
 }
 

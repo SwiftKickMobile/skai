@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.ui-map-guide
 Managed-Source: Guides/UIMap/ui-map-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-11
+Managed-Updated-At: 2026-11-18
 
 # UI Map Guide
 
@@ -19,12 +19,18 @@ This guide defines the platform-agnostic YAML format. Platform implementation pa
 
 ## Rendering and validation
 
-SKAI owns the default UI Map renderer. Use `Bin/ui-map-render.py` from the current SKAI checkout unless the project provides an explicit override.
+SKAI owns the default renderer. Use `Bin/ui-map-render.py` from the current SKAI checkout unless the project provides an explicit override.
 
-For an installed project, look first for the SKAI checkout at `Submodules/skai`. If SKAI is installed elsewhere, use that root instead. The renderer takes the map to render and the HTML page to write — map and page paths resolved against the repo that holds the map, which may be separate from the app and SKAI repos. For the production map:
+For an installed project, use `Submodules/skai` as the SKAI checkout, or its actual root if elsewhere. Run it from the host project root; it takes the map to render and the HTML page to write. The production map is `ui-map/ui-map.yaml` in the production artifacts root:
 
 ```
-uv run <skai-root>/Bin/ui-map-render.py <map-repo-root>/skai/ui-map/ui-map.yaml --html <map-repo-root>/skai/ui-map/ui-map.html
+uv run <skai-root>/Bin/ui-map-render.py <production-artifacts-root>/ui-map/ui-map.yaml --html <production-artifacts-root>/ui-map/ui-map.html
+```
+
+For a change package, the map is its `ui-map/` folder and the page is `proposed-ui-map.html` in it. For popovers on the Review tab and side panel, the renderer uses the spec catalogs in the production artifacts root and available spec drafts. The production map's page has no Review tab.
+
+```
+uv run <skai-root>/Bin/ui-map-render.py <package>/ui-map --html <package>/ui-map/proposed-ui-map.html
 ```
 
 The page is static: it holds the map model and loads the versioned shared page library and viewer (`Bin/skai-pages.v<n>.*`, `Bin/ui-map-viewer.v<n>.*`, the versions the renderer links) from the SKAI checkout by a relative path, so it opens from the file system or any static server with no build step. It lays the map out in levels at a fixed width, and selecting a scene filters the page to that scene's connections; the renderer's docstring ("RENDER CONVENTIONS", rule 12) is the authoritative description. The renderer also still emits Mermaid text (`-o`, `--markdown`) for documents that embed a diagram, and an SVG (`--svg`, needs the Mermaid CLI).

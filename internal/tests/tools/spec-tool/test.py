@@ -608,6 +608,58 @@ class Writers(unittest.TestCase):
         self.assertIsNotNone(tip, "the open Tradeoff D2 has a gap tooltip")
         self.assertIn("Missing expiration leaves a Submitted suggestion active", tip.group(0), "the tooltip carries the item's alternatives, not only the Options label")
 
+    def test_render_lists_a_removed_gap_footnote_struck_through(self):
+        base = (self.copy / "package/proposed-product-specs/domains/suggestion.md").read_text()
+        self.assertIn("ends[^1] |", base)
+        draft = self.copy / "changes/CR-01/package/proposed-product-specs/domains/suggestion.md"
+        draft.write_text(base.replace("ends[^1] |", "ends |", 1).replace("[^1]: **Gap:** D3. Placeholder: 14 days after Received when no Expiration arrives.\n", "", 1))
+        code, lines = run("render", "--catalog", "catalog", "--base", "package/proposed-product-specs",
+                          "--drafts", "changes/CR-01/package/proposed-product-specs",
+                          "--authoring", "changes/CR-01/package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = (self.copy / "changes/CR-01/package/product-specs-review.html").read_text()
+        card = re.search(r'<details class="item[^"]*" id="suggestion-08"[^>]*>(.*?)</details>', html, re.S)
+        self.assertIsNotNone(card)
+        self.assertIn('<sup class="fn">1</sup>', card.group(1), "the removed marker is shown struck through in the diff")
+        note = re.search(r'<div class="gapnote" id="gap-suggestion-08-removed-1">(.*?)</div></div>', card.group(1), re.S)
+        self.assertIsNotNone(note, "the removed footnote is listed under the item, so the struck-through marker has its note")
+        self.assertIn("<del>", note.group(1), "the removed note is struck through")
+        self.assertIn("14 days after Received", note.group(1))
+        self.assertRegex(note.group(1), r'href="[^"]*package/product-specs-review\.html#d3"', "a bare owner in the old file is the base's item")
+
+    def test_render_does_not_list_a_gap_footnote_whose_owner_is_only_rewritten_as_a_link(self):
+        base = (self.copy / "package/proposed-product-specs/domains/suggestion.md").read_text()
+        draft = self.copy / "changes/CR-01/package/proposed-product-specs/domains/suggestion.md"
+        draft.write_text(base.replace("[^1]: **Gap:** D3.", "[^1]: **Gap:** [D3][base D3].", 1) + "\n[base D3]: ../../../../../package/product-specs-authoring.md#d3\n")
+        code, lines = run("render", "--catalog", "catalog", "--base", "package/proposed-product-specs",
+                          "--drafts", "changes/CR-01/package/proposed-product-specs",
+                          "--authoring", "changes/CR-01/package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        html = (self.copy / "changes/CR-01/package/product-specs-review.html").read_text()
+        self.assertNotIn("gap-suggestion-08-removed-", html, "the same gap, its owner written as a link instead of bare, is not a removed footnote")
+        self.assertIn('id="gap-suggestion-08-1"', html)
+
+    def test_render_keeps_only_the_popovers_the_page_can_open(self):
+        code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                          "--authoring", "package/product-specs-authoring.md", fixtures=self.copy)
+        self.assertEqual(code, 0, lines)
+        page = (self.copy / "package/product-specs-review.html").read_text()
+        templates = dict(re.findall(r'<template id="([^"]+)">(.*?)</template>', page, re.S))
+        body = re.sub(r'<template id="[^"]+">.*?</template>', "", page, flags=re.S)
+        named = set(re.findall(r'data-tip="([^"]+)"', body))
+        self.assertTrue(templates)
+        self.assertEqual(set(templates), named, "every template is one the page names, and every popover the page names has its template")
+        spec = importlib.util.spec_from_file_location("st", TOOL); st = importlib.util.module_from_spec(spec); spec.loader.exec_module(st)
+        self.assertEqual(st.reachable_tips('<template id="a">x <a data-tip="b">B</a></template><template id="b">y</template><template id="c">z</template>', '<a data-tip="a">A</a>'),
+                         '<template id="a">x <a data-tip="b">B</a></template>', "only a template the page names stays: a popover never opens from inside another")
+
+    def test_word_diff_keeps_punctuation_against_a_link(self):
+        spec = importlib.util.spec_from_file_location("st", TOOL); st = importlib.util.module_from_spec(spec); spec.loader.exec_module(st)
+        self.assertEqual(st.tok("an [upfront payment][g-upfront-payment], its (see [ID-01]) later.[^1]"),
+                         ["an", "[upfront payment][g-upfront-payment],", "its", "(see", "[ID-01])", "later.[^1]"])
+        out = st.word_diff("only an [term][g-term], its value", "only an [term][g-term], its worth")
+        self.assertNotRegex(re.sub(r"<[^>]+>", "", out), r"\s[,.;:)]", "no space is added before punctuation that follows a link")
+
     def test_render_gap_tooltip_resolves_citations_as_its_own_artifact_defines_them(self):
         page = self.copy / "package/product-specs-review.html"
         code, lines = run("render", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
@@ -1715,6 +1767,29 @@ def _(self, m):
     m.entries.pop(); m.render()
     self.assertTrue(any("title Alpha Board is modified but no change-list entry names it" in i for i in m.check_issues), m.check_issues)
 
+
+
+class Locations(unittest.TestCase):
+    """Without --catalog, render and check-changes take the drafts' type's catalog from the project's production artifacts root."""
+
+    def test_the_catalog_comes_from_the_production_artifacts_root(self):
+        with tempfile.TemporaryDirectory() as directory:
+            host = Path(directory)
+            (host / "skai").mkdir()
+            (host / "skai/config.json").write_text('{"schemaVersion": 1, "productionArtifactsRoot": "Context"}')
+            shutil.copytree(FIXTURES / "catalog", host / "Context/product-specs")
+            package = host / "skai/changes/reminders/product-specs"
+            shutil.copytree(FIXTURES / "package", package)
+            code, lines = run("check-changes", "--drafts", str(package / "proposed-product-specs"),
+                              "--authoring", str(package / "product-specs-authoring.md"))
+            expected = run("check-changes", "--catalog", "catalog", "--drafts", "package/proposed-product-specs",
+                           "--authoring", "package/product-specs-authoring.md")
+            self.assertEqual((code, lines[-1:]), (expected[0], expected[1][-1:]), "the configured catalog gives the same comparison as the one passed")
+            (host / "skai/config.json").write_text('{"schemaVersion": 1, "productionArtifactsRoot": "Elsewhere"}')
+            code, lines = run("check-changes", "--drafts", str(package / "proposed-product-specs"),
+                              "--authoring", str(package / "product-specs-authoring.md"))
+            self.assertRegex(lines[-1], r"^\d+ issues$", "before the first promotion the catalog is empty, not an error")
+            self.assertFalse((host / "Elsewhere").exists(), "nothing is created early")
 
 
 if __name__ == "__main__":

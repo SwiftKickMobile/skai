@@ -86,6 +86,8 @@ struct Catalog: Decodable {
 }
 
 final class Configuration {
+    /// Project locations, each a path from the project root; blank means `skai`.
+    static let locationKeys = ["productionArtifactsRoot", "changePackagesFolder"]
     let project: URL
     let skaiRoot: URL
     let components: [Component]
@@ -97,12 +99,18 @@ final class Configuration {
     let originalLocal: [String: Any]?
     let originalSelection: Set<String>
     let originalOverrides: [String: Bool]
+    let originalLocations: [String: String]
     var selected: Set<String>
     var overrides: [String: Bool]
-    var projectChanged: Bool { selected != originalSelection }
+    /// Each location key's value as typed; empty means the default, `skai`.
+    var locations: [String: String]
+    var selectionChanged: Bool { selected != originalSelection }
+    var locationsChanged: Bool { Self.normalized(locations) != originalLocations }
+    var projectChanged: Bool { selectionChanged || locationsChanged }
     var localChanged: Bool { overrides != originalOverrides }
     var hasChanges: Bool { projectChanged || localChanged }
-    var defaultAll: Bool { originalData == nil }
+    /// No config, or one without `components`: every eligible component is selected.
+    var defaultAll: Bool { original?["components"] == nil }
     var configURL: URL { project.appendingPathComponent("skai/config.json") }
     var localConfigURL: URL { project.appendingPathComponent("skai/config.local.json") }
     var optionalIDs: Set<String> { Set(components.filter { !$0.required }.map(\.id)) }
@@ -156,7 +164,7 @@ final class Configuration {
     }
     /// New to this host: optional, not chosen in the project config, never seen by the given adapter (or any). Nothing is new on a default host.
     func newComponents(adapter: String? = nil, stack: String? = nil) throws -> [Component] {
-        guard originalData != nil else { return [] }
+        guard !defaultAll else { return [] }
         let seen = try seenComponents(adapter: adapter)
         return components.filter { c in
             !c.required && !originalSelection.contains(c.id) && !seen.contains(c.id)
@@ -166,7 +174,7 @@ final class Configuration {
     var newComponentIDs: Set<String> { Set((try? newComponents())?.map(\.id) ?? []) }
     var configurationFingerprint: String {
         // Same semantic representation as the portable installer resolver. Extra JSON keys don't affect selection.
-        let base = originalData == nil && !projectChanged ? "all" : selected.sorted().joined(separator: ",")
+        let base = defaultAll && !selectionChanged ? "all" : selected.sorted().joined(separator: ",")
         let local = overrides.keys.sorted().map { $0 + ":" + (overrides[$0]! ? "on" : "off") }.joined(separator: ",")
         return SHA256.hash(data: Data("project=\(base)\noverrides=\(local)\n".utf8)).map { String(format: "%02x", $0) }.joined()
     }
@@ -195,13 +203,15 @@ final class Configuration {
         if let bytes = originalData {
             let (object, selection) = try Self.parse(bytes, optional: optional, retired: retired)
             original = object
-            originalSelection = selection
-            selected = selection
+            originalSelection = selection ?? optional
+            selected = selection ?? optional
         } else {
             original = nil
             originalSelection = optional
             selected = optional
         }
+        originalLocations = try Self.parseLocations(original)
+        locations = originalLocations
         if let bytes = originalLocalData {
             let object = try Self.parseObject(bytes)
             guard let values = object["overrides"] as? [String: Any] else {
@@ -271,7 +281,7 @@ final class Configuration {
 
     /// Append new components to the project config; never create one (a default host already selects everything).
     func enable(_ ids: Set<String>) throws -> [String: Any] {
-        guard let original else { throw ConfigurationFailure(message: "No project config: defaults already select every eligible component.") }
+        guard let original, !defaultAll else { throw ConfigurationFailure(message: "No project selection: defaults already select every eligible component.") }
         guard ids.isSubset(of: optionalIDs) else { throw ConfigurationFailure(message: "Unknown or non-selectable component IDs.") }
         var object = original
         object["schemaVersion"] = 1
@@ -315,13 +325,63 @@ final class Configuration {
         return object
     }
 
-    static func parse(_ bytes: Data, optional: Set<String>, retired: Set<String> = []) throws -> ([String: Any], Set<String>) {
+    /// The project object and its selection; nil selection when `components` is absent (every eligible component).
+    static func parse(_ bytes: Data, optional: Set<String>, retired: Set<String> = []) throws -> ([String: Any], Set<String>?) {
         let object = try parseObject(bytes)
+        _ = try parseLocations(object)
+        guard object["components"] != nil else { return (object, nil) }
         guard let ids = object["components"] as? [String], ids.count == Set(ids).count,
               Set(ids).isSubset(of: optional.union(retired)) else {
             throw ConfigurationFailure(message: "components must list unique, known optional skill/policy IDs.")
         }
         return (object, Set(ids).intersection(optional))
+    }
+
+    /// Each location key's value, trimmed; empty for blank or absent.
+    static func parseLocations(_ object: [String: Any]?) throws -> [String: String] {
+        var result: [String: String] = [:]
+        for key in locationKeys {
+            guard let value = object?[key] else { result[key] = ""; continue }
+            guard let text = value as? String else {
+                throw ConfigurationFailure(message: "\(key) must be a path from the project root; leave it blank for skai.")
+            }
+            result[key] = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        if let folder = result["changePackagesFolder"], !folder.isEmpty, (folder as NSString).lastPathComponent != "skai" {
+            throw ConfigurationFailure(message: "changePackagesFolder must name a folder called skai.")
+        }
+        return result
+    }
+    /// Each location whose value this Save changes: its key and its folder before and after, as
+    /// paths from the project root (`skai` for the default), so the agent can propose moving
+    /// the folder's contents and updating references to the old one.
+    var locationChanges: [[String: String]] {
+        let now = Self.normalized(locations)
+        return Self.locationKeys.compactMap { key in
+            let before = originalLocations[key].flatMap { $0.isEmpty ? nil : $0 } ?? "skai"
+            let after = now[key].flatMap { $0.isEmpty ? nil : $0 } ?? "skai"
+            guard Self.folderPath(before) != Self.folderPath(after) else { return nil }  // `skai` set explicitly is still the default folder
+            return ["key": key, "from": before, "to": after]
+        }
+    }
+    static func folderPath(_ value: String) -> String { (value as NSString).standardizingPath }
+    /// A chosen folder as a location value: its path from the project root (`.` for the root
+    /// itself, `../` steps for a folder outside it).
+    func relativeLocation(_ folder: URL) -> String {
+        let base = project.standardizedFileURL.resolvingSymlinksInPath().pathComponents
+        let target = folder.standardizedFileURL.resolvingSymlinksInPath().pathComponents
+        var shared = 0
+        while shared < min(base.count, target.count), base[shared] == target[shared] { shared += 1 }
+        let parts = Array(repeating: "..", count: base.count - shared) + target[shared...]
+        return parts.isEmpty ? "." : parts.joined(separator: "/")
+    }
+    /// A location's folder: the value from the project root, or `skai` when blank.
+    func locationURL(_ key: String) -> URL {
+        let value = Self.normalized(locations)[key] ?? ""
+        return project.appendingPathComponent(value.isEmpty ? "skai" : value, isDirectory: true).standardizedFileURL
+    }
+    static func normalized(_ values: [String: String]) -> [String: String] {
+        Dictionary(uniqueKeysWithValues: locationKeys.map { ($0, (values[$0] ?? "").trimmingCharacters(in: .whitespacesAndNewlines)) })
     }
 
     func save() throws -> [String: Any] {
@@ -360,7 +420,11 @@ final class Configuration {
         if projectChanged {
             var object = original ?? [:]
             object["schemaVersion"] = 1
-            object["components"] = selected.sorted()
+            // A default selection stays default when only a location changed.
+            if selectionChanged || !defaultAll { object["components"] = selected.sorted() }
+            for (key, value) in Self.normalized(locations) {
+                if value.isEmpty { object.removeValue(forKey: key) } else { object[key] = value }
+            }
             writes.append((configURL, try encode(object), originalData))
         }
         if localChanged {
@@ -390,6 +454,7 @@ final class Configuration {
         }
         return ["status": "saved", "project": project.path, "configPath": configURL.path,
                 "localConfigPath": localConfigURL.path, "components": effectiveSelection.sorted(),
+                "locationChanges": locationChanges,
                 "projectChanged": projectChanged, "localChanged": localChanged,
                 "changed": hasChanges, "reconcile": true, "declined": declined]
     }
@@ -407,7 +472,7 @@ final class Configuration {
         }
         return ["configPath": configURL.path, "localConfigPath": localConfigURL.path,
                 "defaultAll": defaultAll, "configurationFingerprint": configurationFingerprint,
-                "trackComponents": originalData != nil || !overrides.isEmpty || projectChanged,
+                "trackComponents": !defaultAll || !overrides.isEmpty || selectionChanged,
                 "historyScope": historyScope,
                 "historyStatePath": project.appendingPathComponent(historyScope == "local" ? "skai/install-state.local.json" : "skai/install-state.json").path,
                 "skills": enabled.filter { $0.type == "skill" && $0.tags.contains("adapter:" + adapter) }.map(asset),

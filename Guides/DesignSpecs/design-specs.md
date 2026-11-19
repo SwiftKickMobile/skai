@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.design-specs
 Managed-Source: Guides/DesignSpecs/design-specs.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-10-31
+Managed-Updated-At: 2026-11-18
 
 # Design Specs
 
@@ -41,7 +41,7 @@ Specs apply to every app in the catalog's `apps/` index.
 ## Layout
 
 ```
-skai/design-specs/   the fixed root, in the repository the README links
+design-specs/        in the production artifacts root
   _design-specs.md   glossary.md
   screens/   _screens.md   <screen>.md   <family>.md
   shared/    _shared.md    <piece>.md

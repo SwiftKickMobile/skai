@@ -336,3 +336,20 @@ Rulings: skai#101 (body updated 2026-11-11: requests only against architecture; 
 **Tools (ui-map-render.py and the viewer, a new viewer version):** the `ui-map-chg-mgmt` code TODOs: the change package page's Map and Review tabs; change badges on scenes with any change to them or their outgoing connections; the Changes toggle with its count; a scene's entries first in the side panel, linked to the Review tab; the Review tab built from the package's Discussion and `## Map Changes` in the new format; domain filters in the review pages' style with scene counts; the hops drop-down; the search field's cross; no Theme or Clear buttons, the page following the system theme; section heading icons in their heading's color, no counts on Reached from and Opens; render fails when an entry names a scene not on the proposed map, except a removed scene; a request's proposed map layered over every UI Map package up its chain. The backfill's owed items stay out unless the designs carry them.
 
 **Migration:** active packages' `## Map Changes` move to the grouped format (domain headings in map order, Touches removed, sub-changes numbered); the release notes say how. No UI Map request files exist in known hosts; any found in an active package are listed for the supervisor.
+
+## Amendment — 2026-11-12: Spec Popovers On A Change Package's Page
+
+Ruling: supervisor, 2026-11-12. A change package's page showed no popovers on the glossary terms and spec items its Discussion and Map Changes cite, where the design review page shows them. `ui-map-render.py` now takes `--specs ROOT` (repeatable: catalog first, then drafts layered over it), as `design-tool.py render` does.
+
+**ui-map-guide.md must say,** in *Rendering and validation*, where the default render command lives:
+
+1. **A change package's page is rendered with the spec roots its package cites,** each passed as `--specs`: the product specs and design specs catalogs first, then the open packages' drafts layered over them, nearest last. They give the page's Review tab and side panel the glossary and cited-item popovers the design review page has.
+2. **The production map's page takes none:** it has no Review tab.
+
+The other UI Map guides keep pointing to `ui-map-guide.md` for the default renderer and do not restate the option. Nothing in the guides is made obsolete.
+
+**Revised 2026-11-12 (supervisor):** the renderer finds the drafts itself (`spec_drafts`): for each spec type, the package beside the UI Map package (else nearest up its request chain) and every package it builds on, stopping at a promoted one. The agent passes only the product specs and design specs catalogs, from where the README links them. Items 1–2 become: **a change package's page is rendered with the two catalogs as `--specs`; the production map's page takes none.** Choosing roots by hand, and the best-effort ruling on it, no longer apply to the guides.
+
+**Revised 2026-11-18 (supervisor, skai#144):** the renderer reads the spec catalogs from the project's production artifacts root setting, and the production map is `ui-map/ui-map.yaml` in that root (`artifact-location-design.md`, Amendment 2026-11-18). `--specs` is gone: a change package's page is rendered with its folder and page only.
+
+**Caps (supervisor, 2026-11-18, skai#144 pass, after round 4):** `ui-map-guide.md` **17,850** (was 17,370; the 2026-11-12 pass's change package paragraph went over it without a cap proposal; 17,889 settled); `ui-map-architecture.md` **37,050** (was 36,980; 37,058 settled).

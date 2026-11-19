@@ -8,14 +8,16 @@ A design package has no drafts to diff: its drawings live in the design file. Th
 what the spec page shows — the package card, the Discussion, and the changes, here the typed
 Design Changes list under its per-screen headings, each frame a card with its description, its
 link into the design file and its justification, or its numbered sub-changes — in the same shell, stylesheet and script as the spec pages, which it imports
-from spec-tool.py beside it. Spec citations in the artifact get the same
-chips and popovers as on a spec page; pass the spec roots so glossary terms do too.
+from spec-tool.py beside it. Spec citations and glossary terms get the same
+chips and popovers as on a spec page.
 
 Usage:
     python3 design-tool.py render --authoring FILE [--specs ROOT ...] [--out FILE]
-        Writes design-review.html beside the artifact unless --out says otherwise. --specs lists
-        spec roots (catalog first, then any package drafts layered over it) whose glossaries and
-        items feed the popovers; the artifact's own link definitions reach cited items without it.
+        Writes design-review.html beside the artifact unless --out says otherwise. The popovers'
+        glossaries and items come from the spec catalogs in the production artifacts root, then the
+        change's spec drafts over them (spec-tool.py's spec_catalogs and spec_drafts); --specs
+        lists other spec roots in their place (catalog first, then drafts layered over it). The
+        artifact's own link definitions reach cited items either way.
 """
 
 import argparse
@@ -148,7 +150,7 @@ def page_shell(title, counts, body, gloss, out, tips=""):
 <title>{html.escape(text)}</title>{css}</head><body>
 <div class="top">{h1}<div class="seg change" role="group" aria-label="Change">{change}</div>{state}</div><div class="wrap">
 {body}
-{st.render_popovers(gloss)}{tips}
+{st.reachable_tips(st.render_popovers(gloss) + tips, body)}
 <div id="pop" class="popover"></div></div>
 {js}
 </body></html>"""
@@ -168,7 +170,7 @@ def render(authoring, specs, out):
     out = Path(out) if out else authoring.parent / "design-review.html"
     text = authoring.read_text(encoding="utf-8")
     linkdefs = {m.group("name"): m.group("target") for m in map(st.LINKDEF_RE.match, text.splitlines()) if m}
-    specs = [Path(s) for s in specs]
+    specs = [Path(s) for s in specs] or st.spec_catalogs(authoring.parent) + st.spec_drafts(authoring.parent)
     gloss = st.prepare(specs[0], specs[1:], None, out) if specs else {}
     st.RESOLVER["out_dir"] = out.resolve().parent
     st.set_resolver(linkdefs, authoring)
@@ -221,7 +223,7 @@ def main(argv):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     r = sub.add_parser("render"); r.add_argument("--authoring", required=True)
-    r.add_argument("--specs", action="append", default=[], help="a spec root for popovers (repeatable: catalog first, then drafts layered over it)")
+    r.add_argument("--specs", action="append", default=[], help="a spec root for popovers, in place of the configured catalogs and the change's drafts (repeatable: catalog first, then drafts layered over it)")
     r.add_argument("--out")
     a = ap.parse_args(argv)
     if a.cmd == "render":

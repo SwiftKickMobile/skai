@@ -229,6 +229,46 @@ class ChangePackagePage(unittest.TestCase):
             self.assertNotIn("Resolved decision", panel, "the panel's reasons drop their source")
             self.assertNotIn("welcome", review["changes"])
 
+    def test_the_configured_catalogs_give_cited_items_and_terms_their_popovers(self):
+        with tempfile.TemporaryDirectory() as root:
+            folder = self.package(root, ARTIFACT.replace("People need earlier text; Resolved decision: D02",
+                                                         "People need earlier text; Upstream requirement: [NOTE-01]; Resolved decision: D02", 1)
+                                  .replace("## Decision Log\n", "## Decision Log\n\n[NOTE-01]: ../../../../Context/product-specs/domains/note.md#note-01\n", 1))
+            self.write(root, "skai/config.json", json.dumps({"schemaVersion": 1, "productionArtifactsRoot": "Context"}))
+            self.write(root, "Context/product-specs/domains/note.md", "# Note\n\nWhat a note is.\n\n## Versions\n\n### NOTE-01\n\nA note keeps its older versions.\n")
+            self.write(root, "Context/product-specs/glossary.md", "# Glossary\n\nTerms.\n\n### Earlier text\n\nA note's text before its latest edit ([NOTE-01]).\n\n[NOTE-01]: domains/note.md#note-01\n")
+            self.write(root, "skai/changes/note-versions/product-specs/product-specs-authoring.md", "# Note Versions\n\n## Goal\n\nVersions.\n\n## Inputs\n\n- The catalog.\n\n## Decision Log\n")
+            self.write(root, "skai/changes/note-versions/product-specs/proposed-product-specs/domains/note.md",
+                       "# Note\n\nWhat a note is.\n\n## Versions\n\n### NOTE-01\n\nA later layer's text.\n")
+            page = folder / "proposed-ui-map.html"
+            result = self.render(folder / "proposed-ui-map.yaml", page)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            html = self.page_model(page)[1]["review"]["html"]
+            tip = re.search(r'<a class="ref" href="[^"]*specs/domains/note\.md#note-01" data-tip="([^"]+)"', html)
+            self.assertIsNotNone(tip, "a citation of an item in the configured catalog has its popover")
+            template = re.search(r'<template id="' + re.escape(tip.group(1)) + r'">(.*?)</template>', html, re.S)
+            self.assertIsNotNone(template)
+            self.assertIn("A note keeps its older versions.", template.group(1), "the cited file's own item, though the change's drafts define the same ID")
+            self.assertIn('data-tip="tip-g-earlier-text">earlier text<', html, "a glossary term in the text has its popover")
+
+    def test_the_renderer_adds_the_change_spec_drafts_and_their_bases(self):
+        with tempfile.TemporaryDirectory() as root:
+            folder = self.package(root, ARTIFACT.replace("The note stays in view; Supervisor input", "The note stays in view, beside the earlier text and the history pane; Supervisor input", 1))
+            self.write(root, "skai/product-specs/glossary.md", "# Glossary\n\nTerms.\n\n### Earlier text\n\nThe catalog's wording.\n")
+            self.write(root, "skai/changes/older/product-specs/product-specs-authoring.md", "# Older\n\n## Goal\n\nA base.\n\n## Inputs\n\n- The catalog.\n\n## Decision Log\n")
+            self.write(root, "skai/changes/older/product-specs/proposed-product-specs/glossary.md", "# Glossary\n\nTerms.\n\n### History pane\n\nWhere older versions list.\n")
+            self.write(root, "skai/changes/note-versions/product-specs/product-specs-authoring.md",
+                       "# Note Versions\n\n## Goal\n\nVersions.\n\n## Inputs\n\n- The [older package](../../older/product-specs/product-specs-authoring.md), the base.\n\n## Decision Log\n")
+            self.write(root, "skai/changes/note-versions/product-specs/proposed-product-specs/glossary.md", "# Glossary\n\nTerms.\n\n### Earlier text\n\nThe draft's wording.\n")
+            page = folder / "proposed-ui-map.html"
+            result = self.render(folder / "proposed-ui-map.yaml", page)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            html = self.page_model(page)[1]["review"]["html"]
+            self.assertIn('data-tip="tip-g-earlier-text"', html, "with no config, the catalog in the skai folder holding the package")
+            self.assertIn('data-tip="tip-g-history-pane"', html, "a term from the base change's drafts, found through the package's first input")
+            self.assertIn("The draft&#x27;s wording.", re.search(r'<template id="tip-g-earlier-text">(.*?)</template>', html, re.S).group(1),
+                          "the change's own drafts layer over the catalog and the base")
+
     def test_an_entry_naming_a_scene_off_the_map_fails_except_a_removed_scene(self):
         for entry, fails in [("- M8 modify scene: ghost", True), ("- M8 add route: ghost", True), ("- M8 move scene: ghost", True),
                              ("- M8 modify domain: ghost", True), ("- M8 remove scene: ghost", False), ("- M8 remove domain: ghost", False),
@@ -282,6 +322,25 @@ class ChangePackagePage(unittest.TestCase):
             orphan = self.write(request, "ui-map-architecture.md", "# UI Map — CR-01\n\n## Goal\n\nA request.\n")
             self.assertEqual(self.render(orphan.parent, page).returncode, 0)
             self.assertIn("welcome", self.page_model(page)[1]["scenes"], "no package map up the chain: the production map")
+
+    def test_a_configured_production_root_holds_the_production_map(self):
+        with tempfile.TemporaryDirectory() as root:
+            folder = self.package(root)
+            (Path(root) / "skai/ui-map/ui-map.yaml").unlink()
+            self.write(root, "skai/config.json", json.dumps({"schemaVersion": 1, "productionArtifactsRoot": "Context"}))
+            production = self.write(root, "Context/ui-map/ui-map.yaml", fenced_block(DEMO.read_text(), "yaml"))
+            self.write(root, "Context/ui-map/ui-map-architecture.md", ARTIFACT)
+            result = self.render(production, production.with_suffix(".html"))
+            self.assertEqual(result.returncode, 0, result.stderr)
+            model = self.page_model(production.with_suffix(".html"))[1]
+            self.assertEqual(model["package"], "Production", "a map outside the change packages folder is the production map")
+            self.assertIsNone(model["review"])
+            (folder / "proposed-ui-map.yaml").unlink()
+            self.write(folder, "ui-map-architecture.md", "# UI Map — Note Versions\n\n## Goal\n\nVersions.\n")
+            page = folder / "proposed-ui-map.html"
+            result = self.render(folder, page)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("welcome", self.page_model(page)[1]["scenes"], "no package map: the production map in the configured root")
 
 
 if __name__ == "__main__":

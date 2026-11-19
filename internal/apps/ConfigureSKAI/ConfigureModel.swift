@@ -16,6 +16,9 @@ enum OverrideChoice: Hashable, CaseIterable {
     }
 }
 
+/// The window's tabs. User is hidden for now (`ConfigureModel.showsUserTab`); its code stays.
+enum ConfigureTab: Hashable { case project, user, locations }
+
 /// The window's state and every user action, kept free of view code so it can be tested directly.
 @MainActor
 final class ConfigureModel: ObservableObject {
@@ -30,7 +33,13 @@ final class ConfigureModel: ObservableObject {
     let agentSession: Bool
     /// Components this host has never chosen: listed first, checked, until Save.
     let newIDs: Set<String>
-    @Published var editingLocal = false
+    /// Whether the User tab is offered. Hidden for now; its behavior is unchanged.
+    static let showsUserTab = false
+    @Published var tab: ConfigureTab = .project
+    var editingLocal: Bool {
+        get { tab == .user }
+        set { tab = newValue ? .user : .project }
+    }
     @Published var expanded: Set<String> = []
     @Published var requiresReload = false
 
@@ -109,6 +118,16 @@ final class ConfigureModel: ObservableObject {
 
     func isOverridden(_ component: Component) -> Bool { configuration.overrides[component.id] != nil }
 
+    // MARK: Locations
+
+    /// A project location's value as typed; empty means the default, `skai`.
+    func location(_ key: String) -> String { configuration.locations[key] ?? "" }
+
+    func setLocation(_ key: String, to value: String) {
+        objectWillChange.send()
+        configuration.locations[key] = value
+    }
+
     // MARK: Categories
 
     private func optionalIDs(_ section: Section) -> [String] { section.members.filter { !$0.required }.map(\.id) }
@@ -166,7 +185,8 @@ final class ConfigureModel: ObservableObject {
 
     var overrideCount: Int { configuration.overrides.count }
     var summary: String {
-        "\(configuration.effectiveSelection.count) of \(configuration.optionalIDs.count) effective · \(overrideCount) override\(overrideCount == 1 ? "" : "s")"
+        let selected = "\(configuration.effectiveSelection.count) of \(configuration.optionalIDs.count) effective"
+        return Self.showsUserTab ? selected + " · \(overrideCount) override\(overrideCount == 1 ? "" : "s")" : selected
     }
     /// New components always need a decision, so Save stays available while any are listed: saving
     /// installs the checked ones and records the rest as declined.

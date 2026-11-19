@@ -112,3 +112,17 @@ Requirements are renamed *product specs*: the root becomes `skai/product-specs/`
 "Product requirements" becomes "Product specs", and change packages use the `product-specs/` type
 folder. Discovery is unchanged in mechanism; the migration moves the folder and rewrites the README
 row and every relative link in one pass, instructed by the release document.
+
+## Amendment — 2026-11-18: Locations Set In The Project Config
+
+Ruling: supervisor, 2026-11-18 (skai#144). Hosts keep production artifacts outside `skai/` (a context repository's root), and tools that need a catalog or the production map had the agent pass its path. Two project settings now say where things live, and tools read them.
+
+1. **One production artifacts root.** The product specs catalog, the design specs catalog and the production UI Map live under one root, each in the folder its content guide names (`product-specs/`, `design-specs/`, `ui-map/`). The root is `productionArtifactsRoot` in the host's `skai/config.json`, a path from the host root; not set, it is the host's `skai/` folder. This replaces decision 1's per-artifact repository and decision 4's supervisor naming it: the root names it. Decision 4's "add the README link when the package is created" stands.
+2. **A change packages folder.** `changePackagesFolder` names the `skai` folder that holds `changes/` and `promoted/`; not set, the host's `skai/`. The guides keep writing `skai/changes/…` for the layout inside it.
+3. **The settings are for tools; the README is for readers.** The UI Map renderer, `spec-tool.py render` / `check-changes` and `design-tool.py render` read the settings, so no guide command passes a catalog or spec root. Agents still find existing resources through the README's links (decision 2); both describe the same places.
+4. **Where the root is set is said once,** in the hosting guide. Content guides' Layout sections name their folder "in the production artifacts root" instead of a fixed `skai/` root; the UI Map guides name the production map the same way.
+5. **Scope widens** to the render and tool commands: `ui-map-guide.md` § Rendering and validation, the production map path in `ui-map-architecture.md`, the spec tool table in `Guides/Core/spec-file-shape.md`, and the render command in `design-authoring.md`.
+
+Settled: one root for every production artifact (no per-artifact setting); a second setting for change packages; unset settings change nothing for an existing project and need no migration; tools never scan for locations.
+
+**Cap (supervisor, 2026-11-18, skai#144 pass, after round 4; its first, replacing "no size cap"):** `Guides/Core/artifact-hosting.md` **2,480** (2,341 before, 2,493 settled).

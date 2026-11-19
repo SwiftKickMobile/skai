@@ -315,3 +315,5 @@ Cap (supervisor, 2026-11-10, after cold round 4): the set **47,700** (was 47,650
 ## Amendment — 2026-11-11: Requests As Folders Of Sub-Packages; Confirming The Route (skai#108, skai#129)
 
 Adopts [`change-requests-design.md`](change-requests-design.md) § Amendment — 2026-11-11: this standard's guides say the items that amendment lists for their kind of guide (artifacts, authoring, promotion, Figma), and every request path, ID and provenance tag in them takes the new form. Caps for this change: `change-requests-design.md` § Amendment — 2026-11-11 (supervisor, 2026-11-11).
+
+**Cap (supervisor, 2026-11-18, skai#144 pass):** `design-specs.md` **15,100** (was 15,000; the file stood at 15,117 before the pass; 15,099 settled).

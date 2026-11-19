@@ -1,6 +1,7 @@
 """Behavioral checks for the read-only installer history/selection planner."""
 import importlib.util
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -300,7 +301,7 @@ class ComponentHistoryTests(unittest.TestCase):
             manifest = selection.read_manifest()
             # Default host: nothing is new.
             self.assertEqual(selection.resolve(project, "codex", "generic", manifest)["newComponents"], [])
-            with self.assertRaisesRegex(selection.ConfigurationError, "No project config"):
+            with self.assertRaisesRegex(selection.ConfigurationError, "No project selection"):
                 selection.enable_components(project, ["skill.skai-debugging"], manifest)
             (project / "skai/config.json").write_text(json.dumps({"schemaVersion": 1, "components": ["skill.skai-debugging"], "note": "keep"}))
             state = project / "skai/install-state.json"
@@ -334,6 +335,76 @@ class ComponentHistoryTests(unittest.TestCase):
             # A declined record is a valid, unknown-version baseline for the planner once re-enabled.
             proposal = selection.plan_history(records[0], set(), {"skill.skai-unit-testing"}, fingerprint="f", target_sha="N+2", date="2026-10-13", track=True)
             self.assertEqual(proposal["migrations"][0]["reason"], "no-known-installed-version")
+
+
+class LocationTests(unittest.TestCase):
+    def test_blank_or_absent_locations_are_skai_under_the_project(self):
+        with tempfile.TemporaryDirectory() as directory:
+            project = Path(directory).resolve()
+            self.assertEqual(selection.locations(project), {k: project / "skai" for k in selection.LOCATION_KEYS})
+            (project / "skai").mkdir()
+            (project / "skai/config.json").write_text(json.dumps({"schemaVersion": 1, "productionArtifactsRoot": " ", "changePackagesFolder": "Context/skai"}))
+            found = selection.locations(project)
+            self.assertEqual(found["productionArtifactsRoot"], project / "skai")
+            self.assertEqual(found["changePackagesFolder"], project / "Context/skai")
+
+    def test_a_config_without_components_selects_everything(self):
+        with tempfile.TemporaryDirectory() as directory:
+            project = Path(directory)
+            (project / "skai").mkdir()
+            (project / "skai/config.json").write_text(json.dumps({"schemaVersion": 1, "productionArtifactsRoot": "Context"}))
+            manifest = selection.read_manifest()
+            resolved = selection.resolve(project, "codex", "generic", manifest)
+            self.assertTrue(resolved["defaultAll"])
+            self.assertEqual(resolved["newComponents"], [])
+            with self.assertRaises(selection.ConfigurationError):
+                selection.enable_components(project, ["skill.skai-debugging"], manifest)
+
+    def test_the_change_packages_folder_is_a_skai_folder(self):
+        with tempfile.TemporaryDirectory() as directory:
+            project = Path(directory)
+            (project / "skai").mkdir()
+            (project / "skai/config.json").write_text(json.dumps({"schemaVersion": 1, "changePackagesFolder": "Context/work"}))
+            with self.assertRaises(selection.ConfigurationError):
+                selection.locations(project)
+
+    def test_a_change_packages_folder_outside_the_host_is_found_from_the_host(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            host = root / "app"
+            (host / "skai").mkdir(parents=True)
+            (host / "skai/config.json").write_text(json.dumps({"schemaVersion": 1, "productionArtifactsRoot": "../context", "changePackagesFolder": "../context/skai"}))
+            package = root / "context/skai/changes/reminders/ui-map"
+            package.mkdir(parents=True)
+            here = os.getcwd()
+            try:
+                os.chdir(root)
+                self.assertIsNone(selection.locations_for(package), "outside the host and run from elsewhere: no config places it")
+                os.chdir(host)
+                self.assertEqual(selection.locations_for(package)["productionArtifactsRoot"], root / "context")
+            finally:
+                os.chdir(here)
+
+    def test_a_location_must_be_a_string(self):
+        with tempfile.TemporaryDirectory() as directory:
+            project = Path(directory)
+            (project / "skai").mkdir()
+            (project / "skai/config.json").write_text(json.dumps({"schemaVersion": 1, "components": [], "changePackagesFolder": 3}))
+            with self.assertRaises(selection.ConfigurationError):
+                selection.resolve(project, "codex", "generic", selection.read_manifest())
+
+    def test_tools_find_the_project_whose_locations_hold_a_path(self):
+        with tempfile.TemporaryDirectory() as directory:
+            host = Path(directory).resolve()
+            (host / "skai").mkdir()
+            (host / "skai/config.json").write_text(json.dumps({"schemaVersion": 1, "productionArtifactsRoot": ".", "changePackagesFolder": "Context/skai"}))
+            package = host / "Context/skai/changes/reminders/ui-map"
+            package.mkdir(parents=True)
+            self.assertEqual(selection.locations_for(package)["productionArtifactsRoot"], host)
+            # A SKAI checkout's own packages inside the host are not the host's, even under its production root.
+            own = host / "Vendor/skai/skai/changes/demo/ui-map"
+            own.mkdir(parents=True)
+            self.assertIsNone(selection.locations_for(own))
 
 
 if __name__ == "__main__":

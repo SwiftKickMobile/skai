@@ -316,11 +316,18 @@ the demo doc and the guide describe the same conventions in prose.
           package's inherited list) is shown with that line and not checked.
         * Links: `#map`, `#review`, `#scene=<id>` and an element of the
           Review tab (`#m3`, `#d01`) open that tab, scene or entry.
+        * Popovers: the Review tab and the side panel get the review pages'
+          popovers for glossary terms and cited spec items: from the spec
+          catalogs (`product-specs/` and `design-specs/` in the production
+          artifacts root), then the drafts of the spec packages beside the UI
+          Map package (else nearest up its request chain) and every package
+          each builds on, farthest base first (spec-tool.py's spec_catalogs
+          and spec_drafts).
     - Request layering: a request's `ui-map/` sub-package renders the
       nearest proposed map up its chain — its own `proposed-ui-map.yaml`,
       else each base package's (spec-tool.py's chain_bases), else the
-      production map `skai/ui-map/ui-map.yaml` — with its own architecture
-      artifact. Pass the package folder (or its missing proposed map) to use
+      production map `ui-map/ui-map.yaml` in the production artifacts root —
+      with its own architecture artifact. Pass the package folder (or its missing proposed map) to use
       it; an existing YAML file is always rendered as given.
 
 13. ERRORS
@@ -1207,7 +1214,7 @@ def package_id(input_path: Path) -> str:
     then each change request ID down from it, joined by ' | ' (`offers/changes/CR-01/ui-map/` gives
     'offers | CR-01'); anything else, the production map included, is 'Production'."""
     folder = package_folder(input_path)
-    if folder.name != "ui-map" or folder.parent.name == "skai":
+    if folder.name != "ui-map" or st.skai_folder(folder) is None:
         return "Production"
     pkg, ids = st.locate(folder)
     return " | ".join([pkg.parent.name] + ids)
@@ -1222,16 +1229,15 @@ def package_folder(input_path: Path) -> Path:
 def map_source(input_path: Path) -> Path:
     """The YAML to render. A file that exists is itself. A UI Map package folder, or its missing
     `proposed-ui-map.yaml`, takes the nearest proposed map up its request chain (its own, then
-    each package spec-tool.py's chain_bases walks), else the production map, `skai/ui-map/ui-map.yaml`,
-    as a request's drafts layer over its bases', nearest winning."""
+    each package spec-tool.py's chain_bases walks), else the production map, `ui-map/ui-map.yaml` in
+    the production artifacts root, as a request's drafts layer over its bases', nearest winning."""
     if input_path.is_file():
         return input_path
     folder = package_folder(input_path)
     for pkg in [folder] + st.chain_bases(folder):
         if (pkg / MAP_FILE).is_file():
             return pkg / MAP_FILE
-    own = st.locate(folder)[0]  # skai/changes/<change-id>/ui-map
-    return own.parent.parent.parent / "ui-map" / "ui-map.yaml"
+    return (st.production_root(folder) or folder) / "ui-map" / "ui-map.yaml"
 
 
 # ---------------------------------------------------------------------------
@@ -1292,11 +1298,14 @@ def changed_scene(c: dict[str, Any]) -> str | None:
 def build_review(artifact: Path, model: Model, html_path: Path) -> dict[str, Any]:
     """The Review tab and the change marks for a change package's page, from its architecture
     artifact: the summary box, the Discussion and the Map Changes cards as HTML; the counts its
-    filters show; the changed scenes in map order; and each changed scene's side panel cards."""
+    filters show; the changed scenes in map order; and each changed scene's side panel cards.
+    The spec catalogs, then the change's spec drafts over them, give glossary terms and cited spec
+    items their popovers, as on the design review page."""
     text = artifact.read_text(encoding="utf-8")
     out_dir = html_path.resolve().parent
     linkdefs = {m.group("name"): m.group("target") for m in map(st.LINKDEF_RE.match, text.splitlines()) if m}
-    gloss: dict[str, Any] = {}
+    roots = st.spec_catalogs(artifact.parent) + st.spec_drafts(artifact.parent)
+    gloss: dict[str, Any] = st.prepare(roots[0], roots[1:], None, html_path) if roots else {}
     st.RESOLVER["out_dir"] = out_dir
     st.set_resolver(linkdefs, artifact.resolve())
     links = dt.Links(artifact.resolve().parent, out_dir)
@@ -1332,7 +1341,7 @@ def build_review(artifact: Path, model: Model, html_path: Path) -> dict[str, Any
         body += '<section class="file"><h2>Map Changes</h2>' + note + "".join(cards) + "</section>"
     counts = {status: sum(MAP_STATUS[c["op"]] == status for c in changes) for status in MAP_STATUS.values()}
     return {
-        "html": body + st.render_popovers(gloss),
+        "html": body + st.render_popovers(gloss, body, *(card for cards in panel.values() for card in cards)),
         "counts": {**counts, **states},
         "changed": [sid for sid in model.scenes if sid in panel],
         "changes": panel,
