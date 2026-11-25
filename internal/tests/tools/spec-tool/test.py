@@ -971,6 +971,52 @@ class Writers(unittest.TestCase):
             found = [i for i in issues(lines) if "labeled" in i]
             self.assertEqual(found == [], right, (label, target, lines))
 
+    def nested_terms_catalog(self, sentence, *definitions):
+        """A catalog where 'Reminder' is also part of 'Overdue reminder' and 'Reminder log'; returns
+        the file whose intro holds the sentence and the file whose item governs 'Reminder log'."""
+        root = self.copy / "nested-terms"
+        for name, text in {"glossary.md": "# Glossary\n\n### Overdue reminder\nOne past due ([REMIND-01]).\n\n### Reminder\nA prompt that comes due ([REMIND-01]).\n\n"
+                                          "### Reminder log\nWhat came due ([LOG-01]).\n\n[LOG-01]: log.md#log-01\n[REMIND-01]: reminders.md#remind-01\n",
+                           "reminders.md": "# Prompts\n\nWhat a prompt is.\n\n### REMIND-01\nA reminder comes due once.\n",
+                           "log.md": "# Log\n\nWhat came due.\n\n### LOG-01\nThe reminder log lists each reminder.\n",
+                           "notes.md": f"# Notes\n\n{sentence}\n\n### NOTE-01\nA note holds text.\n\n" + "".join(f"{d}\n" for d in definitions)}.items():
+            root.mkdir(exist_ok=True)
+            (root / name).write_text(text)
+        return root / "notes.md", root / "log.md"
+
+    def test_a_term_inside_a_longer_term_is_not_linked_on_its_own(self):
+        for command in ("link-terms", "convert"):
+            note, log = self.nested_terms_catalog("Overdue reminders and a reminder fill the **reminder log**.")
+            run(command, "nested-terms", fixtures=self.copy)
+            self.assertIn("[Overdue reminders][g-overdue-reminder] and a [reminder][g-reminder] fill the **[reminder log][g-reminder-log]**.", note.read_text())
+            self.assertIn("The reminder log lists each [reminder][g-reminder].", log.read_text(), "nor in the longer term's own item")
+            code, lines = run("validate", "nested-terms", fixtures=self.copy)
+            self.assertEqual((code, issues(lines)), (0, []))
+
+    def test_a_link_on_part_of_a_longer_term_is_reported_and_replaced(self):
+        definition = "[g-reminder]: glossary.md#reminder"
+        for sentence, whole, kept in (("The [reminder][g-reminder] log shows it.", "The [reminder log][g-reminder-log] shows it.", False),
+                                      ("Overdue [reminders][g-reminder] and a [reminder][g-reminder].", "[Overdue reminders][g-overdue-reminder] and a [reminder][g-reminder].", True)):
+            note, log = self.nested_terms_catalog(sentence, definition)
+            log.write_text("# Log\n\nWhat came due.\n\n### LOG-01\nThe [reminder][g-reminder] log.\n\n" + definition + "\n")  # its own item is exempt
+            code, lines = run("validate", "nested-terms", fixtures=self.copy)
+            found = [i for i in issues(lines) if "only some of its words are linked" in i]
+            self.assertTrue(len(found) == 1 and "notes.md:3" in found[0], lines)
+            run("link-terms", "nested-terms", fixtures=self.copy)
+            text = note.read_text()
+            self.assertIn(whole, text)
+            self.assertEqual(definition in text, kept, "a definition nothing uses any more goes")
+            code, lines = run("validate", "nested-terms", fixtures=self.copy)
+            self.assertFalse(any("notes.md" in i for i in issues(lines)), lines)
+            run("link-terms", "nested-terms", fixtures=self.copy)
+            self.assertEqual(note.read_text(), text, "idempotent")
+
+    def test_a_link_reaching_past_a_term_keeps_its_words(self):
+        note, _ = self.nested_terms_catalog("The [daily reminder][g-reminder] log.", "[g-reminder]: glossary.md#reminder")
+        before = note.read_text()
+        run("link-terms", "nested-terms", fixtures=self.copy)
+        self.assertEqual(note.read_text(), before)
+
     def test_link_terms_rewrites_only_the_last_root(self):
         stale = self.copy / "link-terms/catalog/domains/stale.md"
         fresh = self.copy / "link-terms/drafts/domains/fresh.md"

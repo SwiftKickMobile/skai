@@ -145,6 +145,9 @@ GLOSSARY TERMS (what "every occurrence in spec prose" covers, for validate and l
     items as well as live ones. Table headers are column labels, not prose, like the headings
     they sit under. Glossary files and index files are not spec prose. An item that a term's
     entry names as governing is exempt for that term; intro and section lines are never exempt.
+    Where one term holds another, the longer is the occurrence: "due date" is no occurrence of
+    "date", in an item governing "due date" either. A link on only some of a term's words leaves the
+    term unlinked; link-terms puts one link on the whole of it in their place.
     A link to a whole file labeled with its name and extension ("[reminders.md]", with a folder
     where the name alone is not enough: "[domains/reminders.md]") names the file, not a term, so a
     term in its label is not an occurrence; the validator checks that the label ends the target's
@@ -934,11 +937,11 @@ def validate(roots):
             continue
         gloss_refs = {n for n, t in s.linkdefs.items() if "glossary.md#" in t}
         for i, line, item, start in prose_lines(s):
-            for term, (governing, anc, _) in terms.items():
-                if item is not None and item.id in governing:
-                    continue
-                if unlinked_uses(line, term, gloss_refs, start):
-                    shape.append(Issue(s.path, i + 1, f"unlinked use of glossary term {term!r}"))  # per file: a package cannot edit files it does not hold
+            uses = {}  # term -> whether every unlinked use of it on the line has a link on some of its words
+            for _, _, _, term, refs in unlinked_uses(line, terms, item, gloss_refs, start):
+                uses[term] = bool(refs) and uses.get(term, True)
+            for term in sorted(uses):
+                shape.append(Issue(s.path, i + 1, f"unlinked use of glossary term {term!r}" + (": only some of its words are linked" if uses[term] else "")))  # per file: a package cannot edit files it does not hold
 
     # with several roots, per-file diagnostics outside the drafts (untouched canonical files, and
     # catalog files a draft replaces) are notes; whole-projection checks always block
@@ -1022,21 +1025,39 @@ def glossary_terms(glossaries):
     return terms
 
 
-def unlinked_uses(body, term, gloss_refs, start=0):
-    """Matches of the term in body, from `start` on, that are neither wrapped in a glossary link nor
-    part of a file link's label."""
-    out, files = [], [f.span() for f in FILE_LINK_RE.finditer(body)]
-    for m in term_pattern(term).finditer(body, start):
-        if any(a < m.start() and m.end() < b for a, b in files):
+GLOSS_USE_RE = re.compile(r"\[([^\]\[]+)\]\[([^\]\[]+)\]")
+
+
+def unlinked_uses(body, terms, item, gloss_refs, start=0):
+    """The occurrences in body, from `start` on, that no glossary link covers: (start, end, words,
+    term, refs), in order, the span taking in whole any links on some of the term's words, whose names
+    are `refs`. The longest term wins: words inside one are no occurrence of a shorter one, even in an
+    item governing the longer term, which is exempt for it."""
+    read, at, links, pos = "", [], [], 0  # the line as read, each glossary link reduced to its label; `at`: where each character sits in body
+    for m in GLOSS_USE_RE.finditer(body):
+        if m.group(2) in gloss_refs:
+            read += body[pos:m.start()] + m.group(1)
+            at += [*range(pos, m.start()), *range(m.start(1), m.end(1))]
+            links.append((len(read) - len(m.group(1)), len(read), m))
+            pos = m.end()
+    read += body[pos:]
+    at += range(pos, len(body))
+    files = [f.span() for f in FILE_LINK_RE.finditer(read)]
+    found = [(m.start(), m.end(), term) for term in terms for m in term_pattern(term).finditer(read)]
+    taken, out = [], []
+    for a, b, term in sorted(found, key=lambda f: (f[0] - f[1], f[0])):
+        if any(a < d and c < b for c, d in taken) or any(c < a and b < d for c, d in files):
             continue
-        before, after = body[: m.start()], body[m.end():]
-        # linked when the match sits anywhere inside a glossary link's label: "[Appointments
-        # stage][g-appointments-stage]" links the shorter term "appointment" too
-        lm = re.match(r"[^\]\[]*\]\[([^\]]+)\]", after)
-        if before.rfind("[") > before.rfind("]") and lm and lm.group(1) in gloss_refs:
+        over = [l for l in links if l[0] < b and a < l[1]]
+        whole = any(l[0] <= a and b <= l[1] for l in over)  # "[Appointments stage][g-appointments-stage]" links "appointment" too
+        if not whole and any(l[0] < a or b < l[1] for l in over):
+            continue  # a link reaching past the term holds these words
+        taken.append((a, b))
+        if whole or at[a] < start or (item is not None and item.id in terms[term][0]):
             continue
-        out.append(m)
-    return out
+        out.append((min([at[a]] + [l[2].start() for l in over]), max([at[b - 1] + 1] + [l[2].end() for l in over]),
+                    read[a:b], term, {l[2].group(2) for l in over}))
+    return sorted(out, key=lambda u: u[0])
 
 
 def link_terms(roots, write_roots=None):
@@ -1059,24 +1080,24 @@ def link_terms(roots, write_roots=None):
         spec = parse(p)
         lines = spec.raw[:]
         gloss_refs = {n for n, t in spec.linkdefs.items() if "glossary.md#" in t}
-        new_defs = {}
+        new_defs, replaced = {}, set()  # replaced: names of links on part of a longer term, now linked whole
         for k, _, item, start in prose_lines(spec):
-            for term, (governing, anc, grel) in terms.items():
-                if item is not None and item.id in governing:
-                    continue
+            l, pieces, pos = lines[k], [], 0
+            for a, b, words, term, refs in unlinked_uses(l, terms, item, gloss_refs, start):
+                _, anc, grel = terms[term]
                 ref = f"g-{anc}"
-                l = lines[k]
-                pieces, pos = [], 0
-                for m in unlinked_uses(l, term, gloss_refs | set(new_defs), start):
-                    pieces.append(l[pos:m.start()] + f"[{m.group(0)}][{ref}]")
-                    pos = m.end()
-                    changed += 1
-                if pieces:
-                    lines[k] = "".join(pieces) + l[pos:]
-                    # the glossary file as it sits on disk relative to this file: the drafts' copy
-                    # when the last root holds one, else the earlier root's
-                    new_defs[ref] = f"{Path(os.path.relpath(by_rel[grel].resolve(), p.resolve().parent)).as_posix()}#{anc}"
+                pieces.append(l[pos:a] + f"[{words}][{ref}]")
+                pos = b
+                changed += 1
+                replaced |= refs
+                # the glossary file as it sits on disk relative to this file: the drafts' copy
+                # when the last root holds one, else the earlier root's
+                new_defs[ref] = f"{Path(os.path.relpath(by_rel[grel].resolve(), p.resolve().parent)).as_posix()}#{anc}"
+            if pieces:
+                lines[k] = "".join(pieces) + l[pos:]
         if new_defs:
+            orphans = tuple(f"[{n}]:" for n in replaced if not any(f"[{n}]" in l for l in lines if not LINKDEF_RE.match(l)))
+            lines = [l for l in lines if not (orphans and l.startswith(orphans))]
             while lines and not lines[-1].strip():
                 lines.pop()
             if lines and not LINKDEF_RE.match(lines[-1]):
