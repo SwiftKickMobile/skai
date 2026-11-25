@@ -933,6 +933,44 @@ class Writers(unittest.TestCase):
             found = [i for i in issues(lines) if "known-issues.md" in i]
             self.assertEqual(found == [], resolves, (frag, lines))
 
+    def file_link_catalog(self, sentence, *definitions):
+        """A catalog where 'Reminder' is a term and reminders.md a file; returns the file whose intro holds the sentence."""
+        root = self.copy / "file-links"
+        for name, text in {"glossary.md": "# Glossary\n\n### Reminder\nA prompt that comes due ([REMIND-01]).\n\n[REMIND-01]: domains/reminders.md#remind-01\n",
+                           "domains/reminders.md": "# Reminders\n\nWhat a prompt is.\n\n### REMIND-01\nA reminder comes due once.\n",
+                           "domains/notes.md": f"# Notes\n\n{sentence}\n\n### NOTE-01\nA note holds text.\n\n" + "".join(f"{d}\n" for d in definitions)}.items():
+            (root / name).parent.mkdir(parents=True, exist_ok=True)
+            (root / name).write_text(text)
+        return root / "domains/notes.md"
+
+    def test_a_link_labeled_with_a_file_name_is_not_a_use_of_a_term(self):
+        for label, target in (("reminders.md", "reminders.md"), ("domains/reminders.md", "../domains/reminders.md")):
+            note = self.file_link_catalog(f"How a note prompts is in [{label}]: and, again, ([{label}]).", f"[{label}]: {target}")
+            code, lines = run("validate", "file-links", fixtures=self.copy)
+            self.assertEqual((code, issues(lines)), (0, []), label)
+            before = note.read_bytes()
+            for command in ("link-terms", "convert"):
+                run(command, "file-links", fixtures=self.copy)
+                self.assertEqual(note.read_bytes(), before, f"{command} leaves [{label}] alone")
+        note = self.file_link_catalog("How a reminder shows is in [reminders.md].", "[reminders.md]: reminders.md")
+        run("link-terms", "file-links", fixtures=self.copy)
+        self.assertIn("How a [reminder][g-reminder] shows is in [reminders.md].", note.read_text(), "a term beside the link still counts")
+        self.file_link_catalog("How a note prompts is in [reminders].", "[reminders]: reminders.md")
+        code, lines = run("validate", "file-links", fixtures=self.copy)
+        self.assertTrue(any("unlinked use of glossary term 'Reminder'" in i for i in issues(lines)), "only a file-name label is exempt")
+        self.file_link_catalog("How a note prompts is in reminders.md.")
+        code, lines = run("validate", "file-links", fixtures=self.copy)
+        self.assertTrue(any("unlinked use of glossary term 'Reminder'" in i for i in issues(lines)), "a bare file name is not a link")
+
+    def test_a_file_name_label_names_the_file_it_points_at(self):
+        for label, target, right in (("reminders.md", "reminders.md", True), ("domains/reminders.md", "../domains/reminders.md", True),
+                                     ("reminders.md", "https://example.com/a", True), ("notes.md", "reminders.md", False),
+                                     ("ders.md", "reminders.md", False), ("reminders.md", "reminders.md#remind-01", False)):
+            self.file_link_catalog(f"How a note prompts is in [{label}].", f"[{label}]: {target}")
+            code, lines = run("validate", "file-links", fixtures=self.copy)
+            found = [i for i in issues(lines) if "labeled" in i]
+            self.assertEqual(found == [], right, (label, target, lines))
+
     def test_link_terms_rewrites_only_the_last_root(self):
         stale = self.copy / "link-terms/catalog/domains/stale.md"
         fresh = self.copy / "link-terms/drafts/domains/fresh.md"

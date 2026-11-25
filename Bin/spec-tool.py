@@ -145,6 +145,10 @@ GLOSSARY TERMS (what "every occurrence in spec prose" covers, for validate and l
     items as well as live ones. Table headers are column labels, not prose, like the headings
     they sit under. Glossary files and index files are not spec prose. An item that a term's
     entry names as governing is exempt for that term; intro and section lines are never exempt.
+    A link to a whole file labeled with its name and extension ("[reminders.md]", with a folder
+    where the name alone is not enough: "[domains/reminders.md]") names the file, not a term, so a
+    term in its label is not an occurrence; the validator checks that the label ends the target's
+    path and that the target has no anchor. Any other label is prose.
     Every glossary.md under a root is part of the glossary and they are read as one (a term
     defined in two of them is rejected); entries stay alphabetical within each file's sections.
     link-terms writes the link and the definition for every unlinked occurrence the validator
@@ -314,6 +318,7 @@ TABLE_ROW_RE = re.compile(r"^( *)\|(.*)\|\s*$")
 TABLE_SEP_RE = re.compile(r"^ *\|(\s*:?-+:?\s*\|)+\s*$")
 INDEX_LINE_RE = re.compile(r"^- \[(?P<name>[^\]]+)\] -- (?:`(?P<prefixes>[^`]+)` -- )?(?P<text>.*)$")
 LINK_USE_RE = re.compile(r"\[([^\]\s][^\]]*)\](?!\()(?:\[([^\]]*)\])?")
+FILE_LINK_RE = re.compile(r"\[[^\]\[]+\.md\](?![(\[])")  # a link to a whole file, labeled with its name
 MARKER_RE = re.compile(r"(^|\s)- \[[ x]\]|🟡")
 
 
@@ -899,6 +904,8 @@ def validate(roots):
             if target.startswith(("http:", "https:", "mailto:")):
                 continue
             path, frag = target.split("#", 1) if "#" in target else (target, "")
+            if s.kind == "spec" and name.endswith(".md") and (frag or not f"/{path}".endswith(f"/{name}")):
+                shape.append(Issue(s.path, s.linkdef_lines[name], f"[{name}] is labeled as a file but points at {target}; label a link to a whole file with that file's name"))
             rel = Path(os.path.normpath(Path(rel_of[id(s)]).parent / path)).as_posix() if path else ""
             found, why = resolve_link(s, rel, path, frag, by_rel)
             if why is None:
@@ -1016,9 +1023,12 @@ def glossary_terms(glossaries):
 
 
 def unlinked_uses(body, term, gloss_refs, start=0):
-    """Matches of the term in body, from `start` on, that are not wrapped in a glossary link."""
-    out = []
+    """Matches of the term in body, from `start` on, that are neither wrapped in a glossary link nor
+    part of a file link's label."""
+    out, files = [], [f.span() for f in FILE_LINK_RE.finditer(body)]
     for m in term_pattern(term).finditer(body, start):
+        if any(a < m.start() and m.end() < b for a, b in files):
+            continue
         before, after = body[: m.start()], body[m.end():]
         # linked when the match sits anywhere inside a glossary link's label: "[Appointments
         # stage][g-appointments-stage]" links the shorter term "appointment" too

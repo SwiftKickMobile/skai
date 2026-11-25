@@ -10,7 +10,7 @@ is also its GitHub release notes.
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
 - **Figma designs.** The structure check no longer stops on a design file with grouped layers or values that differ across a layer's parts.
-- **Spec tools.** Item ID prefixes may hold digits (`A11Y-01`); such items were skipped without a word. The validator no longer rejects working links to headings with dashes or other punctuation. The spec, design and UI Map tools run on Python 3.9 to 3.11 again (UI Map: 3.11).
+- **Spec tools.** Item ID prefixes may hold digits (`A11Y-01`); such items were skipped without a word. The validator no longer rejects working links to headings with dashes or other punctuation. The spec, design and UI Map tools run on Python 3.9 to 3.11 again (UI Map: 3.11). A link to a whole spec file can be labeled with the file's name (`[reminders.md]`), and the tools no longer mistake the name for a glossary term.
 
 ## Release 18 — 2026-11-18
 
