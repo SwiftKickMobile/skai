@@ -126,7 +126,7 @@ reconstructed; recorded here as a gap rather than invented.
 | 2026-08-30 r9 | Artifacts' change-request lifecycle contradicted promotion's new `## Completion` | closed | Condition carried into artifacts; the spec corrected as the stale side |
 | 2026-08-30 r9 | `## Assumptions and TODOs` and `## Out of scope` named in the skeleton, owned by no step | closed | Made operative at `## Requirement Changes` |
 | 2026-08-30 r9 | Readiness condition 2's "matches" undefined; a literal text match fails on the guide's own example | closed | Names the recompute-and-reconcile operation. Accepted against the reviewer's `log-only` |
-| 2026-08-30 r9 | `[A-Z-]+-[0-9]+` cannot see a digit-bearing prefix — `A11Y-03` invisible, bracket reports a green pass over a lost ID | closed | Prefix constrained to letters and hyphens: six words, correct by construction. Accepted against `log-only` |
+| 2026-08-30 r9 | `[A-Z-]+-[0-9]+` cannot see a digit-bearing prefix — `A11Y-03` invisible, bracket reports a green pass over a lost ID | superseded 2026-11-25 | Was closed by constraining the prefix to letters and hyphens; that grep is gone, prefixes may hold digits and the tool's pattern reads them |
 | 2026-08-30 r9 | Both skill wrappers state the boundary as a literal path, wrong under `shared` | closed | Both say "the catalog". Accepted against `log-only` |
 | 2026-08-30 r9 | The read-only claim names debugging and unit testing, which have no catalog integration | noise (re-raise), trimmed | Second sighting of the pass-1 disposition, which still stands — so it scored as noise. Trimmed anyway at five words rather than logged a third time |
 

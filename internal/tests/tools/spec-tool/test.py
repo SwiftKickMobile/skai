@@ -881,10 +881,40 @@ class Writers(unittest.TestCase):
         code, lines = run("validate", "old-shape", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
         self.assertEqual(issues(lines), [])
+        digits = (self.copy / "old-shape/features/w3-sync.md").read_text()
+        self.assertEqual(re.findall(r"^#+ W3-\d+$", digits, re.M), ["### W3-01", "### W3-02"], "a prefix may hold digits")
+        self.assertIn("([W3-02-01])", digits)
         before = {p: p.read_bytes() for p in (self.copy / "old-shape").rglob("*.md")}
         code, lines = run("convert", "old-shape", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
         self.assertEqual({p: p.read_bytes() for p in (self.copy / "old-shape").rglob("*.md")}, before)
+
+    def test_item_ids_take_digits_after_the_first_letter_of_a_prefix_part(self):
+        spec = importlib.util.spec_from_file_location("st", TOOL); st = importlib.util.module_from_spec(spec); spec.loader.exec_module(st)
+        for iid in ("REMIND-01", "A11Y-01", "W3-12", "UI-A11Y-01", "UI-DEFAULT-FOLDER-100", "A-B-01"):
+            self.assertRegex(iid, rf"^(?:{st.ID_RE})$")
+        for text in ("X-01", "D01", "01-01", "A11Y-1", "a11y-01", "REMIND-01-01"):
+            self.assertNotRegex(text, rf"^(?:{st.ID_RE})$")
+        self.assertEqual(st.rule_parent("A11Y-02-03"), "A11Y-02", "a rule's number is never read as part of the prefix")
+        self.assertEqual(st.target_identity("../a.md#a11y-02"), st.target_identity("../b.md#a11y-02"))
+        self.assertNotEqual(st.target_identity("../a.md#part-2-02"), st.target_identity("../b.md#part-2-02"), "a heading belongs to its document")
+
+    def test_a_digit_prefix_item_left_in_the_old_shape_is_reported(self):
+        code, lines = run("validate", "old-shape", fixtures=self.copy)
+        self.assertNotEqual(code, 0)
+        self.assertTrue(any("w3-sync.md" in i and "must not carry an ID" in i for i in issues(lines)), lines)
+
+    def test_links_to_headings_resolve_as_github_anchors_them(self):
+        (self.copy / "known-issues.md").write_text("# Known issues\n\n## ISSUE-02 — Reminders don't fire: `quiet_hours` & [more](x.md)\n\n## Again\n\n## Again\n")
+        note = self.copy / "old-shape/features/reminders.md"
+        run("convert", "old-shape", fixtures=self.copy)
+        text = note.read_text()
+        for frag, resolves in (("issue-02--reminders-dont-fire-quiet_hours--more", True), ("again-1", True), ("again-2", False),
+                               ("issue-02-reminders-dont-fire", False)):
+            note.write_text(text.replace("Quiet hours silence reminders.", "[Quiet hours][known] silence reminders.") + f"[known]: ../../known-issues.md#{frag}\n")
+            code, lines = run("validate", "old-shape", fixtures=self.copy)
+            found = [i for i in issues(lines) if "known-issues.md" in i]
+            self.assertEqual(found == [], resolves, (frag, lines))
 
     def test_link_terms_rewrites_only_the_last_root(self):
         stale = self.copy / "link-terms/catalog/domains/stale.md"

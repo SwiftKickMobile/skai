@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.spec-file-shape
 Managed-Source: Guides/Core/spec-file-shape.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-18
+Managed-Updated-At: 2026-11-25
 
 # Spec File Shape
 
@@ -101,7 +101,7 @@ File lines carry prefixes in backticks; folder lines none. An app's index also l
 
 ## IDs And Citations
 
-- Item ID: `<PREFIX>-<NN>` for product specs, `UI-<PREFIX>-<NN>` for design specs; uppercase letters and hyphens, two digits zero-padded, three past 99; unique across the catalog; the prefix is registered on the file's index line.
+- Item ID: `<PREFIX>-<NN>` for product specs, `UI-<PREFIX>-<NN>` for design specs; a prefix of uppercase letters, digits and hyphens, at least two characters, each hyphen-separated part starting with a letter (`A11Y`, `UI-A11Y`); the number two digits zero-padded, three past 99; unique across the catalog; the prefix is registered on the file's index line.
 - Anchors: the heading lowercased, `remind-01`; retired, `remind-02-retired`.
 - Modify keeps the ID; a changed contract retires it and adds a new one, at item and rule level alike.
 

@@ -55,7 +55,8 @@ parser, one renderer, and both guide sets cite the shape guide instead of each r
    distinguish. An entry may end with one Also called note after its paragraph (decision 22).
 5. **Indexes.** `_<folder>.md`: one reminder line, then `- [name] -- \`PREFIX-\` -- questions` per
    file and `- [name] -- questions` per folder. An app's index also lists the feature files it offers.
-6. **IDs and anchors.** `<PREFIX>-<NN>` (design specs: `UI-<PREFIX>-<NN>`), two digits zero-padded,
+6. **IDs and anchors.** `<PREFIX>-<NN>` (design specs: `UI-<PREFIX>-<NN>`), the prefix uppercase
+   letters, digits and hyphens with each part starting with a letter (digits added 2026-11-25), two digits zero-padded,
    three past 99, unique across the catalog; anchor is the lowercased heading, `-retired` when
    retired; a rule citation links the parent item's anchor. Modify keeps the ID; a changed contract
    retires and adds, at item and rule level alike.

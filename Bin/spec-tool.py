@@ -291,10 +291,13 @@ _cfg_spec.loader.exec_module(cfg)
 
 # ---------------------------------------------------------------- shapes
 
-ID_RE = r"[A-Z][A-Z-]*[A-Z]-\d{2,}"
+# Each hyphen-separated part of a prefix starts with a letter, so a rule number never reads as part of
+# one; a prefix is at least two characters. Lowercased, it matches an ID's anchor.
+ID_RE = r"[A-Z](?!-\d)[A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\d{2,}"
 ITEM_HEAD_RE = re.compile(rf"^### (?P<id>{ID_RE})(?P<retired> \(retired\))?\s*$")
 ANY_H3_RE = re.compile(r"^### (.*)$")
 H2_RE = re.compile(r"^## (.*)$")
+HEADING_LINK_RE = re.compile(r"\[([^\]]*)\](?:\([^)]*\)|\[[^\]]*\])")  # a link in a heading, which GitHub anchors by its label
 H1_RE = re.compile(r"^# (.*)$")
 RULE_RE = re.compile(r"^(?P<indent> *)- \*\*(?P<num>\d+)\*\*(?P<retired> \(retired\))?(?P<text>.*)$")
 KNOWN_RE = re.compile(r"^> \*\*Known difference — (?P<app>[^:]+):\*\*(?P<text>.*)$")
@@ -970,7 +973,14 @@ def projection_fate(frag, found, by_rel):
 
 
 def heading_anchors(spec):
-    return {anchor(l.lstrip("#").strip()) for l in spec.raw if l.startswith("#")}
+    """The anchors a link may name a heading by: the one the review pages give it, and GitHub's, which
+    drops punctuation and keeps each space ('A — b' is #a--b) and numbers repeats."""
+    out, seen = set(), {}
+    for heading in (l.lstrip("#").strip() for l in spec.raw if l.startswith("#")):
+        github = re.sub(r"\s", "-", re.sub(r"[^\w\s-]", "", HEADING_LINK_RE.sub(r"\1", heading).lower()))
+        n = seen[github] = seen.get(github, -1) + 1
+        out |= {anchor(heading), f"{github}-{n}" if n else github}
+    return out
 
 
 def prose_lines(spec):
@@ -1410,7 +1420,7 @@ def target_identity(target):
         return target  # an external destination is identified whole, anchor included
     if "#" in target:
         path, frag = target.split("#", 1)
-        if re.fullmatch(rf"{ID_RE.lower().replace('[a-z][a-z-]*[a-z]', '[a-z][a-z0-9-]*[a-z]')}(?:-\d{{2}})*(?:-retired)?", frag):
+        if re.fullmatch(rf"{ID_RE.lower()}(?:-\d{{2}})*(?:-retired)?", frag):
             return frag  # a spec item's own ID: stable across moves and layers
         return (os.path.normpath(path).replace(os.sep, "/") + "#" + frag) if path else "#" + frag  # a heading: its document qualifies it
     return os.path.normpath(target).replace(os.sep, "/") if target else target

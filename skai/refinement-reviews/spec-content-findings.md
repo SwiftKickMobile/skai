@@ -11,7 +11,7 @@ Target 2: `Guides/ProductSpecs/product-specs-catalog.md`, `product-specs-artifac
 | 2026-08-29 r7 (req) | `retire glossary entry` means delete, thirty lines after an ❌ forbidding deletion | closed | Only a requirement keeps its heading and `(retired)`; a retired glossary entry is removed |
 | 2026-08-30 (req) | Silent loss of glossary entries or index lines on a whole-file rewrite | accepted risk, stated | Drafting rule is the obligation; no check backs it (P9); do not re-raise |
 | 2026-08-30 r8 (req) | Modify-vs-retire had no pointer where the type is chosen | closed | Type bullet points at the catalog guide's rule; the rule has one home |
-| 2026-08-30 r9 (req) | Digit-bearing prefixes invisible to the ID pattern | closed | Prefix is letters and hyphens only (shape guide) |
+| 2026-08-30 r9 (req) | Digit-bearing prefixes invisible to the ID pattern | superseded 2026-11-25 | Was closed by a letters-and-hyphens prefix (shape guide); prefixes may hold digits and the tool's pattern reads them |
 | 2026-08-30 r11 (req) | A package whose only change is an index line has no `Type` to ride on | logged | Stranded, not broken; the standing blocked gate covers it |
 | 2026-08-30 r15 (req) | Mandatory inline cross-references have no check | open — supervisor | A proof burden; in the unimplemented ledger; do not re-raise |
 | 2026-08-30 r15 (req) | Catalog root stated as a literal path | closed | The Integration block names the root; guides say `<catalog root>` |

@@ -64,7 +64,8 @@ UI Map is a technical document downstream of all three and references none of th
    readability; that bends "stated once" deliberately. No silent precedence.
 6. **IDs.** `UI-<PREFIX>-<NN>` per item, `-<NN>` per rule beneath it and `-<NN>-<NN>` one level
    down, which is the limit (amended 2026-10-18 from `.<NN>` and "nested as needed"; dashes read as
-   one ID and parse unambiguously because a prefix never holds a digit). Prefixes name the thing
+   one ID and parse unambiguously because every part of a prefix starts with a letter; amended
+   2026-11-25 from "a prefix never holds a digit"). Prefixes name the thing
    specified, never the file, and are unique across the specs; a prefix is a namespace and may span
    files after a move. IDs are file-independent and append-only from first drafting; retire in
    place at every level; modify keeps the ID when the promise is the same, a changed contract
