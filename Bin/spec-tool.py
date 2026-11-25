@@ -1974,12 +1974,16 @@ def render_all_popovers(gloss):
     for iid, it in sorted(RESOLVER.get("items", {}).items()):
         src = RESOLVER.get("item_src", {}).get(iid, ({}, None))
         out.append(rendered_under(src[0], src[1], lambda: f'<template id="tip-{anchor(iid)}"><div class="pop-head"><span class="id">{html.escape(iid)}</span>'
-                   f'{" <span class=\"badge retired\"></span>" if it.retired else ""}</div>{render_plain_item(it, gloss)}</template>'))
+                   f'{retired_badge(it)}</div>{render_plain_item(it, gloss)}</template>'))
     for (doc, iid), (it, linkdefs) in sorted(RESOLVER.get("ext_items", {}).items(), key=lambda kv: (str(kv[0][0]), kv[0][1])):
         src = os.path.relpath(doc, RESOLVER["out_dir"]).replace(os.sep, "/") if RESOLVER.get("out_dir") else doc.name
         out.append(rendered_under(linkdefs, doc, lambda: f'<template id="{ext_tip_id(doc, iid)}"><div class="pop-src">{html.escape(src)}</div><div class="pop-head"><span class="id">{html.escape(iid)}</span>'
-                   f'{" <span class=\"badge retired\"></span>" if it.retired else ""}</div>{render_plain_item(it, gloss)}</template>'))
+                   f'{retired_badge(it)}</div>{render_plain_item(it, gloss)}</template>'))
     return "".join(out)
+
+
+def retired_badge(item):
+    return ' <span class="badge retired"></span>' if item.retired else ""
 
 
 @dataclass

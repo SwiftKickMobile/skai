@@ -13,8 +13,10 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import tokenize
 import unittest
 import importlib.util
+import io
 
 ROOT = Path(__file__).resolve().parents[4]
 TOOL = ROOT / "Bin/spec-tool.py"
@@ -888,6 +890,21 @@ class Writers(unittest.TestCase):
         code, lines = run("convert", "old-shape", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
         self.assertEqual({p: p.read_bytes() for p in (self.copy / "old-shape").rglob("*.md")}, before)
+
+    def test_no_fstring_needs_a_newer_python_than_the_tools_declare(self):
+        # before Python 3.12 an f-string expression may hold neither a backslash nor the f-string's own quotes; an older Python fails the parse itself
+        for script in sorted((ROOT / "Bin").glob("*.py")):
+            source, quotes, found = script.read_text(encoding="utf-8"), [], []
+            compile(source, str(script), "exec")
+            for token in tokenize.generate_tokens(io.StringIO(source).readline):
+                kind = tokenize.tok_name[token.type]
+                if quotes and kind not in ("FSTRING_MIDDLE", "FSTRING_END") and ("\\" in token.string or quotes[-1] in token.string):
+                    found.append(token.start[0])
+                if kind == "FSTRING_START":
+                    quotes.append(token.string.lstrip("rRfFbBtT"))
+                elif kind == "FSTRING_END":
+                    quotes.pop()
+            self.assertEqual(found, [], f"{script.name}: f-string expressions that need Python 3.12, by line")
 
     def test_item_ids_take_digits_after_the_first_letter_of_a_prefix_part(self):
         spec = importlib.util.spec_from_file_location("st", TOOL); st = importlib.util.module_from_spec(spec); spec.loader.exec_module(st)
