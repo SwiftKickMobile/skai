@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.designer-guide
 Managed-Source: Guides/Design/figma-designer-guide.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-18
+Managed-Updated-At: 2026-11-27
 
 # Figma Designer Guide
 
@@ -27,7 +27,7 @@ An agent editing through the Figma tool reads
      [design conventions](#design-conventions).
 
    A change page, named for its change package, holds its drafts until they reach `Production`:
-   one concept per page, its letter in the name, per-screen Sections and any `Components` and
+   per-screen Sections and any `Components` and
    `Design System` Sections inside a Section named for the package (for several form factors: [Multiple form factors](figma-designer-guide-form-factors.md)). A request uses a `<request ID> — <name>`
    Section (`CR-01`, or `CR-01-01` against `CR-01`), never inside another Section, on its base's draft page (a change page when the base is production), holding per-screen Sections for its added or changed
    screens, a changed screen as a copy, and `Components` and `Design System` Sections when it needs them. Promotion backs up the base, then copies them into its

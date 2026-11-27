@@ -132,8 +132,10 @@ Requirement 10, in the screen-page rules:
    loose allowance in Screen pages 7 and Components 1.
 3. A request draws in one section of its own on the base's page, `CR-<nnn> — <name>`, holding
    the same per-screen sections (Pages 1 reworded).
-4. One concept per page: the concept letter is in the page name; frames and sections carry no
-   prefix.
+4. Frames and sections carry no prefix. (Corrected 2026-11-27, supervisor: this requirement
+   first read "One concept per page: the concept letter is in the page name". The supervisor never
+   set that rule. It was inferred from the Offers session, which drew concepts on separate pages
+   before scratch Sections existed. A change package has one change page, named for the package.)
 5. A **structure check**: one line under Agent tooling naming `Bin/figma-page-check.js`, run
    through the tool, as the check of the rules above; what it reports is the script's header's to
    say; the process guides say when (before the Review gate; promotion's `C1`).

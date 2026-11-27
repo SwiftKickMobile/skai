@@ -9,7 +9,7 @@ is also its GitHub release notes.
 
 Technical document: [`Releases/unreleased.md`](Releases/unreleased.md).
 
-- **Figma designs.** The structure check no longer stops on a design file with grouped layers or values that differ across a layer's parts.
+- **Figma designs.** The structure check no longer stops on a design file with grouped layers or values that differ across a layer's parts. A change page is named for its change package, with no concept letter.
 - **Spec tools.** Item ID prefixes may hold digits (`A11Y-01`); such items were skipped without a word. The validator no longer rejects working links to headings with dashes or other punctuation. The spec, design and UI Map tools run on Python 3.9 to 3.11 again (UI Map: 3.11). A link to a whole spec file can be labeled with the file's name (`[reminders.md]`), and the tools no longer mistake the name for a glossary term. A term made of several words ("reminder log") is linked as a whole, not word by word, and the validator reports one linked only in part. A term split across two lines is now found and linked, and a title or section heading not in Title Case is reported. Converting an old glossary entry with a dotted rule citation no longer needs a second run. A table under a nested rule is shown and checked under that rule, not its parent. The spec file shape guide now matches what the tools do.
 
 ## Release 18 — 2026-11-18

@@ -2,7 +2,7 @@ Managed-By: skai
 Managed-Id: guide.figma-designer-guide-design-system-changes
 Managed-Source: Guides/Design/figma-designer-guide-design-system-changes.md
 Managed-Adapter: repo-source
-Managed-Updated-At: 2026-11-17
+Managed-Updated-At: 2026-11-27
 
 # Figma Designer Guide: Design System Changes
 
@@ -18,8 +18,8 @@ change that alters nothing visible is not drafted; the design process guides say
 The process guides say when and in what order.
 
 1. **A drafted style or variable is named `Draft/<package>/<name>`.** `<package>` is the change
-   page's name, followed by `/<request ID>` for a request: `Draft/Pinned Notes A/Brand Blue`,
-   `Draft/Pinned Notes A/CR-01/Body`. Slashes form folders. A draft variable sits in
+   page's name, followed by `/<request ID>` for a request: `Draft/Pinned Notes/Brand Blue`,
+   `Draft/Pinned Notes/CR-01/Body`. Slashes form folders. A draft variable sits in
    the collection of the one it replaces, with its modes.
 
 2. **A changed component is drafted as a copy** in the package's `Components` Section, keeping its
