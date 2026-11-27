@@ -56,13 +56,15 @@ parser, one renderer, and both guide sets cite the shape guide instead of each r
 5. **Indexes.** `_<folder>.md`: one reminder line, then `- [name] -- \`PREFIX-\` -- questions` per
    file and `- [name] -- questions` per folder. An app's index also lists the feature files it offers.
 6. **IDs and anchors.** `<PREFIX>-<NN>` (design specs: `UI-<PREFIX>-<NN>`), the prefix uppercase
-   letters, digits and hyphens with each part starting with a letter (digits added 2026-11-25), two digits zero-padded,
+   letters, digits and hyphens, two characters or more, with each part starting with a letter (digits
+   added 2026-11-25; the two-character minimum is the tool's since decision 6 was written), two digits zero-padded,
    three past 99, unique across the catalog; anchor is the lowercased heading, `-retired` when
    retired; a rule citation links the parent item's anchor. Modify keeps the ID; a changed contract
    retires and adds, at item and rule level alike.
 7. **Markdown stays the source.** No YAML or JSON authoring format; the shape above is the grammar
    and the tool is its parser. A structured export is derivable if a service ever needs one.
-8. **Validator rejects:** a heading that does not fit the shape; an item without a statement; a
+8. **Validator rejects:** a heading that does not fit the shape, a title or section not in Title Case
+   included (added 2026-11-26); an item without a statement; a
    duplicate ID across the projected catalog; rule numbers not two digits, out of sequence, or nested
    too deep; a table without header and separator, with an empty or duplicate key; a link used but
    undefined or defined but unused; a glossary entry out of order, not a heading, or not sentence
@@ -129,7 +131,8 @@ parser, one renderer, and both guide sets cite the shape guide instead of each r
     touched files; it never inlines old or new text (supervisor, 2026-10-18). Promotion's
     list-matches-diff check is the tool's `check-changes`: every added, modified or retired item,
     glossary entry, index line or file in the projection has a list entry (an index line or intro: an
-    entry or a Touches line) and no entry names an unchanged or absent one (settled 2026-10-18).
+    entry or a Touches line; in design specs an index line rides in Touches only with the new file
+    it describes, since 2026-10-25) and no entry names an unchanged or absent one (settled 2026-10-18).
 16. **Converter.** The migration rewrites an existing catalog mechanically: `##` items to `###`,
     rule citations from dots to dashes, glossary entries to headings, `link-terms`, and validates the
     result; it reorganizes nothing. Reorganization (folding separate requirements into a table) is

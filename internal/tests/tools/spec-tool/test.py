@@ -886,6 +886,7 @@ class Writers(unittest.TestCase):
         digits = (self.copy / "old-shape/features/w3-sync.md").read_text()
         self.assertEqual(re.findall(r"^#+ W3-\d+$", digits, re.M), ["### W3-01", "### W3-02"], "a prefix may hold digits")
         self.assertIn("([W3-02-01])", digits)
+        self.assertIn("([REMIND-02-01])", (self.copy / "old-shape/glossary.md").read_text(), "a dotted citation in an old glossary entry is re-dashed on the first run")
         before = {p: p.read_bytes() for p in (self.copy / "old-shape").rglob("*.md")}
         code, lines = run("convert", "old-shape", fixtures=self.copy)
         self.assertEqual(code, 0, lines)
@@ -905,6 +906,19 @@ class Writers(unittest.TestCase):
                 elif kind == "FSTRING_END":
                     quotes.pop()
             self.assertEqual(found, [], f"{script.name}: f-string expressions that need Python 3.12, by line")
+
+    def test_a_table_under_a_nested_rule_is_that_rules(self):
+        spec = importlib.util.spec_from_file_location("st", TOOL); st = importlib.util.module_from_spec(spec); spec.loader.exec_module(st)
+        def rules(cell):
+            path = self.copy / "nested-table.md"
+            path.write_text("# Reminders\n\nIntro.\n\n### REMIND-01\nA reminder has a state.\n\n"
+                            "- **01** A reminder repeats.\n  | Every | Gap |\n  | --- | --- |\n  | day | 1 |\n"
+                            "  - **01** A repeat can be skipped.\n    | Skip | Effect |\n    | --- | --- |\n    | once | " + cell + " |\n")
+            return st.parse(path).items[0].rules
+        old, new = rules("next repeat"), rules("next two repeats")
+        self.assertEqual((len(new[0].tables), len(new[0].children[0].tables)), (1, 1), "each rule keeps the table indented under it")
+        self.assertEqual([st.rule_status(old[0], new[0]), st.rule_status(old[0].children[0], new[0].children[0])], ["unchanged", "modified"],
+                         "a change in a nested rule's table is the nested rule's")
 
     def test_item_ids_take_digits_after_the_first_letter_of_a_prefix_part(self):
         spec = importlib.util.spec_from_file_location("st", TOOL); st = importlib.util.module_from_spec(spec); spec.loader.exec_module(st)
@@ -1010,6 +1024,33 @@ class Writers(unittest.TestCase):
             self.assertFalse(any("notes.md" in i for i in issues(lines)), lines)
             run("link-terms", "nested-terms", fixtures=self.copy)
             self.assertEqual(note.read_text(), text, "idempotent")
+
+    def test_a_term_broken_across_lines_is_reported_and_linked_in_place(self):
+        note, log = self.nested_terms_catalog("Each overdue\nreminder fills the reminder\nlog; a reminder\n\nlog is two paragraphs.")
+        code, lines = run("validate", "nested-terms", fixtures=self.copy)
+        found = sorted(i.split(": ", 1)[1] for i in issues(lines) if "notes.md" in i)
+        self.assertEqual(found, ["unlinked use of glossary term 'Overdue reminder'", "unlinked use of glossary term 'Reminder log'",
+                                 "unlinked use of glossary term 'Reminder'"], lines)  # a paragraph break ends a term
+        self.assertTrue(any("notes.md:3: unlinked use of glossary term 'Overdue reminder'" in i for i in issues(lines)), "reported where the term starts")
+        run("link-terms", "nested-terms", fixtures=self.copy)
+        text = note.read_text()
+        self.assertIn("Each [overdue\nreminder][g-overdue-reminder] fills the [reminder\nlog][g-reminder-log]; a [reminder][g-reminder]\n\nlog is two paragraphs.", text, "the lines stay as they were")
+        code, lines = run("validate", "nested-terms", fixtures=self.copy)
+        self.assertFalse(any("notes.md" in i for i in issues(lines)), lines)
+        run("link-terms", "nested-terms", fixtures=self.copy)
+        self.assertEqual(note.read_text(), text, "idempotent")
+
+    def test_titles_and_sections_are_title_case(self):
+        root = self.copy / "title-case"
+        root.mkdir()
+        (root / "glossary.md").write_text("# Glossary\n\n## Shared terms\n\n### Note\nA text ([NOTE-01]).\n\n[NOTE-01]: notes.md#note-01\n")
+        for title, section, right in (("Notes of the Day", "Word Counts and Dates", True), ("Notes on iPhone (A11Y)", "Sync — 2026", True),
+                                      ("Note history", "Mentions", False), ("Notes", "Word counts", False)):
+            (root / "notes.md").write_text(f"# {title}\n\nWhat a [note][g-note] is.\n\n## {section}\n\n### NOTE-01\nA [note][g-note] holds text.\n\n[g-note]: glossary.md#note\n")
+            code, lines = run("validate", "title-case", fixtures=self.copy)
+            found = [i for i in issues(lines) if "notes.md" in i and "Title Case" in i]
+            self.assertEqual(found == [], right, (title, section, lines))
+        self.assertTrue(any("glossary.md:3: section 'Shared terms' should be Title Case" in i for i in issues(lines)), lines)
 
     def test_a_link_reaching_past_a_term_keeps_its_words(self):
         note, _ = self.nested_terms_catalog("The [daily reminder][g-reminder] log.", "[g-reminder]: glossary.md#reminder")

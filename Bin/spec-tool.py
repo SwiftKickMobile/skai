@@ -148,6 +148,10 @@ GLOSSARY TERMS (what "every occurrence in spec prose" covers, for validate and l
     Where one term holds another, the longer is the occurrence: "due date" is no occurrence of
     "date", in an item governing "due date" either. A link on only some of a term's words leaves the
     term unlinked; link-terms puts one link on the whole of it in their place.
+    A line break may fall inside a term: an occurrence runs across the lines of one paragraph, or of
+    one rule or known-difference note with its continuation lines, never past a blank line, the
+    next rule or a table row. It is reported at the line where it starts, and link-terms links it
+    where it stands, the link spanning the break, so the lines stay as they were.
     A link to a whole file labeled with its name and extension ("[reminders.md]", with a folder
     where the name alone is not enough: "[domains/reminders.md]") names the file, not a term, so a
     term in its label is not an occurrence; the validator checks that the label ends the target's
@@ -235,8 +239,9 @@ RENDER CONVENTIONS (the canonical render spec; update with the code)
     script by a path relative to the output file (like the UI Map viewer): it needs the skai
     checkout at that relative location and nothing else, and a styling or behaviour change there
     reaches every rendered page without a re-render; the version in the name bumps only for a change
-    that would break pages already rendered, and old versions stay beside the tool. Within an item, a "[^n]" marker renders as a superscript
-    link to the footnote's "Gap" line under the item, which names and links the Discussion item;
+    that would break pages already rendered, and old versions stay beside the tool. Within an item, a "[^n]" marker renders as a plain
+    superscript; the item's footnotes share one box, each line the owner's linked chip (its text on
+    hover), then the placeholder;
     an item carrying a gap footnote counts as modified. When the artifact has a "## Situations" section it is
     rendered after the card, as written (headings, bullets, paragraphs), citations linked. The
     card, Situations and Discussion resolve their links through the authoring artifact's own
@@ -503,6 +508,8 @@ def _title(spec, body, err):
         err(0, "file must start with a single '# Title' line")
         return j
     spec.title = H1_RE.match(body[j][1]).group(1).strip()
+    if not title_case(spec.title):
+        err(body[j][0], f"title {spec.title!r} should be Title Case: every word capitalized but short words such as 'of' and 'the'")
     for i, l in body[j + 1:]:
         if H1_RE.match(l):
             err(i, "second '#' heading; only one title allowed")
@@ -547,6 +554,8 @@ def _parse_spec(spec, body, err):
             section = mh2.group(1).strip()
             if re.search(ID_RE, section):
                 err(i, "a '##' section heading must not carry an ID")
+            elif not title_case(section):
+                err(i, f"section {section!r} should be Title Case: every word capitalized but short words such as 'of' and 'the'")
             item = None
             mode = "section"
             k += 1
@@ -603,7 +612,9 @@ def _parse_spec(spec, body, err):
             if mt:
                 k, table = _parse_table(body, k, err)
                 indent = len(mt.group(1))
-                if indent >= 2 and item.rules:
+                if indent >= 4 and item.rules and item.rules[-1].children:
+                    item.rules[-1].children[-1].tables.append(table)  # under a nested rule
+                elif indent >= 2 and item.rules:
                     item.rules[-1].tables.append(table)
                 else:
                     item.tables.append(table)
@@ -728,6 +739,8 @@ def _parse_glossary(spec, body, err):
             term, para, section, alt = None, [], m2.group(1).strip(), None
             if re.search(ID_RE, section):
                 err(i, "a '##' section heading must not carry an ID")
+            elif not title_case(section):
+                err(i, f"section {section!r} should be Title Case: every word capitalized but short words such as 'of' and 'the'")
             continue
         if line.startswith("**"):
             err(i, "glossary entry must be a '###' heading, not a bold paragraph")
@@ -766,6 +779,21 @@ def _parse_glossary(spec, body, err):
             err(ln - 1, f"duplicate glossary term {t!r}")
         seen.add(t.lower())
     spec.items = entries
+
+
+SMALL_WORDS = {"a", "an", "and", "as", "at", "but", "by", "for", "from", "in", "into", "nor", "of", "on", "or",
+               "over", "per", "so", "the", "to", "up", "via", "vs", "with", "yet"}
+
+
+def title_case(name):
+    """Every word capitalized, short words after the first allowed lowercase; a word that does not
+    start with a letter (a number, a dash) and one already holding a capital ("iPhone") pass."""
+    for n, w in enumerate(name.split()):
+        core = w.lstrip("(\"'“‘").split("-")[0]
+        if not core[:1].isalpha() or (n and core.lower() in SMALL_WORDS) or any(c.isupper() for c in core):
+            continue
+        return False
+    return True
 
 
 def sentence_case(term):
@@ -813,11 +841,10 @@ def link_uses(text):
 
 
 def term_pattern(term):
-    t = re.escape(term)
-    if term.endswith("y"):
-        t = re.escape(term[:-1]) + r"(?:y|ies)"
-    else:
-        t += r"(?:e?s)?"
+    """A term's occurrences, plural included; its words may be split by any whitespace, a line
+    break among them."""
+    stem, tail = (term[:-1], r"(?:y|ies)") if term.endswith("y") else (term, r"(?:e?s)?")
+    t = r"\s+".join(re.escape(w) for w in stem.split()) + tail
     return re.compile(rf"(?<![\w-]){t}(?![\w-])", re.I)
 
 
@@ -936,12 +963,13 @@ def validate(roots):
         if s.kind != "spec" or id(s) not in projected:
             continue
         gloss_refs = {n for n, t in s.linkdefs.items() if "glossary.md#" in t}
-        for i, line, item, start in prose_lines(s):
-            uses = {}  # term -> whether every unlinked use of it on the line has a link on some of its words
-            for _, _, _, term, refs in unlinked_uses(line, terms, item, gloss_refs, start):
-                uses[term] = bool(refs) and uses.get(term, True)
-            for term in sorted(uses):
-                shape.append(Issue(s.path, i + 1, f"unlinked use of glossary term {term!r}" + (": only some of its words are linked" if uses[term] else "")))  # per file: a package cannot edit files it does not hold
+        for idx, text, item, skips in prose_blocks(s):
+            uses = {}  # (line, term) -> whether every unlinked use of it there has a link on some of its words
+            for a, _, _, term, refs in unlinked_uses(text, terms, item, gloss_refs, skips):
+                key = (idx[text.count("\n", 0, a)], term)
+                uses[key] = bool(refs) and uses.get(key, True)
+            for i, term in sorted(uses):
+                shape.append(Issue(s.path, i + 1, f"unlinked use of glossary term {term!r}" + (": only some of its words are linked" if uses[i, term] else "")))  # per file: a package cannot edit files it does not hold
 
     # with several roots, per-file diagnostics outside the drafts (untouched canonical files, and
     # catalog files a draft replaces) are notes; whole-projection checks always block
@@ -1014,6 +1042,24 @@ def prose_lines(spec):
     return out
 
 
+def prose_blocks(spec):
+    """Spec prose as runs of lines read together, so a term broken across a line break is found:
+    (indexes, text, item, skips), the text the lines joined by newlines and `skips` the spans of it
+    that are not prose (a known-difference label, a '>' marker). A run is a paragraph, or a rule or
+    bullet with its continuation lines; a table row stands alone."""
+    blocks, prev = [], None
+    for i, line, item, start in prose_lines(spec):
+        opens = RULE_RE.match(line) or TABLE_ROW_RE.match(line) or KNOWN_RE.match(line) or FOOT_DEF_RE.match(line) or line.lstrip().startswith("- ")
+        if blocks and prev == i - 1 and blocks[-1][2] is item and not opens and not TABLE_ROW_RE.match(spec.raw[prev]):
+            idx, text, _, skips = blocks[-1]
+            skips.append((len(text) + 1, len(text) + 1 + start))
+            blocks[-1] = (idx + [i], text + "\n" + line, item, skips)
+        else:
+            blocks.append(([i], line, item, [(0, start)]))
+        prev = i
+    return blocks
+
+
 def glossary_terms(glossaries):
     """term -> (governing IDs, anchor, root-relative path of the glossary file holding it) from
     [(rel, parsed glossary)], every glossary.md under a root read as one."""
@@ -1028,8 +1074,8 @@ def glossary_terms(glossaries):
 GLOSS_USE_RE = re.compile(r"\[([^\]\[]+)\]\[([^\]\[]+)\]")
 
 
-def unlinked_uses(body, terms, item, gloss_refs, start=0):
-    """The occurrences in body, from `start` on, that no glossary link covers: (start, end, words,
+def unlinked_uses(body, terms, item, gloss_refs, skips=()):
+    """The occurrences in body, outside the `skips` spans, that no glossary link covers: (start, end, words,
     term, refs), in order, the span taking in whole any links on some of the term's words, whose names
     are `refs`. The longest term wins: words inside one are no occurrence of a shorter one, even in an
     item governing the longer term, which is exempt for it."""
@@ -1053,7 +1099,7 @@ def unlinked_uses(body, terms, item, gloss_refs, start=0):
         if not whole and any(l[0] < a or b < l[1] for l in over):
             continue  # a link reaching past the term holds these words
         taken.append((a, b))
-        if whole or at[a] < start or (item is not None and item.id in terms[term][0]):
+        if whole or any(c <= at[a] < d for c, d in skips) or (item is not None and item.id in terms[term][0]):
             continue
         out.append((min([at[a]] + [l[2].start() for l in over]), max([at[b - 1] + 1] + [l[2].end() for l in over]),
                     read[a:b], term, {l[2].group(2) for l in over}))
@@ -1081,9 +1127,9 @@ def link_terms(roots, write_roots=None):
         lines = spec.raw[:]
         gloss_refs = {n for n, t in spec.linkdefs.items() if "glossary.md#" in t}
         new_defs, replaced = {}, set()  # replaced: names of links on part of a longer term, now linked whole
-        for k, _, item, start in prose_lines(spec):
-            l, pieces, pos = lines[k], [], 0
-            for a, b, words, term, refs in unlinked_uses(l, terms, item, gloss_refs, start):
+        for idx, l, item, skips in prose_blocks(spec):
+            pieces, pos = [], 0
+            for a, b, words, term, refs in unlinked_uses(l, terms, item, gloss_refs, skips):
                 _, anc, grel = terms[term]
                 ref = f"g-{anc}"
                 pieces.append(l[pos:a] + f"[{words}][{ref}]")
@@ -1093,8 +1139,8 @@ def link_terms(roots, write_roots=None):
                 # the glossary file as it sits on disk relative to this file: the drafts' copy
                 # when the last root holds one, else the earlier root's
                 new_defs[ref] = f"{Path(os.path.relpath(by_rel[grel].resolve(), p.resolve().parent)).as_posix()}#{anc}"
-            if pieces:
-                lines[k] = "".join(pieces) + l[pos:]
+            if pieces:  # a link may span the line break its term did; the lines stay as many
+                lines[idx[0]:idx[-1] + 1] = ("".join(pieces) + l[pos:]).split("\n")
         if new_defs:
             orphans = tuple(f"[{n}]:" for n in replaced if not any(f"[{n}]" in l for l in lines if not LINKDEF_RE.match(l)))
             lines = [l for l in lines if not (orphans and l.startswith(orphans))]
@@ -1131,14 +1177,14 @@ def convert(roots):
                 if kind == "index" and re.match(r"^- \[[^\]]+\] [—–] ", line):  # the old index bullet's em dashes
                     line = re.sub(r"^(- \[[^\]]+\]) [—–] (?:(`[^`]+`) [—–] )?", lambda m: f"{m.group(1)} -- " + (f"{m.group(2)} -- " if m.group(2) else ""), line)
                     counts["index lines re-dashed"] += 1
+                line, n = DOTTED_RE.subn(lambda m: f"[{m.group(1)}{m.group(2).replace('.', '-')}]", line)
+                counts["citations re-dashed"] += n
                 if kind == "glossary":
                     m = OLD_ENTRY_RE.match(line)
                     if m:
                         out += [f"### {m.group('term').strip()}", m.group("text").strip()]
                         counts["entries re-headed"] += 1
                         continue
-                line, n = DOTTED_RE.subn(lambda m: f"[{m.group(1)}{m.group(2).replace('.', '-')}]", line)
-                counts["citations re-dashed"] += n
                 out.append(line)
             if out != lines:
                 p.write_text("\n".join(out) + "\n", encoding="utf-8")

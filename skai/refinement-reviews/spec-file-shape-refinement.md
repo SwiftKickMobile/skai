@@ -205,3 +205,127 @@ Catalog + drafts 5 files, 0 issues; broken 22 file:line issues, exit 1; the guid
 Closure confirmed at 8,198 bytes after a clean round 3. Every finding of the pass carries a disposition with evidence or rationale above (r1 closure table, r2 closure table, r3 closure table): r1 F1, F2, F3 (guide part), F5, F9 (guide part), F10, F11 closed; r1 F3 (tool part), F4, F6, F7, F8 routed to the tool pass; r1 F9 artifacts-guide part routed to those guides' refinement; r2 F2, F3 closed; r2 F1 logged; r3 F1, F2 logged; open questions recorded. Net size change for the pass: 9,582 → 8,198 (−1,384), cap 8,200.
 
 Supervisor ruling on the bold-number ambiguity: spec-format-design.md decision 3 now settles it — a bare bold number points at a top-level rule; a nested rule is pointed at as `01-01`. The guide picks this up in a later consistency pass (not in this one; no edit made).
+
+# Pass 2026-11-26: Digit Prefixes and Title Case
+
+Supervisor, 2026-11-26: "Undo the guide changes that skipped refinement and re-do them through refinement. Use Codex 6.1 Sol | High as the reviewer". Two tool changes reached the guide without a pass: item ID prefixes may hold digits (commit 1f95074, 2026-11-25) and the validator rejects a title or `##` section not in Title Case (uncommitted). Both guide edits were undone; the guide is back to its 1f95074^ text, 8,828 bytes against the 8,830 cap (spec-format-design.md, 2026-11-18). Design spec: decision 6 already carries digits (2026-11-25); decision 8 gains Title Case (2026-11-26).
+
+Series B: Codex gpt-6.1-sol, high effort; standard charter over the shape guide; tool `Bin/spec-tool.py` at the uncommitted validator fix. Tier: lightweight.
+
+Proposal (round 1): the Item ID line states the prefix's characters and the validator paragraph names Title Case; proposed shape 8,914 bytes, 84 over the cap before trims.
+
+## Series B Rounds
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+
+Round 1 (proposal, not scored): review saved at the session scratchpad `shape-r1/review.md`. Verdict: amend before applying; the managed date and the validator hunk endorsed.
+
+## Series B Round 1 Finding Matrix
+
+| Defect | Triage | Touches (spec § + target doc §) | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 "two or more uppercase letters" reads as a two-letter minimum; the tool requires two characters, not letters (`A1-01` passes, `A-01` does not) | accept, amended | spec 6; IDs And Citations | "the prefix uppercase letters, digits and hyphens, two characters or more, each part starting with a letter (`A11Y`)". Departed from the reviewer's wording, which dropped the minimum: the minimum predates this change (old `ID_RE` `[A-Z][A-Z-]*[A-Z]-\d{2,}`), so spec 6 now records it | digit prefixes, letter-led parts, registration, uniqueness, padding |
+| F2 Proposal 84 over the cap; How The Renderer Diffs restates the docstring (spec Guide Shape: "the guide does not restate it") | accept | spec Guide Shape; How The Renderer Diffs, `render` row | Section removed; `render` row: "Render conventions and diffing: tool docstring." Docstring convention 1 checked to hold every removed clause | render behavior, gap pointer |
+| A1 "Every departure … a parser can see" claims more than the tool checks (prefix registration unchecked; `A11Y-0001` accepted) | accept in part | spec 8; What The Validator Rejects | Opening "Reports these shape faults, with file and line:". Rejected "revived in an overlaid file": jargon, and a retired ID moved to another file mostly meets the duplicate-ID check | the listed faults |
+| A2 Nested pointer given as plain `01-01`; `references` finds only `**01-01**` | accept | spec 3; Rule, Example | "at a nested one as `**01-01**`"; the example's retired rule now points at `**01-01**`, the nested rule it names | bare bold number = top-level rule |
+| A3 `convert` row omits that it validates (code: `validate(roots)` after linking; spec 16) | accept | spec 16; Spec Tool | "in place, then links terms and validates; idempotent." | mechanical, idempotent |
+
+Clusters applied one at a time with a self-check after each: (1) proposal + F1; (2) F2; (3) A1–A3. Checks: the guide's example validates at 0 issues with a stub note file and index; `references REMIND-01-01-01` finds the `**01-01**` pointer; a lowercase title and section are reported; `A11Y-01` is an item and `### A-01` is reported, not skipped. Size 8,828 → 8,529 (cap 8,830).
+
+## Series B Round 2
+
+Applied text reviewed; review at the session scratchpad `shape-r2/review.md`. Changes from round 1 endorsed; neither finding is about this pass's repairs (0 of 2).
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 `references` row: "bold-number pointers too" implies an item query finds them; the code searches pointers only for a rule query | accept | spec 9; Spec Tool | "…or linking a glossary term; given a rule, its bold-number pointers in its item too." (reviewer's wording recast to the table's noun form) | item queries list rule citations; term queries list linked uses |
+| F2 `convert` "idempotent" is false: an old glossary entry's dotted citation is re-dashed only on a second run (probe: second run changes `[REMIND-01.01]` → `[REMIND-01-01]`); the docstring claims the same | supervisor decision → tool fixed (supervisor: "if there's a script bug, fix the bug") | spec 16; Spec Tool; tool | Tool: re-dash the entry text before `continue` (two lines), keeping the claim; or guide: drop "; idempotent" | mechanical migration, linking, validation |
+
+F1 checked: an item query (`references REMIND-01`) lists bracketed citations only; a rule query finds pointers (`references REMIND-01-01-01` finds the `**01-01**` pointer). Size 8,558 (cap 8,830).
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| B r2 | 8.75 | 2 | 0 | 2 | 0 | 0 |
+
+> F1 divergent · normal · verified = 5 · F2 divergent · off-normal · verified = 3.75
+
+## Series B Round 3
+
+Review at the session scratchpad `shape-r3/review.md`. Verdict: usable; the applied changes endorsed. Findings about this pass's repairs: 0 of 2.
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 "Prose links every occurrence" and the `link-terms` row read as covering glossary and index text; the tool skips both (`validate`, `link_terms`: `kind != "spec"`; docstring "Glossary files and index files are not spec prose") | accept | spec 4; Glossary File, Spec Tool | "Spec prose, not glossary or index text, links every occurrence…"; row "Links glossary terms in spec prose under the last root…" (reviewer's wording, "excluding" → "not") | every-occurrence rule in spec prose, governing exemption, last-root writes |
+| F2 Docstring, which the `render` row routes to, says a footnote marker links to its Gap line; the code emits a plain `<sup>` and one notes box (spec amendment 2026-10-24) | accept | spec 2026-10-24 amendment; tool docstring | Docstring: "a plain superscript; the item's footnotes share one box, each line the owner's linked chip (its text on hover), then the placeholder" | footnote placement, owner chip |
+| A1 A table under a nested rule was parsed as its parent's (probe: 2 parent tables, 0 nested) | routed to the tool; fixed | spec 3; parser | A table indented four spaces under a nested rule attaches to it; render and `rule_status` already recurse. Test fails without the fix | statement and top-level rule tables |
+
+Checks: `link-terms` on a probe leaves glossary text unlinked and links spec prose; tests pass on 3.9, 3.11 and 3.15; a host catalog of 22 spec files validates at 0 issues. Size 8,581 (cap 8,830).
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| B r3 | 7 | 2 | 0 | 1 | 1 | 0 |
+
+> F1 divergent · normal · verified = 5 · F2 cosmetic · normal · verified = 2 · A1 outside the binding target, routed to the tool, neither
+
+## Series B Round 4
+
+Review at the session scratchpad `shape-r4/review.md`. Verdict: usable; every applied change endorsed. Findings about this pass's repairs: 1 of 2 (F2, from round 3's parser fix).
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 The example's retired REMIND-02 says "Overdue reminders" unlinked, a use of the example glossary's term outside its governing item | accept | spec 4; Example | "The overdue state is now defined in [REMIND-01]." | retired items stay subject to linking |
+| F2 "indented under that rule" leaves table ownership to indentation the guide never states; two spaces after a nested rule is the parent's, four the nested rule's | accept | spec 3; Table | "its rows start with two spaces for a top-level rule, four for a nested rule." Release note says the same | tables after statements or either rule level |
+
+Checks: the guide's spec example, its glossary example, a stub note file and an index validate together at 0 issues. Size 8,631 (cap 8,830).
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| B r4 | 5.75 | 2 | 0 | 1 | 1 | 0 |
+
+> F1 cosmetic · normal · verified = 2 · F2 divergent · off-normal · verified = 3.75
+
+## Series B Round 5
+
+Review at the session scratchpad `shape-r5/review.md`. Verdict: usable; every applied change endorsed. Findings about this pass's repairs: 0 of 1.
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 Section element "Never cited or diffed" reads as covering the orientation line, which spec 11 and the tool diff (`section line` entry, word-diffed, marked modified) | accept | spec 11; Section | "Never cited." Diffing stays with the docstring the `render` row points to | section names, order and membership not diffed |
+
+Size 8,621 (cap 8,830).
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| B r5 | 3.75 | 1 | 0 | 1 | 0 | 0 |
+
+> F1 divergent · off-normal · verified = 3.75
+
+## Series B Round 6
+
+Review at the session scratchpad `shape-r6/review.md`. Verdict: the requested changes pass. Findings about this pass's repairs: 0 of 1.
+
+| Defect | Triage | Touches | Minimal fix | Must remain unchanged |
+|---|---|---|---|---|
+| F1 "Whenever a package materially changes, validate, then render" is unconditional, competing with spec 15 and the promotion guides' "do not render after" the write | accept | spec 15; Spec Tool (live render) | "Until promotion writes, whenever…" (reviewer's "Before the base write" recast without the jargon) | live render through authoring and promotion preparation |
+| A1 Design specs: the tool lets an index-line change ride in an entry's Touches only for an added file, narrower than spec 15; `design-specs-artifacts.md` states the same narrower rule | logged (outside the binding target) | spec 15; design-specs artifacts guide, tool | Tool and its artifacts guide agree; reconciling them with spec 15 is a design-specs decision, routed there | — |
+
+Size 8,645 (cap 8,830).
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| B r6 | 5 | 1 | 0 | 1 | 0 | 0 |
+
+> F1 divergent · normal · verified = 5 · A1 outside the binding target, routed, neither
+
+## Series B Round 7
+
+Review at the session scratchpad `shape-r7/review.md`. No findings; every applied change endorsed; size measured 8,645.
+
+| Round | Score | Total defects | Irreversible | Divergent | Cosmetic | Noise |
+|---|---|---|---|---|---|---|
+| B r7 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+## Series B Closure
+
+Stop rule (a): clean fresh round over the current text. Series B r2 8.75 → r3 7 → r4 5.75 → r5 3.75 → r6 5 → r7 0. Size 8,828 → 8,645 (cap 8,830, unchanged). Every finding is closed except A1 of round 6 (logged, routed to the design-specs guides). Tool fixes made on the supervisor's ruling: `convert` re-dashes inside an old glossary entry; a table under a nested rule is that rule's; the docstring's footnote-marker sentence.
